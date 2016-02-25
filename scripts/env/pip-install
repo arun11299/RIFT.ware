@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+
+# /bin/pip install --use-wheel --no-index --find-links=http://wheel.eng.riftio.com/mirrors/wheelhouse --trusted-host wheel.eng.riftio.com  "$@"
+if [ "$1" == "ALL" ]; then
+    set -- -r /usr/rift/scripts/setup/PIP
+fi
+/bin/pip2 install --use-wheel --no-index --find-links=http://wheel.eng.riftio.com/mirrors/wheelhouse "$@"
+
+
