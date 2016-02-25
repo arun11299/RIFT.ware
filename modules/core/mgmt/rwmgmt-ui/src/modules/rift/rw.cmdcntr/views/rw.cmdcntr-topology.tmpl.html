@@ -1,0 +1,14 @@
+<svg id="diagram" width='1000' height='1000'>
+  <defs>
+    <pattern id="fabric" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path class="fabricPattern" d='M0 5L5 0ZM6 4L4 6ZM-1 1L1 -1Z'/>
+    </pattern>
+    <filter id="blueglow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

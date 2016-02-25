@@ -1,0 +1,90 @@
+Example #4: Read-only Instrumentation in Java and also 
+            Validation in Java
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how you can easily
+integrate existing sources of read-only data, typically statistics or
+operational information in various forms, in your data model. 
+
+
+Build dependencies.
+~~~~~~~~~~~~~~~~~~~~~
+
+This example requires Java CLASSPATH to include log4j and aspectjrt.
+The example has been tested against aspectjrt-1.6.5.jar and log4j-1.2.14.jar
+See:
+http://www.eclipse.org/aspectj/
+http://logging.apache.org/log4j/
+
+
+What the Example does
+~~~~~~~~~~~~~~~~~~~~~
+
+This example demonstrated how we can use the Java APIs to 
+provide statistics from a read-only callpoint and also how
+we can use the Java APIs to validate a piece of configuration
+kept in CDB.
+
+The application is monitoring the ARP tables by running
+'/sbin/arp -an' whenever a manager asks for the current status. 
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try some commands
+
+        > show status arp
+
+    Now ping a few of the hosts in your neighborhood and rerun
+    the above status command to see that the newly pinged hosts 
+    are shown in the arp output.
+
+ 4. You can also compose the same queries using NETCONF. Try the
+    cmd-*.xml commands in the example:
+
+       netconf-console cmd-get-all.xml
+       netconf-console cmd-get-arpentries.xml
+
+
+Further Reading
+~~~~~~~~~~~~~~~
+
++ ConfD Manual: Using ConfD with external Data
+
+
+
+Testing the validation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+The data model contains two validation points. Both implemented in
+Demo.java. Start the CLI and create a server with it's IP being 
+192.168.128.3 and the validation code will issue a warming
+
+Now create a server with the port number not between 1024 and 2048,
+this will be rejected by the user Java validation code. 
+
+
+
+
+Exercises
+~~~~~~~~~
+
+X1. Make your own NETCONF commands. Use the cmd-*.xml files as
+    templates.
+
+X2. Add an additional validation point and provide the relevant
+    Java code 
+
+

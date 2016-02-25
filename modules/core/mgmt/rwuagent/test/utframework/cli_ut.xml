@@ -1,0 +1,20 @@
+<cli>
+  <yang-modules>
+    <module name="interfaces"/>
+    <module name="routes" />
+    <module name="dns" />
+    <module name="ntp" />
+    <module name="rw-mgmtagt"/>
+    <module name="vehicle-b"/>    
+  </yang-modules>
+
+  <plugin-list>
+    <plugin name="rwcli_plugin" typelib="rwcli_plugin/1.0"/>
+  </plugin-list>
+
+  <modifications>
+    <addPrintHook path="uagent" hook="rwcli_plugin:default_print"/>
+    <addPrintHook path="interfaces" hook="rwcli_plugin:default_print"/>
+    <addPrintHook path="ntp" hook="rwcli_plugin:default_print"/>
+  </modifications>
+</cli>

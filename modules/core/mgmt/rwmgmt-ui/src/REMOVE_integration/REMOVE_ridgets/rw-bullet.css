@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+}
+.bullet {
+  transition: all 0.5s ease-in-out;
+  -webkit-transition: all 0.5s ease-in-out;
+  transform-origin: left center;
+  -webkit-transform-origin: left center;
+  transform: scaleX(0);
+  -webkit-transform: scaleX(0);
+}
+.container {
+  stroke: #000000;
+  stroke-width: 1;
+  fill: #3b3b3b;
+}
+.marker {
+  stroke: #454545;
+  stroke-width: 2;
+}
+.markerText {
+  font-size: 10px;
+  font-family: open-sans;
+  color: #858585;
+}

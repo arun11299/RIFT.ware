@@ -1,0 +1,67 @@
+<SNMP-VIEW-BASED-ACM-MIB xmlns="http://tail-f.com/ns/mibs/SNMP-VIEW-BASED-ACM-MIB/200210160000Z">
+
+  <vacmSecurityToGroupTable>
+
+    <!-- The 'public' security name is mapped to the 'public' group -->
+
+    <vacmSecurityToGroupEntry>
+      <vacmSecurityModel>1</vacmSecurityModel>
+      <vacmSecurityName>public</vacmSecurityName>
+      <vacmGroupName>public</vacmGroupName>
+    </vacmSecurityToGroupEntry>
+
+    <vacmSecurityToGroupEntry>
+      <vacmSecurityModel>2</vacmSecurityModel>
+      <vacmSecurityName>public</vacmSecurityName>
+      <vacmGroupName>public</vacmGroupName>
+    </vacmSecurityToGroupEntry>
+
+    <!--v3 user 'bob' is mapped to the 'public' group -->
+
+    <vacmSecurityToGroupEntry>
+      <vacmSecurityModel>3</vacmSecurityModel>
+      <vacmSecurityName>bob</vacmSecurityName>
+      <vacmGroupName>public</vacmGroupName>
+    </vacmSecurityToGroupEntry>
+
+  </vacmSecurityToGroupTable>
+
+  <vacmAccessTable>
+
+    <!-- default context-->
+    <vacmAccessEntry>
+      <vacmGroupName>public</vacmGroupName>
+      <vacmAccessContextPrefix></vacmAccessContextPrefix>
+      <vacmAccessSecurityModel>0</vacmAccessSecurityModel>
+      <vacmAccessSecurityLevel>noAuthNoPriv</vacmAccessSecurityLevel>
+      <vacmAccessContextMatch>exact</vacmAccessContextMatch>
+      <vacmAccessReadViewName>internet</vacmAccessReadViewName>
+      <vacmAccessWriteViewName>internet</vacmAccessWriteViewName>
+      <vacmAccessNotifyViewName>internet</vacmAccessNotifyViewName>
+    </vacmAccessEntry>
+
+    <!-- context foo-* -->
+    <vacmAccessEntry>
+      <vacmGroupName>public</vacmGroupName>
+      <vacmAccessContextPrefix>foo-</vacmAccessContextPrefix>
+      <vacmAccessSecurityModel>0</vacmAccessSecurityModel>
+      <vacmAccessSecurityLevel>noAuthNoPriv</vacmAccessSecurityLevel>
+      <vacmAccessContextMatch>prefix</vacmAccessContextMatch>
+      <vacmAccessReadViewName>internet</vacmAccessReadViewName>
+      <vacmAccessWriteViewName>internet</vacmAccessWriteViewName>
+      <vacmAccessNotifyViewName>internet</vacmAccessNotifyViewName>
+    </vacmAccessEntry>
+
+  </vacmAccessTable>
+
+  <vacmViewTreeFamilyTable>
+
+    <vacmViewTreeFamilyEntry>
+      <vacmViewTreeFamilyViewName>internet</vacmViewTreeFamilyViewName>
+      <vacmViewTreeFamilySubtree>1.3.6.1</vacmViewTreeFamilySubtree>
+      <vacmViewTreeFamilyMask></vacmViewTreeFamilyMask>
+      <vacmViewTreeFamilyType>included</vacmViewTreeFamilyType>
+    </vacmViewTreeFamilyEntry>
+
+  </vacmViewTreeFamilyTable>
+</SNMP-VIEW-BASED-ACM-MIB>

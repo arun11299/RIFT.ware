@@ -1,0 +1,110 @@
+@import "css/base/base";
+@import "css/elements/header";
+@import "css/elements/button";
+@import "css/elements/icons";
+
+:host {
+  .flex(1 1 auto);
+
+
+  .flex-display();
+}
+
+.dashpanel {
+  margin: 3px;
+  // overflow: auto;
+}
+
+#scatterButtons {
+  text-align: center;
+}
+
+#geo {
+  min-width: 300px;
+  min-height: 420px;
+}
+
+rw-geo-map {
+  margin: 0 0 10px 0;
+  border: 1px solid @gray2;
+  height: 150px;
+}
+
+rw-vcs-table {
+  /*border: 1px solid @gray2;*/
+  overflow: auto;
+  height: 250px;
+}
+
+#graphs-dashpanel {
+  .flex(1 1 auto);
+  min-height: 420px;
+}
+
+#graphsHeader {
+
+}
+
+#graphs {
+  .flex-display();
+  .flex-direction(row);
+}
+
+#donutGrid {
+  .flex(1 1 auto);
+  .flex-display(column);
+  .align-items(flex-start);
+  margin: 0 20px 0;
+}
+
+#donutGrid > div {
+  .flex(1 1 auto);
+  .flex-display();
+  .flex-direction(row);
+}
+
+#donutGrid > div > div {
+  width:140px;
+  padding:0px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+
+#scatter {
+  .flex(7 1 auto);
+  max-height: 300px;
+}
+
+#scatter > h2 {
+  margin: 0 0 -20px 0;
+}
+
+rw-scatter {
+  width: 100%;
+  height: 100%;
+  // .flex(1 1 auto);
+}
+
+/**/
+/**/
+.cloud-dashpanel h2{
+  color:#ffffff;
+  font-weight:400;
+}
+.dashpanel h2 span.gray{
+  color:#cccccc;
+}
+.dashpanel h3{
+  color:#cccccc;
+  font-weight:200;
+  text-align:center;
+}
+.dashpanel sup{
+  margin-left:5px;
+
+  color:#cccccc;
+  font-size:12px;
+  font-weight:200;
+}
+.dashpanel span{}

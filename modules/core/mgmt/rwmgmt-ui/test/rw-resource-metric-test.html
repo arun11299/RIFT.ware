@@ -1,0 +1,41 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-resource-metric.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-resource-metric
+    id="test0"
+    metric="{{metric}}"
+    ></rw-resource-metric>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    var self = this;
+    this.metric = { utilization: 50, capacity: 100 };
+    setInterval(function() {
+        self.metric = {
+          utilization : Math.round(Math.random() * self.metric.capacity),
+          capacity : self.metric.capacity
+        }
+      }, 500);
+  },
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-resource-metric', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

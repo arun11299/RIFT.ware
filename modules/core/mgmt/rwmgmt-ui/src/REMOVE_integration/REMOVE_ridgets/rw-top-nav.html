@@ -1,0 +1,74 @@
+<link rel="import" href="../../lib/core-selector/core-selector.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+<link rel="import" href="rw-iconset.html">
+<script src="../../lib/svg4everybody/svg4everybody.min.js"></script>
+
+<!--
+  Application navigation header
+
+  <img src="nav.png"/>
+
+  @class rw-top-nav
+-->
+<polymer-element name="rw-top-nav" attributes="active">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-top-nav.css"/>
+  <rw-iconset size="32"></rw-iconset>
+  <header class="global-header">
+    <div class="logo"></div>
+    <nav class="global-nav">
+      <core-selector target="{{$.navList}}" selected="{{activeIndex}}" selectedClass="global-nav__list__item--is-selected" itemSelector="li" on-core-activate="{{navigate}}">
+        <ul id="navList" class="global-nav__list">
+          <li class="global-nav__list__item" link="rw-dashboard">
+            <core-icon class="global-nav__list__item__icon" icon="rw-iconset:icon-control-panel"></core-icon>
+            <div class="global-nav__list__item__label">Dashboard</div>
+          </li>
+          <li class="global-nav__list__item" link="rw-traffic">
+            <core-icon class="global-nav__list__item__icon" icon="rw-iconset:icon-control-panel"></core-icon>
+            <div class="global-nav__list__item__label">Traffic</div>
+          </li>
+          <li class="global-nav__list__item" link="rw-network">
+            <core-icon class="global-nav__list__item__icon" icon="rw-iconset:icon-graph"></core-icon>
+            <div class="global-nav__list__item__label">Interfaces</div>
+          </li>
+          <li class="global-nav__list__item" link="rw-resources">
+            <core-icon class="global-nav__list__item__icon" icon="rw-iconset:icon-cloud-server"></core-icon>
+            <div class="global-nav__list__item__label">Resources</div>
+          </li>
+          <li class="global-nav__list__item" link="rw-configuration">
+            <core-icon class="global-nav__list__item__icon" icon="rw-iconset:icon-html-code"></core-icon>
+            <div class="global-nav__list__item__label">Configuration</div>
+          </li>
+        </ul>
+      </core-selector>
+    </nav>
+  </header>
+</template>
+<script>
+Polymer({
+
+  /**
+   * Navigation id of application section to be highlighted.  One of:
+   * "dashboard", "topology", "resources", "configuration".
+   *
+   * @attribute active
+   * @type string
+   */
+
+  created: function() {
+    this.nav = ["rw-dashboard", "rw-traffic", "rw-network", "rw-resources", "rw-configuration"]
+  },
+
+  activeChanged: function() {
+    this.activeIndex = this.nav.indexOf(this.active);
+  },
+
+  navigate:function(e) {
+    var link = e.detail.item.attributes.link.value;
+    var url = window.location.href.replace(/#rw[2]?-[a-z]*/, '#' + link);
+    console.log("url", url);
+    window.location = url;      
+  }
+});
+</script>
+</polymer-element>

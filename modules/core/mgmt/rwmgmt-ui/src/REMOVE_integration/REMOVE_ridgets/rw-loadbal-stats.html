@@ -1,0 +1,35 @@
+<polymer-element name="rw-loadbal-stats" attributes="data">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-loadbal-stats.css"/>
+  <table id="stats" class="datagrid-small">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Forward</th>
+        <th>Reverse</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bindings</td>
+        <td class="datagrid-numcell-small">{{data.fwdBindings | fmtNum }}</td>
+        <td class="datagrid-numcell-small">{{data.revBindings | fmtNum }}</td>
+      </tr>
+    </tbody>
+  </table>  
+</template>
+<script>
+Polymer({
+
+  fmtNum: function(s) {
+    var n = parseInt(s);
+    return isNaN(n) ? '' : numeral(n).format('0,00');
+  },
+
+  pktNum : function(s) {
+    var n = parseInt(s);
+    return isNaN(n) ? '' : numeral(n).format('0.00a').toUpperCase();
+  }
+});
+</script>
+</polymer-element>

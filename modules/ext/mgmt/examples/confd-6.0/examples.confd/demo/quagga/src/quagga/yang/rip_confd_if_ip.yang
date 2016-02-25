@@ -1,0 +1,68 @@
+submodule rip_confd_if_ip {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+  include rip_confd_router;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef AuthenticationLengthType {
+    type enumeration {
+      enum old-ripd;
+      enum rfc;
+    }
+  }
+  typedef SplitHorizonType {
+    type enumeration {
+      enum split;
+      enum poisoned-reverse;
+      enum none;
+    }
+  }
+
+  augment "/system/interface/ip" {
+
+    container rip {
+      tailf:validate valAuthKeyString;
+      container authentication-mode {
+        presence "";
+        leaf mode {
+          type AuthenticationModeType;
+          mandatory true;
+        }
+        leaf auth-length {
+          type AuthenticationLengthType;
+          default old-ripd;
+        }
+      }
+      /* only one parameter can be set - "authentication-key-chain" or "authentication-string" - valAuthKeyString */
+      /* this should be a 'choice' in YANG, validation kept for demo purposes */
+      leaf authentication-key-chain {
+        type leafref {
+          path "../../../../key-chain/name";
+        }
+      }
+      leaf authentication-string {
+        type string;
+        tailf:validate valAuthString {
+          tailf:dependency .;
+        }
+      }
+      leaf receive-version {
+        type RipVersionSetType;
+      }
+      leaf send-version {
+        type RipVersionSetType;
+      }
+      leaf split-horizon {
+        type SplitHorizonType;
+        default split;
+      }
+    }
+  }
+}

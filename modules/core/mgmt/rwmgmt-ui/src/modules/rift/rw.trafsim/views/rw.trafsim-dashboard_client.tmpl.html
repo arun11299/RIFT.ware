@@ -1,0 +1,21 @@
+<div>
+    <div id="traffic-control-dashpanel" class="dashpanel">
+        <trafsim-control
+            orientation="vertical"
+            id="control"
+        ></trafsim-control>
+        <rw-trafsim-controller id="trafsimController"
+        colony="trafsimDashboardClient.trafsimClient.colonyId"
+        service="trafsimDashboardClient.trafsimClient"
+        ></rw-trafsim-controller>
+    </div>
+
+    <rw-gaugeset
+    dial-size="140"
+    panel-width="140"
+    class="panel__panel-body"
+    gauges="trafsimDashboardClient.gauges"
+    >
+    </rw-gaugeset>
+
+</div>

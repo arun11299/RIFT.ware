@@ -1,0 +1,59 @@
+<link rel="import" href="../../lib/core-selector/core-selector.html">
+
+<!--
+  Present each service of a list services for selection. Normally pulls
+  data from rw-vcs-model
+
+  <img src="service-selector.png"/>
+
+  @class rw-vcs-selector
+-->
+<polymer-element name="rw-vcs-selector" attributes="services">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-vcs-selector.css"/>
+  <section class="fieldset">
+    <div class="fieldset__label">Nodes</div>
+    <div class="form__item">
+      <ul class="config-system-list">
+        <core-selector id="selector" itemSelector="li" 
+          selectedClass="item-selected" on-core-select="{{selectService}}">
+          <template repeat="{{service, i in services}}">
+            <li serviceIndex="{{i}}">{{service.instance_name}}</li>
+          </template>
+        </core-selector>
+      </ul>
+    </div>
+  </section>
+</template>
+<script>
+Polymer({
+
+  /**
+   * Services (most likely VMs) for display 
+   *
+   * @attribute services
+   * @type Array
+   */
+
+  /**
+   * The service the user has selected.
+   *
+   * @property service
+   * @type Object
+   * @default null
+   */
+  created: function() {
+    this.service = {};
+    this.services = [];
+  },
+
+  selectService: function(e, detail) {
+    if (detail.isSelected) {
+      var i = parseInt(detail.item.attributes.serviceIndex.value);
+      this.service = this.services[i];
+    }
+  },
+})
+</script>
+</polymer-element>
+

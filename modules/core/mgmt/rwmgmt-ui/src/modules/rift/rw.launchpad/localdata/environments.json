@@ -1,0 +1,45 @@
+{
+  "status": "success",
+  "code": 200,
+  "environments": [
+    {
+      "status": "active",
+      "config_file": "config_file.xml",
+      "description": "Traffic Generator",
+      "alert_count": 0,
+      "template_id": 6097257849834615,
+      "mode": "Production",
+      "reservation": null,
+      "app_image": "nightly-build",
+      "id": 1,
+      "pool": "production",
+      "name": "Trafgen"
+    },
+    {
+      "status": "inactive",
+      "config_file": "config_file.xml",
+      "description": "Diameter Call Generator",
+      "alert_count": 0,
+      "template_id": 6097257850219176,
+      "mode": "Production",
+      "reservation": null,
+      "app_image": "nightly-build",
+      "id": 2,
+      "pool": "production",
+      "name": "Diameter"
+    },
+    {
+      "status": "active",
+      "config_file": "config_file.xml",
+      "description": "Combined Trafgen and Diameter Call Generator",
+      "alert_count": 0,
+      "template_id": 6097257848033665,
+      "mode": "Production",
+      "reservation": null,
+      "app_image": "nightly-build",
+      "id": 3,
+      "pool": "production",
+      "name": "Combined"
+    }
+  ]
+}

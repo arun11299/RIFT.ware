@@ -1,0 +1,24 @@
+module example {
+  namespace "http://example.com/example";
+  prefix example;
+
+  container x {
+    list host {
+      key "name";
+      leaf name {
+        description "Host name";
+        type string;
+      }
+
+      leaf number {
+        description "Number";
+        type uint32;
+      }
+
+      leaf enabled {
+        description "Enabled ?";
+        type boolean;
+      }
+    }
+  }
+}

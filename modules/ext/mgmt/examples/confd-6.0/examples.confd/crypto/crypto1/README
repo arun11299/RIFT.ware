@@ -1,0 +1,6 @@
+
+This example demonstrated how to use the built in ConfD crypto types.
+We have an application (called crypto_cdb) which reads the encrypted
+data from CDB and then use the DES3 and the AES keys defined in confd.conf
+to decrypt the data.
+

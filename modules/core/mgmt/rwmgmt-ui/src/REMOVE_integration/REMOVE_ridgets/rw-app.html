@@ -1,0 +1,55 @@
+<link rel="import" href="../../lib/flatiron-director/flatiron-director.html">
+<link rel="import" href="rw-top-nav.html">
+<!-- <link rel="import" href="rw-footer.html"> -->
+<link rel="import" href="rw-dashboard.html">
+<link rel="import" href="rw-network.html">
+<link rel="import" href="rw-resources.html">
+<link rel="import" href="rw-configuration.html">
+<link rel="import" href="rw-traffic.html">
+
+<polymer-element name="rw-app">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-app.css"/>
+  <flatiron-director id="route" autoHash
+    on-director-route="{{updateRoute}}"
+    ></flatiron-director>
+  <rw-top-nav active="{{route}}"/></rw-top-nav>
+  <div id="content" class="global-main">
+    <div style="border:1px solid red;"></div>
+  </div>
+<!--   <rw-footer></rw-footer> -->
+</template>
+<script>
+Polymer({
+
+  created: function() {
+    this.route = 'rw-dashboard';
+  },
+
+  attached : function() {
+    if (this.$.route.route == '') {
+      this.$.route.route = this.route;
+    }
+  },
+
+  updateRoute: function(e) {
+    if (e.detail == '') {
+      console.log('empty route');
+      return;
+    }
+    this.route = e.detail;
+    this.navigateToPage();
+  },
+
+  navigateToPage: function() {
+    var incoming = document.createElement(this.route);
+    if (incoming) {
+      this.$.content.empty();
+      this.$.content.appendChild(incoming);      
+    } else {
+      console.log("ERR: Could not create incoming element for " + this.route)
+    }
+  }
+});
+</script>
+</polymer-element>

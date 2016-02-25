@@ -1,0 +1,39 @@
+<link rel="import" href="rw-dashboard-control.html">
+<link rel="import" href="rw-dashboard-trafsim-control.html">
+<link rel="import" href="rw-trafsim-controller.html">
+<link rel="import" href="rw-gauge.html">
+<link rel="import" href="rw-scroll-graph.html">
+
+
+<polymer-element name="rw-gaugeset" attributes="dialSize panelWidth gauges">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-gaugeset.css"/>
+    <div id="gauges" class="dashpanel">
+      <template repeat="{{gauge in gauges}}">
+        <div class="gauge-group">
+          <h2>{{gauge.label}}</h2>
+          <rw-gauge
+                  size="{{dialSize}}"
+                  color="{{gauge.color}}"
+                  value="{{gauge.rate | noNaN}}"
+                  max="{{gauge.max}}"
+                  ></rw-gauge>
+          <rw-scroll-graph
+                  lineColor="{{gauge.color}}"
+                  strokeColor="{{gauge.colorLight}}"
+                  value="{{gauge.rate | noNaN}}"
+                  width="{{panelWidth}}"
+                  max="{{gauge.max}}"
+                  paused="false"
+                  ></rw-scroll-graph>
+        </div>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer(Platform.mixin({
+      dialSize: 280,
+      panelWidth: 250
+    }, rw.ui));
+  </script>
+</polymer-element>

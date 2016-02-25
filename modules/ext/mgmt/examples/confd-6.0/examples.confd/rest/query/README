@@ -1,0 +1,246 @@
+Example: Using the REST QUERY API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  This example shows how to make use of the REST QUERY API.
+
+  First, make sure you have run through the "basic REST example".
+
+  Second, we are making use of a nifty test tool named 'lux'.
+  You are not required to use this tool and can then skip right
+  down to the "Description of the Query API".
+
+  Lux is very easy to install, but it requires you to have
+  the version control system 'git' installed, 'autoconf',
+  and the programming language Erlang installed.
+  To install them on a Ubuntu Linux system run as root:
+
+    apt-get install autoconf git-core erlang
+
+  Now you can fetch the lux tool:
+
+    git clone https://github.com/hawk/lux.git
+    cd lux
+
+  Read the INSTALL.md file to see how to best install it.
+  For the default way, to install it under '/usr/local' you
+  only need to do the following:
+
+    autoconf
+    ./configure
+    make
+    make install  # As root!
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+  Build the data model and set up the initial files:
+
+    $ make all
+
+  Start ConfD
+
+    $ make start
+
+  ConfD is now started with some pre-populated data (found in example_init.xml).
+
+Sending REST requests using lux scripts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Using the tool 'lux' you can run the provided test cases
+  in the files run.lux and run_json.lux. The former uses XML
+  and the latter JSON for representing the queries.
+  Run them like this:
+
+    lux --progress=doc run.lux
+    lux --progress=doc run_json.lux
+
+  They should both end with SUCCESS. Feel free to experiment
+  by making your own scripts based on these lux scripts.
+  In case of ERRORS you will get a nice error report that
+  you can study in your Web Browser.
+
+Description of the Query API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  The Query API consists of a number of Requests and Replies which are
+  sent as payload via the (REST) HTTP connection.
+
+  In your installed release you should be able to find a Yang file named
+  tailf-rest-query.yang that defines the structure of these Requests /
+  Replies. An easy way to find the file run, from the top directory of
+  your installation:
+
+    find . -name tailf-rest-query.yang
+
+  The API consists of the following Requests:
+
+    start-query         - Start a query return a query handle.
+    fetch-query-result  - Use a query handle to fetch the result.
+    reset-query         - (Re)set where the next fetched result
+                          will begin from.
+    stop-query          - Stop (and close) the query.
+
+  The API consists of the following Replies:
+
+    start-query-result  - Reply to the start-query request
+    query-result        - Reply to the fetch-query-result request
+
+  The actual format of the payload should be represented either
+  in XML or Json. For XML it could look like this:
+
+    <start-query xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <foreach>
+        /x/host[enabled = 'true']
+      </foreach>
+      <sort-by>name</sort-by>
+      <limit>100</limit>
+      <offset>1</offset>
+      <select>
+        <label>Host name</label>
+        <expression>name</expression>
+        <result-type>string</result-type>
+      </select>
+    </start-query>
+
+  Let us discuss the various pieces of this request.
+  To start with, when using XML, we need to specify the
+  name space as shown:
+
+    <start-query xmlns="http://tail-f.com/ns/tailf-rest-query">
+
+  The actual XPath query to run is specified by the foreach element.
+  In the example below will search for all '/x/host' nodes that has the
+  'enabled' element set to 'true':
+
+      <foreach>
+        /x/host[enabled = 'true']
+      </foreach>
+
+  The returned result can be sorted. This is expressed as an XPath
+  expression, which in most cases are very simple and refers to the
+  found node set. In the example we sort the result by the content of
+  the 'name' element:
+
+      <sort-by>name</sort-by>
+
+  To limit the max amount of result chunks that 'fetch-query-result'
+  will return you can set the 'limit' element. The default is all chunks.
+
+    <limit>100</limit>
+
+  With the 'offset' element you can specify at which chunk we should
+  start to receive the result. The default is 1, i.e the first chunk.
+
+    <offset>1</offset>
+
+  The 'foreach' element defines the actual query that will
+  result in a matching node set. Now, you can define what you
+  want to have returned from that node set by using one or more
+  'select' sections. What to actually return is defined by the
+  XPath 'expression'.
+
+  We must also choose how the result should be represented.
+  Basically, it can be the actual value or the path leading to the
+  value.  This is specified per select chunk The possible
+  result-types are: 'string' , 'path' , 'leaf-values'.  The
+  difference between 'string' and 'leaf-value' is somewhat
+  subtle. In the case of 'string' the result will be processed by
+  the XPath function: string() (which if the result is a node-set
+  will concatenate all the values). The 'leaf-value' will return
+  the value of the first node in the result. As long as the the
+  result is a leaf node, 'string' and 'leaf-value' will return the
+  same result. In the example above, we are using 'string' as
+  shown below. At least one result-type must be specified.
+
+  Finally you can
+  specify an optional 'label' of your choice for a convenient
+  way of labeling the returned data. In the example we have the
+  following:
+
+    <select>
+      <label>Host name</label>
+      <expression>name</expression>
+      <result-type>string</result-type>
+    </select>
+
+  This request, expressed in Json, would look like this:
+
+    {
+     "start-query": {
+       "foreach": "/x/host[enabled = 'true']",
+       "sort-by": ["name"],
+       "limit": 100,
+       "offset": 1,
+       "select": [
+         {
+           "label": "Host name",
+           "expression": "name",
+           "result-type": "string"
+         }
+       ]
+     }
+    }
+
+  Now, if we continue by putting this XML example in a file: test.xml
+  we can send a request, using the command 'curl', like this:
+
+    curl -i 'http://admin:admin@localhost:8008/api/query' \
+         -X POST -T test.xml \
+         -H "Content-Type: application/vnd.yang.data+xml"
+
+  The important parts of the above is the '/api/query' in the URI
+  and that we send a HTTP 'POST' with the correct 'Content-Type'.
+
+  The result would look something like this:
+
+    <start-query-result>
+      <query-handle>12345</query-handle>
+    </start-query-result>
+
+  The query handle, in this example: 12345 must be used in all the
+  succeeding calls. To retrieve the result, we can now send:
+
+    <fetch-query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <query-handle>12345</query-handle>
+    </fetch-query-result>
+
+  Which will result in something like the following:
+
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <value>One</value>
+        </select>
+      </result>
+      <result>
+        <select>
+          <label>Host name</label>
+          <value>Three</value>
+        </select>
+      </result>
+    </query-result>
+
+  If we try to get more data with the 'fetch-query-result' we might
+  get more 'query-result' in return until no more data exists and
+  we will get a 'no-more-data' in return:
+
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <no-more-data/>
+      </result>
+    </query-result>
+
+  When we are done we should stop the query, as in:
+
+    <stop-query xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <query-handle>12345</query-handle>
+    </stop-query>
+
+  Finally, if we want to go back in the "stream" of received data chunks
+  and have them repeated, we can do that with the 'reset-query' request:
+
+    <reset-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+      <query-handle>12345</query-handle>
+      <offset>42</offset>
+    </reset-query>

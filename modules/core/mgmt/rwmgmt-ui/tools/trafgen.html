@@ -1,0 +1,70 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<script src="../lib/jquery/dist/jquery.js"></script>
+<script src="../lib/underscore/underscore.js"></script>
+<script src="../lib/socket.io-client/dist/socket.io.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../integration/ridgets/rw-trafgen-controller.html">
+
+<polymer-element name="my-trafgen">
+  <template>
+    <pre>
+    <button on-click="{{start}}">Start</button> <button on-click="{{stop}}">Stop</button>
+    Rate: <input type="text" value="{{rate}}"/> <button on-click="{{sendRate}}">Send</button>
+    PacketSize: <input type="text" value="{{packetSize}}"/> <button on-click="{{sendPacketSize}}">Send</button>
+    Colony: <input type="text" value="{{colony}}"/>
+    Port: <input type="text" value="{{ports[0].name}}"/>
+
+    <button on-click="{{refresh}}">Refresh</button>
+    <span style="font-size: small">
+    <h2>Counters</h2>
+    {{counters}}
+    </span>
+    </pre>
+    <rw-trafgen-controller
+      id="controller"
+      colony="{{colony}}"
+      ports="{{ports}}"
+      ></rw-trafgen-control>
+  </template>
+  <script>
+    Polymer({
+
+      created: function() {
+        this.rate = 20;
+        this.packetSize = 1024;
+        this.colony = 'trafgen';
+        this.ports = [ {name: 'trafgen/2/1'}];
+      },
+
+      attached: function() {
+        this.refresh();
+      },
+
+      start: function() {
+        this.$.controller.started = true;
+      },
+
+      stop: function() {
+        this.$.controller.started = false;
+      },
+
+      sendRate: function() {
+        this.$.controller.rate = this.rate;
+      },
+
+      sendPacketSize: function() {
+        this.$.controller.packetSize = this.packetSize;
+      },
+
+      refresh: function() {
+        var self = this;
+        rw.api.json('/fpath/port/port-state/counters/' + this.colony)
+          .then(function(data) {
+            self.counters = JSON.stringify(data, null, 2);
+          });
+      }
+    })
+  </script>
+</polymer-element>
+
+<my-trafgen></my-trafgen>

@@ -1,0 +1,141 @@
+// Datagrid
+//-------------------------------------------------------------------------
+
+.datagrid {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  padding: 0;
+}
+
+.datagrid__port-params {
+  border-right: 1px solid transparent;
+}
+
+.datagrid__tx {
+  border-right: 1px solid transparent;
+}
+
+.datagrid tr {
+  border-bottom: 1px solid transparent;
+}
+
+
+
+.datagrid tbody tr:nth-of-type(even) {
+  /*background: @gray7;*/
+}
+
+
+/**/
+.datagrid thead{}
+.datagrid thead tr{}
+.datagrid thead tr th{
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:8px;
+  padding-bottom:8px;
+  margin:0px;
+
+  color:@gray5;
+  font-size:14px;
+  font-weight:700;
+  text-transform: uppercase;
+  text-align: left;
+
+  background-color:@gray17;
+  border-bottom:1px solid transparent;
+}
+/**/
+.datagrid tbody{}
+.datagrid tbody tr{}
+.datagrid tbody tr:nth-of-type(odd) {
+  background-color: @gray18;
+}
+.datagrid tbody tr:nth-of-type(even) {
+  background-color: @gray17;
+}
+.datagrid tbody tr td {
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:10px;
+  padding-bottom:10px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:14px;
+  font-weight:400;
+  text-align: left;
+  white-space:nowrap;
+}
+.datagrid tbody tr.datagrid--is-selected td{
+  background-color: @blue-4;
+}
+/**/
+/**/
+.datagrid tbody tr td.cluster .icon{
+  margin-left:25px;
+}
+.datagrid tbody tr td.vm2 .icon{
+  margin-left:50px;
+}
+// underscores and hyphens do not work in polymer's tokenList impl
+.dataGridIsClosed, .datagrid__details--is-closed {
+  display: none;
+}
+
+.datagrid-small {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  padding: 0;
+}
+
+.datagrid-small td:first-child, .datagrid-small th {
+  font-size: 14px;
+  color: @gray5;
+}
+
+.datagrid-small td:first-child, .datagrid-small th:first-child{
+  border-right:1px solid transparent;
+}
+
+.datagrid-small th:not(:first-child)  {
+  font-weight: normal;
+  border-left:1px solid transparent;
+}
+
+.datagrid-small td:not(:first-child) {
+  border-left: 1px solid transparent;
+  color: @gray11;
+}
+
+.datagrid-small tr {
+  border-bottom:1px solid transparent;
+}
+
+.datagrid-small td {
+  padding: 0;
+
+
+}
+
+.datagrid-small thead tr {
+  text-align: center;
+  white-space:nowrap;
+}
+
+.datagrid-small thead td {
+  font-size: 14px;
+}
+
+.datagrid-small tbody tr {
+  border-bottom:1px solid transparent;
+  text-align: left;
+}
+
+td.datagrid-numcell-small {
+  text-align: right;
+  font-size: 14px;
+  color: @gray5;
+}

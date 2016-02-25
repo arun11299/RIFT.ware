@@ -1,0 +1,27 @@
+<div class="cb-tree">
+  <div class="cb-li"
+       ng-class="{selected : item.selected, hilite : item.hilite}"
+       ng-click="showDetails(column, item)">
+    {{item.label}}
+  </div>
+  <ul ng-repeat="child in item.children" class="cb-container-props">
+    <li class="cb-li cb-list-item"
+      ng-class="{selected : child.selected, hilite : child.hilite}"
+      ng-if="child.property.type == 'list'"
+      ng-click="expandList(column, child)">
+      <div class="cb-list-label" data-col="{{column}}">
+        {{child.label}}
+      </div>
+      <div class="cb-list-expand">
+        &gt;
+      </div>
+    </li>
+    <li class="cb-container-item" ng-if="child.property.type == 'container'">
+      <!-- recursive -->
+      <config-tree
+              item="child"
+              editor="editor"
+              column="column"></config-tree>
+    </li>
+  </ul>
+</div>

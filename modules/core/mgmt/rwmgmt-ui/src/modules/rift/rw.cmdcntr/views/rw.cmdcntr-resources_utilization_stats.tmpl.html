@@ -1,0 +1,69 @@
+<table id="statsTable" class="datagrid">
+  <thead class="datagrid">
+    <tr>
+      <th>Virtual Component System</th>
+      <th>Status</th>
+      <th>VCPU Count</th>
+      <th>VCPU Last 10 Sec</th>
+      <th>VCPU Current</th>
+      <th></th>
+      <th>Mem Last 10 Sec</th>
+      <th>Mem Current</th>
+      <th></th>
+      <th>Storage</th>
+    </tr>
+  </thead>
+  <tbody class="datagrid__summary">
+    <tr template ng-repeat="node in resourcesUtilizationStats.targetNodes">
+      <td nowrap class="{{node | getNodeClass}}">
+        <svg class="icon icon--small icon-vertical-align">
+          <use ng-attr-xlink:href="{{node | showNodeIcon}}" xlink:href="" />
+        </svg> {{node.instance_name}} </td>
+      <td>
+        <status-led state="{{node.state}}" state-string="{{resourcesUtilizationStats.nodeStateString(node)}}"></status-led>
+      </td>
+      <td style="text-align:right;">
+        {{node.cpu.ncores}}
+      </td>
+      <td>
+        <rw-scroll-graph line-color="{{resourcesUtilizationStats.theme.cpu}}" stroke-color="{{resourcesUtilizationStats.theme.cpuTranslucent}}" width="100%" height="40" labels="false" value="{{node.cpu.percent}}" paused="false"></rw-scroll-graph>
+      </td>
+      <td>
+        <div class="rate resources-bullet">
+            <div class="rate-value">{{node.cpu.percent}}%</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+            value="{{node.cpu.percent}}"
+            bullet-color="{{resourcesUtilizationStats.theme.cpu}}"
+            ></rw-bullet>
+            <div class="rate-max">100</div>
+        </div>
+      </td>
+      <td></td>
+      <td>
+        <rw-scroll-graph
+        line-color="{{resourcesUtilizationStats.theme.memory}}"
+        stroke-color="{{resourcesUtilizationStats.theme.memoryTranslucent}}"
+        width="100"
+        height="40"
+        labels="false"
+        value="{{node.memory.percent}}"
+        paused="false"
+    ></rw-scroll-graph></td>
+      <td>
+        <div class="rate resources-bullet">
+            <div class="rate-value">{{node.memory['curr-usage'] | bytes}}
+            ({{node.memory.percent}}%)</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+            value="{{node.memory.percent}}"
+            bullet-color="{{resourcesUtilizationStats.theme.memory}}"
+            ></rw-bullet>
+            <div class="rate-max">{{node.memory.total | bytes}}</div>
+        </div>
+      </td>
+      <td></td>
+      <td>{{node.storage['curr-usage'] | bytes:node.storage.total}}/{{node.storage.total | bytes}}</td>
+    </tr>
+  </tbody>
+</table>

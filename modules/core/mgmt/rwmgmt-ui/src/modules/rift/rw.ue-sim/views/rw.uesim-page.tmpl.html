@@ -1,0 +1,301 @@
+<div id="uesimulatorLyt" class="uesimulator">
+    <!--<div class="working-curtain" ng-if="ue.dropCurtain">
+        <div class="working-label">Fetching ScriptList</div>
+        <div class="working">Working</div>
+    </div>-->
+    <div id="uetemplatesLyt">
+        <ul>
+            <li ng-repeat="tmpl in ue.templateList" ng-click="ue.setTemplate(tmpl.name)" class="selected">
+                <dl>
+                    <dt>{{tmpl.name}}</dt>
+                    <dd class="ranges">
+                        <dl>
+                            <dt>Template Range Values</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IMSI</dt>
+                                    <dd>{{tmpl.imsi}}</dd>
+                                    <dt>IMEI</dt>
+                                    <dd>{{tmpl.imei}}</dd>
+                                    <dt>MSISDN</dt>
+                                    <dd>{{tmpl.msisdn}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                    </dd>
+
+                    <dd class="script" ng-if="ue.scriptState.script.state === 'Active'">
+                        <dl class="selected">
+                            <dt>Script Selected</dt>
+                            <dd>{{ue.currentScriptObject.name}}</dd>
+                        </dl>
+                        <dl class="state">
+                            <dt>Script State</dt>
+                            <dd><span class="icn" ng-class="{
+                              'fa-circle c-grn':ue.script_running == 2 || ue.script_running == 1 ,
+                            'fa-circle c-org': ue.script_running == 3,
+                            'fa-minus-circle': ue.script_running == 0,
+                            'fa-check-circle c-grn':ue.script_running == 2 || ue.scriptState.script.state == 'Complete'}"></span>
+                                {{ (ue.script_running == 1) ?
+                                'Activating' :
+                                (ue.script_running == 3)?
+                                'Terminating':
+                                ue.scriptState.script.state || 'Inactive'
+                                }}
+                            </dd>                        </dl>
+                        <dl class="elapsed">
+                            <dt>Script Elapsed Time</dt>
+                            <dd><uptime initialtime="ue.scriptState.script['duration-secs']" run="ue.script_running == 2"></uptime></dd>
+                        </dl>
+                    </dd>
+
+                </dl>
+            </li>
+
+        </ul>
+    </div>
+    <div id="uetemplateLyt">
+        <div id="uetemplateCntnt">
+            <!-- Left side of the content panel -->
+            <div id="templateInfoCntnt">
+                <dl>
+                    <dt class="title" title="UE Template Title">{{ue.selectedTemplate.name}}</dt>
+                    <dd class="description">{{ue.selectedTemplate.description}}</dd>
+                    <dd class="ranges">
+                        <dl>
+                            <dt>Template Range Values</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IMSI</dt>
+                                    <dd>{{ue.selectedTemplate.imsi}}</dd>
+                                    <dt>IMEI</dt>
+                                    <dd>{{ue.selectedTemplate.imei}}</dd>
+                                    <dt>MSISDN</dt>
+                                    <dd>{{ue.selectedTemplate.msisdn}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                    </dd>
+                  <dd class="mode">
+                    <dl class="drpdwn-cntrl">
+                      <dt>Script Mode</dt>
+                      <dd id="scriptMode" ng-class="{'drpdwn-grp':true, open:ue.scriptModeToggle, disable:ue.script_running > 0}" ng-init="scriptModeSelect = 'Automatic'">
+                        <a class="drpdwn-tgl" href="">{{scriptModeSelect}} <span class="icn fa-sort-desc"></span></a>
+                        <ul class="drpdwn">
+                          <li><a href="" ng-click="scriptModeSelect = 'Automatic'">Automatic</a></li>
+                          <li><a href="" ng-click="scriptModeSelect = 'Manual'">Manual</a></li>
+                        </ul>
+                      </dd>
+                    </dl>
+                  </dd>
+                    <dd class="manualcontrols" style="display:none;">
+                        this will eventually have content in it
+                    </dd>
+                    <dd class="script">
+                        <dl class="drpdwn-cntrl">
+                            <dt>Script Selected</dt>
+                            <dd id="scriptSelected" ng-class="{'drpdwn-grp':true, open:ue.scriptSelectedToggle, disable:ue.script_running > 0}" >
+                                <a class="drpdwn-tgl" href="">{{ue.currentScriptObject.name}} <span class="icn fa-sort-desc"></span></a>
+                                <ul class="drpdwn">
+                                    <li ng-repeat="script in ue.scripts"><a href="" title="{{script.name}}" ng-click="ue.selectScript(script, $index)">{{script.name}}</a></li>
+                                </ul>
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dd class="script-values left">
+                        <dl>
+                            <dt>Script State</dt>
+                            <dd><span class="icn" ng-class="{
+                                'fa-circle c-grn':ue.script_running == 2 || ue.script_running == 1 ,
+                                'fa-circle c-org': ue.script_running == 3,
+                                'fa-circle c-red': ue.script_running == 0 && ue.scriptState.script.state == 'Error',
+                                'fa-check-circle c-grn': ue.script_running == 0 && ue.scriptState.script.state == 'Complete',
+                                'fa-minus-circle': ue.script_running == 0,
+                                'fa-check-circle c-grn':ue.script_running == 2}"></span>
+                                {{ (ue.script_running == 1) ?
+                                'Activating' :
+                                (ue.script_running == 3)?
+                                'Terminating':
+                                ue.scriptState.script.state || 'Inactive'
+                                }}
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dd class="script-values">
+                        <dl>
+                            <dt>Script Elapsed Time</dt>
+                            <dd><uptime initialtime="ue.scriptState.script['duration-secs']" run="ue.script_running == 2"></uptime></dd>
+                        </dl>
+                    </dd>
+                    <!--<dd class="script-values">
+                        <dl>
+                            <dt>Script Refresh Interval</dt>
+                            <dd>BLAH</dd>
+                        </dl>
+                    </dd>-->
+                    <dd class="actions">
+                        <ul>
+                            <li><a href="" ng-class="{'button-link':true, disable: 2 > ue.script_running || ue.script_running == 3 }" ng-click="ue.killScript();">Kill Script</a></li>
+                            <li><a href="" ng-class="{button: true, loader: true, disable: ue.script_running > 0}" ng-click="ue.runScript();"><div class="">Run Script</div><div class="working"><div class="dot-1"></div><div class="dot-2"></div><div class="dot-3"></div></div></a></li>
+
+                        </ul>
+                    </dd>
+                </dl>
+            </div>
+            <!-- Right side of the content panel -->
+            <div id="scriptInfoLyt">
+                <!-- -->
+                <script-box
+                            scripts="ue.scripts"
+                            script-state="ue.script_running"
+                            current-script-index="ue.currentScriptIndex"
+                            current-script-object="ue.currentScriptObject"
+                            save-script="ue.saveScript(d)"
+                  ></script-box>
+                <!-- -->
+                <div id="scriptCallLyt">
+                    <h2>Call Information</h2>
+                    <div id="scriptCallCntnt" class="content">
+                        <dl class="call-item-1 width-1 height-1">
+                            <dt>Call State</dt>
+                            <dd><span ng-class="{'icn fa-circle c-red': ue.imsiState.state.mobility === 'Disconnected'
+                            && !ue.new, 'icn fa-circle c-org': ue.imsiState.state.mobility === 'Unknown'
+                            && !ue.new, 'icn fa-circle c-grn': ue.imsiState.state.mobility !== undefined && !ue.new
+                            }"></span> {{ue.checkDefault(ue.imsiState.state.mobility)}}</dd>
+                        </dl>
+                        <dl class="call-item-2 width-1 height-1">
+                            <dt>Calls In Progress</dt>
+                            <dd>{{ue.checkDefault(ue.scriptState.calls.active)}}</dd>
+                        </dl>
+                        <dl class="call-item-3 width-1 height-1">
+                            <dt>Calls Made</dt>
+                            <dd>{{ue.checkDefault(ue.scriptState.calls.total)}}</dd>
+                        </dl>
+                        <dl class="call-item-4 width-1 height-1">
+                            <dt>Calls Passed</dt>
+                            <dd><span ng-class="{'icn fa-circle c-grn': ue.scriptState.calls.success !== undefined && ue.scriptState.calls.success !== 0}"></span>  {{ue.checkDefault(ue.scriptState.calls.success)}}</dd>
+                        </dl>
+                        <dl class="call-item-5 width-1 height-1">
+                            <dt>Calls Failed</dt>
+                            <dd><span ng-class="{'icn fa-circle c-red': ue.scriptState.calls.failure !== undefined && ue.scriptState.calls.failure !== 0}"></span> {{ue.checkDefault(ue.scriptState.calls.failure)}}</dd>
+                        </dl>
+                        <dl class="call-item-6 width-2 height-2">
+                            <dt>IP Address</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IPv4</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState["pdn-ipv4-address"])}}</dd>
+                                    <dt>IPv6</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState["pdn-ipv6-address"])}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-7 width-3 height-1">
+                            <dt>APN Name</dt>
+                            <dd>{{ue.checkDefault(ue.imsiState["pdn-connections"][0].apn)}}</dd>
+                        </dl>
+                        <dl class="call-item-8 width-2 height-4">
+                            <dt>DNS Server</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IPv4 Primary</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState.dns.ipv4[0].addr)}}</dd>
+                                    <dt>IPv4 Secondary</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState.dns.ipv4[1].addr)}}</dd>
+                                    <dt>IPv6 Primary</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState.dns.ipv6[0].addr)}}</dd>
+                                    <dt>IPv6 Secondary</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState.dns.ipv6[1].addr)}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-9 width-1 height-4">
+                            <dt>QOS</dt>
+                            <dd>
+                                <dl>
+                                    <dt>QCI</dt>
+                                    <dd> {{ue.imsiState["pdn-connections"][0].bearers[0].qos.qci | checkDefaultFilter}}</dd>
+                                    <dt>ARP - PL</dt>
+                                    <dd>{{ue.imsiState["pdn-connections"][0].bearers[0].qos["arp-pl"].toString() | checkDefaultFilter }} </dd>
+                                    <dt>ARP - PVI</dt>
+                                    <dd>{{ue.imsiState["pdn-connections"][0].bearers[0].qos["arp-pvi"].toString() | checkDefaultFilter }}</dd>
+                                    <dt>ARP - PCI</dt>
+                                    <dd>{{ue.imsiState["pdn-connections"][0].bearers[0].qos["arp-pci"] | checkDefaultFilter  }}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-10 width-2 height-2">
+                            <dt>MME</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IP Address</dt>
+                                    <dd>{{ ue.checkDefault(ue.imsiState.mme)}}</dd>
+                                    <dt>TEID</dt>
+                                    <dd>{{ue.checkDefault(ue.convertToHex(ue.imsiState["pdn-connections"][0].bearers[0]["enb-teid"]))}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-11 width-2 height-2">
+                            <dt>SGW</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IP Address</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState.sgw)}}</dd>
+                                    <dt>TEID</dt>
+                                    <dd>{{ue.checkDefault(ue.convertToHex(ue.imsiState["pdn-connections"][0].bearers[0]["sgw-teid"]))}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-12 width-2 height-2">
+                            <dt>PGW</dt>
+                            <dd>
+                                <dl>
+                                    <dt>IP Address</dt>
+                                    <dd>{{ue.checkDefault(ue.imsiState["pdn-connections"][0].pgw)}}</dd>
+                                    <dt>TEID</dt>
+                                    <dd>{{ue.checkDefault( ue.convertToHex(ue.imsiState["pdn-connections"][0].bearers[0]["pgw-teid"]))}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-13 width-1 height-2">
+                            <dt>Subscriber Data</dt>
+                            <dd>
+                                <dl>
+                                    <dt>TX</dt>
+                                    <dd>{{ ue.checkDefault(ue.imsiState["downlink-bytes"])}}</dd>
+                                    <dt>RX</dt>
+                                    <dd>{{ ue.checkDefault(ue.imsiState["uplink-bytes"])}}</dd>
+                                </dl>
+                            </dd>
+                        </dl>
+                        <dl class="call-item-14 width-2 height-1">
+                            <dt>MME MGMT IP Address</dt>
+                            <dd>{{ue.vnfData.ip}}</dd>
+                        </dl>
+                        <dl class="call-item-15 width-1 height-1">
+                            <dt>Call ID</dt>
+                            <dd>{{ue.callID.call_id}}</dd>
+                        </dl>
+                        <dl class="call-item-16 width-1 height-1">
+                            <dt>Group Call ID</dt>
+                            <dd>{{ue.callID.group_call_id}}</dd>
+                        </dl>
+                        <dl class="call-item-17 width-2 height-1">
+                            <dt>UE Network</dt>
+                            <dd>{{ue.imsiState.netns}}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <!-- -->
+                <div id="scriptLogLyt">
+                    <h2>Log</h2>
+                    <div class="content">
+                        <!-- -->
+                        <react-log></react-log>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

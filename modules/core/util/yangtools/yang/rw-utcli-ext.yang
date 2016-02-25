@@ -1,0 +1,82 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file rw-utcli-ext.yang
+ * @author Anil Gunturu, Tom Seidenberg
+ * @date 2013/05/28
+ * @brief RiftWare yang-based CLI extensions
+ */
+
+module rw-utcli-ext
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-utcli-ext";
+  prefix "rwutcli";
+
+  revision 2014-05-28 {
+    description
+      "Initial revision.";
+    reference
+      "RIFT yang extensions for defining unit test CLI behaviour.";
+  }
+
+  extension callback-argv {
+    argument "function_name";
+    description
+      "The argument is the name of a function with the following
+      prototype:
+
+        rw_status_t (*)(int argc, char** argv)
+
+      The function returns a rw_status_t to indicating the success or
+      failure of the command.
+
+      The argv argument is owned by the caller; the function must not
+      modify, free, or retain the pointers it beyond the return.  If
+      the function needs to manipulate or keep anything, the function
+      should make a copy.
+
+      The function may output to stdout/std::cout, but it must not
+      attempt to read from stdin/std::cin, because that is owned by the
+      CLI parser and will not play nice.
+
+      The function is allowed to block as determined by the unit test
+      program.  The API works either way.";
+  }
+
+/*
+  ATTN: This requires much more code...
+
+  extension callback-pb {
+    argument "function_name";
+    description
+      "Takes as argument a name string.  The name string indicates the
+      callback function to invoke when this command is executed.
+      Function must have the following prototype:
+
+        rw_status_t (*)(const ProtobufCMessage* args)
+
+      The function returns a rw_status_t to indicating the success or
+      failure of the command.
+
+      The args argument is the encoded protoc-c data structure for the
+      remaining arguments on the command line.  It is owned by the
+      caller; the function must not modify, free, or retain a pointer
+      it beyond the return.  If the function needs to manipulate or
+      keep it, the function should make a copy.
+
+      The function may output to stdout/std::cout, but it must not
+      attempt to read from stdin/std::cin, because that is owned by the
+      CLI parser and will not play nice.
+
+      The function is allowed to block as determined by the unit test
+      program.  The API works either way.";
+  }
+*/
+} // rw-utcli-ext

@@ -1,0 +1,45 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-dashboard-control.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+<template>
+  <style>
+  #test0 {
+    width: 400px;
+    height: 400px;
+  }
+  #test1 {
+    width: 800px;
+    height: 64px;
+  }
+  </style>
+  <rw-dashboard-control
+    id="test0"
+    ></rw-dashboard-control>
+  <rw-dashboard-control
+          class="horizontal"
+          id="test1"
+          testModeEnabled="false"
+          ></rw-dashboard-control>  Started = {{$.test0.started}}
+</template>
+<script>
+Polymer('my-test', {
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-dashboard-control', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

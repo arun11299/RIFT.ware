@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" class="viewport"  ng-app="test">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+<script src="../../vendor.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.browserify.js"></script>
+
+  <script src="../../modules/rift/rw.cmdcntr.browserify.js"></script>
+  <script src="../../modules/rift/rw.iot.browserify.js"></script>
+  <script src="../../modules/rift/rw.ui.browserify.js"></script>
+  <script src="../../lib/nouislider/jquery.nouislider.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../lib/nouislider/jquery.nouislider.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+
+</head>
+<body class="viewport" style="margin:100px;" ng-controller="testController">
+    <div id="traffic-control-dashpanel" class="dashpanel" style="">
+      <iot-control id="control"></iot-control>
+      <iot-controller id="iotController" service="testController.iot"></iot-controller>
+    </div>
+<iot-client-panel></iot-client-panel>
+<iot-server-panel></iot-server-panel>
+<script>
+angular.module('test', ['cmdcntr', 'rw.iot'])
+.controller('testController', function($scope, radio) {
+
+
+
+
+
+  // trafgenFactory.attached();
+ // var self = $scope;
+ //      ueFactory.attached();
+ //      dispatcher.watch('ue-update', function() {
+ //        self.ltesim = ueFactory;
+ //        $scope.$apply();
+ //      });
+})
+</script>
+</body>
+</html>
+

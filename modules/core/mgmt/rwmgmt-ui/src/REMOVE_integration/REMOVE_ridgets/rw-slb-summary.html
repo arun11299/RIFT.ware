@@ -1,0 +1,139 @@
+<link rel="import" href="rw-bullet.html">
+
+<polymer-element name="rw-slb-summary" attributes="slb service">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-slb-summary.css"/>
+
+    <!-- OUTGOING -->
+    <div class="rate-label">TX</div>
+    <div class="rate-result">
+      {{outgoing.tx_rate_mbps | bits}} ({{outgoing.tx_percent}}%)
+    </div>
+    <rw-bullet
+            min="0"
+            max="100"
+            bulletColor="{{theme.txBps}}"
+            value="{{outgoing.tx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{outgoing.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{outgoing.tx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+            min="0"
+            max="{{outgoing.maxMsgRate}}"
+            bulletColor="{{theme.txPps}}"
+            value="{{outgoing.tx_rate_pps | noNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{outgoing.maxMsgRate | fmt('0a') | upperCase}}pps</div>
+    </div>
+
+    <div class="rate-label">RX</div>
+    <div class="rate-result">
+      {{outgoing.rx_rate_mbps | bits}} ({{outgoing.rx_percent}}%)
+    </div>
+    <rw-bullet
+            min="0"
+            max="100"
+            bulletColor="{{theme.rxBps}}"
+            value="{{outgoing.rx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{outgoing.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{outgoing.rx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+            min="0"
+            max="{{outgoing.maxMsgRate}}"
+            bulletColor="{{theme.rxPps}}"
+            value="{{outgoing.rx_rate_pps | noNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{outgoing.maxMsgRate | fmt('0a') | upperCase}}pps</div>
+    </div>
+
+    <!-- INCOMING -->
+    <div class="rate-label">TX</div>
+    <div class="rate-result">
+      {{incoming.tx_rate_mbps | bits}} ({{incoming.tx_percent}}%)
+    </div>
+    <rw-bullet
+            min="0"
+            max="100"
+            bulletColor="{{theme.txBps}}"
+            value="{{incoming.tx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{incoming.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{incoming.tx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+            min="0"
+            max="{{incoming.maxMsgRate}}"
+            bulletColor="{{theme.txPps}}"
+            value="{{incoming.tx_rate_pps| noNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{incoming.maxMsgRate | fmt('0a') | upperCase}}pps</div>
+    </div>
+
+    <div class="rate-label">RX</div>
+    <div class="rate-result">
+      {{incoming.rx_rate_mbps | bits}} ({{incoming.rx_percent}}%)
+    </div>
+    <rw-bullet
+            min="0"
+            max="100"
+            bulletColor="{{theme.rxBps}}"
+            value="{{incoming.rx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{incoming.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{incoming.rx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+            min="0"
+            max="{{incoming.maxMsgRate}}"
+            bulletColor="{{theme.rxPps}}"
+            value="{{incoming.rx_rate_pps | noNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{incoming.maxMsgRate | fmt('0a') | upperCase}}pps</div>
+    </div>
+
+ </template>
+  <script>
+    Polymer(Platform.mixin({
+      maxCallRate : 200000,
+      maxMsgRate: 600000,
+      maxPacketRate: 1000,
+
+      serviceChanged: function() {
+        var totMbps = function(tot, iface) {
+          return tot + parseInt(iface.speed);
+        };
+        this.outgoing = this.service.connector[0];
+        this.outgoing.maxMsgRate = rw.ui.bpsAsPps(this.outgoing.interface.reduce(totMbps, 0)) * 1000000;
+        this.incoming = this.service.connector[1];
+        this.incoming.maxMsgRate = rw.ui.bpsAsPps(this.incoming.interface.reduce(totMbps, 0)) * 1000000;
+      }
+    }, rw, rw.ui));
+  </script>
+</polymer-element>

@@ -1,0 +1,25 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module vld-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/vld-annotation";
+  prefix "vld-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import vld {
+    prefix vld;
+  }
+}

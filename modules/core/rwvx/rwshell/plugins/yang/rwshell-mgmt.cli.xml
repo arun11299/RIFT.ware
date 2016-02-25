@@ -1,0 +1,13 @@
+<cli>
+  <plugin-list>
+     <plugin name="rwcli_plugin" typelib="rwcli_plugin/1.0"/>
+  </plugin-list>
+
+  <modifications>
+     <addPrintHook path="crash" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="profiler" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="profiler-stop" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="profiler-start" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="profiler-report" hook="rwcli_plugin:default_print"/>
+  </modifications>
+</cli>

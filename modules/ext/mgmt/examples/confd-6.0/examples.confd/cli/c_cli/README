@@ -1,0 +1,44 @@
+Example: CLI command implemented in C
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example demonstrates how you can define a CAPI cmdpoint in the 
+clispec file, how the command is implemented in C, and how to invoke the
+command from the CLI. It also shows how a c-callback can be used
+to define a custom mode name in the cisco style CLI.
+
+What the Example does
+~~~~~~~~~~~~~~~~~~~~~
+
+The actions program is implementing the 'show ctest' CLI command 
+using the actions API. The command writes to the CLI and then 
+prompts the user whether to proceed or not.
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try the command
+
+        > show ctest from README
+
+    Note how the 'cli-point' action callback in actions.c is executed.
+
+4. Try the command 'show all data' and note how the "show-point"
+   callback in actions.c is executed. The data elements are generated
+   by the external data provider executed in callpoints.c
+
+Further Reading
+~~~~~~~~~~~~~~~
+
++ ConfD Manual: The CLI agent
++ man 3 confd_lib
++ man 3 confd_lib_maapi

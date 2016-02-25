@@ -1,0 +1,12 @@
+<div>
+<style>
+
+</style>
+  <core-menu class="tabs" id="tabNav" selected="0" on-core-select="{{flipTab}}">
+    <div ng-repeat="(tab, tabIndex) in tabs">
+      <core-item class="tab" data-tab="tab-{{tabIndex}}" label="{{tab.label}}"></core-item>
+    </div>
+  </core-menu>
+  <div id="tabContents">
+  </div>
+</div>

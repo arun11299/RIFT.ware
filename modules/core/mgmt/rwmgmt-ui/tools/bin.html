@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RW.Bin</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="bin.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../lib/paper-button/paper-button.html">
+  <link rel="import" href="../lib/paper-tabs/paper-tabs.html">
+  <link rel="import" href="../lib/core-pages/core-pages.html">
+  <link rel="import" href="../lib/paper-input/paper-autogrow-textarea.html">
+  <link rel="import" href="../lib/core-splitter/core-splitter.html">
+  <link rel="import" href="sort.html">
+  <script src="bin.js"></script>
+</head>
+<polymer-element name="rw-internal-model">
+  <script>
+    Polymer({
+      publish : {
+        statsId : null
+      },
+      attached: function() {
+        var self = this;
+        rw.api.post('/internal/wsgi/create').then(function(meta) {
+          self.statsId = meta.statsId;
+          self.subscription = new rw.api.SocketSubscriber('internal/wsgi');
+          self.subscription.subscribeMeta(self.load.bind(self), {statsId : self.statsId});
+          rw.api.statsId = self.statsId;
+        });
+      },
+
+      avgMs: function(t, n) {
+        return Math.round((t / n) * 1000);
+      },
+
+      load: function(stats) {
+        this.stats = stats;
+      },
+      
+      detached: function() {
+        rw.api.statsId = null;
+        this.subscription.unsubscribe();
+      }
+    });
+  </script>
+</polymer-element>
+<polymer-element name="rw-timeline" attributes="timeline">
+  <template>
+    <link rel="stylesheet" type="text/css" href="bin.css"/>
+    <sort-controller itemSelector=".datagrid sort-item" on-sort="{{changeSortBy}}"></sort-controller>
+    <table class="datagrid">
+      <thead>
+      <tr>
+        <th><sort-item token="m">URL</sort-item></th>
+        <th><sort-item token="d">Duration</sort-item></th>
+        <th><sort-item token="t" ordered="true" ascending="true">Time</sort-item></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr template repeat="{{t in sortedTimeline}}">
+        <td>
+          {{t.m}}
+        </td>
+        <td>
+          {{t.d | ms}}ms
+        </td>
+        <td>
+          {{t.t}}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </template>
+  <script>
+    Polymer({
+      created: function() {
+        this.comparator = this.sortBy('t', true);
+      },
+      timelineChanged: function() {
+        this.sortedTimeline = _.clone(this.timeline);
+        this.sort();
+      },
+      ms : function(n) {
+        return Math.round(1000 * n);
+      },
+      sort: function() {
+        if (this.sortedTimeline) {
+          this.sortedTimeline.sort(this.comparator);
+        }
+      },
+      changeSortBy : function(e) {
+        this.comparator = this.sortBy(e.detail.token, e.detail.ascending);
+        this.sort();
+      },
+      sortBy: function(path, ascending) {
+        var self = this;
+        var propTree = path.split('.');
+        return function(a, b) {
+          var aData = self.getProperty(a, propTree);
+          var bData = self.getProperty(b, propTree);
+          var x = 0;
+          if (jQuery.isNumeric(aData)) {
+            x = Number(aData) - Number(bData);
+          } else {
+            x = aData.localeCompare(bData);
+          }
+          return ascending ? x : -x;
+        };
+      },
+      getProperty : function(o, path) {
+        var x = o;
+        for (var i = 0; i < path.length; i++) {
+          x = x[path[i]];
+        }
+        return x;
+      }
+    });
+  </script>
+</polymer-element>
+<body class="viewport">
+<template layout vertical is="auto-binding" id="test">
+  <style>
+    #details {
+      height: 100%;
+      overflow: scroll;
+    }
+    #editor {
+      height: 50%;
+    }
+  </style>
+  <select id="scriptSelector">
+    <option value="">-- New Script --</option>
+    <option value="bin.d/logs.js">Log Check</option>
+    <option value="bin.d/smoke.js">Smoke API</option>
+    <option value="bin.d/diameter.js">Diameter</option>
+    <option value="bin.d/lte.js">LTE</option>
+    <option value="bin.d/ue-state.js">ue-state</option>
+    <option value="bin.d/test-scripts.js">List of test scripts</option>
+  </select>
+  <div id="editor" flex layout horizontal>
+    <paper-autogrow-textarea rows="30" flex>
+      <textarea id="bin"></textarea>
+    </paper-autogrow-textarea>
+  </div>
+  <core-splitter direction="up" allowOverflow></core-splitter>
+  <div id="details" flex layout vertical>
+    <div layout horizontal>
+      <paper-button on-click="{{run}}">Run</paper-button>
+      <paper-button on-click="{{clearStats}}">Reset</paper-button>
+    </div>
+    <paper-tabs id="tabs" selected="0" noink>
+      <paper-tab>Output</paper-tab>
+      <paper-tab>Timings</paper-tab>
+    </paper-tabs>
+    <core-pages flex selected="{{$.tabs.selected}}">
+
+      <div>
+        <pre>{{result}}</pre>
+      </div>
+
+      <div>
+        <rw-internal-model id="timingsModel"></rw-internal-model>
+        <rw-timeline timeline="{{$.timingsModel.stats.timeline}}"></rw-timeline>
+      </div>
+    </core-pages>
+  </div>
+</template>
+<script>
+
+  var loadScript = function(t, script) {
+    var request = jQuery.ajax({
+      type: "GET",
+      url: script,
+      dataType: "text"
+    });
+    request.done(function(content) {
+      t.$.bin.value = content;
+    });
+    request.fail(function(jqXHR, textStatus) {
+      log(textStatus);
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var t = document.getElementById('test');
+    t.result = '';
+    var log = function(msg) {
+      var m = msg;
+      if (typeof(msg) == 'object') {
+        m = JSON.stringify(msg, null, '  ');
+      }
+      t.result += m + '\n';
+    };
+    t.addEventListener("template-bound", function() {
+
+      t.$.scriptSelector.addEventListener("change", function(e) {
+        var select = e.target;
+        var scriptIndex = select.selectedIndex;
+        if (scriptIndex == 0) {
+          t.$.bin.value = '';
+        } else {
+          var script = select.options[scriptIndex].value;
+          window.location.hash = script;
+          loadScript(t, script);
+        }
+      });
+      if (window.location.hash) {
+        var selectedScript = window.location.hash.slice(1);
+        var options = t.$.scriptSelector.options;
+        Array.prototype.forEach.call(options, function(option) {
+          if (option.value == selectedScript) {
+            option.selected = true;
+            loadScript(t, selectedScript);
+            return false;
+          }
+        });
+        window.history.pushState()
+      }
+    });
+    t.clearStats = function() {
+      rw.api.put('/internal/wsgi/' + t.$.timingsModel.statsId + '/reset', {});
+    };
+    t.run = function() {
+      t.result = '';
+      var t0 = Date.now();
+      var bin = t.$.bin.value;
+      var done = function() {
+        log('***finished in  ' + (Date.now() - t0) + 'ms');
+      };
+      try {
+
+        // 'jsbin' becomes variable available to script along
+        // with 'log' and 'done' functions
+        var jsbin = new rw.JsBin(log, done);
+
+        eval(bin);
+      } catch (e) {
+        log(e.stack);
+        done();
+      }
+    };
+  });
+</script>
+</body>
+</html>
+

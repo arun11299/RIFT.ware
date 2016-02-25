@@ -1,0 +1,63 @@
+<script src="../../lib/bower-jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="../../lib/bower-jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+ 
+<polymer-element name="rw-geo-map" attributes="markers">
+<template>
+  <link rel="stylesheet" type="text/css" href="../../lib/bower-jvectormap/jquery-jvectormap-1.2.2.css" />
+  <link rel="stylesheet" type="text/css" href="rw-geo-map.css"/>
+  <div id="map"></div>
+</template>
+<script>
+Polymer({
+
+  attached: function() {
+    this.map = new jvm.WorldMap({
+      container: $(this.$.map),
+      map: 'world_mill_en',
+      markerStyle : {
+        initial: {
+          fill: 'rgba(73, 189, 238, 1)',
+          stroke: '#1f80ae',
+          "fill-opacity": 1,
+          "stroke-width": 1,
+          "stroke-opacity": 1,
+          r: 10
+        },
+        hover: {
+          stroke: 'black',
+          "stroke-width": 2
+        },
+        selected: {
+          fill: 'blue'
+        },
+        selectedHover: {
+        }
+      },
+      backgroundColor: "#3b3b3b",
+      regionsSelectable: false,
+      markersSelectable: true,
+      markersSelectableOne: true,
+      onMarkerSelected: this.markerSelected.bind(this)
+    });
+  },
+
+  markerSelected: function(marker) {
+    console.log('selected', marker);
+  },
+
+  markersChanged: function() {
+    this.map.addMarkers(this.markers);
+  },
+
+  setSelected: function(item) {
+    if (!item.marker) {
+      console.log('item does not have a marker', item);
+    } else {
+      this.map.clearSelectedMarkers();
+      var ndx = this.markers.indexOf(item.marker);
+      this.map.setSelectedMarkers(['' + ndx]);
+    }
+  }
+});
+</script>
+<polymer-element>

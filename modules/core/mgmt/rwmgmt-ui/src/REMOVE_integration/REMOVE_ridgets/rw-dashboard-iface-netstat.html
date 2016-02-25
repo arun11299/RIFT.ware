@@ -1,0 +1,70 @@
+<link rel="import" href="rw-bullet.html">
+
+<polymer-element name="rw-dashboard-iface-netstat" attributes="connector rate">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-dashboard-iface-netstat.css" />
+  <div class="rate-stack">
+    <div class="rate-label">TX</div>
+    <div class="rate-result">
+      {{connector.tx_rate_mbps | bits}} ({{connector.tx_percent}}%)
+    </div>
+    <rw-bullet
+      min="0"
+      max="100"
+      marker="{{rate}}"
+      bulletColor="{{theme.rxBps}}"
+      value="{{connector.tx_percent}}"
+    ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{connector.tx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+      min="0"
+      max="{{connector.speed * 1000000 | bpsAsPps}}"
+      bulletColor="{{theme.txPps}}"
+      value="{{connector.tx_rate_pps}}"
+      ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | mbpsAsPps}}pps</div>
+    </div>
+  </div>
+  <div class="rate-stack">
+    <div class="rate-label">RX</div>
+    <div class="rate-result">
+      {{connector.rx_rate_mbps | bits}} ({{connector.rx_percent}}%)
+    </div>
+    <rw-bullet
+      min="0"
+      max="100"
+      bulletColor="{{theme.rxBps}}"
+      value="{{connector.rx_percent}}"
+    ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{connector.rx_rate_pps | fmt('0a') | upperCase}}pps
+    </div>
+    <rw-bullet
+      min="0"
+      max="{{connector.speed * 1000000 | bpsAsPps}}"
+      bulletColor="{{theme.rxPps}}"
+      value="{{connector.rx_rate_pps}}"
+      ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | mbpsAsPps}}pps</div>
+    </div>
+  </div>
+</template>
+<script>
+Polymer(Platform.mixin({
+}, rw, rw.ui));
+</script>
+</polymer-element>

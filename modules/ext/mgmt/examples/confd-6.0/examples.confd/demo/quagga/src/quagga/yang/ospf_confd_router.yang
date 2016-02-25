@@ -1,0 +1,403 @@
+submodule ospf_confd_router {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef OspfBandwidthRangeType {
+    type uint32 {
+      range "1 .. 4294967";
+    }
+  }
+  typedef OspfMetricRangeType {
+    type uint32 {
+      range "0 .. 16777214";
+    }
+  }
+  typedef OspfMetricTypeRangeType {
+    type int8 {
+      range "1 .. 2";
+    }
+  }
+  typedef CostRangeType {
+    type uint32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef MaxConcurrentRangeType {
+    type uint32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef OspfIntervalRangeType {
+    type uint32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef OspfTimerRangeType {
+    type uint32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef DistributeListOutType {
+    type enumeration {
+      enum bgp;
+      enum connected;
+      enum isis;
+      enum kernel;
+      enum rip;
+      enum static;
+    }
+  }
+  typedef OspfAbrType {
+    type enumeration {
+      enum cisco;
+      enum ibm;
+      enum shortcut;
+      enum standard;
+    }
+  }
+  typedef AuthenticationType {
+    type enumeration {
+      enum yes;
+      enum message-digest;
+    }
+  }
+  typedef VlinkAuthenticationType {
+    type enumeration {
+      enum null;
+      enum message-digest;
+    }
+  }
+  typedef TransRoleType {
+    type enumeration {
+      enum translate-always;
+      enum translate-candidate;
+      enum translate-never;
+    }
+  }
+  typedef ShortcutType {
+    type enumeration {
+      /* enum default; (equivalent to no shortcut)  */
+      enum disable;
+      enum enable;
+    }
+  }
+  typedef MaxMetricType {
+    type uint32 {
+      range "5 .. 86400";
+    }
+  }
+  typedef TimerRefreshType {
+    type uint16 {
+      range "10 .. 1800";
+    }
+  }
+  typedef RangeCostType {
+    type uint32 {
+      range "min .. 16777215";
+    }
+  }
+
+/*  =============== main OSPF router configuration ====================  */
+
+  augment "/system/router" {
+
+    container ospf {
+      presence "";
+      list area {
+        key area;
+        tailf:validate valAreaType;
+        leaf area {
+          type inet:ipv4-address;
+        }
+        /*  validate - at most one of values can be set - nssa or stub, in which case virtual-link must be undefined - valAreaType  */
+        container nssa {
+          presence "";
+          leaf translator-role {
+            type TransRoleType;
+            default translate-candidate;
+          }
+          leaf summary {
+            type boolean;
+            default true;
+          }
+        }
+        container stub {
+          presence "";
+          leaf summary {
+            type boolean;
+            default true;
+          }
+        }
+        list virtual-link {
+          key addr;
+          leaf addr {
+            type inet:ipv4-address;
+          }
+          container authentication {
+            presence "";
+            leaf type {
+              type VlinkAuthenticationType;
+            }
+            leaf key {
+              type string;
+            }
+          }
+          list message-digest-key {
+            key key-id;
+            leaf key-id {
+              type int8;
+            }
+            leaf md5 {
+              type string;
+              mandatory true;
+            }
+          }
+          leaf dead-interval {
+            type OspfIntervalRangeType;
+            default 40;
+          }
+          leaf hello-interval {
+            type OspfIntervalRangeType;
+            default 10;
+          }
+          leaf retransmit-interval {
+            type OspfIntervalRangeType;
+            default 5;
+          }
+          leaf transmit-delay {
+            type OspfIntervalRangeType;
+            default 1;
+          }
+        }
+        container authentication {
+          presence "";
+          leaf message-digest {
+            type boolean;
+            default false;
+          }
+        }
+        /*  validate - default cost can be set only for stub or nssa areas - valAreaType  */
+        leaf default-cost {
+          type CostRangeType;
+        }
+        list filter-list-prefix {
+          key direction;
+          leaf direction {
+            type DirectionType;
+          }
+          leaf prefix-list {
+            type leafref {
+              path "../../../../../ip/prefix-list/name";
+            }
+            mandatory true;
+          }
+        }
+        list range {
+          key "addr prefix-length";
+          tailf:validate valRangeValuesOspf;
+          /*  validate - if advertise is false, neither cost or
+              substitute can be set; moreover, if cost is set,
+              substitute must not be set defined in valRangeValuesOspf  */
+          leaf addr {
+            type inet:ipv4-address;
+          }
+          leaf prefix-length {
+            type PrefixLengthIPv4;
+          }
+          leaf advertise {
+            type boolean;
+            default true;
+          }
+          leaf cost {
+            type RangeCostType;
+          }
+          container substitute {
+            presence "";
+            tailf:validate valRangeSubstitute;
+            leaf addr {
+              type inet:ipv4-address;
+              mandatory true;
+            }
+            leaf prefix-length {
+              type PrefixLengthIPv4;
+              mandatory true;
+            }
+          }
+        }
+        leaf shortcut {
+          type ShortcutType;
+          tailf:validate valShortcut {
+            tailf:dependency .;
+            /*  validate - area must not be backbone (0.0.0.0)  */
+          }
+        }
+      }
+      leaf auto-cost-reference-bandwidth {
+        type OspfBandwidthRangeType;
+        tailf:validate valAutoCostReferenceBandwidth {
+          tailf:dependency .;
+        }
+      }
+      leaf compatible-rfc1583 {
+        type boolean;
+        default false;
+      }
+      container default-information-originate {
+        presence "";
+        leaf metric {
+          type OspfMetricRangeType;
+        }
+        leaf metric-type {
+          type OspfMetricTypeRangeType;
+          default 2;
+        }
+        leaf route-map {
+          type leafref {
+            path "../../../../route-map/tag";
+          }
+        }
+        leaf always {
+          type boolean;
+          default false;
+        }
+      }
+      leaf default-metric {
+        type OspfMetricRangeType;
+      }
+      leaf distance {
+        type DistanceRangeType;
+      }
+      container distance-ospf {
+        presence "";
+        /*  validate: at least one of the elements must be set  */
+        tailf:validate valDistanceOspf;
+        leaf external {
+          type DistanceRangeType;
+        }
+        leaf inter-area {
+          type DistanceRangeType;
+        }
+        leaf intra-area {
+          type DistanceRangeType;
+        }
+      }
+      list distribute-list {
+        key source-type;
+        leaf source-type {
+          type DistributeListOutType;
+        }
+        container alist {
+          uses AccessListRefType5;
+        }
+      }
+      container log-adjacency-changes {
+        presence "";
+        leaf detail {
+          type boolean;
+          default false;
+        }
+      }
+      leaf max-metric-router-lsa-startup {
+        type MaxMetricType;
+      }
+      leaf max-metric-router-lsa-shutdown {
+        type MaxMetricType;
+      }
+      list neighbor {
+        key ip;
+        leaf ip {
+          type inet:ipv4-address;
+        }
+        leaf poll-interval {
+          type MaxConcurrentRangeType;
+        }
+        leaf priority {
+          type int8;
+        }
+      }
+      list network-ip {
+        key "address prefix-length area";
+        /*  validate: area is not key, in fact, address/prefix pair must be unique!  */
+        tailf:validate valOspfNetworkIp;
+        leaf address {
+          type inet:ipv4-address;
+        }
+        leaf prefix-length {
+          type PrefixLengthIPv4;
+        }
+        leaf area {
+          type leafref {
+            path "../../area/area";
+          }
+        }
+      }
+      leaf ospf-abr-type {
+        type OspfAbrType;
+        default cisco;
+      }
+      container passive-interfaces {
+        leaf passive-by-default {
+          type boolean;
+          default false;
+        }
+        list except {
+          key ifname;
+          leaf ifname {
+            type leafref {
+              path "../../../../../interface/name";
+            }
+          }
+        }
+      }
+      list redistribute {
+        key type;
+        leaf type {
+          type RedistributeType;
+        }
+        leaf metric {
+          type OspfMetricRangeType;
+        }
+        leaf metric-type {
+          type OspfMetricTypeRangeType;
+        }
+        leaf route-map {
+          type leafref {
+            path "../../../../route-map/tag";
+          }
+        }
+      }
+      leaf refresh-timer {
+        type TimerRefreshType;
+      }
+      leaf router-id {
+        type inet:ipv4-address;
+      }
+      container timers-spf {
+        presence "";
+        leaf delay {
+          type OspfTimerRangeType;
+          mandatory true;
+        }
+        leaf init-hold {
+          type OspfTimerRangeType;
+          mandatory true;
+        }
+        leaf max-hold {
+          type OspfTimerRangeType;
+          mandatory true;
+        }
+      }
+    }
+  }
+}

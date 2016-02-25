@@ -1,0 +1,38 @@
+module order {
+  namespace "http://tail-f.com/ns/example/order";
+  prefix order;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  list server {
+    key "name idx";
+    max-elements 64;
+    tailf:indexed-view;
+    leaf name {
+      type int32;
+      tailf:key-default "1";
+    }
+    leaf idx {
+        type int32;
+        tailf:key-default "1";
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf port {
+      type inet:port-number;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+}
+

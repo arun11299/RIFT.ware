@@ -1,0 +1,279 @@
+<polymer-element name="rw-scatter" attributes="xAxisLabel yAxisLabel values color">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-scatter.css"/>
+    <div id="plotContainer">
+      <svg id="plot"></svg>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      color: 'rgba(73, 189, 238, 1)',
+
+      created: function() {
+        this.margin = {
+          top: 20,
+          right: 20,
+          bottom: 20,
+          left: 35
+        };
+        this.range = {
+          xMin : 0,
+          xMax : 100,
+          yMin : 0,
+          yMax : 100
+        };
+      },
+
+      domReady: function() {
+        var self = this;
+        this.calculateSizes();
+
+        // add the graph canvas to the body of the webpage
+        this.svg = d3.select(this.$.plot);
+
+        this.plot = this.svg.append("g");
+
+        // x-axis
+        this.xAxisG = this.plot.append("g")
+                .attr("class", "x axis");
+
+        this.xAxisText = this.xAxisG
+                .append("text")
+                .attr("class", "label")
+                .attr("y", -6)
+                .style("text-anchor", "end")
+                .text(this.xAxisLabel);
+
+        // y-axis
+        this.yAxisG = this.plot
+                .append("g")
+                .attr("class", "y axis");
+
+        this.yAxisText = this.yAxisG
+                .call(this.yAxis)
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text(this.yAxisLabel);
+
+        this.dotsContainer = this.plot.append("g");
+
+        // add the tooltip area to the webpage
+        this.tooltip = d3.select(this.$.plotContainer)
+                .append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+        this.yTooltipOutline = new TooltipOutline(this.plot, "horizontal");
+        this.xTooltipOutline = new TooltipOutline(this.plot, "vertical");
+
+        this.sizeToFit();
+        this.valuesChanged();
+
+        window.addEventListener("resize", function() {
+          self.async(self.resize.bind(self), 50);
+        });
+      },
+
+      resize: function() {
+        this.calculateSizes();
+        this.sizeToFit();
+      },
+
+      calculateSizes: function() {
+        var self = this;
+        var dim = this.getBoundingClientRect();
+        this.height = Math.floor(dim.height);
+        this.width = Math.floor(dim.width);
+
+        this.plotWidth = this.width - this.margin.left - this.margin.right;
+        this.plotHeight = this.height - this.margin.top - this.margin.bottom;
+
+        this.xValue = function(d) { return d.x; };
+        this.xScale = d3.scale.linear().range([0, this.plotWidth]);
+        this.xAxis = d3.svg.axis().scale(this.xScale).orient("bottom");
+        this.xMap = function(d) { return self.xScale(self.xValue(d)); };
+        this.xScale.domain([this.range.xMin, this.range.xMax]);
+
+        this.yValue = function(d) { return d.y; };
+        this.yScale = d3.scale.linear().range([this.plotHeight, 0]);
+        this.yAxis = d3.svg.axis().scale(this.yScale).orient("left");
+        this.yMap = function(d) { return self.yScale(self.yValue(d)); };
+        this.yScale.domain([this.range.yMin, this.range.yMax]);
+      },
+
+      sizeToFit: function() {
+        var self = this;
+        this.svg
+                .attr("width", this.plotWidth + self.margin.right + self.margin.left)
+                .attr("height", this.plotHeight + self.margin.top + self.margin.bottom);
+
+        this.plot
+                .attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
+
+        this.xAxisG
+                .attr("transform", "translate(0," + this.plotHeight + ")")
+                .call(this.xAxis);
+
+        this.xAxisText.attr("x", this.plotWidth);
+        this.yAxisG.call(this.yAxis);
+      },
+
+      colorChanged: function() {
+        if (typeof(this.dots) === 'undefined') {
+          return;
+        }
+        this.dots
+                .attr("color", this.color);
+      },
+
+      valuesChanged: function() {
+        if (typeof(this.plot) === 'undefined' || typeof(this.values) === 'undefined') {
+          return;
+        }
+        var self = this;
+
+        this.dotsContainer.selectAll('.dot').remove();
+        this.dots = this.dotsContainer.selectAll('.dot')
+                .data(this.values)
+                .enter()
+                .append("circle")
+                .attr("r", function(d) { return d.size;})
+                .attr("cx", this.xMap)
+                .attr("cy", this.yMap)
+                .attr('class', 'dot')
+                .style("fill", this.color)
+                .on("mouseover", self.showToolTip.bind(self))
+                .on("mouseout", self.hideTooltip.bind(self));
+      },
+
+      showToolTip: function(d) {
+        // moves circle to top in case it's behind others
+        var node = d3.event.srcElement;
+        var pagePointer = {
+          x : d3.event.offsetX + 15,
+          y : d3.event.offsetY - 40
+        };
+        if (typeof(node) === 'undefined') {
+          // Firefox
+          node = d3.event.currentTarget;
+          pagePointer = {
+            x : d3.event.pageX - 10,
+            y : d3.event.pageY - 50
+          };
+        }
+        node.parentNode.appendChild(node);
+
+        this.tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+        this.tooltip.html(d.label)
+                .style("left", pagePointer.x + "px")
+                .style("top", pagePointer.y + "px");
+
+        var x = this.xMap(d);
+        var y = this.yMap(d);
+        this.xTooltipOutline.show(d, x, y, this.plotHeight);
+        this.yTooltipOutline.show(d, x, y, this.plotHeight);
+
+        // IE doesn't support mouseout if the dom element is modified so
+        // we have to close it on a timer
+        //   http://stackoverflow.com/questions/3686132/move-active-element-loses-mouseout-event-in-internet-explorer
+        if (platform.name == 'IE') {
+          setTimeout(this.hideTooltip.bind(this), 3000);
+        }
+      },
+
+      hideTooltip: function() {
+        this.tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        this.yTooltipOutline.hide();
+        this.xTooltipOutline.hide();
+      },
+
+      update: function() {
+        this.dots
+                .transition()
+                .duration(1000)
+                .attr("r", function(d) { return d.size;})
+                .attr("cx", this.xMap)
+                .attr("cy", this.yMap);
+      }
+    });
+
+
+    function TooltipOutline(d3Item, orientation) {
+      this.line = d3Item
+              .append("path")
+              .attr("stroke-dasharray", "5,5")
+              .attr("class", "tooltipGuide");
+      this.txt = d3Item
+              .append("text")
+              .attr("class", "tooltipGuideLabel");
+      this.orientation = orientation;
+      return this;
+    };
+
+    TooltipOutline.prototype = {
+      horizontal : 1,
+
+      vertical : 2,
+
+      // how far off x or y axis to show label
+      labelOffset : 4,
+
+      // when value is so small, no room to draw
+      // line but actual value is easily seen as it's
+      // so close to axis
+      threshold : 5,
+
+      show: function(d, x, y, height) {
+        var path = ['M', x, y, 'L'];
+
+        var shouldShow;
+        if (this.orientation === "horizontal") {
+          Array.prototype.push.call(path, 0, y);
+          this.txt.text('' + Math.round(d.y));
+          this.txt
+                  .attr("x", 0 + this.labelOffset)
+                  .attr("y", y - this.labelOffset);
+          shouldShow = (d.x > this.threshold);
+        } else {
+          Array.prototype.push.call(path, x, height);
+          this.txt.text('' + Math.round(d.x));
+          this.txt
+                  .attr("x", x + this.labelOffset)
+                  .attr("y", height - this.labelOffset);
+          shouldShow = (d.y > this.threshold);
+        }
+        console.log(this);
+        if (shouldShow) {
+          this.line
+                  .attr('d', path.join(' '))
+                  .transition()
+                  .duration(200)
+                  .style("opacity", .9);
+          this.txt
+                  .transition()
+                  .duration(200)
+                  .style("opacity", .9);
+        }
+      },
+      hide: function() {
+        this.line.transition()
+                .duration(500)
+                .style("opacity", 0);
+        this.txt
+                .transition()
+                .duration(500)
+                .style("opacity", 0);
+      }
+    };
+
+
+  </script>
+</polymer-element>

@@ -1,0 +1,70 @@
+ ConfD SNMP Agent Example - Simple using confd_dyncfg
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example is a combination of the introductory SNMP example,
+../1-simple and the ../../confdconf/dyncfg example. The purpose of the
+example is to show how to configure the ConfD SNMP agent using a
+special purpose YANG module, as well as how to hide the SNMP specific
+fxs files from the CLI (and other northbound agents).
+
+The three important differences from the examples referred to above are:
+
+  1. All the ConfD provided SNMP YANG modules are compiled using
+     "--export snmp", thus hiding them from "normal" view (e.g. from
+     the CLI).
+
+  2. The confd_dyncfg.yang is included to be able to configure the ConfD
+      SNMP agent via a built-in data-model. The confd_dyncfg.yang is
+      compiled using the "--export none" flag, thus hiding confdConfig
+      from normal view.
+
+  3. A data model called "system.yang" is included to expose selected
+     aspects of the ConfD SNMP agent (and other parts of ConfD) to the
+     end-user.
+
+The point of the example is to show an example of how to hide ConfD
+configuration, while at the same time exposing selected parts of it in
+a way that fits with the system developers data-model.
+
+
+
+How to run the example
+
+  1. Start by building "make all"
+
+  2. Start ConfD by issuing "make start"
+
+  3. Start a cli in one terminal "make cli"
+
+  If you have snmpwalk installed, try "make walk". You should see
+  something like:
+
+     host% make walk
+     snmpwalk -v2c -c public 127.0.0.1:4000
+     SNMPv2-MIB::sysDescr.0 = STRING: Tail-f ConfD agent
+    ...
+
+  In the CLI you can now:
+
+     admin@host> configure 
+     admin@host% set system snmp address port 4444
+     admin@host% set system snmp communityString foobar
+     admin@host% set system snmp sysDescr "FooBar agent"
+     admin@host% commit
+
+  The SNMP agent is now listening to port 4444 instead, the public
+  community string as well as the sysDescription string has been
+  changed. Issuing a "make walk" in a shell should now look something
+  like this:
+
+     host% make walk COMMUNITY=foobar SNMPPORT=4444
+     snmpwalk -v2c -c foobar 127.0.0.1:4444
+     SNMPv2-MIB::sysDescr.0 = STRING: FooBar agent
+     SNMPv2-MIB::sysObjectID.0 = OID: SNMPv2-SMI::enterprises.24961
+    ...
+
+
+  Play around with the different settings in system.yang. Also try
+  adding more symlinks in the system.yang file (refer to confd_dyncfg.yang
+  to see what you can point to).
+

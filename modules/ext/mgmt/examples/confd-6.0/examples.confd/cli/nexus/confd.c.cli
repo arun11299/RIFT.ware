@@ -1,0 +1,21 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+
+  <operationalMode>
+    <modifications>
+      <hasRange path="interface name"/>
+    </modifications>
+  </operationalMode>
+
+
+  <configureMode>
+    <modifications>
+    </modifications>
+  </configureMode>
+
+  <pipeCmds>
+    <modifications>
+      <move src="include" dest="grep"/>
+    </modifications>
+  </pipeCmds>
+
+</clispec>

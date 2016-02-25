@@ -1,0 +1,67 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file test_rwutcli.yang
+ * @author Tome Seidenberg
+ * @date 2014/06/04
+ * @brief Interactive CLI for testing rwutcli
+ */
+
+module test_rwutcli-b
+{
+  namespace "http://riftio.com/ns/core/util/rwutcli/test/test_rwutcli.yang";
+  prefix "uct";
+
+  import rw-utcli-ext { prefix "rwutcli"; }
+  import rw-pb-ext { prefix "rwpb"; }
+
+  description "Test unit test CLI callbacks.";
+  revision 2014-06-04 { description "Initial version"; }
+
+  container show {
+    rwpb:msg-new TestShowT;
+    rwutcli:callback-argv "test_rwutcli_show";
+    presence true;
+
+    config false;
+    description "Show command";
+
+    container foo {
+      rwpb:msg-new TestShowFooT;
+      rwutcli:callback-argv "test_rwutcli_show_foo";
+      description "Show foo command";
+      presence true;
+
+      leaf a1 { type string; }
+      leaf b2 { type uint32; }
+      leaf c3 { type string; }
+    }
+
+    container bar {
+      rwpb:msg-new TestShowBarT;
+      rwutcli:callback-argv "test_rwutcli_show_bar";
+      description "Show bar command";
+      presence true;
+
+      leaf d4 { type string; }
+      leaf e5 { type uint32; }
+      leaf f6 { type int32; }
+    }
+
+    container baz {
+      description "Show baz command";
+      presence true;
+      leaf g7 { type string; }
+      leaf h8 { type string; }
+      leaf i9 { type string; }
+    }
+  }
+}
+

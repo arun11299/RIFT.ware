@@ -1,0 +1,55 @@
+<script src="../../lib/circliful/js/jquery.circliful.js"></script>
+<polymer-element name="rw-donut" attributes="archWidth dimension value label color">
+<template>
+  <link href="../../lib/circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="rw-donut.css"/>
+  <div id="mycircliful"
+    data-dimension="{{dimension}}"
+    data-info="{{label}}"
+    data-fontsize="20"
+    data-fgcolor="{{color}}"
+    data-bgcolor="#383838"
+    data-border="#1f1f1f"
+    data-type="half"
+    data-width="{{archWidth}}"
+    data-animation-step="0"
+    data-icon="fa-task">
+  </div>
+</template>
+<script>
+Polymer({
+
+  created: function() {
+    this.value = 20;
+    this.archWidth = 28;
+    this.dimension = 200;
+  },
+
+  attached: function() {
+    this.circliful = $(this.$.mycircliful);
+
+      this.circliful.circliful();
+
+  },
+
+  valueChanged: function() {
+    // debounce updates
+    this.job('update', this.update.bind(this), 100);
+  },
+
+  labelChanged: function() {
+    // debounce updates
+    this.job('update', this.update.bind(this), 100);
+  },
+
+  update: function() {
+    // creates a stutter effect, but widget doesn't support updating
+    // https://github.com/pguso/jquery-plugin-circliful/issues/6
+    this.circliful.empty().removeData();
+    this.circliful.attr('data-percent', this.value);
+    this.circliful.attr('data-text', this.value + '%');
+    this.circliful.circliful();
+  }
+});
+</script>
+</polymer-element>

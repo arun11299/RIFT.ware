@@ -1,0 +1,69 @@
+ <div>
+  <slbalancer-panel class="row dash-gauges" ng-if="servicesPage.hasSlb"></slbalancer-panel>
+  <iot-cag-panel class="row dash-gauges" ng-if="servicesPage.hasCag"></iot-cag-panel>
+  <iot-pgw-panel class="row dash-gauges" ng-if="servicesPage.hasPgw"></iot-pgw-panel>
+  <rw-dashboard-trafgen-panel ng-if="servicesPage.hasTrafGen" class="row dash-controlled-gauges"></rw-dashboard-trafgen-panel>
+  <!-- start iot panel -->
+  <div class="row dash-controlled-gauges" ng-if="servicesPage.hasIOT">
+    <div class="panel">
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">{{::servicesPage.l10n.vnf['iot_army']}}</div>
+      </div>
+      <iot-client-panel id="iotClient"
+                          dial-size="140"
+                          panel-width="140"
+                          class="panel__panel-body dial"
+                          iot-client-name="{{servicesPage.iotClientName}}"
+                          ></iot-client-panel>
+    </div>
+    <div class="panel">
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">{{::servicesPage.l10n.vnf['iot_server']}}</div>
+      </div>
+      <iot-server-panel id="iotServer"
+                         dial-size="140"
+                         panel-width="140"
+                         class="panel__panel-body dial"
+                         iot-server-name="{{servicesPage.iotServerName}}"
+                         ></iot-server-panel>
+    </div>
+  </div>
+  <!-- end iot panel -->
+<!-- start Trafsim Panels -->
+  <div class="row dash-controlled-gauges" ng-if="servicesPage.hasTrafSim">
+    <div class="panel">
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">{{::servicesPage.l10n.vnf['trafsimclient']}}</div>
+      </div>
+      <rw-dashboard-trafsim-client id="trafsimClient"
+                          dial-size="140"
+                          panel-width="140"
+                          class="panel__panel-body dial"
+                          trafsim="servicesPage.trafsimClient"
+                          ></rw-dashboard-trafsim-client>
+    </div>
+    <div class="panel">
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">{{::servicesPage.l10n.vnf['trafsimserver']}}</div>
+      </div>
+      <rw-dashboard-trafsim-server id="trafsimServer"
+                         dial-size="140"
+                         panel-width="140"
+                         class="panel__panel-body dial"
+                         trafsim="servicesPage.trafsimServer"
+                         ></rw-dashboard-trafsim-server>
+    </div>
+  </div>
+  <!-- end trafsim panels -->
+  <rw-dashboard-ue-panel class="row dash-gauges" ng-if="servicesPage.hasMme || servicesPage.hasSaegw" has-mme="servicesPage.hasMme" has-saegw='servicesPage.hasSaegw'></rw-dashboard-ue-panel>
+  <div class="row" id="dash-cloud">
+    <div class="panel">
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">Cloud</div>
+      </div>
+      <system-cloud
+              class="panel__panel-body"
+              ></system-cloud>
+    </div>
+  </div>
+</div>

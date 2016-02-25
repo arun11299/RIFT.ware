@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RiftWare</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="../integration/ridgets/css/page.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../lib/core-collapse/core-collapse.html">
+  <script src="../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../src/integration/ridgets/js/rw.js"></script>
+  <script src="../lib/underscore/underscore.js"></script>
+  <script src="../lib/jsonpath/lib/jsonpath.js"></script>
+  <link rel="import" href="../lib/core-menu/core-menu.html">
+  <link rel="import" href="../lib/paper-dropdown/paper-dropdown.html">
+  <link rel="import" href="../lib/paper-item/paper-item.html">
+  <link rel="import" href="../lib/paper-dropdown-menu/paper-dropdown-menu.html">
+  <style>
+    html /deep/ paper-dropdown-menu {
+      box-sizing: border-box;
+      width: 170px;
+    }
+
+    html /deep/ core-menu {
+      box-sizing: border-box;
+      width: 170px;
+    }
+
+    paper-item {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    html /deep/ core-collapse {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    html /deep/ core-overlay {
+      border: 1px solid #ccc;
+      padding: 8px;
+      background: #000;
+    }
+  </style>
+</head>
+
+<polymer-element name="rw-local-db-manager">
+  <template>
+    <link rel="stylesheet" type="text/css" href="offline.css"/>
+    Create DB: <input type="text" value="{{createName}}"/><button on-click="{{save}}">Save</button><br>
+    Upload DB: <input type="text" value="{{uploadName}}"/> <input type="file" id="uploadFile"/> <button on-click="{{upload}}">Upload</button><br>
+    <template if="{{dbs.length == 0}}">
+      Download DB: <input type="text" value="{{downloadName}}"/> <button on-click="{{downloadByTextInput}}">Download</button><br>
+    </template>
+    <template if="{{dbs.length > 0}}">
+      Download DB:
+      <template repeat="{{db in dbs}}">
+        <paper-dropdown-menu label="{{db}}" class="operation" on-core-select="{{operationDb}}" valueattr="label">
+          <paper-dropdown class="dropdown">
+            <core-menu class="menu">
+              <paper-item label="use">use</paper-item>
+              <paper-item label="download">download</paper-item>
+              <paper-item label="delete">delete</paper-item>
+            </core-menu>
+          </paper-dropdown>
+        </paper-dropdown-menu>
+      </template><br>
+    </template>
+    <br>
+    <pre>{{log}}</pre>
+  </template>
+  <script>
+  var isLB = function(iface) {
+    return !(iface.colonyId != "cag" && iface.colonyId != "premise_gw" && iface.colonyId != "iot_army"  && iface.colonyId != "iot_server"  && iface.colonyId != "load_balancer")
+  }
+    Polymer('rw-local-db-manager', {
+
+      created: function() {
+        this.createName = 'test';
+        this.dbs = [];
+        this.uploadName = 'test';
+        this.downloadName = '';
+        this.uesim = {};
+      },
+
+      ready: function() {
+        this.urls = [
+          '/fpath/',
+          '/vcs/',
+          '/vnf/',
+          '/api/running/colony',
+          '/api/running/colony?deep',
+          '/api/running/colony?select=name',
+          '/api/running/colony?select=trafsim-service/name',
+
+          '/api/operational/vcs/resources?deep'
+
+//          '/api/operational/ltesim/ue-sim/att'
+//          ,'/api/operations/show-logs'
+        ];
+        this.upload_json = "";
+        this.loadDbs();
+      },
+
+      loadDbs: function() {
+        var self = this;
+        if (window.indexedDB.webkitGetDatabaseNames) {
+          window.indexedDB.webkitGetDatabaseNames().onsuccess = function(e) {
+            var dbs = [];
+            for (var i = 0; i < e.target.result.length; i++) {
+              dbs.push(e.target.result[i]);
+            }
+            self.dbs = dbs;
+          }
+        }
+      },
+
+      onDbErr: function(msg) {
+        return function(e) {
+          alert(msg + e.target.error.message);
+        };
+      },
+
+      downloadByButton: function(e, details) {
+        var name = e.srcElement.getAttribute('data-db');
+        this.downloadByName(name);
+      },
+
+      operationDb: function(e, details) {
+        if (!details.isSelected) {
+          return;
+        }
+        var db = e.srcElement.parentElement.parentElement.label;
+        var operation = details.item.attributes.label.value;
+        switch(operation) {
+          case 'delete':
+            this.deleteDb(db);
+            break;
+          case 'download':
+            this.downloadByName(db);
+            break;
+          case 'use':
+            this.useDb(db);
+            break;
+        }
+        e.srcElement.selected = -1;
+      },
+
+      deleteDb: function(db) {
+        if (window.confirm('Are you sure you want to delete ' + db + '?')) {
+          window.indexedDB.deleteDatabase(db);
+          this.loadDbs();
+        }
+      },
+
+      useDb: function(db) {
+        window.location.href = '../index.html?offline=' + db;
+      },
+
+      downloadByTextInput: function() {
+        this.downloadByName(this.downloadName);
+      },
+
+      downloadByName: function(name) {
+        var self = this;
+        var dataStoreName = 'offline';
+        var open = window.indexedDB.open(name, 2);
+        open.onerror = self.onDbErr('could not open db :');
+        open.onblocked = self.onDbErr('blocked opening db :');
+        open.onsuccess = function(e) {
+          var db = e.target.result;
+          var store = db.transaction(dataStoreName).objectStore(dataStoreName);
+          var list = store.openCursor();
+          var store = {};
+          list.onerror = self.onDbErr('could not open store :');
+          list.onsuccess = function(e) {
+            var cursor = e.target.result;
+            if (e.target.result) {
+              console.log(cursor.key);
+              store[cursor.value.url] = {url: cursor.value.url, data: cursor.value.data};
+              cursor.continue();
+            } else {
+              self.downloadStore(store);
+              db.close();
+            }
+          };
+        };
+      },
+
+      downloadStore: function(store) {
+        var a = document.createElement('a');
+        a.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(store));
+        a.setAttribute('download', 'test.json');
+        // HACK : pollutes DOM, we should try to find a cleaner way
+        document.body.appendChild(a);
+        a.click();
+      },
+
+      loadPortStats: function(store) {
+        var self = this;
+
+        var data = store['/fpath/'].data;
+        var ifaces = _.flatten(jsonPath.eval(data, '$..interface'));
+        var chain = null;
+        _.each(ifaces, function(iface) {
+          // if(!isLB(iface)){
+          //   var url = '/api/operational/colony/' + iface.colonyId + '/port-state/counters?deep';
+          // } else {
+            var url = '/api/operational/colony/' + iface.colonyId + '/port-state?deep';
+          // }
+            var next = self.download.bind(self, store, url);
+            chain = chain ? chain.then(next) : next();
+             var url = '/api/operational/colony/' + iface.colonyId + '/port-state?select=portname;info(*)';
+            chain = chain.then(self.download.bind(self, store, url))
+             var url = '/api/operational/colony/' + iface.colonyId + '/port-state?select=portname;trafgen-info(*)';
+            chain = chain.then(self.download.bind(self, store, url))      ;
+            var url = '/api/operational/colony/' + iface.colonyId + '/port-state?select=portname;counters(*)';
+            chain = chain.then(self.download.bind(self, store, url))
+
+        });
+        return chain;
+      },
+
+      upload: function() {
+        var self = this;
+        if (this.$.uploadFile.files.length == 0) {
+          alert('no file selected');
+          return;
+        }
+        if (!this.uploadName) {
+          alert('no db name specified');
+          return;
+        }
+        var f = this.$.uploadFile.files[0];
+        var rdr = new FileReader();
+        rdr.readAsText(f, 'UTF-8');
+        rdr.onload = function(e) {
+          var json = e.target.result;
+          var store = JSON.parse(json);
+          var db = new rw.db.Offline(self.uploadName);
+          db.saveStore(_.values(store));
+          self.loadDbs();
+        };
+      },
+
+      save: function() {
+        var self = this;
+        var store = {};
+        var chain = null;
+        self.log = '';
+
+        for (var i = 0; i < self.urls.length; i++) {
+          var next = this.download.bind(self, store, self.urls[i]);
+          chain = chain ? chain.then(next) : next();
+        }
+        // chain = chain.then(this.downloadAndSetEnvVars.bind(self, store));
+        chain = chain.then(this.loadPortStats.bind(self, store));
+        chain = chain.then(this.downloadLoadbalState.bind(self, store));
+        chain = chain.then(this.downloadTrafsimMetrics.bind(self, store));
+//        chain = chain.then(this.downloadScriptStats.bind(self, store));
+        chain.then(function() {
+          self.log += '*** downloaded\n';
+          var db = new rw.db.Offline(self.createName);
+          db.saveStore(_.values(store));
+          self.log += '*** saved\n';
+          self.loadDbs();
+        })
+      },
+
+      downloadLoadbalState: function(store) {
+        var self = this;
+        var data = store['/fpath/'].data;
+        var ifaces = _.flatten(jsonPath.eval(data, '$..interface'));
+        var chain = null;
+        _.each(ifaces, function(iface) {
+          var url = '/api/operational/colony/' + iface.colonyId + '/load-balancer?deep';
+          var next = self.download.bind(self, store, url);
+          chain = chain ? chain.then(next) : next();
+        });
+        return chain;
+      },
+
+      downloadTrafsimMetrics: function(store) {
+        var self = this;
+        var config = store['/api/running/colony?select=trafsim-service/name'].data;
+        var colonies = config.colony;
+        var chain = null;
+        _.each(colonies, function (colony) {
+          var colonyId = colony.name;
+          _.each(colony['rw-appmgr:trafsim-service'], function(trafsim) {
+            var name = trafsim.name;
+            var baseUrl = '/api/operational/colony/' + colonyId + '/trafsim-service/'
+                    + name + '/statistics';
+            var urls = [
+              '/service/counters',
+              '/service/traffic?deep',
+              '/service/counters/protocol/commands?deep',
+              '/service/counters/timer?deep',
+              '/rest'
+            ];
+            _.each(urls, function(url) {
+              var url = baseUrl + url;
+              var next = self.download.bind(self, store, url);
+              chain = chain ? chain.then(next) : next();
+            });
+          });
+        });
+        return chain;
+      },
+
+      downloadScriptStats: function(store) {
+        var self = this;
+        var chain = null;
+        var scriptUrl = '/api/operations/trafsim-start';
+        var scriptList = store['/api/operational/ltesim/test-script'].data['test-script'];
+        var scriptStatsUrl = '/api/operations/trafsim-show/';
+        var imsiURL = '/api/operational/ltesim/ue-state/123456789012345?deep';
+        _.each(scriptList, function(script){
+          var payload =  {
+            "input":{
+              "colony":{
+                "name":self.uesim.colonyName,
+                "trafsim-service":{
+                  "name":self.uesim.trafsimServiceName,
+                  "execute-script":{
+                    "id":script.id,
+                    "ue-sim-name":"att"
+                  }
+                }
+              }
+            }
+          };
+
+          var next = self.downloadYang.bind(self, store, scriptUrl, payload, script.id);
+          next = next().then(function(data) {
+            var payload = {
+              "input":{
+                "colony":{
+                  "name":self.uesim.colonyName,
+                  "trafsim-service":{
+                    "name":self.uesim.trafsimServiceName,
+                    "execution-id":data.output.script["execution-id"]
+                  }
+                }
+              }
+            };
+            return self.downloadYang.bind(self,store, scriptStatsUrl, JSON.stringify(payload), data.output.script["execution-id"])
+          });
+          chain = chain ? chain.then(next) : next;
+          chain = chain.then(self.download.bind(self, store, imsiURL));
+        });
+        return chain;
+      },
+
+      storeJSON: function(store) {
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(store));
+        pom.setAttribute('download', 'test.json');
+        document.body.appendChild(pom);
+        pom.click();
+      },
+
+      download: function(store, url) {
+        var self = this;
+        if (url in store) {
+          return null;
+        }
+
+        return jQuery.ajax(rw.api.server + url, {
+          type: 'GET',
+          dataType: 'json',
+          error: rw.api.handleAjaxError,
+          headers: {
+            Accept: 'application/json, application/vnd.yang.data+json, application/vnd.yang.collection+json'
+          },
+          success: function (data) {
+//            if(id) url = url + id;
+            self.log += url + '\n';
+            store[url] = {url: url, data: data};
+
+          }
+        });
+      },
+
+      downloadAndSetEnvVars: function(store) {
+        var self = this;
+        var url = '/api/operational/colony/';
+        return jQuery.ajax(rw.api.server + url, {
+          type: 'GET',
+          dataType: 'json',
+          error: rw.api.handleAjaxError,
+          headers: {
+            Accept: 'application/json, application/vnd.yang.data+json, application/vnd.yang.collection+json'
+          },
+          success: function (data) {
+            try{
+              self.uesim.colonyName = data.colony[0].name;
+
+
+            self.uesim.trafsimServiceName = data.colony[0]["rw-appmgr:trafsim-service"][0].name;
+             } catch(e) {
+              console.log('Data bad: ', data)
+            }
+            self.log += url + '\n';
+            store[url] = {url: url, data: data};
+            console.log('the store', store)
+          }
+        });
+      },
+
+      downloadYang: function(store, url, data, id) {
+        //TODO Refactor
+        var self = this;
+        if (url in store) {
+          return null;
+        }
+        return jQuery.ajax(rw.api.server + url, {
+          type: 'POST',
+          dataType: 'json',
+          error: rw.api.handleAjaxError,
+          headers: {
+            'Content-Type': 'application/vnd.yang.data+json',
+            Accept: 'application/json'
+          },
+          data: JSON.stringify(data),
+          success: function (data) {
+            if(id) url = url + id;
+            self.log += url + '\n';
+            store[url] = {url: url, data: data};
+          }
+        });
+      }
+    });
+  </script>
+</polymer-element>
+
+<body class="viewport">
+<rw-local-db-manager></rw-local-db-manager>
+
+</body>
+</html>
+

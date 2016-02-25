@@ -1,0 +1,8 @@
+
+<route>
+  <next-hop>
+    <name>192.168.5.1</name>
+    <metric>400</metric>
+  </next-hop>
+</route>
+

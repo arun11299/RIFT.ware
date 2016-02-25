@@ -1,0 +1,68 @@
+{
+  "6097257848410996": {
+    "status": "success",
+    "code": 200,
+    "resources": [
+      {
+        "name": "rw_uesim_vm2",
+        "ip_address": "10.64.1.112",
+        "ram": 16384,
+        "comments": "Reserved for demo",
+        "cpu": 4,
+        "controller": "grunt1",
+        "os_image": "Existing",
+        "reservation": "Owned",
+        "type": "rw.destnat_trafgen_master",
+        "id": 2
+      }
+    ]
+  },
+  "6097257850321555": {
+    "status": "success",
+    "code": 200,
+    "resources": [
+      {
+        "name": "rw_uesim_vm1",
+        "ip_address": "10.64.1.194",
+        "ram": 16384,
+        "comments": "Reserved for demo",
+        "cpu": 4,
+        "controller": "grunt1",
+        "os_image": "Existing",
+        "reservation": "Owned",
+        "type": "rw.destnat_trafgen_master",
+        "id": 1
+      }
+    ]
+  },
+  "6097257850410212": {
+    "status": "success",
+    "code": 200,
+    "resources": [
+      {
+        "name": "rw_uesim_vm3",
+        "ip_address": "10.64.1.194",
+        "ram": 16384,
+        "comments": "Reserved for demo",
+        "cpu": 4,
+        "controller": "grunt1",
+        "os_image": "Existing",
+        "reservation": "Owned",
+        "type": "rw.destnat_trafgen_leadr",
+        "id": 3
+      },
+      {
+        "name": "rw_uesim_vm4",
+        "ip_address": "10.64.1.112",
+        "ram": 16384,
+        "comments": "Reserved for demo",
+        "cpu": 4,
+        "controller": "grunt1",
+        "os_image": "Existing",
+        "reservation": "Owned",
+        "type": "rw.destnat_trafgen_leadr",
+        "id": 4
+      }
+    ]
+  }
+}

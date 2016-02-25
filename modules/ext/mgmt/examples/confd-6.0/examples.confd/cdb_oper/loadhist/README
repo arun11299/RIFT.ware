@@ -1,0 +1,44 @@
+
+Using CDB operational data store for history of samples
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example demonstrates using CDB for persistent storage of
+operational data, while keeping a limited set of data samples.
+
+What the example does
+~~~~~~~~~~~~~~~~~~~~~
+
+The 'get_load' agent collects CPU utilization and load average from the
+Linux /proc file system every minute, storing the samples persistently
+in the CDB operational data store. The set of samples stored is limited
+to those for the last 24 hours, by simply deleting the oldest sample(s)
+once the total number of samples exceeds the limit. The limit is easily
+implemented by means of the cdb_num_instances() API function and the
+"dynamic-element[Integer]" syntax for CDB paths. We can see the
+collected samples in the CLI, or by doing a NETCONF <get> rpc - see
+below.
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD and the get_load agent by
+    typing
+
+        $ make all start
+
+    The get_load agent will be running in the foreground with tracing
+    enabled.
+
+ 2. In another window, after at least one minute has elapsed, look at the
+    collected samples in the CLI by typing 
+
+        $ make cli
+        > show status
+          (wait one or more minutes)
+        > show status
+        > exit
+
+  3. Look at the collected samples via a NETCONF <get> rpc by typing
+
+        $ make query
+

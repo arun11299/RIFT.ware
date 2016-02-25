@@ -1,0 +1,112 @@
+<!--
+
+<rw-bullet> displays a horizontal (default) bullet chart for a series of data.
+
+Chart Example:
+-------------------------
+    <rw-bullet value="80" min="0" max="100" marker="50" bulletColor="blue"></rw-bullet>
+<img src="bullet-chart.png"/>
+
+  @class rw-bullet
+-->
+
+<polymer-element name="rw-bullet" attributes="value min max marker bulletColor">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-bullet.css" />
+  <svg id="svg" width="100%" height="100%" viewBox="0 0 {{width}} {{height}}" preserveAspectRatio="none">
+    <rect class="container"
+          width="{{width - (2 * containerMarginX)}}"
+          height="{{height - (2 * containerMarginY)}}"
+          x="{{containerMarginX}}"
+          y="{{containerMarginY}}"
+          rx="{{radius}}"
+          ry="{{radius}}"></rect>
+    <svg
+          x="{{containerMarginX}}"
+          y="{{bulletMargin}}">
+      <rect id="bullet"
+            class="bullet"
+            fill="{{bulletColor}}"
+            width="{{bulletWidth}}"
+            height="{{height - (2 * bulletMargin)}}"></rect>
+    </svg>
+    <line class="marker"
+          x1="{{markerX}}"
+          x2="{{markerX}}"
+          y1="{{markerY1}}"
+          y2="{{markerY2}}"></line>
+  </svg>
+</template>
+  
+<script>  
+  Polymer({
+    /**
+     * input data for the bullet chart
+     * Its value should be between min and max.
+     * @attribute value
+     * @type integer
+     *
+     * the minimum value of the input data
+     * @attribute min
+     * @type integer
+     *
+     * the maximum value of the input data
+     * @attribute max
+     * @type integer
+     *
+     * the marker value
+     * Its value should be between min and max.
+     * The marker and the markerText is not displayed if the marker attribute is not provided.
+     * @attribute marker
+     * @type integer
+     *
+     * the color of the bullet
+     * It uses the css color specification, e.g. blue
+     * @attribute bulletColor
+     * @type string
+     * the background color of the container box
+     */
+    created: function() {
+      this.vertical = false;
+      this.value = 0;
+      this.min = 0;
+      this.max = 100;
+      this.bulletColor = "blue";
+      this.radius = 4;
+      this.containerMarginX = 2;
+      this.containerMarginY = 5;
+      this.bulletMargin = 10;
+      this.width = 512;
+      this.height = 64;
+      this.markerX = -100; // puts it off screen unless set
+    },
+
+    domReady: function() {
+      this.valueChanged();
+    },
+
+    valueChanged: function() {
+      var range = this.max - this.min;
+      var normalizedValue = (this.value - this.min) / range;
+      // All versions of IE as of Jan 2015 does not support inline CSS transforms on SVG
+      if (platform.name == 'IE') {
+        this.bulletWidth = Math.round(100 * normalizedValue) + '%';
+      } else {
+        this.bulletWidth = this.width - (2 * this.containerMarginX);
+        var transform = 'scaleX(' + normalizedValue + ')';
+        var bullet = $(this.$.bullet);
+        bullet.css('transform', transform);
+        bullet.css('-webkit-transform', transform);
+      }
+    },
+
+    markerChanged: function() {
+      var range = this.max - this.min;
+      var w = this.width - (2 * this.containerMarginX);
+      this.markerX = this.containerMarginX + ((this.marker - this.min) / range ) * w;
+      this.markerY1 = 7;
+      this.markerY2 = this.width - 7;
+    }
+  });
+</script>
+</polymer-element>

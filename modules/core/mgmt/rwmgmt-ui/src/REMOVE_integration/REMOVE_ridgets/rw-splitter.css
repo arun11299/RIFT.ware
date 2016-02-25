@@ -1,0 +1,58 @@
+* {
+  box-sizing: border-box;
+}
+:host {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  width: 12px;
+  cursor: col-resize;
+  box-shadow: none;
+  background-image: none;
+  align-items: center;
+  padding: 4px;
+  border-top: 1px solid #121212;
+  border-bottom: 1px solid #121212;
+  background-color: #454545;
+}
+:host(.horizontal) {
+  width: auto;
+  flex-direction: row;
+  height: 32px;
+  cursor: row-resize;
+  background-image: none;
+}
+:host(:hover, :active) {
+  background-color: #454545;
+}
+#content {
+  -webkit-flex: 1 0 auto;
+  -moz-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+}
+#buttons {
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+}
+.adjustments {
+  -webkit-flex: 0 1 auto;
+  -moz-flex: 0 1 auto;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+}
+.adjustments > div {
+  float: left;
+  display: inline-block;
+}
+core-icon {
+  margin-bottom: 5px;
+}
+.button__tbar {
+  background-color: #c0c0c0;
+}

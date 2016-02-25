@@ -1,0 +1,14 @@
+<link rel="import" href="rw-loadbal-model.html">
+<link rel="import" href="rw-loadbal-stats.html">
+<link rel="import" href="rw-dashboard-netstat.html">
+
+<polymer-element name="rw-dashboard-loadbal" attributes="service" noscript>
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-dashboard-loadbal.css"/>
+  <rw-loadbal-model id="model" colony="{{service.connector[0].interface[0].colonyId}}"></rw-loadbal-model>
+  <rw-loadbal-stats data="{{$.model.sum}}"></rw-loadbal-stats>
+  <rw-dashboard-netstat 
+    service="{{service}}" 
+    ></rw-dashboard-netstat>
+</template>
+</polymer-element>

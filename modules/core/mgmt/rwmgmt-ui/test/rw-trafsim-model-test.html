@@ -1,0 +1,40 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-trafsim-model.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+  <template>
+    <rw-trafsim-model id="test0" on-update="{{testUpdate}}"></rw-trafsim-model>
+    Call Rates:
+    <pre>
+    <template repeat="{{trafsim in $.test0.trafsims}}">
+      {{trafsim.name}},  Call Rate = {{trafsim.call_rate}}, Msg Rate = {{trafsim.tx_msg_per_sec}}
+    </template>
+    </pre>
+  </template>
+  <script>
+    Polymer({
+      testUpdate: function() {
+        if (this.ran) {
+          return;
+        }
+        this.ran = true;
+        var test0 = this.$.test0;
+        suite('model', function() {
+          test('attached', function() {
+            console.log('asserting');
+            assert.isNotNull(test0.findFirstServer());
+          });
+        });
+        htmlTestRunner(mocha.run());
+      }
+    });
+  </script>
+</polymer-element>
+
+<div class="viewport__body">
+  <div id="mocha"></div>
+  <my-test></my-test>
+</div>

@@ -1,0 +1,67 @@
+.layout-row {
+
+	min-width: 600px;
+
+	display: flex;
+	flex-wrap: nowrap;
+
+	vertical-align: baseline;
+	line-height: 30px;
+
+	margin: 0;
+	border: 0;
+	padding: 0;
+
+	> .primary-action-column {
+		flex: 0;
+		min-width: 30px;
+		max-width: 30px;
+		text-align: center;
+		> * {
+			vertical-align: middle;
+		}
+	}
+
+	> .secondary-action-column {
+		flex: 0;
+		min-width: 30px;
+		max-width: 30px;
+		text-align: center;
+		margin: 0 9px;
+		> * {
+			vertical-align: middle;
+		}
+	}
+
+	> .columns {
+		flex: auto;
+		> * {
+			vertical-align: middle;
+		}
+	}
+
+	.Button {
+		margin: 2px 0 0 0;
+		padding: 0;
+		width: 30px;
+		height: 30px;
+		position: relative;
+		img {
+			margin: 0;
+			position: absolute;
+			top: 4px;
+			left: 4px;
+			width: 20px;
+			height: 20px;
+		}
+		span {
+			margin: 8px;
+		}
+	}
+
+	small.Button {
+		margin: 2px 8px;
+		padding: 0 8px;
+	}
+
+}

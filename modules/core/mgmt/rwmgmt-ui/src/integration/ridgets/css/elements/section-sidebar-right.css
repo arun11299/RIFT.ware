@@ -1,0 +1,10 @@
+* {
+  box-sizing: border-box;
+}
+.section-sidebar-right {
+  width: 200px;
+  border-left: 1px solid #c4c4c4;
+  padding: 10px;
+  overflow: auto;
+  background: #ededed;
+}

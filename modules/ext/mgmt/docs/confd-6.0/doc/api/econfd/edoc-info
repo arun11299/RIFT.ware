@@ -1,0 +1,5 @@
+%% encoding: UTF-8
+{application,econfd}.
+{packages,[]}.
+{modules,[econfd,econfd_cdb,econfd_ha,econfd_logsyms,econfd_maapi,
+          econfd_notif,econfd_schema,econfd_sup]}.

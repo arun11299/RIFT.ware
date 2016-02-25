@@ -1,0 +1,169 @@
+submodule ipsec {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  typedef EncryptionAlgo {
+    type enumeration {
+      enum des;
+      enum 3des;
+      enum blowfish;
+      enum cast128;
+      enum aes;
+    }
+  }
+  typedef EncryptionAlgo2 {
+    type enumeration {
+      enum default;
+      enum des;
+      enum 3des;
+      enum blowfish;
+      enum cast128;
+      enum aes;
+    }
+  }
+  typedef HashAlgo {
+    type enumeration {
+      enum md5;
+      enum sha1;
+      enum sha256;
+    }
+  }
+  typedef HashAlgo2 {
+    type enumeration {
+      enum default;
+      enum md5;
+      enum sha1;
+      enum sha256;
+    }
+  }
+  typedef InOut {
+    type enumeration {
+      enum in;
+      enum out;
+    }
+  }
+
+  /*    tunnels going up and down dynamically  */
+  notification saEstablished {
+    leaf tunnelName {
+      type leafref {
+        path "/system/vpn/ipsec/tunnel/name";
+      }
+      mandatory true;
+    }
+    leaf spi {
+      type int64;
+      mandatory true;
+    }
+  }
+  notification saExpired {
+    leaf tunnelName {
+      type leafref {
+        path "/system/vpn/ipsec/tunnel/name";
+      }
+      mandatory true;
+    }
+    leaf spi {
+      type int64;
+      mandatory true;
+    }
+  }
+
+  /*    policy error on ESP packets  */
+  notification noPolicy {
+    leaf local-net {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf local-net-mask {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf remote-endpoint {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf remote-net {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf remote-net-mask {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf direction {
+      type InOut;
+      mandatory true;
+    }
+  }
+
+
+  augment "/system" {
+
+    container vpn {
+      presence "";
+      container ipsec {
+        container defaults {
+          leaf encryption-algo {
+            type EncryptionAlgo;
+            default des;
+          }
+          leaf hash-algo {
+            type HashAlgo;
+            default md5;
+          }
+        }
+        list tunnel {
+          key name;
+          leaf name {
+            type string;
+          }
+          leaf local-endpoint {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf local-net {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf local-net-mask {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf remote-endpoint {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf remote-net {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf remote-net-mask {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf pre-shared-key {
+            type string;
+            mandatory true;
+          }
+          leaf encryption-algo {
+            type EncryptionAlgo2;
+            default default;
+          }
+          leaf hash-algo {
+            type HashAlgo2;
+            default default;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+Example display_groups: exemplify how display groups can be used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how display groups can
+be used to limit the amount of information shown in the CLI.
+
+The example is based on the 4-java_stats example from intro,
+but Java is in no way needed to use the display groups feature.
+The data provider could have been written in some other language,
+for example, C.
+
+Display groups are used to limit what is displayed below a given
+point in the data model. If no display groups are defined when
+a show command is given, ie "show <path>" then all nodes below
+path are displayed as long as they don't have any display groups
+defined, or has the display group "none" defined.
+
+If display groups are defined when entering the show command,
+ie, "show <path> <display groups>", then only nodes below <path>
+that has any of the display groups in <display groups> defined will
+be entered and shown. The display groups specified for the node
+indicated by <path> are not taken into account, only the groups
+for the children of <path>.
+
+The root node is a special case in the sense that <path> cannot be
+empty, ie it is not allowed to write "show <display-groups>".
+
+Build dependencies.
+~~~~~~~~~~~~~~~~~~~~~
+
+This example requires Java CLASSPATH to include log4j and aspectjrt.
+The example has been tested against aspectjrt-1.6.5.jar and log4j-1.2.14.jar
+See:
+http://www.eclipse.org/aspectj/
+http://logging.apache.org/log4j/
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing
+
+        $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try some commands
+
+        > show arp
+
+    Now ping a few of the hosts in your neighborhood and rerun
+    the above status command to see that the newly pinged hosts
+    are shown in the arp output.
+
+4. Try some more command and completions.
+
+       > show arp ?
+
+   You see arpe and the two display groups details and summary. Try
+   summary
+
+       > show arp summary
+
+   Now try details
+
+       > show arp details
+
+   You can also try displaying the data as a straight listing using the
+   notab pipe target. Try
+
+       > show arp details | notab
+
+   Or if your screen is too narrow to display the data as a table you can
+   still force the data into a table using the 'tab' pipe target.
+
+       > show arp details | tab
+
+
+
+
+
+
+

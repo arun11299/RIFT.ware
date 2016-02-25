@@ -1,0 +1,11 @@
+<cli>
+  <plugin-list>
+     <plugin name="rwcli_plugin" typelib="rwcli_plugin/1.0"/>
+  </plugin-list>
+
+  <modifications>
+     <addPrintHook path="dts" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="start-dts" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="rtr-peer-reg-keyspec" hook="rwcli_plugin:default_print"/>
+  </modifications>
+</cli>

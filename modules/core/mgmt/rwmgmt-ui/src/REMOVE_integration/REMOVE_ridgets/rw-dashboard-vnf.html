@@ -1,0 +1,244 @@
+<link rel="import" href="rw-dashboard-traffic-generator.html">
+<link rel="import" href="rw-dashboard-ip-traffic-sink.html">
+<link rel="import" href="rw-dashboard-trafsim-client.html">
+<link rel="import" href="rw-dashboard-trafsim-servers.html">
+<link rel="import" href="rw-dashboard-cloud.html">
+<link rel="import" href="rw-dashboard-ue.html">
+<link rel="import" href="rw-services-model.html">
+<link rel="import" href="rw-vcs-model.html">
+<link rel="import" href="rw-trafsim-model.html">
+<link rel="import" href="rw-trafgen-model.html">
+<link rel="import" href="rw-fpath-model.html">
+<link rel="import" href="rw-ue-model.html">
+<link rel="import" href="rw-slb-model.html">
+<link rel="import" href="rw-gaugeset.html">
+
+<polymer-element name="rw-dashboard-vnf">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-dashboard-vnf.css"/>
+        <rw-services-model
+                id="vnf"
+                on-update="{{vnfUpdate}}"
+                ></rw-services-model>
+        <rw-vcs-model
+                id="vcs"
+                on-update="{{vcsUpdate}}"
+                ></rw-vcs-model>
+        <rw-fpath-model
+                id="fpath"
+                on-update="{{fpathUpdate}}"
+                ></rw-fpath-model>
+        <rw-trafsim-model
+                id="trafsims"
+                noCounters="true"
+                noTimers="true"
+                on-update-config="{{trafsimUpdate}}"
+                ></rw-trafsim-model>
+        <rw-trafgen-model
+                id="trafgens"
+                colonies="{{$.fpath.colonies}}"
+                ></rw-trafgen-model>
+        <rw-ue-model
+                id="ltesim"
+                noCounters="true"
+                noTimers="true"
+                active="{{hasSaegw || hasMme}}"
+                ></rw-ue-model>
+        <rw-slb-model
+                id="slbs"
+                colonies="{{$.fpath.colonies}}"
+                on-update-config="{{slbUpdate}}"
+                on-update="{{slbUpdateMetrics}}"
+                ></rw-slb-model>
+        <template if="{{hasSlb}}">
+          <div class="row dash-gauges">
+            <div class="panel">
+              <div class="panel__panel-header">
+                <div class="panel__panel-header__panel-title">[[ l10n.vnf['slbalancer'] ]] Incoming</div>
+              </div>
+              <rw-gaugeset
+                      dialSize="140"
+                      panelWidth="140"
+                      class="panel__panel-body"
+                      gauges="{{slbIncoming}}"
+                      ></rw-gaugeset>
+            </div>
+            <div class="panel">
+              <div class="panel__panel-header">
+                <div class="panel__panel-header__panel-title">[[ l10n.vnf['slbalancer'] ]] Outgoing</div>
+              </div>
+              <rw-gaugeset
+                      dialSize="140"
+                      panelWidth="140"
+                      class="panel__panel-body"
+                      gauges="{{slbOutgoing}}"
+                      ></rw-gaugeset>
+            </div>
+          </div>
+        </template>
+        <template if="{{hasTrafGen}}">
+            <div class="row dash-controlled-gauges">
+                <div class="panel">
+                    <div class="panel__panel-header">
+                        <div class="panel__panel-header__panel-title">[[ l10n.vnf['trafgen'] ]]</div>
+                    </div>
+                    <rw-dashboard-traffic-generator id="trafgen"
+                        dialSize="140"
+                        panelWidth="140"
+                        class="panel__panel-body"
+                        vnfModel="{{$.vnf}}"
+                        fpath="{{$.fpath}}"
+                        ></rw-dashboard-traffic-generator>
+                </div>
+                <div class="panel">
+                    <div class="panel__panel-header">
+                        <div class="panel__panel-header__panel-title">[[ l10n.vnf['trafsink'] ]]</div>
+                    </div>
+                    <rw-dashboard-ip-traffic-sink id="trafsink"
+                        dialSize="140"
+                        panelWidth="140"
+                        class="panel__panel-body"
+                        vnfModel="{{$.vnf}}"
+                        fpath="{{$.fpath}}"
+                        ></rw-dashboard-ip-traffic-sink>
+                </div>
+            </div>
+        </template>
+
+        <template if="{{hasTrafSim}}">
+            <div class="row dash-controlled-gauges">
+                <div class="panel">
+                    <div class="panel__panel-header">
+                        <div class="panel__panel-header__panel-title">[[ l10n.vnf['trafsimclient'] ]]</div>
+                    </div>
+                    <rw-dashboard-trafsim-client id="trafsimClient"
+                          dialSize="140"
+                          panelWidth="140"
+                          class="panel__panel-body dial"
+                          trafsim="{{trafsimClient}}"
+                          ></rw-dashboard-trafsim-client>
+                </div>
+                <div class="panel">
+                    <div class="panel__panel-header">
+                        <div class="panel__panel-header__panel-title">[[ l10n.vnf['trafsimserver'] ]]</div>
+                    </div>
+                    <rw-dashboard-trafsim-servers id="trafsimServer"
+                         dialSize="140"
+                         panelWidth="140"
+                         class="panel__panel-body dial"
+                         trafsim="{{trafsimServer}}"
+                         ></rw-dashboard-trafsim-servers>
+                </div>
+            </div>
+        </template>
+      <template if="{{hasMme || hasSaegw}}">
+        <div class="row dash-gauges">
+          <template if="{{hasMme}}">
+            <div class="uePanel panel">
+                <div class="panel__panel-header">
+                  <div class="panel__panel-header__panel-title">[[ l10n.vnf['ltemmesim'] ]]</div>
+                </div>
+                <rw-dashboard-ue id="MME"
+                    dialSize="140"
+                    panelWidth="140"
+                    class="panel__panel-body dial"
+                    ltesim="{{$.ltesim.mme}}"></rw-dashboard-ue>
+            </div>
+          </template>
+          <template if="{{hasSaegw}}">
+            <div class="uePanel panel">
+              <div class="panel__panel-header">
+                <div class="panel__panel-header__panel-title">[[ l10n.vnf['ltegwsim'] ]]<</div>
+              </div>
+              <rw-dashboard-ue id="SAEGate"
+                    dialSize="140"
+                    panelWidth="140"
+                    class="panel__panel-body dial"
+                    ltesim="{{$.ltesim.saegw}}"></rw-dashboard-ue>
+            </div>
+          </template>
+        </div>
+      </template>
+        <div class="row" id="dash-cloud">
+            <div class="panel">
+                <div class="panel__panel-header">
+                    <div class="panel__panel-header__panel-title">Cloud</div>
+                </div>
+                <rw-dashboard-cloud
+                        id="cloud"
+                        vcs="{{$.vcs}}"
+                        fpath="{{$.fpath}}"
+                        class="panel__panel-body"></rw-dashboard-cloud>
+            </div>
+        </div>
+    </template>
+    <script>
+Polymer(Platform.mixin({
+  hasTrafSim : false,
+  hasTrafGen : false,
+  hasSaegw: false,
+  hasMme: false,
+  hasSlb: false,
+  trafSimStarted: rw.ui.trafsimStarted,
+  created: function() {
+    this.slbIncoming = [
+      {label: 'Gbps', rate: 0, max: 100, color: 'hsla(212, 57%, 50%, 1)', colorLight: 'rgba(55,124,200,0.7)'},
+      {label: 'Mpps', rate: 0, max: 100, color: 'hsla(260, 35%, 50%, 1)', colorLight: 'hsla(260, 35%, 50%, 0.7)'}
+    ];
+    this.slbOutgoing = [
+      {label: 'Gbps', rate: 0, max: 100, color: 'hsla(212, 57%, 50%, 1)', colorLight: 'rgba(55,124,200,0.7)'},
+      {label: 'Mpps', rate: 0, max: 100, color: 'hsla(260, 35%, 50%, 1)', colorLight: 'hsla(260, 35%, 50%, 0.7)'}
+    ];
+  },
+
+  slbUpdate: function() {
+    this.hasSlb = (typeof(this.$.slbs.slb) != 'undefined');
+  },
+
+  slbUpdateMetrics:function() {
+    var m = this.$.slbs.slb.metrics;
+    this.slbIncoming[0].rate = (parseInt(m['clnt-fwd-rate-mbps']) + parseInt(m['clnt-rev-rate-mbps'])) / 1000;
+    this.slbIncoming[1].rate = (parseInt(m['clnt-fwd-rate-pps']) + parseInt(m['clnt-rev-rate-pps'])) / 1000000;
+    this.slbOutgoing[0].rate = (parseInt(m['srvr-fwd-rate-mbps']) + parseInt(m['srvr-rev-rate-mbps'])) / 1000;
+    this.slbOutgoing[1].rate = (parseInt(m['srvr-fwd-rate-pps']) + parseInt(m['srvr-rev-rate-pps'])) / 1000000;
+  },
+
+  vnfUpdate: function() {
+    var self = this;
+    _.each(this.$.vnf.services, function(service) {
+      if (service.type == 'trafgen') {
+        self.hasTrafGen = true;
+      } else if (service.type == 'trafsimclient') {
+        self.hasTrafSim = true;
+      } else if (service.type == 'ltegwsim') {
+        self.hasSaegw = true;
+      } else if (service.type == 'ltemmesim') {
+        self.hasMme = true;
+      } else if (service.type == 'slbalancer') {
+        var totMbps = function(tot, iface) {
+          return tot + parseInt(iface.speed);
+        };
+        var maxGbpsDuplex = (service.connector[0].interface.reduce(totMbps, 0) * 2) / 1000;
+        self.slbIncoming[0].max = self.slbOutgoing[0].max = maxGbpsDuplex;
+        self.slbIncoming[1].max = self.slbOutgoing[1].max = maxGbpsDuplex * 1.5;
+      }
+    });
+
+    new rw.FpathVnf(this.$.fpath, this.$.vnf.services);
+  },
+
+  vcsUpdate: function() {
+    new rw.FpathVcs(this.$.fpath, this.$.vcs.sector);
+    this.$.cloud.vcsModel = this.$.vcs;
+  },
+
+  trafsimUpdate: function() {
+    if (this.$.trafsims && this.$.trafsims.trafsims) {
+      // assumes specific order, need way to tell client from server in list
+      this.trafsimClient = this.$.trafsims.trafsims[0];
+      this.trafsimServer = this.$.trafsims.trafsims[1];
+    }
+  }
+}, rw.ui));
+</script>
+</polymer-element>

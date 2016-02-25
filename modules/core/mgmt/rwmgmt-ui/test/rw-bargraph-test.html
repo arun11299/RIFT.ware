@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../lib/web-component-tester/browser.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../integration/ridgets/rw-bargraph.html">
+  <link rel="stylesheet" href="../integration/ridgets/css/page.css">
+  <style>
+    .fixture {
+      width: 50%;
+      margin: 20px;
+      border: 1px solid red;
+    }
+  </style>
+</head>
+<body>
+<div layout vertical class="viewport__body">
+  <!--<rw-bargraph flex class="fixture" xAxisLabel="exs" yAxisLabel="why" id="fixture1"></rw-bargraph>-->
+  <!--<rw-bargraph flex class="fixture" xAxisLabel="exs" yAxisLabel="why" id="fixture2"></rw-bargraph>-->
+  <!--<rw-bargraph flex class="fixture" xAxisLabel="exs" yAxisLabel="why" id="fixture3"></rw-bargraph>-->
+  <rw-bargraph flex class="fixture" xAxisLabel="exs" yAxisLabel="why" id="fixture4"></rw-bargraph>
+</div>
+<script>
+
+  function values1() {
+    return [
+      {x: 10, label: 'Alpha'},
+      {x: 15, label: 'Beta'},
+      {x: 5, label: 'Charlie'},
+      {x: 7, label: 'Delta'}
+    ];
+  }
+
+  function values2() {
+    return [
+      {x: 20, label: 'Alpha'},
+      {x: 35, label: 'Beta'},
+      {x: 25, label: 'Charlie'},
+      {x: 27, label: 'Delta'}
+    ];
+  };
+
+  function values3() {
+    return [
+      {x: 300000000, label: 'Alpha'},
+      {x: 35, label: 'Beta'},
+      {x: 25, label: 'Charlie'},
+      {x: 27, label: 'Delta'}
+    ];
+  };
+
+  function rand(existing) {
+    var r = Math.round(25 - (Math.random() * 40));
+    return Math.min(100, Math.max(0, existing + r));
+  }
+
+  suite('<rw-bargraph>', function() {
+//    test('live data', function(done) {
+//      var fixture1 = document.getElementById('fixture1');
+//      fixture1.values = values1();
+//      setInterval(function() {
+//        for (var i = 0; i < fixture1.values.length; i++) {
+//          fixture1.values[i].x = rand(fixture1.values[i].x);
+//        }
+//        fixture1.update();
+//      }, 2000);
+//      fixture1.async(function() {
+////        var r = fixture.shadowRoot.querySelector('pre');
+////        assert.isTrue(r.textContent.match(/1000/) != null);
+//        done();
+//      });
+//    });
+//    test('values change', function(done) {
+//      var fixture2 = document.getElementById('fixture2');
+//      var v1 = values1();
+//      var v2 = values2();
+//      fixture2.values = v1;
+//      setInterval(function() {
+//        if (fixture2.values === v1) {
+//          fixture2.values = v2;
+//        } else {
+//          fixture2.values = v1;
+//        }
+//      }, 2000);
+//      fixture2.async(function() {
+////        var r = fixture.shadowRoot.querySelector('pre');
+////        assert.isTrue(r.textContent.match(/1000/) != null);
+//        done();
+//      });
+//    });
+//    test('xmax ', function(done) {
+//      var fixture3 = document.getElementById('fixture3');
+//      fixture3.values = values1();
+//      setInterval(function() {
+//        fixture3.values[0].x += 100;
+//        fixture3.update();
+//      }, 2000);
+//      fixture3.async(function() {
+////        var r = fixture.shadowRoot.querySelector('pre');
+////        assert.isTrue(r.textContent.match(/1000/) != null);
+//        done();
+//      });
+//    });
+    test('large value ', function(done) {
+      var fixture3 = document.getElementById('fixture4');
+      fixture3.values = values3();
+      fixture3.async(function() {
+//        var r = fixture.shadowRoot.querySelector('pre');
+//        assert.isTrue(r.textContent.match(/1000/) != null);
+        done();
+      });
+    });
+  });
+</script>
+</body>
+</html>

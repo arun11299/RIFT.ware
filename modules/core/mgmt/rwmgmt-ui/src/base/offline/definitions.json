@@ -1,0 +1,202 @@
+{
+  "applications": {
+    "default": {
+      "modules": [
+        "rwHelpers",
+        "uesimModule",
+        "ue",
+        "rw.aggregate",
+        "rw.iot",
+        "rwServicesPage",
+        "cmdcntr",
+        "configuration",
+        "uiModule",
+        "trafsim",
+        "trafgen",
+        "loadbal",
+        "slbalancer"
+      ]
+    },
+    "ltesim_mme": {
+      "modules": [
+        "rwHelpers",
+        "uiModule",
+        "uesimModule",
+        "ue",
+        "cmdcntr",
+        "rwServicesPage",
+        "configuration"
+      ]
+    },
+    "ltesim_saegw": {
+      "modules": [
+        "rwHelpers",
+        "ue",
+        "cmdcntr",
+        "rwServicesPage",
+        "configuration",
+        "uiModule"
+      ]
+    },
+    "ltesim_dist": {
+      "modules": [
+        "rwHelpers",
+        "uesimModule",
+        "ue",
+        "cmdcntr",
+        "rwServicesPage",
+        "configuration",
+        "uiModule"
+      ]
+    },
+    "traffic_generator": {
+      "modules": [
+        "rwHelpers",
+        "rw.aggregate",
+        "rwServicesPage",
+        "cmdcntr",
+        "configuration",
+        "uiModule",
+        "trafgen",
+        "trafsim",
+        "loadbal",
+        "slbalancer"
+      ]
+    },
+    "uesim": {
+      "modules": [
+        "rwHelpers",
+        "uesimModule",
+        "ue",
+        "cmdcntr",
+        "rwServicesPage",
+        "configuration",
+        "uiModule"
+      ]
+    },
+    "diameter_client": {
+      "modules": [
+        "rwHelpers",
+        "rw.aggregate",
+        "rwServicesPage",
+        "cmdcntr",
+        "configuration",
+        "uiModule",
+        "trafsim",
+        "trafgen",
+        "loadbal",
+        "slbalancer"
+      ]
+    },
+    "diameter_server": {
+      "modules": [
+        "rwHelpers",
+        "rw.aggregate",
+        "rwServicesPage",
+        "cmdcntr",
+        "configuration",
+        "uiModule",
+        "trafsim",
+        "trafgen",
+        "loadbal",
+        "slbalancer"
+      ]
+    },
+    "example": {
+      "modules": [
+        "uesimModule",
+        "headerIntegration"
+      ]
+    }
+  },
+  "modules": {
+    "cmdcntr": {
+      "src": "/modules/rift/rw.cmdcntr.browserify.js"
+    },
+    "rw.aggregate": {
+      "src": "/modules/rift/rw.aggregate.browserify.js"
+    },
+    "rw.integration": {
+      "src": "/modules/rift/rw.integration.browserify.js"
+    },
+    "configuration": {
+      "src": "/modules/rift/rw.configuration.browserify.js",
+      "files": [
+        "/modules/css/rw.configuration.css"
+      ]
+    },
+    "trafsim": {
+      "src": "/modules/rift/rw.trafsim.browserify.js",
+      "files": [
+        "modules/css/rw.trafsim.css"
+      ]
+    },
+    "trafgen": {
+      "src": "/modules/rift/rw.trafgen.browserify.js",
+      "files": [
+        "modules/css/rw.trafgen.css"
+      ]
+    },
+    "loadbal": {
+      "src": "/modules/rift/rw.loadbal.browserify.js"
+    },
+    "uiModule": {
+      "src": "/modules/rift/rw.ui.browserify.js",
+      "files":[
+      "lib/codemirror/lib/codemirror.css",
+      "lib/codemirror/theme/mbo.css"
+      ]
+    },
+    "slbalancer" : {
+      "src": "/modules/rift/rw.slbalancer.browserify.js",
+      "files": [
+        "modules/css/slbalancer.css"
+      ]
+    },
+    "uesimModule": {
+      "src": "/modules/rift/rw.ue-sim.browserify.js",
+      "files": [
+        "modules/css/uesim.css"
+      ]
+    },
+    "ue": {
+      "src": "/modules/rift/rw.ue.browserify.js",
+      "files": [
+        "modules/css/rw.ue.css"
+      ]
+    },
+    "rwServicesPage": {
+      "src": "/modules/rift/rw.services.page.browserify.js",
+      "files": [
+        "modules/css/rw.services.css"
+      ]
+    },
+    "testingModule": {
+      "src": "/modules/rift/testingModule.browserify.js"
+    },
+    "headerIntegration": {
+      "src": "/modules/rift/headerIntegration.browserify.js"
+    },
+    "configEditor": {
+      "src": "/modules/rift/rw.config.editor.browserify.js",
+      "depends": [
+        "RecursionHelper"
+      ],
+      "files": [
+        "modules/css/config-editor.css"
+      ]
+    },
+    "RecursionHelper": {
+      "src": "/modules/rift/rw.helpers.browserify.js"
+    },
+    "rw.iot": {
+      "src": "/modules/rift/rw.iot.browserify.js"
+    },
+    "rwHelpers": {
+      "src": "/modules/rift/rw.helper.browserify.js"
+    }
+  },
+  "themes": {
+    "default":"sometheme.css"
+  }
+}

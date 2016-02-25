@@ -1,0 +1,115 @@
+@import "css/base/base";
+
+
+.global-header {
+  min-height: 40px;
+  border-bottom: 1px solid @gray2;
+  color: @white;
+  background: @gray7 linear-gradient(@gray7, @gray5);
+
+  .flex-display();
+  .align-items(center);
+}
+.global-header .logo{
+  display:inline-block;
+  width: 108px;
+  height: 28px;
+  padding:0px;
+  margin: 0 20px 0 10px;
+  float:left;
+
+  background: url('../img/rift-logo-white.png') no-repeat;
+  background-size: 108px 28px;
+}
+.global-header .global-nav {
+  .flex(1 0 0);
+  margin-right: 20px;
+}
+.global-header .global-nav > ul{
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  .flex-display();
+}
+.global-header .global-nav > ul.left{
+  float:left;
+}
+.global-header .global-nav > ul.left > li{
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right:20px;
+  margin-bottom:0px;
+  padding:0px;
+
+  cursor: pointer;
+
+  line-height: 40px;
+  vertical-align: middle;
+
+  .flex-display();
+  .align-items(center);
+}
+.global-header .global-nav > ul.left > li core-icon{
+  display:inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 3px 0 0;
+
+  fill: @white;
+  .flex-shrink(0);
+  .standard-transition();
+}
+.global-header .global-nav > ul.left > li .label{
+  font-size: 18px;
+  font-weight: 100;
+  text-transform: uppercase;
+
+  .no-select();
+  //        display:inline-block;
+  .standard-transition();
+}
+.global-header .global-nav > ul.left > li.selected core-icon{
+
+  fill: @blue-2;
+}
+
+.global-header .global-nav > ul.left > li.selected .label {
+  color: @blue-2;
+}
+/**/
+.global-header .global-nav > ul.right{
+  float:right;
+}
+
+/**/
+/**/
+@media all and (max-width: 1200px){
+  .global-header .global-nav > ul.left > li core-icon{
+    display: none !important;
+    width:0px;
+    height:0px;
+  }
+  .global-header .global-nav > ul.left > li .label {
+    font-size: 16px;
+  }
+}
+
+.perf {
+  background: white;
+  color: black;
+  font-size: smaller;
+  position: absolute;
+  right:0;
+  bottom:0;
+  z-index: 1000;
+}
+
+.perf-list {
+  list-style-type: none;
+}
+
+.global-nav__list__item__icon {
+  fill: white;
+}

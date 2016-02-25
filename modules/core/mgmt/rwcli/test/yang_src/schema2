@@ -1,0 +1,22 @@
+module schema2
+{
+  // The schema extension is not .yang to make this directory not part of the
+  // YANG_MOD_PATH. These files are meant to be copied
+  namespace "http://riftio.com/ns/yangtools/schema2";
+  prefix "schema2";
+
+
+  revision 2015-10-17 {
+    description
+        "Initial Revision";
+  }
+
+  container root2 {
+    description "test root";
+
+    leaf child2 {
+      type string;
+    }
+  }
+}
+

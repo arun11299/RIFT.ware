@@ -1,0 +1,22 @@
+libnetconf 0.7.0
+
+This release includes the following changes:
+
+ * Dependency on D-Bus removed.
+ * Example applications were moved to a separated Netopeer project.
+ * TransAPI moved to version 3.
+ * Detection and correction of session monitoring inconsistency.
+ * Support for using static transAPI modules via ncds_new_transapi_static().
+ * New nc_verb_* functions mainly for transAPI modules to print messages
+   via libnetconf printing callback.
+
+For API/ABI compatibility to previous versions, see reports in
+'doc/compat_reports/' directory.
+
+libnetconf 0.7.1
+
+This release includes the following changes:
+ * Fixing transAPI issue with adding/removing root element
+ * Fixing xmldiff problem with parsing augment and choice nodes
+ * Fixing withdefault ignoring empty data stores
+ * Fixing some memory issues

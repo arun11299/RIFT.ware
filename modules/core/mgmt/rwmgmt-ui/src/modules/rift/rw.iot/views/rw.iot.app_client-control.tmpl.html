@@ -1,0 +1,55 @@
+<div>
+    <div ng-if="iotControl.orientation == 'vertical'">
+        <div class="vertical trafControlPanel">
+            <div id="primaryButtons">
+                <span ng-class="{'button--is-on' : iotControl.g.startedPerceived}" class="button button__size--full" ng-click="iotControl.toggleStarted()">
+                    <span class="button__box">
+                        <svg class="icon icon--small" ng-class="{'loading-icon' : iotControl.loading}">
+                            <use ng-attr-xlink:href="{{'#' + iotControl.buttonIcon}}" xlink:href=""/>
+                        </svg>
+                        <span class="button__label">{{iotControl.g.startedPerceived ? 'Active' : 'Off'}}</span>
+                    </span>
+                </span>
+            </div>
+            <hr/>
+            <div class="dash-label">
+                <label for="rateRange" class="form__item__label">Calls Per Second</label>
+            </div>
+            <div class="dash-slider">
+                <div class="dash-slider-start">0</div>
+                <rw-slider class="dash-slider-slider" name="rateRange" min="0" max="{{iotControl.g.maxRate}}" step="25000" value="iotControl.g.ratePerceived"></rw-slider>
+                <div class="dash-slider-end">200k</div>
+            </div>
+            <div class="dash-slider-value">
+                <span>{{iotControl.g.ratePerceived | fmt:'0'}}</span>
+            </div>
+        </div>
+    </div>
+    <div ng-if="iotControl.orientation == 'horizontal'">
+        <div class="horizontal trafControlPanel">
+            <div class="horizontal primaryButtons">
+                <div ng-class="{'button--is-on' : iotControl.g.startedPerceived}" class="button button__size--short button__size--medium" ng-click="iotControl.toggleStarted()">
+                    <div class="button__box">
+                        <svg class="icon icon--small" ng-class="{'loading-icon' : iotControl.loading}">
+                            <use ng-attr-xlink:href="{{'#' + iotControl.buttonIcon}}" xlink:href=""/>
+                        </svg>
+                        <span class="button__label">{{iotControl.g.startedPerceived ? 'Active' : 'Off'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-component horizontal">
+                <div class="dash-label">
+                    <label for="rateRange" class="form__item__label">Calls Per Second</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">0</div>
+                    <rw-slider name="rateRange" class="horizontal-dash-slider" min="0" max="{{iotControl.g.maxRate}}" step="25000" value="iotControl.g.ratePerceived"></rw-slider>
+                    <div class="dash-slider-end">200k</div>
+                </div>
+                <div class="dash-slider-value">
+                    <span>{{iotControl.g.ratePerceived | fmt:'0'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

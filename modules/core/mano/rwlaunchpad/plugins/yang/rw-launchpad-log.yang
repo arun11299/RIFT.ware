@@ -1,0 +1,47 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+/**0
+ * @file rw-launchpad-log.yang
+ * @author Rift.IO
+ * @date 03/02/2015
+ * @brief RiftWare Log Event Definitions for rw-launchpad logging
+ */
+
+module rw-launchpad-log
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-launchpad-log";
+  prefix "rwlaunchpadlog";
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import rw-pb-ext {
+    prefix "rwpb";
+  }
+
+  import rw-yang-types {
+    prefix "rwt";
+  }
+
+  import rw-notify-ext {
+    prefix "rwnotify";
+  }
+
+  import rw-log {
+    prefix "rwlog";
+  }
+
+  revision 2014-12-30 {
+    description
+      "Initial revision.";
+    reference
+      "RIFT Launchpad Logging";
+  }
+}

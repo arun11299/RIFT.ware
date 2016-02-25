@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="../lib/mocha/mocha.css">
+<script src="../lib/mocha/mocha.js"></script>
+<script src="../lib/chai/chai.js"></script>
+<script src="lib/helper.js"></script>
+<script src="../lib/jquery/dist/jquery.js"></script>
+<script src="../lib/underscore/underscore.js"></script>
+<script src="../integration/ridgets/js/rwmgmt.js"></script>
+<script src="../integration/ridgets/js/network.js"></script>
+
+<div id="mocha"></div>
+
+<script>
+mocha.setup('tdd');
+assert = chai.assert;
+
+var tgen = {
+  type: "TRAFGEN",
+  groups : [{
+    id: 1,
+    ifaces: [{
+      id: 1, id : 2
+    },{
+      id: 3, id : 4, id: 5
+    }]
+  },{
+    id: 1,
+    ifaces: []
+  }]
+}
+
+var layout;
+
+suite('TopologyLayout', function() {
+  setup(function() {
+    layout = new TopologyLayout();
+  });
+  test('titledPanel', function() {
+    layout.dim = {
+      xMargin0 : 1,
+      yMargin0 : 2,
+      xMargin : 3,
+      yMargin : 4,
+      hTitle: 5,
+      width : 6
+    };
+    var actual_0_0 = {};
+    layout.layoutTitledPanel(actual_0_0, 0, 10);
+    assert.equal(1, actual_0_0.x);
+    assert.equal(2, actual_0_0.y);
+    assert.equal(6, actual_0_0.w);
+    assert.equal(5 + 10, actual_0_0.h);
+    assert.equal(2 + 5, actual_0_0.yBody);   
+
+    var actual_0_1 = {};
+    layout.layoutTitledPanel(actual_0_1, 0, 11);
+    assert.equal(1, actual_0_1.x);
+    assert.equal(2 + 5 + 10 + 4, actual_0_1.y);
+    assert.equal(6, actual_0_1.w);
+    assert.equal(5 + 11, actual_0_1.h);
+    assert.equal(2 + 5 + 10 + 4 + 5, actual_0_1.yBody);     
+
+    var actual_1_0 = {};
+    layout.layoutTitledPanel(actual_1_0, 1, 12);
+    assert.equal(1 + 6 + 3, actual_1_0.x);
+    assert.equal(2, actual_1_0.y);
+    assert.equal(6, actual_1_0.w);
+    assert.equal(5 + 12, actual_1_0.h);
+    assert.equal(2 + 5, actual_1_0.yBody);     
+  });
+  test('buildSelectBox', function() {
+    var actual = layout.buildSelectBox(24, 20, 4);
+    assert.equal('2, 4, 4, 4, 4, 4, 4.5, 5, 5, 5, 4.5, 4, 4, 4, 4, 4, 4.5, 5, 5, 5, 2.5', actual);
+  });
+});
+
+$(document).ready(function() {
+  htmlTestRunner(mocha.run());  
+});
+
+</script>

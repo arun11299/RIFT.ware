@@ -1,0 +1,157 @@
+<script src="../../lib/smoothie/smoothie.js"></script>
+
+<!--
+  <img src="rw-scrollgraph.png"/>
+
+  @class rw-scroll-graph
+-->
+
+<!--
+  @attribute {num} width Defualt 200
+  @attribute {num} height Default 80
+  @attribute {num} lineColor Default: hsla(0, 0%, 13%, 1)
+  @attribute {num} strokeColor Default hsla(0, 0%, 13%, 0.7)
+  @attribute {num} min 0
+  @attribute {num} max 100
+  @attribute {num} value set this over time.
+-->
+<polymer-element name="rw-scroll-graph" attributes="width height lineColor strokeColor labels min max value lineColor2 strokeColor2 value2 paused">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-scroll-graph.css"/>
+    <div id="metricBody">
+      <div>
+        <content></content>
+      </div>
+      <div>
+        <canvas width="{{width}}" height="{{height}}" id="chart"></canvas>
+      </div>
+    </div>
+  </template>
+  <script>
+//Modified start function to enable rendering of first frame only.
+    window.SmoothieChart.prototype.start = function(stop) {
+      if (this.frame) {
+        // We're already running, so just return
+        return;
+      }
+      if(stop){
+        this.render();
+      }else {
+        // Renders a frame, and queues the next frame for later rendering
+        var animate = function () {
+          this.frame = SmoothieChart.AnimateCompatibility.requestAnimationFrame(function () {
+            this.render();
+            animate();
+          }.bind(this));
+        }.bind(this);
+        animate();
+      }
+    };
+    Polymer({
+
+      created: function() {
+        var self = this;
+        this.min = 0;
+        this.max = 100;
+        this.lineColor = 'hsla(0, 0%, 13%, 1)';
+        this.lineColor2 = 'hsla(0, 50%, 13%, 1)';
+        this.width =  '100%';
+        this.height = '80';
+        this.strokeColor = 'hsla(0, 0%, 13%, 0.7)';
+        this.strokeColor2 = 'hsla(0, 50%, 13%, 0.7)';
+        this.paused = true;
+        this.labels = true;
+        var updateSize = _.debounce(function(){
+//          console.log('resizing',self.offsetWidth, this.width)
+          self.width = self.offsetWidth - 30;
+//          self.attached();
+//          self.pausedChanged();
+        })
+//        $(window).resize(updateSize)
+
+      },
+
+      attached: function() {
+        var self = this;
+        this.series = new TimeSeries();
+        this.chart = new SmoothieChart({
+          minValue : this.min,
+          maxValue : this.max,
+          labels: {
+            disabled : ! this.labels
+          },
+          grid: {
+            fillStyle: '#3b3b3b',
+            strokeStyle: '#5e5e5e',
+            verticalSections: 4,
+            millisPerLine: 5000,
+            sharpLines: true
+          },
+          millisPerPixel: 100
+        });
+        this.chartStyle = {
+          strokeStyle: this.lineColor,
+          fillStyle: this.strokeColor,
+          lineWidth: 2
+        };
+        this.chart.addTimeSeries(this.series, this.chartStyle);
+
+        if (this.value2 != undefined) {
+          this.series2 = new TimeSeries();
+          this.chartStyle2 = {
+            strokeStyle: this.lineColor2,
+            fillStyle: this.strokeColor2,
+            lineWidth: 2
+          };
+          this.chart.addTimeSeries(this.series2, this.chartStyle2);
+
+        }
+
+        this.chart.streamTo(this.$.chart, 2000);
+        // with no new values coming in, chart goes blank.
+        var self = this;
+        this.keepAlive = setInterval(function() {
+          self.valueChanged();
+          if (self.series2) {
+            self.value2Changed();
+          }
+        }, 5000);
+        this.chart.stop();
+        this.chart.start(true);
+      },
+
+      detached: function() {
+        clearInterval(this.keepAlive);
+      },
+
+      valueChanged: function() {
+        if (this.series) {
+          var t = new Date().getTime();
+          this.series.append(t, this.value);
+        }
+      },
+      maxChanged: function(){
+        if(this.chart) {
+          this.chart.options.maxValue = this.max;
+          this.chart.render();
+        }
+      },
+      value2Changed: function() {
+        if (this.series2) {
+          var t = new Date().getTime();
+          this.series2.append(t, this.value2);
+        }
+      },
+
+      pausedChanged: function() {
+        if (this.chart) {
+          if (this.paused) {
+            this.chart.stop();
+          } else {
+            this.chart.start();
+          }
+        }
+      }
+    })
+  </script>
+</polymer-element>

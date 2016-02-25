@@ -1,0 +1,7 @@
+<!-- -*- nxml -*- -->
+<webspec xmlns="http://tail-f.com/ns/webspec/1.0"
+         targetNamespace="http://tail-f.com/ns/aaa/1.1">
+  <options>
+    <unrollDynamicElements/>
+  </options>
+</webspec>

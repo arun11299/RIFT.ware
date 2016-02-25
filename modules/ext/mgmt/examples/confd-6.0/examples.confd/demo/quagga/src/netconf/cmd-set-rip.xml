@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <capabilities>
+    <capability>urn:ietf:params:netconf:base:1.0</capability>
+  </capabilities>
+</hello>
+]]>]]>
+<?xml version="1.0" encoding="UTF-8"?>
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+  <edit-config>
+    <target>
+      <running/>
+    </target>
+    <config>
+      <system xmlns="http://tail-f.com/ns/example/quagga"
+            xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <key-chain>
+          <name>ripauth</name>
+          <key>
+            <id>11</id>
+            <key-string>SecretPassword</key-string>
+          </key>
+        </key-chain>
+        <interface>
+          <name>eeth0</name>
+          <ip>
+            <rip>
+              <authentication-mode>
+                <mode>md5</mode>
+                <auth-length>rfc</auth-length>
+              </authentication-mode>
+              <authentication-key-chain>ripauth</authentication-key-chain>
+            </rip>
+          </ip>
+        </interface>
+        <router>
+          <rip>
+            <version>
+              2
+            </version>
+            <network-ip>
+              <address>10.4.0.0</address>
+              <prefix-length>24</prefix-length>
+            </network-ip>
+            <route>
+              <address>128.0.0.0</address>
+              <prefix-length>1</prefix-length>
+            </route>
+            <passive-interfaces>
+              <passive-by-default>true</passive-by-default>
+              <except-interface>
+                <ifname>eeth0</ifname>
+              </except-interface>
+            </passive-interfaces>
+          </rip>
+        </router>
+      </system>
+    </config>
+  </edit-config>
+</rpc>
+]]>]]>
+<?xml version="1.0" encoding="UTF-8"?>
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="2">
+  <close-session/>
+</rpc>

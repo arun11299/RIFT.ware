@@ -1,0 +1,10 @@
+<cli>
+  <plugin-list>
+     <plugin name="rwcli_plugin" typelib="rwcli_plugin/1.0"/>
+  </plugin-list>
+
+  <modifications>
+     <addPrintHook path="vnf-opdata" hook="rwcli_plugin:default_print"/>
+     <addPrintHook path="vnf-config" hook="rwcli_plugin:default_print"/>
+  </modifications>
+</cli>

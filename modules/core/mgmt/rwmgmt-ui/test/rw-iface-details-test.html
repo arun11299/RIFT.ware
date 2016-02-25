@@ -1,0 +1,43 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-iface-details.html">
+<link rel="stylesheet" href="../integration/ridgets/css/page.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-iface-details 
+    iface="{{iface}}" 
+    ifaceGroup="{{ifaceGroup}}" 
+    id="test1"
+    ></rw-iface-details>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    this.iface = {
+      id: 32132,
+      ipv4Address: "10.1.1.1",
+      description: "Description here",
+      status: "Up",
+    };
+    this.ifaceGroup = {
+      context: "context"
+    };
+  },
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-iface-details', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

@@ -1,0 +1,28 @@
+<div>
+  <div class="config-content">
+    <div class="config-nav-header">
+      <div id="navButtons" class="button-group">
+        <div class="button button-bar__first-button button__size--medium" ng-click="refresh()">
+            <span class="button__box">
+              <span class="button__label">Refresh</span>
+            </span>
+        </div>
+        <div class="button button-bar__inner-button button__size--medium" ng-click="expandAll()">
+            <span class="button__box">
+              <span class="button__label">Expand All</span>
+            </span>
+        </div>
+        <div class="button button-bar__last-button button__size--medium" ng-click="collapseAll()">
+            <span class="button__box">
+              <span class="button__label">Collapse All</span>
+            </span>
+        </div>
+      </div>
+    </div>
+    <rw-config-viewer
+        id="configViewer"
+        label="root"
+        config="config"
+        ></rw-config-viewer>
+  </div>
+</div>

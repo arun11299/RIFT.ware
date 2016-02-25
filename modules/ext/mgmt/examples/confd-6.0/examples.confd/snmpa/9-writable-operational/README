@@ -1,0 +1,93 @@
+ConfD SNMP Agent Example - Writable operational data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example shows how writable operational data can be implemented.
+Writable operational data is data that is writable in the MIB, but
+non-config data in the YANG model.  Such data must be marked as
+'tailf:writable true' in the YANG model.
+
+In this example, the YANG model is generated from the MIB.  In order
+for the mib2yang compiler to translate the read-write objects in the
+MIB to writable operational data, a mib annotation file is used.
+
+The example has been made up, and is not something taken from the real
+world.
+
+We start with the MIB SIMPLE-MIB.mib, which defines one read-write
+scalar variable 'rebootRouter'.  It has the following description:
+
+        When this object is set to '1', the router is
+        rebooted.  Setting the variable to '0' results
+        results in an 'inconsistentValue' error.  Setting it to any
+        other value has no effect.
+
+        When this object is read, the value '0' is returned.
+
+This object is implemented in simple_operational.c.
+
+
+1. Generate a YANG (.yang) module.
+
+   confdc is used for producing SIMPLE-MIB.yang from SIMPLE-MIB.mib.
+
+   The scalar variable 'rebootRouter' represents writable operational
+   data.  Using a MIB annotation file we can tell the compiler to
+   mark this in the YANG module.
+
+    confdc --mib2yang SIMPLE-MIB.mib --mib-annotation SIMPLE-MIB.miba \
+      > SIMPLE-MIB.yang
+
+
+2. Compile the YANG module
+
+  The generated YANG module is compiled into SIMPLE-MIB.fxs, with an
+  extra YANG annotation file with a callpoint for the implementation of
+  the operational data.
+
+    confdc -c -o SIMPLE-MIB.fxs -a SIMPLE-MIB-ann.yang SIMPLE-MIB.yang
+
+
+3. Compile the MIB
+
+  The MIB needs to be compiled into a '.bin' file in order to be
+  loaded into the ConfD SNMP Agent.  For each SNMP object in the MIB
+  there must be a mapping into an element in the YANG module.  The
+  objects for the SIMPLE-MIB are mapped to elements in the YANG
+  module, using tailf:snmp-name attributes.
+
+  In order for confdc to compile the MIB, the file needs to have
+  '.mib' as file extension.
+
+  The fxs files which SIMPLE-MIB.fxs depends on must be supplied using -f.
+
+
+4. Configure the ConfD SNMP Agent
+   
+  The SNMP Agent is part of the ConfD daemon and can be enabled from
+  confd.conf file. Per default the SNMP agent is disabled.  Configure
+  the IP address and port of the SNMP agent, and list all the MIBs
+  that should be loaded at startup.
+
+  [confd.conf]
+
+  <snmpAgent>
+    <enabled>true</enabled>
+    <ip>0.0.0.0</ip>
+    <port>4000</port>
+    <mibs>
+      <file>SIMPLE-MIB.bin</file>
+    </mibs>
+  </snmpAgent>
+
+
+  Make the system with
+      > make all
+
+  Start up the system with 
+      > make start
+
+
+5.  Set the rebootRouter variable using snmpset.
+
+  snmpset -m ./SIMPLE-MIB.mib -c public -v2c localhost:4000 rebootRouter.0 = 1
+

@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h3 class="modal-title">Editing {{modal.script.name}}</h3>
+</div>
+<div class="modal-body">
+  <div ui-codemirror="{
+      lineNumbers: true,
+      theme:'mbo',
+      lineWrapping : true,
+      mode: 'python',
+      indentUnit:4,
+      autofocus:true
+    }"  ng-model="modal.script.code" style="width:800px; height:400px;"></div>
+</div>
+<div class="modal-footer">
+    <ul class="right-right">
+        <li><a class="button" ng-click="modal.save()" href="">Save</a></li>
+        <li><a class="button-link" ng-click="modal.close()" href="">Cancel</a></li>
+    </ul>
+</div>

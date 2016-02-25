@@ -1,0 +1,158 @@
+<!--
+  Walks VCS tree and associated latitude and longitude data.
+
+  @class rw-geo-model
+-->
+<polymer-element name="rw-geo-model" attributes="node markers">
+<script>
+Polymer({
+
+  created: function() {
+    this.markers = [];
+  },
+
+  nodeChanged: function() {
+    var markers = [];
+    this.addMarker(markers, this.node);
+    this.markers = markers;
+  },
+
+  addMarker: function(markers, node) {
+    var cityNdx = 0; //Math.floor(this.MAJOR_CITIES.length * Math.random());
+    var city = this.MAJOR_CITIES[cityNdx];
+    var marker = {
+      name: city.name,
+      latLng: city.latLng,
+    };
+    node.marker = marker;
+    markers.push(marker);
+  },
+
+  // Got from
+  //   http://www.infoplease.com/ipa/A0001769.html
+  MAJOR_CITIES : [
+    {"name":"Boston, Massachusetts", "latLng":["42.36", "-71.06"]},
+    {"name":"Aberdeen, Scotland","latLng":["57.9","2.9"]},
+    {"name":"Adelaide, Australia","latLng":["34.55","138.36"]},
+    {"name":"Algiers, Algeria","latLng":["36.50","3.0"]},
+    {"name":"Amsterdam, Netherlands","latLng":["52.22","4.53"]},
+    {"name":"Ankara, Turkey","latLng":["39.55","32.55"]},
+    {"name":"Asunción, Paraguay","latLng":["25.15","57.40"]},
+    {"name":"Athens, Greece","latLng":["37.58","23.43"]},
+    {"name":"Auckland, New Zealand","latLng":["36.52","174.45"]},
+    {"name":"Bangkok, Thailand","latLng":["13.45","100.30"]},
+    {"name":"Barcelona, Spain","latLng":["41.23","2.9"]},
+    {"name":"Beijing, China","latLng":["39.55","116.25"]},
+    {"name":"Belém, Brazil","latLng":["1.28","48.29"]},
+    {"name":"Belfast, Northern Ireland","latLng":["54.37","5.56"]},
+    {"name":"Belgrade, Serbia","latLng":["44.52","20.32"]},
+    {"name":"Berlin, Germany","latLng":["52.30","13.25"]},
+    {"name":"Birmingham, England","latLng":["52.25","1.55"]},
+    {"name":"Bogotá, Colombia","latLng":["4.32","74.15"]},
+    {"name":"Bombay, India","latLng":["19.0","72.48"]},
+    {"name":"Bordeaux, France","latLng":["44.50","0.31"]},
+    {"name":"Bremen, Germany","latLng":["53.5","8.49"]},
+    {"name":"Brisbane, Australia","latLng":["27.29","153.8"]},
+    {"name":"Bristol, England","latLng":["51.28","2.35"]},
+    {"name":"Brussels, Belgium","latLng":["50.52","4.22"]},
+    {"name":"Bucharest, Romania","latLng":["44.25","26.7"]},
+    {"name":"Budapest, Hungary","latLng":["47.30","19.5"]},
+    {"name":"Buenos Aires, Argentina","latLng":["34.35","58.22"]},
+    {"name":"Cairo, Egypt","latLng":["30.2","31.21"]},
+    {"name":"Calcutta, India","latLng":["22.34","88.24"]},
+    {"name":"Canton, China","latLng":["23.7","113.15"]},
+    {"name":"Cape Town, South Africa","latLng":["33.55","18.22"]},
+    {"name":"Caracas, Venezuela","latLng":["10.28","67.2"]},
+    {"name":"Cayenne, French Guiana","latLng":["4.49","52.18"]},
+    {"name":"Chihuahua, Mexico","latLng":["28.37","106.5"]},
+    {"name":"Chongqing, China","latLng":["29.46","106.34"]},
+    {"name":"Copenhagen, Denmark","latLng":["55.40","12.34"]},
+    {"name":"Córdoba, Argentina","latLng":["31.28","64.10"]},
+    {"name":"Dakar, Senegal","latLng":["14.40","17.28"]},
+    {"name":"Darwin, Australia","latLng":["12.28","130.51"]},
+    {"name":"Djibouti, Djibouti","latLng":["11.30","43.3"]},
+    {"name":"Dublin, Ireland","latLng":["53.20","6.15"]},
+    {"name":"Durban, South Africa","latLng":["29.53","30.53"]},
+    {"name":"Edinburgh, Scotland","latLng":["55.55","3.10"]},
+    {"name":"Frankfurt, Germany","latLng":["50.7","8.41"]},
+    {"name":"Georgetown, Guyana","latLng":["6.45","58.15"]},
+    {"name":"Glasgow, Scotland","latLng":["55.50","4.15"]},
+    {"name":"Guatemala City, Guatemala","latLng":["14.37","90.31"]},
+    {"name":"Guayaquil, Ecuador","latLng":["2.10","79.56"]},
+    {"name":"Hamburg, Germany","latLng":["53.33","10.2"]},
+    {"name":"Hammerfest, Norway","latLng":["70.38","23.38"]},
+    {"name":"Havana, Cuba","latLng":["23.8","82.23"]},
+    {"name":"Helsinki, Finland","latLng":["60.10","25.0"]},
+    {"name":"Hobart, Tasmania","latLng":["42.52","147.19"]},
+    {"name":"Hong Kong, China","latLng":["22.20","114.11"]},
+    {"name":"Iquique, Chile","latLng":["20.10","70.7"]},
+    {"name":"Irkutsk, Russia","latLng":["52.30","104.20"]},
+    {"name":"Jakarta, Indonesia","latLng":["6.16","106.48"]},
+    {"name":"Johannesburg, South Africa","latLng":["26.12","28.4"]},
+    {"name":"Kingston, Jamaica","latLng":["17.59","76.49"]},
+    {"name":"Kinshasa, Congo","latLng":["4.18","15.17"]},
+    {"name":"Kuala Lumpur, Malaysia","latLng":["3.8","101.42"]},
+    {"name":"La Paz, Bolivia","latLng":["16.27","68.22"]},
+    {"name":"Leeds, England","latLng":["53.45","1.30"]},
+    {"name":"Lima, Peru","latLng":["12.0","77.2"]},
+    {"name":"Lisbon, Portugal","latLng":["38.44","9.9"]},
+    {"name":"Liverpool, England","latLng":["53.25","3.0"]},
+    {"name":"London, England","latLng":["51.32","0.5"]},
+    {"name":"Lyons, France","latLng":["45.45","4.50"]},
+    {"name":"Madrid, Spain","latLng":["40.26","3.42"]},
+    {"name":"Manchester, England","latLng":["53.30","2.15"]},
+    {"name":"Manila, Philippines","latLng":["14.35","120.57"]},
+    {"name":"Marseilles, France","latLng":["43.20","5.20"]},
+    {"name":"Mazatlán, Mexico","latLng":["23.12","106.25"]},
+    {"name":"Mecca, Saudi Arabia","latLng":["21.29","39.45"]},
+    {"name":"Melbourne, Australia","latLng":["37.47","144.58"]},
+    {"name":"Mexico City, Mexico","latLng":["19.26","99.7"]},
+    {"name":"Milan, Italy","latLng":["45.27","9.10"]},
+    {"name":"Montevideo, Uruguay","latLng":["34.53","56.10"]},
+    {"name":"Moscow, Russia","latLng":["55.45","37.36"]},
+    {"name":"Munich, Germany","latLng":["48.8","11.35"]},
+    {"name":"Nagasaki, Japan","latLng":["32.48","129.57"]},
+    {"name":"Nagoya, Japan","latLng":["35.7","136.56"]},
+    {"name":"Nairobi, Kenya","latLng":["1.25","36.55"]},
+    {"name":"Nanjing (Nanking), China","latLng":["32.3","118.53"]},
+    {"name":"Naples, Italy","latLng":["40.50","14.15"]},
+    {"name":"New Delhi, India","latLng":["28.35","77.12"]},
+    {"name":"Newcastle-on-Tyne, England","latLng":["54.58","1.37"]},
+    {"name":"Odessa, Ukraine","latLng":["46.27","30.48"]},
+    {"name":"Osaka, Japan","latLng":["34.32","135.30"]},
+    {"name":"Oslo, Norway","latLng":["59.57","10.42"]},
+    {"name":"Panama City, Panama","latLng":["8.58","79.32"]},
+    {"name":"Paramaribo, Suriname","latLng":["5.45","55.15"]},
+    {"name":"Paris, France","latLng":["48.48","2.20"]},
+    {"name":"Perth, Australia","latLng":["31.57","115.52"]},
+    {"name":"Plymouth, England","latLng":["50.25","4.5"]},
+    {"name":"Port Moresby, Papua New Guinea","latLng":["9.25","147.8"]},
+    {"name":"Prague, Czech Republic","latLng":["50.5","14.26"]},
+    {"name":"Rangoon, Myanmar","latLng":["16.50","96.0"]},
+    {"name":"Reykjavík, Iceland","latLng":["64.4","21.58"]},
+    {"name":"Rio de Janeiro, Brazil","latLng":["22.57","43.12"]},
+    {"name":"Rome, Italy","latLng":["41.54","12.27"]},
+    {"name":"Salvador, Brazil","latLng":["12.56","38.27"]},
+    {"name":"Santiago, Chile","latLng":["33.28","70.45"]},
+    {"name":"St. Petersburg, Russia","latLng":["59.56","30.18"]},
+    {"name":"São Paulo, Brazil","latLng":["23.31","46.31"]},
+    {"name":"Shanghai, China","latLng":["31.10","121.28"]},
+    {"name":"Singapore, Singapore","latLng":["1.14","103.55"]},
+    {"name":"Sofia, Bulgaria","latLng":["42.40","23.20"]},
+    {"name":"Stockholm, Sweden","latLng":["59.17","18.3"]},
+    {"name":"Sydney, Australia","latLng":["34.0","151.0"]},
+    {"name":"Tananarive, Madagascar","latLng":["18.50","47.33"]},
+    {"name":"Teheran, Iran","latLng":["35.45","51.45"]},
+    {"name":"Tokyo, Japan","latLng":["35.40","139.45"]},
+    {"name":"Tripoli, Libya","latLng":["32.57","13.12"]},
+    {"name":"Venice, Italy","latLng":["45.26","12.20"]},
+    {"name":"Veracruz, Mexico","latLng":["19.10","96.10"]},
+    {"name":"Vienna, Austria","latLng":["48.14","16.20"]},
+    {"name":"Vladivostok, Russia","latLng":["43.10","132.0"]},
+    {"name":"Warsaw, Poland","latLng":["52.14","21.0"]},
+    {"name":"Wellington, New Zealand","latLng":["41.17","174.47"]},
+    {"name":"Zürich, Switzerland","latLng":["47.21","8.31"]}
+  ]
+});
+</script>
+</polymer-element>

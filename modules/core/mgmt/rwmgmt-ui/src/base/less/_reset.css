@@ -1,0 +1,239 @@
+/*------------------------------------*\
+   RESET.LESS
+\*------------------------------------*/
+/**
+ * DESCRIPTION
+ * Original code borrowed from Eric Meyer and the Normalize.css project with some
+ * slight modification from those projects.
+ *
+ * SOURCE
+ * https://github.com/necolas/normalize.css/blob/master/normalize.css &
+ * http://meyerweb.com/eric/tools/css/reset/index.html
+*/
+/*------------------------------------*\
+    #RESET
+\*------------------------------------*/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+/* Is there really a need for the blockquote and q tag? Commented out for now. */
+/*blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* Added in a reset for box sizing */
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/*------------------------------------*\
+    #NORMALIZE
+\*------------------------------------*/
+a:link,
+a:visited,
+a:hover,
+a:active a:focus {
+  backgound-color: transparent;
+  outline: none;
+}
+/* Prevents modern browsers from displaying 'audio' without controls */
+audio:not([controls]) {
+  display: none;
+}
+html {
+  font-size: 100%;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+/* Prevents sub and sup affecting line-height in all browsers */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+/* IMG border in A tags and image quality */
+img {
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+/* Font size in all browsers, margin changes, misc consistency */
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+  vertical-align: baseline;
+  *vertical-align: middle;
+}
+button,
+input {
+  line-height: normal;
+  *overflow: visible;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  cursor: pointer;
+  -webkit-appearance: button;
+}
+/* Appearance in Safari/Chrome */
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+/* Inner-padding issues in Chrome OSX, Safari */
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+/* Correct overflow not hidden in IE 9/10/11 */
+svg:not(:root) {
+  overflow: hidden;
+}
+/**/
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}

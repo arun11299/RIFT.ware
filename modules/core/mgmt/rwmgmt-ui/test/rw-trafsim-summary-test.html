@@ -1,0 +1,45 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-trafsim-model.html">
+<link rel="import" href="../integration/ridgets/rw-trafsim-summary.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+  <template>
+    <rw-trafsim-model id="model" on-update="{{testUpdate}}"></rw-trafsim-model>
+    <rw-trafsim-summary id="test0"
+                        trafsim="{{$.model.trafsims[0]}}"
+            ></rw-trafsim-summary>
+  </template>
+  <script>
+    rw.api.setOffline('large');
+    Polymer({
+      started: true,
+      rate: 50000,
+
+      created: function() {
+        rw.demo.controlPanelDiameter = this;
+      },
+
+      testUpdate: function() {
+        if (this.done) {
+          return;
+        }
+        this.done = 'true';
+        var test0 = this.$.test0;
+        suite('model', function() {
+          test('attached', function() {
+            console.log('asserting');
+          });
+        });
+        htmlTestRunner(mocha.run());
+      }
+    });
+  </script>
+</polymer-element>
+
+<div class="viewport__body">
+  <div id="mocha"></div>
+  <my-test></my-test>
+</div>

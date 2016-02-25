@@ -1,0 +1,203 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// create-fleet.less
+//
+// Styles for create fleet screen
+//
+.create-fleet {
+  &-header {
+    color: @brand-blue;
+    display: inline-block;
+    margin: 0 0 20px 24px;
+    position: relative;
+    img {
+      position: absolute;
+        right: -24px;
+        bottom: 0;
+      width: 16px;
+    }
+  }
+  &-services,
+  &-pool {
+    background-color: @gray-lighter;
+  }
+  > .flex-row {
+    justify-content: space-around;
+    > li {
+      flex: 0 1 30%;
+      h3 {
+        background-color: @white;
+        padding: 12px 18px;
+        text-transform: uppercase;
+      }
+    }
+  }
+  .list {
+    &-fleet-services {
+      flex-wrap: wrap;
+      text-align: center;
+      margin: 24px auto;
+      width: 90%;
+      a {
+        background-color: @white;
+        flex: 0 1 32%;
+        margin: 0 4px 4px 0;
+        padding: 4px;
+        .has-drop-shadow;
+        h5 {
+          font-size: 10px;
+          margin: 5px 0 0 5px;
+          text-align: left;
+        }
+        img {
+          margin-top: 10px;
+          width: 70%;
+        }
+      }
+    }
+    &-pools {
+      padding: 24px;
+      li {
+        a {
+          background-color: @white;
+          display: block;
+          font-size: 12px;
+          margin-bottom: 24px;
+          padding: 12px;
+          text-align: center;
+          .has-drop-shadow;
+        }
+        h4 {
+          text-align: left;
+        }
+        img {
+          margin-top: 24px;
+          width: 65%;
+        }
+      }
+    }
+  }
+  .parameter-controls {
+    background-color: @gray-lighter;
+    padding: 18px 0 18px 24px;
+    .clearfix;
+    &.epa {
+      label {
+        display: block;
+        float: left;
+        margin: 6px 0 0;
+      }
+      .slider-toggle {
+        width: 100%;
+      }
+      .slider-toggle-track {
+        float: right;
+        margin-right: 27px;
+        width: 43%;
+      }
+      .slider-toggle-option {
+        color: @gray-darkest;
+      }
+    }
+    &.vmf {
+      li {
+        .clearfix;
+        font-size: 13px;
+        margin-bottom: 12px;
+      }
+      label {
+        display: block;
+        float: left;
+        padding: 10px 0 6px;
+        text-transform: uppercase;
+      }
+      .step-control {
+        background-color: @white;
+        color: @brand-blue-light;
+        float: right;
+        margin-right: 27px;
+        padding: 10px 0 6px;
+        text-align: center;
+        width: 175px;
+        .step {
+          font-size: 16px;
+          height: 31px;
+          width: 31px;
+          .flex-center;
+          &.decrease {
+            background-color: @gray;
+            border-right: 2px solid @gray-lighter;
+            color: @gray-darker;
+          }
+          &.increase {
+            background-color: @white;
+            border-left: 2px solid @gray-lighter;
+            color: @gray-darkest;
+            .has-drop-shadow;
+          }
+        }
+      }
+    }
+  }
+  .adv-toggle {
+    h4 {
+      background-color: @white;
+      color: @gray-darkest;
+    }
+  }
+  &-params {
+    h4 {
+      background-color: @brand-blue;
+      color: @white;
+      font-size: 12px;
+      padding: 6px 22px;
+      position: relative;
+      text-transform: uppercase;
+      .has-drop-shadow;
+      i {
+        font-size: 18px;
+        position: absolute;
+          right: 12px;
+          top: 6px;
+      }
+    }
+  }
+  &-actions {
+    clear: both;
+    margin-top: 36px;
+    text-align: center;
+    a {
+      color: @black;
+      display: inline-block;
+      font-size: 12px;
+      padding: 8px 64px;
+      text-decoration: none;
+      text-transform: uppercase;
+      .has-drop-shadow;
+      &.save {
+        background-color: @white;
+        border: 1px solid @gray;
+        border-top: 0;
+        cursor: pointer;
+        margin-right: 48px;
+      }
+      &.launch {
+        background-color: @gray-darkest;
+        border: 1px solid @black;
+        border-top: 0;
+        color: @white;
+        &:hover,
+        &:active {
+          background: @brand-blue;
+          color: @white;
+        }
+      }
+    }
+  }
+}

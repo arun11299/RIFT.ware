@@ -1,0 +1,172 @@
+# French translation for libpeas.
+# Copyright (C) 2010-2014 Listed translators
+# This file is distributed under the same license as the libpeas package.
+# Nicolas Repentin <nicolas.repentin@gmail.com>, 2010.
+# Claude Paroz <claude@2xlibre.net>, 2010-2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: libpeas master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=libpeas&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2014-08-29 21:42+0000\n"
+"PO-Revision-Date: 2014-08-30 11:19+0200\n"
+"Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
+"Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:1
+msgid "Plugin Manager"
+msgstr "Gestionnaire de greffons"
+
+#. Translators: What PeasGtkPluginManagerView to use
+#: ../data/glade/libpeas-gtk.xml.in.h:3
+msgid "View"
+msgstr "Affichage"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:4
+msgid "Plugin Manager View"
+msgstr "Affichage du gestionnaire de greffons"
+
+#. Translators: Whether builtin plugins should appear in the view (property name)
+#: ../data/glade/libpeas-gtk.xml.in.h:6
+msgid "Show Builtin"
+msgstr "Afficher greffons internes"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:7
+msgid "Peas Gtk"
+msgstr "Peas Gtk"
+
+#: ../libpeas/peas-engine.c:856
+#, c-format
+msgid "Dependency '%s' was not found"
+msgstr "Dépendance « %s » introuvable"
+
+#: ../libpeas/peas-engine.c:866
+#, c-format
+msgid "Dependency '%s' failed to load"
+msgstr "La dépendance « %s » n'a pas pu être chargée"
+
+#: ../libpeas/peas-engine.c:880
+#, c-format
+msgid "Plugin loader '%s' was not found"
+msgstr "Le chargeur de greffon « %s » n'a pas été trouvé"
+
+#: ../libpeas/peas-engine.c:892
+#, c-format
+msgid "Failed to load"
+msgstr "Échec de chargement"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:91
+msgid "Additional plugins must be disabled"
+msgstr "Des greffons supplémentaires doivent être désactivés"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:98
+#, c-format
+msgid "The following plugins depend on '%s' and will also be disabled:"
+msgstr "Les greffons suivants dépendent de « %s » et seront aussi désactivés :"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:140
+msgid "Plugins"
+msgstr "Greffons"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:156
+msgid "An additional plugin must be disabled"
+msgstr "Un greffon supplémentaire doit être désactivé"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:163
+#, c-format
+msgid ""
+"The '%s' plugin depends on the '%s' plugin.\n"
+"If you disable '%s', '%s' will also be disabled."
+msgstr ""
+"Le greffon « %s » dépend du greffon « %s ».\n"
+"Si vous désactivez « %s », « %s » sera également désactivé."
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:181
+msgid "_Cancel"
+msgstr "_Annuler"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:183
+msgid "Disable Plugins"
+msgstr "Désactiver les greffons"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:187
+msgid "There was an error displaying the help."
+msgstr "Une erreur s'est produite durant l'affichage de l'aide."
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:244
+msgid "_Close"
+msgstr "_Fermer"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:256
+msgid "_Help"
+msgstr "Aid_e"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:323
+msgid "Pr_eferences"
+msgstr "P_références"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:328
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:382
+msgid "_About"
+msgstr "À _propos"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:390
+msgid "_Preferences"
+msgstr "_Préférences"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:334
+msgid "_Enabled"
+msgstr "_Activé"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:345
+msgid "E_nable All"
+msgstr "_Tout activer"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:349
+msgid "_Disable All"
+msgstr "Tout _désactiver"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:509
+msgid "Enabled"
+msgstr "Activé"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:530
+msgid "Plugin"
+msgstr "Greffon"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:615
+#, c-format
+msgid ""
+"<b>The plugin '%s' could not be loaded</b>\n"
+"An error occurred: %s"
+msgstr ""
+"<b>Le greffon « %s » n'a pas pu être chargé</b>\n"
+"Une erreur s'est produite : %s"
+
+#. Translators: The directory in which the demo program was compiled at
+#: ../peas-demo/peas-demo.c:41
+msgid "Run from build directory"
+msgstr "Lancer à partir du répertoire de compilation"
+
+#: ../peas-demo/peas-demo.c:83
+msgid "_Quit"
+msgstr "_Quitter"
+
+#: ../peas-demo/peas-demo.c:99
+msgid "- libpeas demo application"
+msgstr "- application démo libpeas"
+
+#~ msgid "C_onfigure"
+#~ msgstr "C_onfigurer"
+
+#~ msgid "_Plugins:"
+#~ msgstr "_Greffons :"
+
+#~ msgid "A_ctivate"
+#~ msgstr "A_ctiver"

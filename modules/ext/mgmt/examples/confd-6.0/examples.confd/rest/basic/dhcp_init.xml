@@ -1,0 +1,44 @@
+<dhcp xmlns="http://yang-central.org/ns/example/dhcp">
+  <max-lease-time>7200</max-lease-time>
+  <default-lease-time>600</default-lease-time>
+
+  <subnet>
+    <net>10.254.239.0/27</net>
+    <range>
+      <dynamic-bootp/>
+      <low>10.254.239.10</low>
+      <high>10.254.239.20</high>
+    </range>
+    <dhcp-options>
+      <router>rtr-239-0-1.example.org</router>
+      <router>rtr-239-0-2.example.org</router>
+    </dhcp-options>
+    <max-lease-time>1200</max-lease-time>
+  </subnet>
+
+  <shared-networks>
+    <shared-network>
+      <name>224-29</name>
+      <subnet>
+        <net>10.17.224.0/24</net>
+        <range>
+          <low>10.17.224.10</low>
+          <high>10.17.224.250</high>
+        </range>
+        <dhcp-options>
+          <router>rtr-224.example.org</router>
+        </dhcp-options>
+      </subnet>
+      <subnet>
+        <net>10.0.29.0/24</net>
+        <range>
+          <low>10.0.29.10</low>
+          <high>10.0.29.230</high>
+          </range>
+          <dhcp-options>
+            <router>rtr-29.example.org</router>
+          </dhcp-options>
+      </subnet>
+    </shared-network>
+  </shared-networks>
+</dhcp>

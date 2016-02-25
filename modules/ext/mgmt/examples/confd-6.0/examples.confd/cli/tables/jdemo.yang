@@ -1,0 +1,44 @@
+module jdemo {
+  namespace "http://tail-f.com/ns/example/jdemo";
+  prefix jdemo;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  container arp {
+    config false;
+    tailf:callpoint jarp_data {
+    }
+    list arpe {
+      key "ip ifname";
+      max-elements 1024;
+      leaf ip {
+        tailf:display-column-name "Address";
+        type inet:ip-address;
+      }
+      leaf ifname {
+        tailf:display-column-name "Interface";
+        type string;
+      }
+      leaf hwaddr {
+        tailf:display-column-name "HW Address";
+        type string;
+        mandatory true;
+      }
+      leaf permanent {
+        tailf:display-column-name "Permanent";
+        type boolean;
+        mandatory true;
+      }
+      leaf published {
+        tailf:display-column-name "Published";
+        type boolean;
+        mandatory true;
+      }
+    }
+  }
+}

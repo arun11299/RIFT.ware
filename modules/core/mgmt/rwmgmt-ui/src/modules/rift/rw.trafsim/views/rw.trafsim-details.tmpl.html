@@ -1,0 +1,72 @@
+<div>
+  <div class="row details">
+    <div id="controls" class="col" style="display: {{trafsimDetails.trafsim.isClient ? 'block':'none'}}">
+      <h2 class="etched-bottom">Controls</h2>
+      <div class="row details">
+        <div>
+          <trafsim-control
+              orientation="horizontal"
+              id="control"
+              ></trafsim-control>
+          <rw-trafsim-controller id="trafsimController"
+             colony="trafsimDetails.trafsim.colonyId"
+             service="trafsimDetails.trafsim"
+             ></rw-trafsim-controller>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row details">
+    <div id="traffic" class="col">
+      <h2>Traffic</h2>
+      <table class="datagrid">
+        <thead>
+        <tr>
+          <th>Current Calls</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th>TX Calls/s</th>
+          <td>{{trafsimDetails.trafsim.total_calls}}</td>
+        </tr>
+        <tr>
+          <th>TX Messages/s</th>
+          <td>{{trafsimDetails.trafsim.tx_msg_per_sec}}</td>
+        </tr>
+        </tbody>
+        <thead>
+        <tr>
+          <th>Total Calls</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th>Successful</th>
+          <td>{{trafsimDetails.trafsim.cumulative.successful_calls || 0}}</td>
+        </tr>
+        <tr>
+          <th>Failed</th>
+          <td>{{trafsimDetails.trafsim.cumulative.failed_calls || 0}}</td>
+        </tr>
+        <tr>
+          <th>Refused</th>
+          <td>{{trafsimDetails.trafsim.cumulative.refused_calls || 0}}</td>
+        </tr>
+        <tr>
+          <th>Aborted</th>
+          <td>{{trafsimDetails.trafsim.cumulative.aborted_calls || 0}}</td>
+        </tr>
+        <tr>
+          <th>Timed Out</th>
+          <td>{{trafsimDetails.trafsim.cumulative.timedout_calls || 0}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="bar" class="col trafsim-barGraph-Container">
+      <h2>Message Response Time</h2>
+      <rw-bargraph class="trafsim-barGraph" values="trafsimDetails.values"></rw-bargraph>
+    </div>
+  </div>
+</div>

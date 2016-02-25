@@ -1,0 +1,50 @@
+module range {
+    namespace "http://tail-f.com/ns/example/range";
+    prefix range;
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+    import tailf-common {
+        prefix tailf;
+    }
+
+    typedef interface-type {
+        type string {
+            pattern "((FastEthernet)|(GigaEthernet))/[0-9]+";
+        }
+    }
+    typedef ifs-range-type {
+        type string {
+            pattern "((FastEthernet)|(GigaEthernet))/[0-9]+-((FastEthernet)|(GigaEthernet))/[0-9]+";
+        }
+    }
+
+    list interface {
+        tailf:cli-custom-range-actionpoint "ifs-range" {
+            tailf:cli-completion-id idd;
+        }
+        tailf:cli-custom-range-enumerator "ifs-enum" {
+            tailf:cli-completion-id ide;
+        }
+        key name;
+        max-elements 64;
+        leaf name {
+            type interface-type;
+            tailf:cli-custom-range {
+                tailf:cli-range-type "ifs-range-type";
+            }
+        }
+        leaf ip {
+            type inet:ip-address;
+            mandatory false;
+        }
+        leaf mtu {
+            type int32;
+            mandatory true;
+        }
+        leaf description {
+            type string;
+        }
+    }
+}

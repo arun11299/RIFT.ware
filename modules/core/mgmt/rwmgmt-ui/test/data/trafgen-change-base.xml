@@ -1,0 +1,7 @@
+<?xml version= "1.0" encoding="UTF-8"?>
+<config:config xmlns:config="http://riftio.com/ns/riftware-1.0/rw-base">
+  <rwfpath:trafgen xmlns:rwfpath="http://riftio.com/ns/riftware-1.0/rw-fpath">
+    <rwfpath:transmit-param>
+    </rwfpath:transmit-param>
+  </rwfpath:trafgen>
+</config:config>

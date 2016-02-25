@@ -1,0 +1,36 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// states.less
+//
+// Styles for state handling
+//
+// TODO refactor, get rid of all the !importants
+//
+.active {
+  background-color: @brand-blue !important;
+  border-color: @brand-blue !important;
+  color: @white !important;
+}
+.active-text {
+  color: @brand-blue !important;
+}
+.status-clear {
+  background: @brand-green-light !important;
+  color: @white;
+  &-text {
+    color: @brand-green-light;
+  }
+}
+.status-info {
+  background: @brand-blue-light !important;
+  color: @white;
+  &-text {
+    color: @brand-blue-light;
+  }
+}

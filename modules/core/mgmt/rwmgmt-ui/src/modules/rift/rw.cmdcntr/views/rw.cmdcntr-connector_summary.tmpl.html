@@ -1,0 +1,65 @@
+<div>
+  <div class="rate-stack">
+    <div class="rate-label">TX</div>
+    <div class="rate-result">
+      {{connector.tx_rate_mbps | bits}} ({{connector.tx_percent}}%)
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="100"
+            marker="{{rate}}"
+            bullet-color="{{theme.rxBps}}"
+            value="{{connector.tx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{connector.tx_rate_pps | fmt:'0a' | uppercase}}pps
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{connector.speed * 1000000 | bpsAsPps}}"
+            bullet-color="{{theme.txPps}}"
+            value="{{connector.tx_rate_pps}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | mbpsAsPps}}pps</div>
+    </div>
+  </div>
+  <div class="rate-stack">
+    <div class="rate-label">RX</div>
+    <div class="rate-result">
+      {{connector.rx_rate_mbps | bits}} ({{connector.rx_percent}}%)
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="100"
+            bullet-color="{{theme.rxBps}}"
+            value="{{connector.rx_percent}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | bits}}</div>
+    </div>
+    <div class="rate-result">
+      {{connector.rx_rate_pps | fmt:'0a' | uppercase}}pps
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{connector.speed * 1000000 | bpsAsPps}}"
+            bullet-color="{{theme.rxPps}}"
+            value="{{connector.rx_rate_pps}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{connector.speed | mbpsAsPps}}pps</div>
+    </div>
+  </div>
+</div>

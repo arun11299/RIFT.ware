@@ -1,0 +1,44 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwuagent-cli-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-mgmtagt-annotation";
+  prefix "rw-uagent-ann";
+
+
+  import rw-mgmtagt
+  {
+    prefix rw-mgmtagt;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  tailf:annotate "/rw-mgmtagt:mgmt-agent" {
+    tailf:actionpoint mgmt_agent_rpc;
+  }
+
+  tailf:annotate "/rw-mgmtagt:show-system-info" {
+    tailf:actionpoint mgmt_agent_rpc;
+  }
+
+  tailf:annotate "/rw-mgmtagt:show-agent-logs" {
+    tailf:actionpoint mgmt_agent_rpc;
+  }
+
+  tailf:annotate "/rw-mgmtagt:uagent/rw-mgmtagt:state" {
+    tailf:callpoint mgmt_agent_show;
+  }
+
+  tailf:annotate "/rw-mgmtagt:uagent/rw-mgmtagt:confd" {
+    tailf:callpoint mgmt_agent_show;
+  }
+
+}

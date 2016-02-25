@@ -1,0 +1,119 @@
+<script src="js/gauge.js"></script>
+
+<!--
+  <img src="rw-gauge.png"/>
+
+  @class rw-gauge
+-->
+
+<!--
+  @attribute {num} size Default 300
+  @attribute {num} color hsla(212, 57%, 50%, 1)
+  @attribute {num} nSteps Default: 10
+  @attribute {num} min Default: 0
+  @attribute {num} max Default: 100
+  @attribute {num} value set this over time.
+-->
+<polymer-element name="rw-gauge" attributes="min max size color value resize isAggregate">
+<template>
+  <canvas id="speedo"></canvas>
+</template>
+<script>
+Polymer({
+  
+  created: function() {
+    this.min = 0;
+    this.max = 100;
+    this.nSteps = 10;
+    this.size = 300;
+    this.color = 'hsla(212, 57%, 50%, 1)';
+    this.valueFormat = { "int": 1, "dec": 0 };
+    this.isAggregate = false;
+    this.resize = false;
+  },
+
+  attached: function() {
+    if(this.format == 'percent'){
+      this.valueFormat = { "int": 3, "dec": 0 };
+    }
+    this.renderGauge();
+  },
+
+  maxChanged: function() {
+    if (this.max) {
+      this.renderGauge();
+    }
+  },
+
+  renderGauge: function(calcWidth) {
+    var self = this;
+    if(this.max == this.min){
+      this.max = 100;
+    }
+    var range = this.max - this.min;
+    var step = Math.round(range / this.nSteps);
+    var majorTicks = [];
+    for (var i = 0; i <= this.nSteps; i++) {
+      majorTicks.push(this.min + (i * step));
+    };
+    var redLine = this.min + (range * 0.9);
+    var config = {
+      isAggregate : this.isAggregate,
+      renderTo    : this.$.speedo,
+      width       : calcWidth || this.size,
+      height      : calcWidth || this.size,
+      glow        : true,
+      units       : false,
+      title       : false,
+      minValue    : this.min,
+      maxValue    : this.max,
+      majorTicks  : majorTicks,
+      valueFormat : this.valueFormat,
+      minorTicks  : 5,
+      strokeTicks : false,
+      highlights  : [{ 
+        from    : this.min,
+        to      : redLine, 
+        color   : this.color
+      },{ 
+        from    : redLine,
+        to      : this.max,
+        color   : 'hsla(8, 59%, 46%, 1)' 
+      }],
+      colors      : {
+        plate      : '#3b3b3b',
+        majorTicks : '#ccc',
+        minorTicks : '#ccc',
+        title      : '#ccc',
+        units      : '#fff',
+        numbers    : '#fff',
+        needle     : { 
+          start : 'hsla(8, 59%, 46%, 1)', 
+          end   : 'hsla(8, 59%, 46%, 1)' 
+        }
+      }
+    };
+    var updateSize = _.debounce(function(){
+      config.maxValue = self.max;
+      var clientWidth = self.parentNode.parentNode.clientWidth / 2;
+      var calcWidth = (300 > clientWidth) ? clientWidth : 300;
+      self.gauge.config.width =  self.gauge.config.height = calcWidth;
+      self.renderGauge(calcWidth);
+    }, 500);
+    if(this.resize)$(window).resize(updateSize)
+    if (this.gauge) {
+      this.gauge.updateConfig(config);
+    } else {
+      this.gauge = new Gauge(config);
+      this.gauge.draw();
+    }
+  },
+
+  valueChanged: function() {
+   if(this.gauge) {
+     this.gauge.setValue(this.value)
+   }
+  }
+});
+</script>
+<polymer-element>

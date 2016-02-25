@@ -1,0 +1,160 @@
+# Norwegian bokmål translation of libpeas.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the libpeas package.
+# Kjartan Maraas <kmaraas@gnome.org>, 2010-2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: libpeas\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-09-06 14:03+0200\n"
+"PO-Revision-Date: 2014-09-06 14:04+0200\n"
+"Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
+"Language-Team: Norwegian bokmål <i18n-nb@lister.ping.uio.no>\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:1
+msgid "Plugin Manager"
+msgstr "Tilleggshåndterer"
+
+#. Translators: What PeasGtkPluginManagerView to use
+#: ../data/glade/libpeas-gtk.xml.in.h:3
+msgid "View"
+msgstr "Vis"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:4
+msgid "Plugin Manager View"
+msgstr "Visning av tilleggshåndtering"
+
+#. Translators: Whether builtin plugins should appear in the view (property name)
+#: ../data/glade/libpeas-gtk.xml.in.h:6
+msgid "Show Builtin"
+msgstr "Vis innebyggede"
+
+#: ../data/glade/libpeas-gtk.xml.in.h:7
+msgid "Peas Gtk"
+msgstr "Peas Gtk"
+
+#: ../libpeas/peas-engine.c:856
+#, c-format
+msgid "Dependency '%s' was not found"
+msgstr "Avhengighet «%s» ble ikke funnet"
+
+#: ../libpeas/peas-engine.c:866
+#, c-format
+msgid "Dependency '%s' failed to load"
+msgstr "Avhengighet «%s» feilet ved lasting"
+
+#: ../libpeas/peas-engine.c:880
+#, c-format
+msgid "Plugin loader '%s' was not found"
+msgstr "Tilleggslaster «%s» ble ikke funnet"
+
+#: ../libpeas/peas-engine.c:892
+#, c-format
+msgid "Failed to load"
+msgstr "Feilet ved lasting"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:91
+msgid "Additional plugins must be disabled"
+msgstr "Flere tillegg må slås av"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:98
+#, c-format
+msgid "The following plugins depend on '%s' and will also be disabled:"
+msgstr "Følgende tilegg er avhengig av «%s» og vil også bli slått av:"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:140
+msgid "Plugins"
+msgstr "Tillegg"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:156
+msgid "An additional plugin must be disabled"
+msgstr "Flere tillegg må slås av"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:163
+#, c-format
+msgid ""
+"The '%s' plugin depends on the '%s' plugin.\n"
+"If you disable '%s', '%s' will also be disabled."
+msgstr ""
+"Tillegget «%s» er avhengig av tillegg «%s».\n"
+"Hvis du slår av «%s» vil «%s» også bli slått av."
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:181
+msgid "_Cancel"
+msgstr "A_vbryt"
+
+#: ../libpeas-gtk/peas-gtk-disable-plugins-dialog.c:183
+msgid "Disable Plugins"
+msgstr "Slå av tillegg"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:187
+msgid "There was an error displaying the help."
+msgstr "Det oppsto en feil under visning av hjelp."
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:244
+msgid "_Close"
+msgstr "_Lukk"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:256
+msgid "_Help"
+msgstr "_Hjelp"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:323
+msgid "Pr_eferences"
+msgstr "Bruk_ervalg"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:328
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:382
+msgid "_About"
+msgstr "_Om"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager.c:390
+msgid "_Preferences"
+msgstr "_Brukervalg"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:334
+msgid "_Enabled"
+msgstr "_Slått på"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:345
+msgid "E_nable All"
+msgstr "Slå på _alle"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:349
+msgid "_Disable All"
+msgstr "Slå a_v alle"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:509
+msgid "Enabled"
+msgstr "Aktivert"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:530
+msgid "Plugin"
+msgstr "Tillegg"
+
+#: ../libpeas-gtk/peas-gtk-plugin-manager-view.c:615
+#, c-format
+msgid ""
+"<b>The plugin '%s' could not be loaded</b>\n"
+"An error occurred: %s"
+msgstr ""
+"<b>Tillegg «%s» kunne ikke lastes</b>\n"
+"En feil oppsto: %s"
+
+#. Translators: The directory in which the demo program was compiled at
+#: ../peas-demo/peas-demo.c:41
+msgid "Run from build directory"
+msgstr "Kjør fra byggkatalog"
+
+#: ../peas-demo/peas-demo.c:83
+msgid "_Quit"
+msgstr "A_vslutt"
+
+#: ../peas-demo/peas-demo.c:99
+msgid "- libpeas demo application"
+msgstr "- libpeas demoprogram"

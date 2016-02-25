@@ -1,0 +1,30 @@
+<html class="viewport" ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../vendor.js"></script>
+  <script src="../../modules/rift/rw.ui.browserify.js"></script>
+  <script src="../../modules/rift/rw.iot.browserify.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+</head>
+<body class="viewport" ng-controller="test">
+
+<div class="graph-container">
+  <iot-army-summary></iot-army-summary>
+  <iot-army-details></iot-army-details>
+  <iot-app-server-summary></iot-app-server-summary>
+  <iot-app-server-details></iot-app-server-details>
+</div>
+
+<script>
+  angular.module('test', ['uiModule', 'rw.iot'])
+      .controller('test', function($scope, $timeout) {
+      });
+</script>
+
+</body>
+</html>

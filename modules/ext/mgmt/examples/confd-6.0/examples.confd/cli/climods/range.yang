@@ -1,0 +1,159 @@
+module range {
+    namespace "http://tail-f.com/ns/example/range";
+    prefix range;
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import tailf-common {
+        prefix tailf;
+    }
+
+    typedef interface-type {
+        type string {
+            pattern "((FastEthernet-)|(GigaEthernet-))[0-9]+/[0-9]+/[0-9]+";
+        }
+    }
+
+    typedef xinterface-type {
+        type string {
+            pattern "((FastEthernet)|(GigaEthernet))/[0-9]+";
+        }
+    }
+
+    typedef yinterface-type {
+        type string {
+            pattern "((FastEthernet-)|(GigaEthernet-))[0-9]+/[0-9]+/[0-9]+\.[0-9]+";
+        }
+    }
+
+    typedef ifs-range-type {
+        type string {
+            pattern "((FastEthernet)|(GigaEthernet))/[0-9]+-((FastEthernet)|(GigaEthernet))/[0-9]+";
+        }
+    }
+
+    list server {
+        key name;
+        max-elements 64;
+        leaf name {
+            type int32;
+        }
+        leaf ip {
+            type inet:ip-address;
+            mandatory true;
+        }
+        leaf port {
+            type inet:port-number;
+            mandatory true;
+        }
+        leaf description {
+            type string;
+        }
+    }
+
+    list xinterface {
+        key name;
+        tailf:cli-custom-range-actionpoint "ifs-range" {
+            tailf:cli-completion-id idd;
+        }
+        max-elements 64;
+        leaf name {
+            tailf:cli-custom-range {
+                tailf:cli-range-type "ifs-range-type";
+            }
+            type xinterface-type;
+        }
+        leaf ip {
+            type inet:ip-address;
+            mandatory true;
+        }
+        leaf mtu {
+            type int32;
+            mandatory true;
+        }
+        leaf description {
+            type string;
+        }
+    }
+
+    list interface {
+        key name;
+        max-elements 64;
+        leaf name {
+            tailf:cli-allow-range;
+            type interface-type;
+        }
+        leaf ip {
+            type inet:ip-address;
+            mandatory true;
+        }
+        leaf mtu {
+            type int32;
+            mandatory true;
+        }
+        leaf description {
+            type string;
+        }
+        container statistics {
+            leaf rx-pkts {
+                type int32;
+                mandatory true;
+            }
+        }
+        tailf:action reset {
+            tailf:actionpoint reset-point;
+            input {
+                leaf mode {
+                    type string;
+                    mandatory true;
+                }
+                leaf debug {
+                    type empty;
+                }
+            }
+            output {
+                leaf time {
+                    type string;
+                    mandatory true;
+                }
+            }
+
+        }
+    }
+
+    list yinterface {
+        tailf:cli-range-delimiters "/.";
+        key name;
+        max-elements 64;
+        leaf name {
+            tailf:cli-allow-range;
+            type yinterface-type;
+        }
+        leaf ip {
+            type inet:ip-address;
+            mandatory true;
+        }
+        leaf mtu {
+            type int32;
+            mandatory true;
+        }
+        leaf description {
+            type string;
+        }
+        container statistics {
+            leaf rx-pkts {
+                type int32;
+                mandatory true;
+            }
+        }
+    }
+
+  leaf test {
+      tailf:cli-completion-actionpoint "generic-complete" {
+          tailf:cli-completion-id "path";
+      }
+      type string;
+  }
+}

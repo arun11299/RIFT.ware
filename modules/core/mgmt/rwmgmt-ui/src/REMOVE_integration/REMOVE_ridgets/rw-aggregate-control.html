@@ -1,0 +1,142 @@
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-slider.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  <img src="dashboard-control.png">
+
+  @class rw-dashboard-control
+-->
+
+<!--
+  @attribute started
+  @attribute rate 0-100
+  @attribute packetSize
+-->
+<polymer-element name="rw-aggregate-control" attributes="testModeEnabled hasTrafGen hasTrafSim">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-dashboard-control.css" />
+  <rw-iconset></rw-iconset>
+  <div id="controlPanel" class="form__v">
+    <div class="primaryButtons">
+      <span class="{{ {'button--is-on' : started} | tokenList}} button button__size--full" on-click="{{toggleStarted}}">
+        <span class="button__box">
+          <core-icon class="icon" icon="{{started ? 'rw-iconset:icon-power-on' : 'rw-iconset:icon-power-off'}}"></core-icon>
+          <span class="button__label">{{started ? 'Active' : 'Off'}}</span>
+        </span>
+      </span>
+    </div>
+    <div class="dash-label">
+      <label for="rate" class="form__item__label">Rate</label>
+    </div>
+    <div class="dash-slider">
+      <div class="dash-slider-start">0</div>
+      <rw-slider id="rateRange" name="rate" min="0" max="100" step="1" value="{{rate}}"></rw-slider>
+      <div class="dash-slider-end">100%</div>
+    </div>
+    <div class="dash-slider-value">
+      {{rate}}%
+    </div>
+  </div>
+</template>
+<script>
+Polymer(Platform.mixin({
+
+  created: function() {
+    rw.aggregateControlPanel = this;
+    var self = this;
+    this.rate = rw.trafgen.ratePerceived;  // simple guess, but right 1/2 the time and cause less flicker
+    this.tester = new rw.RateTimer(function(testRate) {
+        self.rate = testRate;
+      }, function() {
+        self.started = false;
+      }
+    );
+
+    // on very initial page load, we need to wait for server side to give us
+    // initial state
+    this.oneTimeSync(rw.trafgen, 'startedActual', this.syncStarted.bind(this));
+    this.oneTimeSync(rw.trafsim, 'startedActual', this.syncStarted.bind(this));
+    this.oneTimeSync(rw.trafgen, 'rateActual', this.syncRate.bind(this));
+    this.oneTimeSync(rw.trafsim, 'rateActual', this.syncRate.bind(this));
+  },
+
+  oneTimeSync : function(obj, path, f) {
+    var listener = new PathObserver(obj, path);
+    listener.open(function() {
+      f();
+      listener.close();
+    });
+  },
+
+  hasTrafSimChanged: function() {
+    if (typeof(this.hasTrafGen) == 'undefined') {
+      return;
+    }
+    this.syncStarted();
+    this.syncRate();
+  },
+
+  hasTrafGenChanged: function() {
+    if (typeof(this.hasTrafSim) == 'undefined') {
+      return;
+    }
+    this.syncStarted();
+    this.syncRate();
+  },
+
+  syncStarted: function() {
+    if (this.hasTrafSim && this.hasTrafGen) {
+      this.started = rw.trafsim.startedPerceived && rw.trafgen.startedPerceived;
+    } else if (this.hasTrafSim) {
+      this.started = rw.trafsim.startedPerceived;
+    } else if (this.hasTrafGen) {
+      this.started = rw.trafgen.startedPerceived;
+    }
+  },
+
+  syncRate: function() {
+    if (this.hasTrafGen) {
+      this.rate = rw.trafgen.ratePerceived;
+    } else if (this.hasTrafSim) {
+      this.rate = this.normalizeRate(rw.trafsim.ratePerceived);
+    }
+  },
+
+  normalizeRate: function(rate) {
+    return Math.min(100, Math.round((rate / rw.trafsim.maxRate) * 100));
+  },
+
+  testingChanged: function() {
+    if (this.testing) {
+      this.started = true;
+      this.tester.start();
+    } else {
+      this.tester.stop();
+    }
+  },
+
+  rateChanged: function() {
+    if (this.hasTrafSim) {
+      rw.trafsim.ratePerceived = Math.round((this.rate / 100) * rw.trafsim.maxRate);
+    }
+    if (this.hasTrafGen) {
+      rw.trafgen.ratePerceived = this.rate;
+    }
+  },
+
+  toggleStarted: function() {
+    this.started = ! this.started;
+  },
+
+  startedChanged: function() {
+    if (this.hasTrafGen) {
+      rw.trafgen.startedPerceived = this.started;
+    }
+    if (this.hasTrafSim) {
+      rw.trafsim.startedPerceived = this.started;
+    }
+  }
+}, rw.ui));
+</script>
+</polymer-element>

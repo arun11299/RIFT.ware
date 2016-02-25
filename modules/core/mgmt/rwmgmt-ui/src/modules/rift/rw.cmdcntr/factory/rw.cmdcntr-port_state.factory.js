@@ -1,0 +1,183 @@
+module.exports = angular.module('cmdcntr')
+  .factory('portStateFactory', ['radio', '$rootScope', '$q', function(radio, $rootScope, $q) {
+    var appChannel = radio.channel('appChannel');
+    return {
+      promise: null,
+      subscriptions : [],
+      colonies : [],
+      ports : {},
+
+      attached: function() {
+        if (this.promise) {
+          return this.promise;
+        }
+
+        var self = this;
+        var deferred = jQuery.Deferred();
+        var getData = rw.api.get('/api/running/colony?select=name', 'application/vnd.yang.collection+json');
+        getData.done(function(data) {
+          self.colonies = data.collection['rw-base:colony'].map(function(i) {
+              return i.name;
+            });
+           self.coloniesChanged();
+           deferred.resolve();
+        });
+
+        self.promise = deferred.promise();
+        return self.promise;
+      },
+
+      coloniesChanged: function() {
+        var self = this;
+        _.each(this.colonies, function(colony) {
+          var infoUrl = '/api/operational/colony/' + colony + '/port-state?select=portname;info(*)';
+          rw.api.get(infoUrl, 'application/vnd.yang.collection+json').
+            done(self.loadInfo.bind(self, colony));
+
+          var socket = new rw.api.SocketSubscriber('web/get');
+          var countersUrl = '/api/operational/colony/' + colony + '/port-state?select=portname;counters(*)';
+          var countersMeta = {
+            url : countersUrl,
+            accept: 'application/vnd.yang.collection+json'
+          };
+          socket.subscribeMeta(self.loadCounters.bind(self, colony), countersMeta, self.offlineCounters.bind(self, colony));
+          self.subscriptions.push(socket);
+        });
+      },
+
+      loadInfo: function(colony, data) {
+        var self = this;
+        self.t = new Date().getTime();
+        if (!data || !('collection' in data) || !('rw-ifmgr-data:port-state' in data.collection)) {
+          console.log('counter had no port info');
+          return;
+        }
+
+        _.each(data.collection['rw-ifmgr-data:port-state'], function(portInfo) {
+          var port = self.ports[portInfo.portname];
+          if (typeof(port) == 'undefined') {
+            port = {name: portInfo.portname};
+            self.ports[port.name] = portInfo.info;
+          }
+          self.loadPortStats.call(self, portInfo.info, port);
+        });
+
+        appChannel.trigger('port-state-update');
+      },
+
+      loadCounters: function(colony, data) {
+        var self = this;
+        self.t = new Date().getTime();
+        if (!data || !('collection' in data) || !('rw-ifmgr-data:port-state' in data.collection)) {
+          console.log('counter had no port counters');
+          return;
+        }
+
+        _.each(data.collection['rw-ifmgr-data:port-state'], function(portMetrics) {
+          var port = self.ports[portMetrics.portname];
+          if (typeof(port) == 'undefined') {
+            port = {name: portMetrics.portname};
+            self.ports[port.name] = portMetrics.counters;
+          }
+          self.loadCounterStats.call(self, portMetrics.counters, port);
+        });
+
+        appChannel.trigger('port-state-update');
+      },
+
+      loadPortStats: function(c, port) {
+        port.linkState = c['state'];
+        port.duplex = c['duplex'];
+        port.id = c['id'];
+        port.speed = parseInt(c['speed']);
+        this.elaboratePortStats(port);
+      },
+
+      loadCounterStats: function(c, port) {
+        port.rx_rate_pps = parseInt(c['rx-rate-pps']);
+        port.tx_rate_pps = parseInt(c['tx-rate-pps']);
+        port.rx_rate_mbps = parseInt(c['rx-rate-mbps']);
+        port.tx_rate_mbps = parseInt(c['tx-rate-mbps']);
+        port.input_errors = parseInt(c['input-errors']);
+        port.output_errors = parseInt(c['output-errors']);
+        port.input_packets = parseInt(c['input-packets']);
+        port.time = this.t;
+        this.elaboratePortStats(port);
+      },
+
+      elaboratePortStats: function(obj) {
+        if (!obj.speed || !('tx_rate_mbps' in obj)) {
+          return;
+        }
+        obj.tx_percent = (obj.tx_rate_mbps * 100 / obj.speed).toFixed(0);
+        obj.rx_percent = (obj.rx_rate_mbps * 100 / obj.speed).toFixed(0);
+        obj.speedString = this.bps(obj.speed);
+        obj.rxRateString = this.bps(obj.rx_rate_mbps * 1000);
+        obj.txRateString = this.bps(obj.tx_rate_mbps * 1000);
+        if (obj.rate) {
+          obj.targetSpeed = obj.speed * obj.rate / 100;
+          obj.targetSpeedString = this.bps(obj.targetSpeed) + ' (' + this.rate + '%)';
+        }
+
+        obj.outputErrorsString = isNaN(obj.output_errors) ? 'N/A' : numeral(obj.output_errors).format('0a').toUpperCase();
+        obj.inputErrorsString = isNaN(obj.input_errors) ? 'N/A' : numeral(obj.input_errors).format('0a').toUpperCase();
+      },
+
+      bps: function(n) {
+        return numeral(n).format('0a').toUpperCase() + 'bps';
+      },
+
+      populate: function(ports) {
+        var self = this;
+        _.each(ports, function(port) {
+          var metrics = self.ports[port.name];
+          if (typeof(metrics) != 'undefined') {
+            _.extend(port, metrics);
+          }
+        });
+      },
+
+      offlineCounters: function(colony, data) {
+        if (!this.ports || this.ports.length == 0) {
+          return;
+        }
+
+        if (_.size(this.ports) === 0) {
+          this.load(colony, data);
+        }
+
+        this.t = new Date().getTime();
+        var rate = rw.trafgen.ratePerceived;
+        if (rate == 0) {
+          rate = rw.trafsim.ratePerceived;
+        }
+        var ratePct = (rate / 100);
+        var packetSize = rw.trafgen.packetSize;
+
+        _.each(this.ports, function(port) {
+          port.rx_rate_pps = ratePct * 1000000 * port.speed / (8 * packetSize);
+          port.tx_rate_pps = ratePct * 1000000 * port.speed / (8 * packetSize);
+          port.rx_rate_mbps = ratePct * port.speed;
+          port.tx_rate_mbps = ratePct * port.speed;
+          port.input_errors += rate;
+          port.output_errors += rate;
+          port.input_packets += 100 * rate;
+          port.t = this.t;
+        });
+
+        appChannel.trigger('port-state-update');
+      },
+
+      unsubscribe: function() {
+        _.each(this.subscriptions, function(socket) {
+          socket.unsubscribe();
+        });
+        this.subscriptions.length = 0;
+      },
+
+      detached: function() {
+        this.unsubscribe();
+        this.promise = null;
+      }
+    }
+  }]);

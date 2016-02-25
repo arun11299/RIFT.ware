@@ -1,0 +1,21 @@
+module IP-MIB-ann {
+  namespace "urn:dummy";
+  prefix dummy;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import IP-MIB {
+    prefix x;
+  }
+
+  description
+    "Annotation module for the generated IP-MIB YANG module";
+
+  tailf:annotate "/x:IP-MIB/x:ipAddressTable" {
+    tailf:callpoint "ip-snmp" {
+      tailf:transform true;
+    }
+  }
+
+}

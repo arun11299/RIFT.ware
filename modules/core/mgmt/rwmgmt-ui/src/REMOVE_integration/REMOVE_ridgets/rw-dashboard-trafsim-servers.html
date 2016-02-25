@@ -1,0 +1,54 @@
+<link rel="import" href="rw-dashboard-control.html">
+<link rel="import" href="rw-trafgen-controller.html">
+<link rel="import" href="rw-gauge.html">
+<link rel="import" href="rw-scroll-graph.html">
+
+<polymer-element name="rw-dashboard-trafsim-servers" attributes="dialSize panelWidth trafsim">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-dashboard-traffic.css"/>
+    <rw-iconset></rw-iconset>
+    <div id="gauges" style="height:300px;" class="dashpanel">
+      <div class="gauge-group">
+        <h2>Kcalls/s</h2>
+        <rw-gauge
+                size="{{dialSize}}"
+                color="hsla(212, 57%, 50%, 1)"
+                value="{{trafsim.call_rate / 1000 | noNaN}}"
+                max="200"
+                ></rw-gauge>
+        <rw-scroll-graph
+                lineColor="#377cc8"
+                strokeColor="rgba(55,124,200,0.7)"
+                value="{{trafsim.call_rate / 1000 | noNaN}}"
+                width="{{panelWidth}}"
+                max="200"
+                paused="{{ ! rw.trafsim.startedPerceived }}"
+                ></rw-scroll-graph>
+      </div>
+      <div class="gauge-group">
+        <h2>Kmsgs/s</h2>
+        <rw-gauge
+                size="{{dialSize}}"
+                color="hsla(260, 35%, 50%, 1)"
+                value="{{trafsim.tx_msg_per_sec / 1000 | noNaN}}"
+                max="600"
+                ></rw-gauge>
+        <rw-scroll-graph
+                lineColor="hsla(260, 35%, 50%, 1)"
+                strokeColor="hsla(260, 35%, 50%, 0.7)"
+                value="{{trafsim.tx_msg_per_sec / 1000 | noNaN}}"
+                max="600"
+                min="0"
+                width="{{panelWidth}}"
+                paused="{{! rw.trafsim.startedPerceived}}"
+                ></rw-scroll-graph>
+      </div>
+    </div>
+  </template>
+  <script>
+Polymer(Platform.mixin({
+  rw: rw,
+  dialSize: 280
+}, rw.ui));
+  </script>
+</polymer-element>

@@ -1,0 +1,37 @@
+.rw-textarea{
+  -moz-appearance: none;
+  background-color: hsl(0, 0%, 100%);
+  border-color: hsl(0, 0%, 80%);
+  border-radius: 0;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.1) inset;
+  box-sizing: border-box;
+  color: hsla(0, 0%, 0%, 0.75);
+  display: block;
+  font-family: inherit;
+  font-size: 0.77778rem;
+  height: 2.05556rem;
+  margin: 0;
+  padding: 0.44444rem;
+  transition: border-color 0.15s linear 0s, background 0.15s linear 0s;
+  max-width: 100%;
+  min-height:50px;
+}
+.rw-textarea[data-state~="hovered"]{}
+.rw-textarea[data-state~="focused"]{
+  background: none repeat scroll 0 0 hsl(0, 0%, 98%);
+  border-color: hsl(0, 0%, 60%);
+  outline: medium none;
+}
+.rw-textarea[data-state~="disabled"]{
+  background-color: hsl(0, 0%, 87%);
+  cursor: default;
+}
+.rw-textarea[readonly]{
+  box-shadow:none;
+}
+.rw-textarea[rows]{
+  height:auto;
+}
+

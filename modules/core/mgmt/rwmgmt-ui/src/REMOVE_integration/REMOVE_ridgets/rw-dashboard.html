@@ -1,0 +1,74 @@
+<link rel="import" href="rw-services-model.html">
+<link rel="import" href="rw-vcs-model.html">
+<link rel="import" href="rw-fpath-model.html">
+<link rel="import" href="rw-trafsim-model.html">
+<link rel="import" href="rw-trafgen-model.html">
+
+<link rel="import" href="rw-dashboard-traffic.html">
+<link rel="import" href="rw-dashboard-cloud.html">
+<!--
+-->
+
+<polymer-element name="rw-dashboard">
+    <template>
+        <rw-services-model
+            id="vnf"
+            on-update="{{vnfUpdate}}"
+            ></rw-services-model>
+        <rw-vcs-model
+            id="vcs"
+            on-update="{{vcsUpdate}}"
+            ></rw-vcs-model>
+        <rw-trafsim-model
+            id="trafsims"
+            noCounters
+            noTimers
+            active="true"
+            ></rw-trafsim-model>
+        <rw-fpath-model
+            id="fpath"
+            ></rw-fpath-model>
+        <rw-trafgen-model
+              colonies="{{$.fpath.colonies}}"
+              id="trafgens"
+              ></rw-trafgen-model>
+        <link rel="stylesheet" type="text/css" href="rw-dashboard.css"/>
+        <div class="row" id="dash-aggr">
+            <div class="panel">
+                <div id="trafficPanel" class="panel__panel-header">
+                    <div class="panel__panel-header__panel-title">Aggregate I/O</div>
+                </div>
+                <rw-dashboard-traffic
+                    id="traffic"
+                    vnf="{{$.vnf}}"
+                    fpath="{{$.fpath}}"
+                    trafsims="{{$.trafsims}}"
+                    class="panel__panel-body"
+                    ></rw-dashboard-traffic>
+            </div>
+        </div>
+        <div class="row" id="dash-cloud">
+            <div class="panel">
+                <div id="cloudPanel" class="panel__panel-header">
+                    <div class="panel__panel-header__panel-title">Cloud</div>
+                </div>
+                <rw-dashboard-cloud
+                    id="cloud"
+                    vcs="{{$.vcs}}"
+                    fpath="{{$.fpath}}"
+                    class="panel__panel-body"
+                    ></rw-dashboard-cloud>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            vnfUpdate: function() {
+                new rw.FpathVnf(this.$.fpath, this.$.vnf.services);
+            },
+            vcsUpdate: function() {
+                new rw.FpathVcs(this.$.fpath, this.$.vcs.sector);
+            }
+        });
+    </script>
+<polymer-element>

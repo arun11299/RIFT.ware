@@ -1,0 +1,24 @@
+<div>
+  <div ng-if="(isObject || isArray) && ! isEmpty">
+    <span class="config-parent" ng-click="_toggleExpanded($event)">
+      <core-icon class="icon--small icon__expand-collapse" icon="rw-iconset:icon-{{expandIconClass}}"></core-icon>
+      <span class="config-label config-node">{{label}}</span>
+    </span>
+    <ul class="config-list" style="display:{{expandStyle}}">
+      <div ng-if="isObject" ng-repeat="key in keys_modified">
+        <li>
+          <rw-config-viewer label="{{key}}" config="config[key]"></rw-config-viewer>
+        </li>
+      </div>
+      <div ng-if="isArray" ng-repeat="(i, value) in config">
+        <li>
+          <rw-config-viewer label="[{{i}}]" config="value"></rw-config-viewer>
+        </li>
+      </div>
+    </ul>
+  </div>
+  <div ng-if="isPrimative">
+    <span class="config-label">{{label}} =</span>
+    <span class="config-value">{{config}}</span>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+#
+# rwmgmt-ui/lib
+#
+RIFT.mgmt, rwmgmt-ui/lib/angular, angularjs, MIT, https://github.com/angular/angular.js
+RIFT.mgmt, rwmgmt-ui/lib/angular-mocks, angularjs, MIT, https://github.com/angular/angular.js
+RIFT.mgmt, rwmgmt-ui/lib/angular-resource, angularjs, MIT, https://github.com/angular/angular.js
+RIFT.mgmt, rwmgmt-ui/lib/angular-ui-bootstrap-bower, angular-ui-bootstrap, MIT, https://github.com/angular-ui/bootstrap
+RIFT.mgmt, rwmgmt-ui/lib/angular-ui-codemirror, angular-ui-codemirror, MIT, https://github.com/angular-ui/ui-codemirror
+RIFT.mgmt, rwmgmt-ui/lib/angular-ui-router, angular-ui-router, MIT, https://github.com/angular-ui/ui-router
+#RIFT.mgmt, angular-recursion, angular-recursion, MIT, https://github.com/marklagendijk/angular-recursion
+RIFT.mgmt, rwmgmt-ui/lib/chai, chai, MIT, https://github.com/chaijs/chai
+RIFT.mgmt, rwmgmt-ui/lib/circliful, circliful, MIT, https://github.com/pguso/jquery-plugin-circliful
+RIFT.mgmt, rwmgmt-ui/lib/codemirror, codemirror, MIT, https://github.com/codemirror/CodeMirror/
+#
+# Polymer
+#
+RIFT.mgmt, rwmgmt-ui/lib/context-free-parser, context-free-parser, BSD, https://github.com/polymer/context-free-parser
+RIFT.mgmt, rwmgmt-ui/lib/core-a11y-keys, core-a11y-keys, BSD, https://github.com/Polymer/core-a11y-keys
+RIFT.mgmt, rwmgmt-ui/lib/core-ajax, core-ajax, BSD, https://github.com/Polymer/core-ajax
+RIFT.mgmt, rwmgmt-ui/lib/core-animation, core-animation, BSD, https://github.com/Polymer/core-animation
+RIFT.mgmt, rwmgmt-ui/lib/core-collapse, core-collapse, BSD, https://github.com/Polymer/core-collapse
+RIFT.mgmt, rwmgmt-ui/lib/core-component-page, core-component-page, BSD, https://github.com/Polymer/core-component-page
+RIFT.mgmt, rwmgmt-ui/lib/core-doc-viewer, core-doc-viewer, BSD, https://github.com/Polymer/core-doc-viewer
+RIFT.mgmt, rwmgmt-ui/lib/core-dropdown, core-dropdown, BSD, https://github.com/Polymer/core-dropdown
+RIFT.mgmt, rwmgmt-ui/lib/core-focusable, core-focusable, BSD, https://github.com/Polymer/core-focusable
+RIFT.mgmt, rwmgmt-ui/lib/core-header-panel, core-header-panel, BSD, https://github.com/Polymer/core-header-panel
+RIFT.mgmt, rwmgmt-ui/lib/core-icon, core-icon, BSD, https://github.com/Polymer/core-icon
+RIFT.mgmt, rwmgmt-ui/lib/core-iconset-svg, core-iconset-svg, BSD, https://github.com/Polymer/core-iconset-svg
+RIFT.mgmt, rwmgmt-ui/lib/core-input, core-input, BSD, https://github.com/Polymer/core-input
+RIFT.mgmt, rwmgmt-ui/lib/core-item, core-item, BSD, https://github.com/Polymer/core-item
+RIFT.mgmt, rwmgmt-ui/lib/core-media-query, core-media-query, BSD, https://github.com/Polymer/core-media-query
+RIFT.mgmt, rwmgmt-ui/lib/core-menu, core-menu, BSD, https://github.com/Polymer/core-menu
+RIFT.mgmt, rwmgmt-ui/lib/core-meta, core-meta, BSD, https://github.com/Polymer/core-meta
+RIFT.mgmt, rwmgmt-ui/lib/core-overlay, core-overlay, BSD, https://github.com/Polymer/core-overlay
+RIFT.mgmt, rwmgmt-ui/lib/core-pages, core-pages, BSD, https://github.com/Polymer/core-pages
+RIFT.mgmt, rwmgmt-ui/lib/core-resizable, core-resizable, BSD, https://github.com/Polymer/core-resizable
+RIFT.mgmt, rwmgmt-ui/lib/core-selection, core-selection, BSD, https://github.com/Polymer/core-selection
+RIFT.mgmt, rwmgmt-ui/lib/core-selector, core-selector, BSD, https://github.com/Polymer/core-selector
+RIFT.mgmt, rwmgmt-ui/lib/core-splitter, core-splitter, BSD, https://github.com/Polymer/core-splitter
+RIFT.mgmt, rwmgmt-ui/lib/core-style, core-style, BSD, https://github.com/Polymer/core-style
+RIFT.mgmt, rwmgmt-ui/lib/core-toolbar, core-toolbar, BSD, https://github.com/Polymer/core-toolbar
+RIFT.mgmt, rwmgmt-ui/lib/core-transition, core-transition, BSD, https://github.com/Polymer/core-transition
+RIFT.mgmt, rwmgmt-ui/lib/marked-element, marked-element, BSD, https://github.com/Polymer/marked-element
+RIFT.mgmt, rwmgmt-ui/lib/paper-dropdown, paper-dropdown, BSD, https://github.com/Polymer/paper-dropdown
+RIFT.mgmt, rwmgmt-ui/lib/paper-dropdown-menu, paper-dropdown-menu, BSD, https://github.com/Polymer/paper-dropdown-menu
+RIFT.mgmt, rwmgmt-ui/lib/paper-input, paper-input, BSD, https://github.com/Polymer/paper-input
+RIFT.mgmt, rwmgmt-ui/lib/paper-icon-button, paper-icon-button, BSD, https://github.com/Polymer/paper-icon-button
+RIFT.mgmt, rwmgmt-ui/lib/paper-item, paper-item, BSD, https://github.com/Polymer/paper-item
+RIFT.mgmt, rwmgmt-ui/lib/paper-ripple, paper-ripple, BSD, https://github.com/Polymer/paper-ripple
+RIFT.mgmt, rwmgmt-ui/lib/paper-shadow, paper-shadow, BSD, https://github.com/Polymer/paper-shadow
+RIFT.mgmt, rwmgmt-ui/lib/paper-tabs, paper-tabs, BSD, https://github.com/Polymer/paper-tabs
+RIFT.mgmt, rwmgmt-ui/lib/prettify-element, prettify-element, BSD, https://github.com/Polymer/prettify-element
+RIFT.mgmt, rwmgmt-ui/lib/web-component-tester, web-component-tester, BSD, https://github.com/Polymer/web-component-tester
+#RIFT.mgmt, rwmgmt-ui/lib/, , BSD, https://github.com/Polymer/
+# Elements
+RIFT.mgmt, rwmgmt-ui/lib/paper-button, paper-button, BSD, https://github.com/PolymerElements/paper-button
+#
+#
+#
+RIFT.mgmt, rwmgmt-ui/lib/d3, d3js, BSD-like, https://github.com/mbostock/d3
+RIFT.mgmt, rwmgmt-ui/lib/d3.chart, d3.chart, MIT, https://github.com/misoproject/d3.chart
+RIFT.mgmt, rwmgmt-ui/lib/flatiron-director, flatiron-director, BSD-like, https://github.com/flatiron/director
+RIFT.mgmt, rwmgmt-ui/lib/font-awesome, font-awesome, SIL OFL 1.1 and MIT License, https://github.com/FortAwesome/Font-Awesome
+RIFT.mgmt, rwmgmt-ui/lib/freewall, freewall, MIT, https://github.com/kombai/freewall
+RIFT.mgmt, rwmgmt-ui/lib/google-code-prettify, google-code-prettify, Apache 2.0, https://github.com/google/code-prettify
+RIFT.mgmt, rwmgmt-ui/lib/jquery, jquery, MIT-like, https://github.com/jquery/jquery
+RIFT.mgmt, rwmgmt-ui/lib/jsonpath, jsonpath, Apache 2.0, https://github.com/jayway/JsonPath
+RIFT.mgmt, rwmgmt-ui/lib/less, less, Apache 2.0, https://github.com/less/less.js
+RIFT.mgmt, rwmgmt-ui/lib/marked, marked, BSD, https://github.com/chjj/marked
+RIFT.mgmt, rwmgmt-ui/lib/mocha, mocha, MIT, https://github.com/mochajs/mocha
+RIFT.mgmt, rwmgmt-ui/lib/ng-websocket, ng-websocket, MIT, https://github.com/wilk/ng-websocket
+RIFT.mgmt, rwmgmt-ui/lib/mock-socket, mock-socket, MIT, https://github.com/thoov/mock-socket
+RIFT.mgmt, rwmgmt-ui/lib/nouislider, nouislider, WTFPL, https://github.com/leongersen/noUiSlider/
+RIFT.mgmt, rwmgmt-ui/lib/numeral, numeral, MIT-like, https://github.com/adamwdraper/Numeral-js
+RIFT.mgmt, rwmgmt-ui/lib/oclazyload, oclazyload, MIT, https://github.com/ocombe/ocLazyLoad
+RIFT.mgmt, rwmgmt-ui/lib/platform, platform, MIT-like, https://github.com/bestiejs/platform.js/
+RIFT.mgmt, rwmgmt-ui/lib/polymer, polymer, BSD, https://github.com/polymer/polymer
+RIFT.mgmt, rwmgmt-ui/lib/react, react, BSD, https://github.com/facebook/react
+RIFT.mgmt, rwmgmt-ui/lib/scriptjs, scriptjs, MIT, https://github.com/ded/script.js/
+RIFT.mgmt, rwmgmt-ui/lib/sinonjs, sinonjs, BSD, https://github.com/cjohansen/Sinon.JS
+RIFT.mgmt, rwmgmt-ui/lib/sizzle, sizzleJS, MIT, https://github.com/jquery/sizzle/
+RIFT.mgmt, rwmgmt-ui/lib/smoothie, smoothie, MIT, https://github.com/joewalnes/smoothie
+RIFT.mgmt, rwmgmt-ui/lib/socket.io-client, socket.io-client, MIT, https://github.com/automattic/socket.io-client
+RIFT.mgmt, rwmgmt-ui/lib/sparkline, sparkline, BSD, http://omnipotent.net/jquery.sparkline/#s-about
+RIFT.mgmt, rwmgmt-ui/lib/svg4everybody, svg4everybody, CC0 1.0, https://github.com/jonathantneal/svg4everybody
+RIFT.mgmt, rwmgmt-ui/lib/underscore, underscore, MIT-like, https://github.com/jashkenas/underscore
+RIFT.mgmt, rwmgmt-ui/lib/web-animations-js, web-animations-js, Apache 2.0, https://github.com/web-animations/web-animations-js
+RIFT.mgmt, rwmgmt-ui/lib/webcomponentsjs, webcomponentsjs, BSD, https://github.com/webcomponents/webcomponentsjs
+#
+# rwmgmt-ui/node_modules
+#
+RIFT.mgmt, rwmgmt-ui/node_modules/angular-mocks, angularjs, MIT, https://github.com/angular/angular.js
+RIFT.mgmt, rwmgmt-ui/node_modules/backbone-events-standalone, backbone-events-standalone, MIT, https://github.com/n1k0/backbone-events-standalone
+RIFT.mgmt, rwmgmt-ui/node_modules/backbone.radio, backbone.radio, MIT, https://github.com/marionettejs/backbone.radio
+RIFT.mgmt, rwmgmt-ui/node_modules/browserify, browserify, BSD-like, https://github.com/substack/node-browserify
+RIFT.mgmt, rwmgmt-ui/node_modules/browserify-shim, browserify-shim, BSD-like, https://github.com/thlorenz/browserify-shim
+RIFT.mgmt, rwmgmt-ui/node_modules/cheerio, cheerio, MIT, https://github.com/cheeriojs/cheerio
+RIFT.mgmt, rwmgmt-ui/node_modules/del, del, MIT, https://github.com/sindresorhus/del
+RIFT.mgmt, rwmgmt-ui/node_modules/es5-shim, es5-shim, MIT, https://github.com/es-shims/es5-shim
+RIFT.mgmt, rwmgmt-ui/node_modules/event-stream, event-stream, BSD-like, https://github.com/dominictarr/event-stream
+RIFT.mgmt, rwmgmt-ui/node_modules/grunt, grunt, MIT, https://github.com/gruntjs/grunt
+RIFT.mgmt, rwmgmt-ui/node_modules/grunt-svgstore, grunt-svgstore, MIT, https://github.com/FWeinb/grunt-svgstore
+RIFT.mgmt, rwmgmt-ui/node_modules/grunt-wiredep, grunt-wiredep, MIT, https://github.com/stephenplusplus/grunt-wiredep
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp, gulp, MIT, https://github.com/gulpjs/gulp
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-changed, gulp-changed, MIT, https://github.com/sindresorhus/gulp-changed
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-cheerio, gulp-cheerio, MIT, https://github.com/KenPowers/gulp-cheerio
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-concat, gulp-concat, MIT-like, https://github.com/wearefractal/gulp-concat
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-concat-sourcemap, gulp-concat-sourcemap, MIT, https://github.com/mikach/gulp-concat-sourcemap
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-connect, gulp-connect, MIT-like, https://github.com/avevlad/gulp-connect
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-doxx, gulp-doxx, MIT, https://github.com/filipovskii/gulp-doxx
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-inject, gulp-inject, MIT, https://github.com/klei/gulp-inject
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-jsdoc, gulp-jsdoc, MIT, https://github.com/jsBoot/gulp-jsdoc
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-less, gulp-less, MIT, https://github.com/plus3network/gulp-less
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-minify-css, gulp-minify-css, MIT, https://github.com/jonathanepollack/gulp-minify-css
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-plumber, gulp-plumber, MIT, https://github.com/floatdrop/gulp-plumber
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-react, gulp-react, MIT, https://github.com/sindresorhus/gulp-react
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-rename, gulp-rename, MIT, https://github.com/hparra/gulp-rename
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-sourcemaps, gulp-sourcemaps, ISC, https://github.com/floridoo/gulp-sourcemaps
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-svgstore, gulp-svgstore, MIT, https://github.com/w0rm/gulp-svgstore
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-uglify, gulp-uglify, MIT, https://github.com/terinjokes/gulp-uglify
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-vulcanize, gulp-vulcanize, MIT, https://github.com/sindresorhus/gulp-vulcanize
+RIFT.mgmt, rwmgmt-ui/node_modules/gulp-watch, gulp-watch, MIT, https://github.com/floatdrop/gulp-watch
+RIFT.mgmt, rwmgmt-ui/node_modules/jasmine, jasmine, MIT, https://github.com/jasmine/jasmine
+RIFT.mgmt, rwmgmt-ui/node_modules/jasmine-jquery, jasmine-jquery, MIT, https://github.com/velesin/jasmine-jquery
+RIFT.mgmt, rwmgmt-ui/node_modules/karma, karma, MIT, https://github.com/karma-runner/karma
+RIFT.mgmt, rwmgmt-ui/node_modules/karma-browserify, karma-browserify, MIT, https://github.com/nikku/karma-browserify
+RIFT.mgmt, rwmgmt-ui/node_modules/karma-jasmine, karma-jasmine, MIT, https://github.com/karma-runner/karma-jasmine
+RIFT.mgmt, rwmgmt-ui/node_modules/karma-phantomjs-launcher, karma-phantomjs-launcher, MIT, https://github.com/karma-runner/karma-phantomjs-launcher
+RIFT.mgmt, rwmgmt-ui/node_modules/path, path, MIT, https://github.com/mtrpcic/pathjs
+RIFT.mgmt, rwmgmt-ui/node_modules/phantomjs, phantomjs, BSD, https://github.com/ariya/phantomjs
+RIFT.mgmt, rwmgmt-ui/node_modules/reactify, reactify, MIT, https://github.com/andreypopp/reactify
+RIFT.mgmt, rwmgmt-ui/node_modules/require-dir, require-dir, MIT, https://github.com/aseemk/requireDir
+RIFT.mgmt, rwmgmt-ui/node_modules/validator, validator, MIT-like, https://github.com/chriso/validator.js
+RIFT.mgmt, rwmgmt-ui/node_modules/vinyl, vinyl, MIT, https://github.com/wearefractal/vinyl
+RIFT.mgmt, rwmgmt-ui/node_modules/vinyl-source-stream, vinyl-source-stream, MIT, https://github.com/hughsk/vinyl-source-stream
+RIFT.mgmt, rwmgmt-ui/node_modules/watchify, watchify, MIT, https://github.com/substack/watchify
+RIFT.mgmt, rwmgmt-ui/node_modules/yargs, yargs, MIT/X11, https://github.com/bcoe/yargs
+#
+# unknown or missing
+#
+#RIFT.mgmt, canv-gauge, canv-gauge, MIT, https://github.com/Mikhus/canv-gauge
+#RIFT.mgmt, node, node, BSD-like, https://github.com/joyent/node
+#RIFT.mgmt, splitter, splitter, MIT, https://github.com/chaosim/splitter

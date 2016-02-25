@@ -1,0 +1,18 @@
+<dhcp xmlns="http://yang-central.org/ns/example/dhcp">
+  <status>
+    <leases>
+      <address>10.254.239.10</address>
+      <hardware>
+        <type>ethernet</type>
+        <address>01:21:53:a1:1a:23 </address>
+      </hardware>
+    </leases>
+    <leases>
+      <address>10.254.239.12</address>
+      <hardware>
+        <type>ethernet</type>
+        <address>01:21:53:a1:1a:43 </address>
+      </hardware>
+    </leases>
+  </status>
+</dhcp>

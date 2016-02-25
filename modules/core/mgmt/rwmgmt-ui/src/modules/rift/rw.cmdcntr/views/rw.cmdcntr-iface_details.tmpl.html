@@ -1,0 +1,53 @@
+<div class="row details">
+    <div id="interfaces-details" class="col">
+        <h2 class="etched-bottom">Details</h2>
+        <dl>
+            <dt>Name</dt>
+            <dd>{{ifaceDetails.iface.name}}</dd>
+        </dl>
+        <dl>
+            <dt>Description</dt>
+            <dd>{{ifaceDetails.port}}</dd>
+        </dl>
+        <dl>
+            <dt>Context</dt>
+            <dd>{{ifaceDetails.iface.context}}</dd>
+        </dl>
+        <dl>
+            <dt>Status</dt>
+            <dd>{{ifaceDetails.iface.state}}</dd>
+        </dl>
+        <dl>
+            <dt>IP Address</dt>
+            <dd>{{ifaceDetails.iface.ip.address}}</dd>
+        </dl>
+    </div>
+    <div id="interfaces-ports" class="col">
+        <h2 class="etched-bottom">Ports</h2>
+        <table class="datagrid">
+            <thead>
+                <tr>
+                    <th>Port</th>
+                    <th>Link Status</th>
+                    <th>Admin Status</th>
+                    <th>MAC Address</th>
+                    <th>Speed</th>
+                    <th>TX Flow Control</th>
+                    <th>RX Flow Control</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr template
+                    ng-repeat="port in ifaceDetails.iface.port">
+                    <td>{{port.id}}</td>
+                    <td><status-led state="{{port['link-state']}}"></status-led></td>
+                    <td>N/A</td>
+                    <td>{{port['mac']}}</td>
+                    <td>{{port.speed}}</td>
+                    <td>{{port.duplex | duplextotxflow}}</td>
+                    <td>{{port.duplex | duplextorxflow}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

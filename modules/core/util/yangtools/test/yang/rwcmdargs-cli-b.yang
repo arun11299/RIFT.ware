@@ -1,0 +1,192 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwcmdargs-cli-b
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rwcmdargs-cli";
+  prefix "rcacli";
+
+  import rwcmdargs-min-b { prefix "rcamin"; }
+  import rwcmdargs-ext-b { prefix "rcaext"; }
+
+  description
+    "RW.CmdArgs action definitions.  Actions define the command line
+    options and CLI commands that the RW.CmdArgs library natively
+    understands.";
+
+  revision 2014-01-28 {
+    description
+      "Initial implementation of RW.CmdArgs CLI commands.";
+    reference
+      "CmdArgs Software Component Document";
+  }
+
+  container no {
+    config false;
+    description "Delete configuration";
+  }
+
+  container modify {
+    config false;
+    description "Modify configuration";
+  }
+
+  container append {
+    config false;
+    description "Append new configuration (after a specified node)";
+  }
+
+  container insert {
+    description "Insert new configuration (before a specified node)";
+    config false;
+  }
+
+  container replace {
+    config false;
+    description "Delete and recreate configuration";
+  }
+
+  container load {
+    config false;
+    description "Load configuration changes from a file";
+
+    choice file-type {
+      container config {
+        description "Load a CLI-formatted configuration file";
+        leaf file {
+          // ATTN: should support URL
+          description "The path to a CLI-formatted configuration file";
+          mandatory true;
+          type string;
+        }
+      }
+
+      container manifest {
+        description "Load a XML-formatted configuration file";
+        leaf file {
+          // ATTN: should support URL
+          description "The path to a XML-formatted configuration file";
+          mandatory true;
+          type string;
+        }
+      }
+    }
+
+    leaf strict {
+      description
+        "Strict error checking; unrecognized commands or XML node
+         provoke an error and terminate parsing";
+      type empty;
+    }
+  }
+
+  container save {
+    config false;
+    description "Save the current configuration to a file";
+
+    choice file-type {
+      container config {
+        description "Save a CLI-formatted configuration file";
+        leaf file {
+          // ATTN: should support URL
+          description "The path to a CLI-formatted configuration file";
+          mandatory true;
+          type string;
+        }
+      }
+
+      container manifest {
+        description "Save a XML-formatted configuration file";
+        leaf file {
+          // ATTN: should support URL
+          description "The path to a XML-formatted configuration file";
+          mandatory true;
+          type string;
+        }
+      }
+    }
+
+    leaf overwrite {
+      description "Overwrite the file, if it exists";
+      type empty;
+    }
+  }
+
+  container start-cli {
+    config false;
+    rcaext:not-cli-file;
+    rcaext:not-interactive;
+    description "Start the interactive configuration CLI";
+  }
+
+  container execute {
+    config false;
+    rcaext:not-cli-file;
+    rcaext:not-argv;
+    description "Start the program with the current configuration";
+  }
+
+  container quit {
+    config false;
+    rcaext:not-cli-file;
+    rcaext:not-argv;
+    description "Quit the program without saving the current configuration";
+  }
+
+  container end {
+    config false;
+    rcaext:not-argv;
+    description "Exit the current Edit Mode";
+  }
+
+  container exit {
+    config false;
+    rcaext:not-argv;
+    description "Exit all active Edit Modes";
+  }
+
+  container verify {
+    config false;
+    description "Verify the current configuration";
+  }
+
+  container show {
+    config false;
+    description "Show parts of the configuration";
+
+    container config {
+      description "Show the entire configuration";
+
+      choice file-type {
+        default config;
+        leaf config {
+          description "Show in CLI format";
+          type empty;
+        }
+
+        leaf manifest {
+          description "Show in XML format";
+          type empty;
+        }
+      }
+    }
+  }
+
+  container help {
+    config false;
+    presence "Enables help description";
+    description "Help description for the commands";
+    leaf command {
+      description "Help for the command specified";
+      type string;
+    }    
+  }
+
+  // ATTN: Need to separate the edit mode command sets?  By container type?
+  // ATTN: Need syntax in YANG to identify node_sel, multi_sel, node_set, and multie_set?
+}

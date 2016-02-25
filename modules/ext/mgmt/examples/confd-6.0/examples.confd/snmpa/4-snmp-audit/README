@@ -1,0 +1,10 @@
+ ConfD SNMP Audit Example 
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example shows how an application can use a notification socket
+to ConfD and receive events as SNMP PDU are processed 
+All the other applications in this example directory can be used.
+Simply follow the starting instructions in one of the other SNMP
+example applications. Following that compile this snmpaudit application and
+start it.
+

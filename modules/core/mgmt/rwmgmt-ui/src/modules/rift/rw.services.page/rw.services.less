@@ -1,0 +1,97 @@
+@import "./src/integration/ridgets/css/base/base";
+
+:host {
+  .flex(1 1 auto);
+  .flex-display();
+  .flex-direction(column);
+  overflow: auto;
+}
+
+.row {
+  display:flex;
+  flex-direction:row;
+  height: auto !important;
+  padding: 0px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  overflow:hidden;
+  flex: 1 0 auto;
+}
+
+#dash-cloud.row{
+  min-height:510px;
+  margin-bottom:20px;
+}
+
+#dash-aggr.row{
+  min-height:482px;
+}
+
+#dash-cloud .panel{
+  width:100%;
+}
+
+.panel{
+  flex:1 1 auto;
+  min-height: 200px;
+  padding:0px;
+  margin:0px;
+
+  border-radius: 0px;
+  background-color: @gray18;
+}
+/**/
+
+.panel__panel-body {
+  .flex(1 1 auto);
+
+}
+
+.panel__panel-header__panel-title{
+  display:block;
+  padding:0px;
+  margin:0px;
+
+  color: @gray5;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.uePanel {
+  width: 50%;
+}
+
+.dash-controlled-gauges.row, .dash-gauges.row {
+  min-height:360px;
+}
+
+
+.dash-gauges .panel:nth-child(1) {
+  //width:50%;
+  margin-right:20px;
+  //display:inline-block;
+}
+
+.dash-gauges .panel:nth-child(2) {
+  //width:50%;
+  //display:inline-block;
+}
+
+.dash-controlled-gauges .panel:nth-child(1) {
+  //width:60%;
+  margin-right:20px;
+  //display:inline-block;
+}
+
+.dash-controlled-gauges .panel:nth-child(2) {
+  //width:40%;
+  //display:inline-block;
+}
+
+
+  .panel__panel-body {
+    padding: 10px;
+    display:flex;
+  }

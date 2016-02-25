@@ -1,0 +1,8 @@
+<types xmlns="http://tail-f.com/ns/example/types">
+  <listTypes>
+    <listOfDurations>P2008Y12M12DT10H10M</listOfDurations>
+    <listOfDurations>P2066Y12M</listOfDurations>
+    <listOfDurationEnumerations>PT130S</listOfDurationEnumerations>
+    <listOfDurationEnumerations>P1Y2M3DT5H20M30.123S</listOfDurationEnumerations>
+  </listTypes>
+</types>

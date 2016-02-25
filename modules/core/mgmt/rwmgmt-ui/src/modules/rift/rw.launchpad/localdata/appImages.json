@@ -1,0 +1,24 @@
+{
+  "status": "success",
+  "images": [
+    {
+      "path": "/net/boson/build/v11.3.2",
+      "href": "lepton:8888api/app-images/v11.3.2",
+      "name": "v11.3.2",
+      "id": 6097329687135413
+    },
+    {
+      "path": "/net/boson/build/v2.9.1",
+      "href": "lepton:8888api/app-images/v2.9.1",
+      "name": "v2.9.1",
+      "id": 7097329687135413
+    },
+    {
+      "path": "/net/boson/night_build/",
+      "href": "lepton:8888api/app-images/nightly-build",
+      "name": "nightly build",
+      "id": 7097329688037494
+    }
+  ],
+  "code": 200
+}

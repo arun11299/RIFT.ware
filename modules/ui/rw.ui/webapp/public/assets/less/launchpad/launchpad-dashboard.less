@@ -1,0 +1,84 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+@import "../vendor/css-reset-2.0/css-reset.css";
+@import "../mixins/flexbox.less";
+@import "../base/utils.less";                 // common utils (mixins, etc)
+@import "../base/palette.less";               // contains all palette vars.
+@import "../base/type.less";                  // contains all typography vars and styles.
+@import "../base/vars.less";
+.launchpad{
+  background:white;
+
+  .flex-row{
+    .flex-display();
+    .flex-direction(row);
+    // border:1px solid black;
+  }
+
+  .flex-wrap{
+    .flex-wrap(wrap);
+  }
+
+  .fleet-card{
+    background-color: rgba(203, 209, 209, 0.5);
+    .flex-display();
+    .flex-direction(row);
+    .flex(1);
+    margin: 5px;
+
+    h2 {
+      color: @white;
+      font-size: 16px;
+      font-weight: normal;
+      padding: 10px;
+      text-transform: uppercase;
+    }
+
+    &-status{
+        .flex-display();
+      .flex-direction(column);
+    }
+    &-env-status {
+    background-color: @brand-green;
+    font-size: 10px;
+    h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    i {
+      font-size: 30px;
+      margin: 12px;
+    }
+    > div {
+      margin: 14px 0 0 22px;
+    }
+  }
+
+    &-header{
+      color: @white;
+    }
+
+    &-pwr-status{
+
+      .justify-content(space-between);
+      .align-items(center);
+      background-color: @brand-green-light;
+      a {
+
+      .justify-content(space-between);
+      .align-items(center);
+      background-color: @brand-green-light;
+      }
+    }
+
+    &-graph-container {
+      .flex-display();
+      .flex-direction(row)
+    }
+
+  }
+}

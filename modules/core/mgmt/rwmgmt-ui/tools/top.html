@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RW.TOP</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="top.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../lib/jquery/dist/jquery.js"></script>
+  <script src="../lib/underscore/underscore.js"></script>
+  <script src="../lib/socket.io-client/dist/socket.io.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../integration/ridgets/rw-vcs-model.html">
+  <link rel="import" href="../integration/ridgets/rw-system-resources-model.html">
+  <link rel="import" href="sort.html">
+</head>
+<body class="viewport">
+
+<template is="auto-binding" id="top">
+  <rw-vcs-model
+          id="vcs"
+          on-update="{{vcsUpdated}}"
+          ></rw-vcs-model>
+  <rw-system-resources-model
+          id="metrics"
+          sector="{{sector}}"
+          on-update="{{metricsUpdated}}"
+          ></rw-system-resources-model>
+  <sort-controller itemSelector=".datagrid sort-item" on-sort="{{sort}}"></sort-controller>
+  <table class="datagrid">
+    <thead>
+      <tr>
+        <th><sort-item token="id" ordered="true" ascending="true">VM</sort-item></th>
+        <th><sort-item token="cpu.aggregate.system">Sys</sort-item></th>
+        <th><sort-item token="cpu.aggregate.idle">Idle</sort-item></th>
+        <th><sort-item token="cpu.aggregate.user">User</sort-item></th>
+        <th><sort-item token="memory.percent">RAM%</sort-item></th>
+        <th><sort-item token="memory.total">RAM Total</sort-item></th>
+        <th><sort-item token="storage.percent">HDD%</sort-item></th>
+        <th><sort-item token="storage.total">HDD Total</sort-item></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr template repeat="{{metrics}}">
+        <td>
+          {{id}}
+        </td>
+        <td>
+          {{cpu.aggregate.system}}
+        </td>
+        <td>
+          {{cpu.aggregate.idle}}
+        </td>
+        <td>
+          {{cpu.aggregate.user}}
+        </td>
+        <td>
+          {{memory.percent}}
+        </td>
+        <td>
+          {{memory.total}}
+        </td>
+        <td>
+          {{storage.percent}}
+        </td>
+        <td>
+          {{storage.total}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+<script>
+  var t = document.querySelector('#top');
+  var comparator = sortBy('id', true);
+  t.vcsUpdated = function() {
+    t.vcs = document.querySelector('#vcs').sector;
+    document.querySelector('#metrics').sector = t.vcs;
+  };
+  t.metricsUpdated = function() {
+    t.metrics = t.vcs.allVms().sort(comparator);
+  };
+  t.sort = function(e) {
+    comparator = sortBy(e.detail.token, e.detail.ascending);
+    t.metricsUpdated();
+  };
+  function sortBy(path, ascending) {
+    var propTree = path.split('.');
+    return function(a, b) {
+      var x = getProperty(a, propTree) - getProperty(b, propTree);
+      return ascending ? x : -x;
+    };
+  }
+  function getProperty(o, path) {
+    var x = o;
+    for (var i = 0; i < path.length; i++) {
+      x = x[path[i]];
+    }
+    return parseInt(x);
+  }
+</script>
+</body>
+</html>
+

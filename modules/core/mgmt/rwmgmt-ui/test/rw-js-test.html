@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../lib/web-component-tester/browser.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="stylesheet" href="../integration/ridgets/css/page.css">
+</head>
+<body>
+<div class="viewport__body">
+</div>
+<script>
+
+  var ltesim = {
+    transmitted : {
+      'create-session-response' : {
+        accepted: 1000
+      }
+    },
+    received : {
+      'create-session-response' : {
+        accepted: 2000
+      }
+    }
+  };
+
+  suite('rw.js', function() {
+    test('mergeSimple', function() {
+      var obj1 = { a : 1 };
+      var obj2 = { b : 2 };
+      rw.merge(obj1, obj2);
+      assert.deepEqual({a : 1, b : 2}, obj1);
+    });
+    test('mergeSubobj', function() {
+      var obj1 = { a : { b : 3 } };
+      var obj2 = { a : { c : 4} };
+      rw.merge(obj1, obj2);
+      assert.deepEqual({a: { b: 3, c : 4 }}, obj1);
+    });
+    test('mergeOverwrite', function() {
+      var obj1 = { a : { b : { c : 1 } } };
+      var obj2 = { a : { b : { d : 2 } } };
+      rw.merge(obj1, obj2);
+      assert.deepEqual({a: { b: { c : 1, d : 2 }}}, obj1);
+    });
+  });
+</script>
+</body>
+</html>

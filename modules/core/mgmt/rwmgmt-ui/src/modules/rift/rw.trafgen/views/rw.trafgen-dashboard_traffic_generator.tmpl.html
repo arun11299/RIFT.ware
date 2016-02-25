@@ -1,0 +1,14 @@
+<div>
+    <div id="traffic-control-dashpanel" class="dashpanel" style="">
+      <trafgen-control id="control"></trafgen-control>
+      <trafgen-controller id="trafgenController" service="dashboardTrafficGenerator.trafgen"></trafgen-controller>
+    </div>
+
+    <rw-gaugeset
+        dial-size="140"
+        panel-width="140"
+        class="panel__panel-body"
+        gauges="dashboardTrafficGenerator.gauges"
+        >
+    </rw-gaugeset>
+</div>

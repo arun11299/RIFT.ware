@@ -1,0 +1,118 @@
+<link rel="import" href="rw-trafgen-controller.html">
+<link rel="import" href="rw-traffic-stats.html">
+<link rel="import" href="rw-dashboard-control.html">
+
+<polymer-element name="rw-trafgen-details" attributes="service trafgenModel">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-trafgen-details.css" />
+        <div class="details {{ {hide : !isGenerator, row : isGenerator} | tokenList }}">
+          <div id="controls" class="col">
+            <h2 class="etched-bottom">Controls</h2>
+            <div>
+              <rw-dashboard-control id="controlView" class="horizontal"></rw-dashboard-control>
+            </div>
+            <rw-trafgen-controller id="controller"
+                                   service="{{service}}">
+            </rw-trafgen-controller>
+          </div>
+        </div>
+        <div class="row details">
+            <div class="col">
+              <h2 class="etched-bottom">Traffic</h2>
+              <table id="traffic-metrics" class="datagrid">
+                <thead>
+                  <tr>
+                    <th>Current Traffic</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>Packet Count</th>
+                    <td>{{info['packet-count']}}</td>
+                  </tr>
+                  <tr>
+                    <th>TX Burst</th>
+                    <td>{{info.tx_burst}}</td>
+                  </tr>
+                  <tr>
+                    <th>TX Cycles</th>
+                    <td>{{info['tx-cycles']}}</td>
+                  </tr>
+                  <tr class="{{ {hide : !showAdditionalMetrics } | tokenList }}">
+                    <th>Average Latency</th>
+                    <td>{{info['average-latency']}}&micro;s</td>
+                  </tr>
+                  <tr class="{{ {hide : true || !showAdditionalMetrics} | tokenList }}">
+                    <th>Maximum Latency</th>
+                    <td>{{info['maximum-latency']}}&micro;s</td>
+                  </tr>
+                  <tr class="{{ {hide : !showAdditionalMetrics} | tokenList }}">
+                    <th>Mean Deviation</th>
+                    <td>{{info['mean-deviation']}}&micro;s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col {{ {hide : !showAdditionalMetrics} | tokenList}}">
+              <h2>Message Response Time</h2>
+              <rw-bargraph id="barGraph" flex values="{{values}}"></rw-bargraph>
+            </div>
+        </div>
+    </template>
+    <script>
+      Polymer({
+        created: function() {
+          this.values = [];
+          this.x = 0;
+          this.showAdditionalMetrics = false;
+        },
+        domReady: function() {
+          this.$.barGraph.margin.left = 100;
+        },
+        trafgenModelChanged: function() {
+          this.trafgenModel.addEventListener("update", this.update.bind(this));
+        },
+        serviceChanged: function() {
+          this.colony = this.service.connector[0].interface[0].colonyId;
+          this.isGenerator = (this.service.type === 'trafgen');
+        },
+        update: function() {
+          if (!this.colony) {
+            return;
+          }
+          this.info = this.trafgenModel.info[this.colony];
+          // Generatator
+
+          var showAdditionalMetrics = false;
+          if (this.isGenerator && this.info && 'latency-distribution' in this.info) {
+            var latency = this.info['latency-distribution'];
+            if (this.values.length != latency.length) {
+              this.values = new Array(latency.length);
+            }
+            for (var i = 0; i < this.values.length; i++) {
+              showAdditionalMetrics = true;
+              this.values[i] = this.values[i] || {};
+              this.values[i].label = this.timerLabel(latency[i]);
+              this.values[i].x = latency[i].packets;
+            }
+            this.$.barGraph.valuesChanged();
+          }
+
+          // first time bargraph is shown from hidden state, need to trigger layout
+          if (showAdditionalMetrics && !this.showAdditionalMetrics) {
+            this.showAdditionalMetrics = true;
+            this.async(this.$.barGraph.resize.bind(this.$.barGraph), 1000);
+          }
+        },
+        timerLabel: function(latency) {
+          if (latency['range-start'] == 0) {
+            return '< ' + latency['range-end'] + 'us';
+          }
+          if (latency['range-end'] == 0) {
+            return '> ' + latency['range-start'] + 'us';
+          }
+          return '' + latency['range-start'] + ' - ' + latency['range-end'] + 'us';
+        }
+      });
+    </script>
+</polymer-element>

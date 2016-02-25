@@ -1,0 +1,56 @@
+@import "css/base/base";
+
+:host {
+  display: block;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: @gray10;
+  shape-rendering: crispEdges;
+}
+
+// We disable user select and pointer-events on many
+// texts because dots that are congested were not presenting
+// tooltips as cursor would flip between pointer and text
+.axis text {
+  fill: white;
+  user-select: none;
+  pointer-events: none;
+}
+
+.dot {
+  stroke: #000;
+}
+
+#plotContainer {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: @gray5;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.label {
+  opacity: .5;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tooltipGuide {
+  stroke: white;
+  fill: white;
+}
+
+.tooltipGuideLabel {
+  fill: white;
+  font-size: small;
+  user-select: none;
+  pointer-events: none;
+}

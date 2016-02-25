@@ -1,0 +1,99 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwcmdargs-min
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rwcmdargs-min";
+  prefix "rcamin";
+
+  organization "RIFT.io";
+  description
+    "Minimum RW.CmdArgs definitions needed to bootstrap RW.CmdArgs
+    processing.  The purpose of these definitions it to provide enough
+    information to change search the default paths or parser behavior,
+    sufficient to find the other configuration files.  These
+    definitions will be stored directly in the library, and so cannot
+    require a search path.";
+
+  revision 2014-02-09 {
+    description
+      "Initial implementation.";
+    reference
+      "CmdArgs Software Component Document";
+  }
+
+  extension env-shortcut {
+    argument "variable-name";
+    description
+      "Defines an Environment Variable Shortcut.
+
+       The Shortcut declares a Linux shell environment (getenv(3))
+       variable that can be used for configuration.  The extension may
+       be applied to a container, anyxml, leaf-list, or leaf statement.
+       If variable-name exists in the environment when the RW.CmdArgs
+       library begins parsing, the contents of the variable will be
+       parsed according to the statement type.
+
+       For a container, the variable will be treated as Multiple
+       Assignment Option, parsed with the annotated node as the target
+       node.
+
+       For a leaf or anyxml, the variable will be used as the node's
+       value, without any further interpretation.  For anyxml, the
+       value must be a valid XML fragment.
+
+       For a leaf-list, the variable will be treated as a sequence of
+       values.  By default, the separator is a space and there is no
+       escape mechanism to prevent tokenization on spaces.
+
+       In order to ensure product consistency, the variable-name must
+       begin with 'RIFT_', the upper-cased program name, another
+       underscore, and an arbitrary upper-cased name.  The program name
+       will be verified to be equivalent to the initial portion of the
+       YANG module or submodule, or their associated YANG prefixes,
+       minus any leading 'rift'.";
+  }
+
+  extension env-ll-handle-escapes {
+    description
+      "Handle backslash-escape in environment variable.
+
+       This extension must be applied to a leaf-list that also has the
+       env-shortcut extension.  When applied, the parser's behavior is
+       modified to interpret escapes in the variable's value.  Escaped
+       characters will be retained in the leaf-list values.";
+  }
+
+  extension leaf-list-path {
+    description
+      "Path-style leaf-list.  Use colon separated values.
+
+       This extension defines a leaf-list as a typical Unix path.  When
+       applied, the parser's behavior is modified to use colon as a
+       value separator.";
+  }
+
+  // ATTN: leaf-list hint that indicates whether it should consume all
+  //   remaining words or only one at a time.
+
+  container bootstrap {
+    description
+      "Bootstrap configuration.  Augmented by individual applications.";
+    config true;
+
+    leaf-list xsd-path {
+      rcamin:env-shortcut "RIFT_CMDARGS_XSD_PATH";
+      rcamin:leaf-list-path;
+      rcamin:env-ll-handle-escapes;
+      description
+        "The list of directories to search for schema files.  If none are
+        specified, then the default is '.' and '/usr/data/xsd'.";
+      type string;
+    }
+  }
+}

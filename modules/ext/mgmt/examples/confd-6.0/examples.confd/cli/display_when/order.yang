@@ -1,0 +1,62 @@
+module order {
+  namespace "http://tail-f.com/ns/example/order";
+  prefix order;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  leaf has_crypto_card {
+      type boolean;
+      default false;
+  }
+
+  list server {
+    key name;
+    max-elements 64;
+    leaf name {
+      type int32;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf port {
+      type inet:port-number;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+
+  list dns {
+    key name;
+    max-elements 64;
+    leaf name {
+      type string;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+
+  list host {
+    key name;
+    max-elements 64;
+    leaf name {
+      type string;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+}

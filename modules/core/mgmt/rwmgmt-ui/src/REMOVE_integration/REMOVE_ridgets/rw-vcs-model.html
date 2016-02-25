@@ -1,0 +1,20 @@
+
+<!--
+  Non-visual to gather colony, cluster and vm hierarchy data
+
+  @class rw-vcs-model
+-->
+<polymer-element name="rw-vcs-model" attributes="sector">
+<script>
+Polymer({
+  attached: function() {
+    var self = this;
+    rw.api.json('/vcs/').done(function(data) {
+      self.sector = data.collection[0];
+      _.extend(self.sector, rw.vcs);
+      self.fire("update");
+    });
+  }
+});
+</script>
+</polymer-element>

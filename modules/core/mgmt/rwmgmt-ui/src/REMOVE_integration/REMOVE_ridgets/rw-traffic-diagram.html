@@ -1,0 +1,244 @@
+<link rel="import" href="rw-dashboard-loadbal.html">
+<link rel="import" href="rw-dashboard-trafgen.html">
+<link rel="import" href="rw-dashboard-trafsink.html">
+<link rel="import" href="rw-dashboard-netstat.html">
+<link rel="import" href="rw-trafsim-summary.html">
+<link rel="import" href="rw-ltesim-summary.html">
+<script src="js/network.js"></script>
+
+<polymer-element name="rw-traffic-diagram" attributes="services trafsimModel ltesimModel slbModel">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-traffic-diagram.css"/>
+  <!-- svg on bottom -->
+  <svg id="diagram">
+    <!-- duplicate copy of this in rw-network.html -->
+    <defs>
+      <filter id="dropshadow" height="130%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+        <feOffset dx="0" dy="2" result="offsetblur"/>
+        <feMerge> 
+          <feMergeNode/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="blueglow">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/>
+        <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+  <!-- html on top -->
+  <div id="metrics"></div>
+</template>
+<script>
+Polymer({
+
+  created: function() {
+    this.services = [];
+  },
+
+  servicesChanged: function() {
+    var self = this;
+    var gxDiagram = d3.select(this.$.diagram);
+    var layout = new TopologyLayout();
+    this.layout = layout;
+    layout.dim.width = 300;
+    layout.dim.hIface = 270;
+    layout.dim.yMargin = 70;
+    var widgetDim = {
+      trafgen : { h : 0,  tag : 'rw-dashboard-trafgen' },
+      loadbal : { h : 50,  tag : 'rw-dashboard-loadbal' },
+      trafsimclient : { h : 0,  tag : 'rw-trafsim-summary' },
+      trafsimserver : { h : 0,  tag : 'rw-trafsim-summary' },
+      trafsink : { h : 0,  tag : 'rw-dashboard-trafsink'},
+      ltemmesim : { h : 0,  tag : 'rw-ltesim-summary' },
+      ltegwsim : { h : 0,  tag : 'rw-ltesim-summary' },
+      slbalancer : { h : 0,  tag : 'rw-slb-summary' },
+
+      // this one shouldn't exist and should be converted to client and server
+      ltecombinedsim : { h : 0,  tag : 'rw-ltesim-summary' }
+    };
+
+    var gxServices = gxDiagram.selectAll("g.service")
+      .data(function() {
+        for (var i = 0; i < self.services.length; i++) {
+          var h = widgetDim[self.services[i].type].h;
+          var nStats = 1;
+          if (self.services[i].connector) {
+            nStats = Math.max(1, self.services[i].connector.length);
+          }
+          var bodyHeight = (nStats * layout.dim.hIface) + h;
+          layout.layoutTitledPanel(self.services[i], 
+            layout.colIndex(self.services[i], self.services), bodyHeight);
+        }
+        return self.services;
+      })
+      .enter()
+      .append("g")
+      .classed('service', true);
+
+    layout.appendTitledPanel(gxServices);
+    layout.appendTitle(gxServices, function(service) {
+      self.serviceSelected(service);
+    });
+
+    var gxIfaces = layout.appendIfaces(gxServices,
+      function(service) {
+        var h = widgetDim[service.type].h;
+        service.yStats = service.yBody + h;
+        return h;
+      },
+      function(iface, service, h) {
+        iface.x = service.x;
+        iface.y = service.yBody + h;
+        iface.w = layout.dim.width;
+        iface.h = layout.dim.hIface;
+        return h + iface.h;
+      }
+    );
+
+    layout.appendConnectorHandles(gxIfaces);
+    layout.appendConnectors(gxDiagram);
+
+    var gxMetrics = d3.select(this.$.metrics);
+
+    var gxServices = gxMetrics.selectAll('.metric')
+      .data(self.services)
+      .enter()
+      .append(function(service) {
+        var elementType = widgetDim[service.type].tag;
+        var widget = document.createElement(elementType);
+        widget.className = 'metric';
+        widget.style.width = (service.w - 25) + "px";
+        widget.style.height = service.h + "px";
+        widget.style.top = service.yBody + "px";
+        widget.style.left = (service.x + 2) + "px";
+        widget.service = service;
+        self.populateWidget.call(self, widget);
+        return widget;
+      });
+
+    self.setFirstSelected();
+
+  },
+
+  setFirstSelected: function() {
+    self = this;
+    // RIFT-1694 select first trafgen by default
+    for (var i = 0; i < self.services.length; i++) {
+      var type = self.services[i].type;
+      if (type == 'trafgen' || type == 'trafsimclient'|| type == 'ltemmesim') {
+        self.serviceSelected(self.services[i]);
+        break;
+      }
+    }
+  },
+
+  // NOTE: there's a race condition between d3 and ajax call to load trafsims
+  // so this method can be called twice depending on who's first but harmless
+  populateWidget: function(widget) {
+    if (this.slb) {
+      if (widget.service.type == 'slbalancer') {
+        widget.slb = this.slb;
+        widget.service.slb = this.slb;
+      }
+    }
+    if (this.trafsims) {
+      switch (widget.service.type) {
+        case 'trafsimclient':
+          widget.trafsim = this.trafsims.client;
+          widget.service.trafsim = this.trafsims.client;
+          break;
+        case 'trafsimserver':
+          widget.trafsim = this.trafsims.server;
+          widget.service.trafsim = this.trafsims.server;
+          break;
+      }
+    }
+    if (this.ltesims) {
+      switch (widget.service.type) {
+        case 'ltemmesim':
+          widget.ltesim = this.ltesimModel.mme;
+          widget.service.ltesim = this.ltesimModel.mme;
+          break;
+        case 'ltegwsim':
+          widget.ltesim = this.ltesimModel.saegw;
+          widget.service.ltesim = this.ltesimModel.saegw;
+          break;
+      }
+    }
+  },
+  
+  serviceSelected: function(service) {
+    if (this.selectBox) {
+      this.selectBox.remove();
+    }
+
+    this.selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    this.selectBox.setAttribute("class", "selection");
+    var w = service.w + 8;
+    var h = service.h + 8;
+    this.selectBox.setAttribute("width", w);
+    this.selectBox.setAttribute("height", h);
+    var dashArray = this.layout.buildSelectBox(w, h, 64);
+    this.selectBox.setAttribute("stroke-dasharray", dashArray);
+    this.selectBox.setAttribute('filter', 'url(#blueglow)')
+    this.$.diagram.appendChild(this.selectBox);
+    this.selectBox.setAttribute("x", service.x - 4);
+    this.selectBox.setAttribute("y", service.y - 4);
+
+    this.fire('select-service', {
+      service : service,
+      // may be undefined for some widget types
+      trafsim : service.trafsim,
+      ltesim : service.ltesim,
+      slb : service.slb
+    });
+  },
+
+  trafsimModelChanged: function() {
+    this.trafsimModel.addEventListener('update-config', this.updateTrafsims.bind(this));
+  },
+
+  ltesimModelChanged: function() {
+    this.ltesimModel.addEventListener('update-config', this.updateLtesims.bind(this));
+  },
+
+  slbModelChanged: function() {
+    this.slbModel.addEventListener('update-config', this.updateSlb.bind(this));
+  },
+
+  updateSlb: function() {
+    var self = this;
+    // TODO
+    this.slb = this.slbModel.slb;
+    _.each(this.shadowRoot.querySelectorAll('rw-slb-summary'), function(slb_elem) {
+      self.populateWidget.call(self, slb_elem);
+    });
+  },
+
+  updateLtesims: function() {
+    var self = this;
+    this.ltesims = this.ltesimModel.ltesims[0];
+    _.each(this.shadowRoot.querySelectorAll('rw-ltesim-summary'), function(ltesim_elem) {
+      self.populateWidget.call(self, ltesim_elem);
+    });
+  },
+
+  updateTrafsims: function() {
+    var self = this;
+    this.trafsims = {
+      client: this.trafsimModel.findFirstClient(),
+      server: this.trafsimModel.findFirstServer()
+    };
+    _.each(this.shadowRoot.querySelectorAll('rw-trafsim-summary'), function(trafsim_elem) {
+      self.populateWidget.call(self, trafsim_elem);
+    });
+    self.setFirstSelected();
+  }
+});
+</script>
+</polymer-element>

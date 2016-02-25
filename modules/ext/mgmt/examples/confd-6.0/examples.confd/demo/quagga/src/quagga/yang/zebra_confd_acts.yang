@@ -1,0 +1,88 @@
+submodule zebra_confd_acts {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  container kernel-routes {
+    tailf:action kernel-routes {
+      tailf:actionpoint kernel-routes;
+      input {
+        container route-to-add {
+          uses routeType;
+        }
+        container route-to-delete {
+          uses routeType;
+        }
+        leaf operation {
+          type operationType2;
+          mandatory true;
+        }
+      }
+      output {
+        container routes {
+          uses routeType;
+        }
+      }
+    }
+  }
+  grouping routeType {
+    leaf destination {
+      type string;
+      mandatory true;
+    }
+    leaf gateway {
+      type string;
+    }
+    leaf mask {
+      type inet:ipv4-address;
+    }
+    leaf flags {
+      type routeFlagsType;
+    }
+    leaf metric {
+      type uint16;
+    }
+    leaf iface {
+      type string;
+    }
+    leaf type {
+      type routeTargetType;
+      default host;
+    }
+  }
+  typedef operationType2 {
+    type enumeration {
+      enum add;
+      enum delete;
+      enum show;
+    }
+  }
+  typedef routeTargetType {
+    type enumeration {
+      enum net;
+      enum host;
+    }
+  }
+  typedef routeFlagsType {
+    type bits {
+      bit U { position 0; }
+      bit H { position 1; }
+      bit G { position 2; }
+      bit R { position 3; }
+      bit D { position 4; }
+      bit M { position 5; }
+      bit A { position 6; }
+      bit C { position 7; }
+    }
+  }
+}

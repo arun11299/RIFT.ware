@@ -1,0 +1,1202 @@
+/*-------------------------*/
+/*----- MEDIA QUERIES -----*/
+@media all and (max-width: 1299px) {
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #templateInfoCntnt {
+    width: 280px;
+  }
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt {
+    padding-left: 300px;
+  }
+  #scriptSelectLyt .left {
+    width: 220px;
+  }
+  #scriptSelectLyt .right {
+    padding-left: 220px;
+  }
+  #scriptCallLyt dl.width-1 {
+    width: 20%;
+  }
+  #scriptCallLyt dl.width-2 {
+    width: 40%;
+  }
+  #scriptCallLyt dl.width-3 {
+    width: 60%;
+  }
+  #scriptCallLyt dl.width-4 {
+    width: 80%;
+  }
+  #scriptCallLyt dl.width-5 {
+    width: 100%;
+  }
+}
+@media all and (min-width: 1300px) and (max-width: 1599px) {
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #templateInfoCntnt {
+    width: 300px;
+  }
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt {
+    padding-left: 320px;
+  }
+  #scriptSelectLyt .left {
+    width: 300px;
+  }
+  #scriptSelectLyt .right {
+    padding-left: 300px;
+  }
+  #scriptCallLyt dl.width-1 {
+    width: 20%;
+  }
+  #scriptCallLyt dl.width-2 {
+    width: 40%;
+  }
+  #scriptCallLyt dl.width-3 {
+    width: 60%;
+  }
+  #scriptCallLyt dl.width-4 {
+    width: 80%;
+  }
+  #scriptCallLyt dl.width-5 {
+    width: 100%;
+  }
+}
+@media all and (min-width: 1600px) {
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #templateInfoCntnt {
+    width: 360px;
+  }
+  #uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt {
+    padding-left: 380px;
+  }
+  #scriptSelectLyt .left {
+    width: 400px;
+  }
+  #scriptSelectLyt .right {
+    padding-left: 400px;
+  }
+  #scriptCallLyt dl.width-1 {
+    width: 20%;
+  }
+  #scriptCallLyt dl.width-2 {
+    width: 40%;
+  }
+  #scriptCallLyt dl.width-3 {
+    width: 60%;
+  }
+  #scriptCallLyt dl.width-4 {
+    width: 80%;
+  }
+  #scriptCallLyt dl.width-5 {
+    width: 100%;
+  }
+}
+/*------------------*/
+/*----- LAYOUT -----*/
+#uesimulatorLyt {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+  position: relative;
+}
+#uesimulatorLyt #uetemplatesLyt {
+  width: 300px;
+  height: 100%;
+  position: relative;
+  z-index: 0;
+  opacity: .25;
+  -webkit-transition: opacity 0.2s ease-out;
+  -o-transition: opacity 0.2s ease-out;
+  -moz-transition: opacity 0.2s ease-out;
+  -ms-transition: opacity 0.2s ease-out;
+  -kthtml-transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
+}
+#uesimulatorLyt #uetemplateLyt {
+  width: 100%;
+  height: 100%;
+  padding-left: 60px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  margin: 0px;
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  -webkit-transition: left 0.2s ease-out;
+  -o-transition: left 0.2s ease-out;
+  -moz-transition: left 0.2s ease-out;
+  -ms-transition: left 0.2s ease-out;
+  -kthtml-transition: left 0.2s ease-out;
+  transition: left 0.2s ease-out;
+}
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  pointer-events: auto;
+  background-color: #454545;
+  -webkit-box-shadow: 0px 12px 15px 0px rgba(0, 0, 0, 0.24);
+  -moz-box-shadow: 0px 12px 15px 0px rgba(0, 0, 0, 0.24);
+  box-shadow: 0px 12px 15px 0px rgba(0, 0, 0, 0.24);
+}
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt #templateInfoCntnt {
+  /*width:260px;*/
+  height: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-left: 0px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  position: absolute;
+  z-index: 1;
+  border-right: 1px solid #333333;
+}
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt {
+  display: block;
+  width: 100%;
+  height: auto;
+  /*padding-left:280px;*/
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 20px;
+  margin: 0px;
+  overflow-y: auto;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  z-index: 0;
+}
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt #scriptLogLyt,
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt #scriptSelectLyt,
+#uesimulatorLyt #uetemplateLyt #uetemplateCntnt #scriptInfoLyt #scriptCallLyt {
+  display: block;
+  height: auto;
+  min-height: 430px;
+  width: 100%;
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 30px;
+  margin-right: 0px;
+  clear: both;
+}
+/**/
+#uesimulatorLyt.move #uetemplatesLyt {
+  opacity: 1;
+}
+#uesimulatorLyt.move #uetemplateLyt {
+  left: 240px;
+}
+#uesimulatorLyt.move #uetemplateLyt:before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 700px;
+  padding: 0px;
+  margin: 0px;
+  position: fixed;
+  top: 40px;
+  right: 0px;
+  z-index: 1;
+  background: rgba(34, 34, 34, 0);
+  background: -moz-linear-gradient(left, rgba(34, 34, 34, 0) 0%, #222222 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(34, 34, 34, 0)), color-stop(100%, #222222));
+  background: -webkit-linear-gradient(left, rgba(34, 34, 34, 0) 0%, #222222 100%);
+  background: -o-linear-gradient(left, rgba(34, 34, 34, 0) 0%, #222222 100%);
+  background: -ms-linear-gradient(left, rgba(34, 34, 34, 0) 0%, #222222 100%);
+  background: linear-gradient(to right, rgba(34, 34, 34, 0) 0%, #222222 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#222222', endColorstr='#222222', GradientType=1);
+}
+/*------------------*/
+/*----- STYLES -----*/
+/*----- Hacks/Visual Fixes -----*/
+#uesimulatorLyt *:focus {
+  outline: 0;
+}
+/**/
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+/*----- Icons -----*/
+#uesimulatorLyt .icn {
+  display: inline-block;
+  width: 10px;
+  height: 14px;
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 3px;
+  margin-bottom: 0px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 14px;
+  text-align: center;
+  line-height: 14px;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/*----- Anchor/Links -----*/
+#uesimulatorLyt a {
+  color: #1dabe7;
+}
+/*----- Buttons -----*/
+#uesimulatorLyt .button {
+  display: inline-block;
+  height: 30px;
+  width: auto;
+  min-width: 60px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+  position: relative;
+  color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 30px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  border-color: #212121;
+  background: #67c6ef;
+  background: -moz-linear-gradient(top, #67c6ef 0%, #1daae7 100%);
+  background: -webkit-gradient(left top, left bottom, color-stop(0%, #67c6ef), color-stop(100%, #1daae7));
+  background: -webkit-linear-gradient(top, #67c6ef 0%, #1daae7 100%);
+  background: -o-linear-gradient(top, #67c6ef 0%, #1daae7 100%);
+  background: -ms-linear-gradient(top, #67c6ef 0%, #1daae7 100%);
+  background: linear-gradient(to bottom, #67c6ef 0%, #1daae7 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#67c6ef', endColorstr='#1daae7', GradientType=0);
+}
+#uesimulatorLyt .button.disable {
+  pointer-events: none;
+  background-color: #cccccc;
+  background: linear-gradient(#cccccc, #666666);
+}
+#uesimulatorLyt .button.loader .working {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}
+#uesimulatorLyt .button.loader.disable .label {
+  color: transparent !important;
+}
+#uesimulatorLyt .button.loader.disable .working {
+  display: block;
+}
+#uesimulatorLyt .button-link {
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 30px;
+}
+#uesimulatorLyt .button-link.disable {
+  pointer-events: none;
+  color: #cccccc;
+}
+/*----- Colors -----*/
+#uesimulatorLyt .c-grn {
+  color: #00a651;
+}
+#uesimulatorLyt .c-org {
+  color: #f7941d;
+}
+#uesimulatorLyt .c-red {
+  color: #ff0000;
+}
+#uesimulatorLyt .c-wht {
+  color: #ffffff;
+}
+/*----- H Tags -----*/
+#uesimulatorLyt h2 {
+  padding: 0px;
+  margin: 0px;
+  color: #cccccc;
+  font-size: 22px;
+  font-weight: 200;
+  text-align: left;
+  line-height: normal;
+}
+/*----- Scroll Shadows -----*/
+#uesimulatorLyt .shadow-top {
+  height: 10px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  pointer-events: none;
+  box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.75) inset;
+}
+#uesimulatorLyt .shadow-bottom {
+  height: 10px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  z-index: 1;
+  bottom: 0px;
+  pointer-events: none;
+  box-shadow: 0px -5px 5px -5px rgba(0, 0, 0, 0.75) inset;
+}
+/*----- Working -----*/
+#uesimulatorLyt .working-curtain {
+  width: 100%;
+  padding-top: 160px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(69, 69, 69, 0.75);
+}
+#uesimulatorLyt .working-curtain.page {
+  height: 100%;
+  background-color: #454545;
+}
+#uesimulatorLyt #scriptSelectLyt .working-curtain {
+  display: inline-block;
+  height: 400px;
+  width: 100%;
+  padding-top: 180px;
+  margin: 0px;
+}
+#uesimulatorLyt #scriptSelectLyt.loaded .working-curtain {
+  display: none;
+  width: 0px;
+  height: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+#uesimulatorLyt .working-curtain .working-label {
+  text-align: center;
+}
+#uesimulatorLyt .working {
+  display: block;
+  width: 102px;
+  height: auto;
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -23px;
+  margin-bottom: 0px;
+  font-size: 0px;
+  text-indent: -9999px;
+  text-align: center;
+}
+#uesimulatorLyt .button .working {
+  width: 51px;
+}
+#uesimulatorLyt .working .dot-1,
+#uesimulatorLyt .working .dot-2,
+#uesimulatorLyt .working .dot-3 {
+  display: block;
+  width: 30px;
+  height: 30px;
+  padding: 0px;
+  margin: 1px;
+  float: left;
+  border-radius: 50%;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+#uesimulatorLyt .button .working .dot-1,
+#uesimulatorLyt .button .working .dot-2,
+#uesimulatorLyt .button .working .dot-3 {
+  width: 15px;
+  height: 15px;
+}
+#uesimulatorLyt .working .dot-1 {
+  -webkit-animation-delay: 0s !important;
+  animation-delay: 0s !important;
+}
+#uesimulatorLyt .working .dot-2 {
+  -webkit-animation-delay: 0.16s !important;
+  animation-delay: 0.16s !important;
+  transform: translateZ(0);
+}
+#uesimulatorLyt .working .dot-3 {
+  -webkit-animation-delay: 0.32s !important;
+  animation-delay: 0.32s !important;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 30px 0 -15px #ffffff;
+  }
+  40% {
+    box-shadow: 0 30px 0 0 #FFF;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 30px 0 -15px #ffffff;
+  }
+  40% {
+    box-shadow: 0 30px 0 0 #FFF;
+  }
+}
+/*----- Drop Down -----*/
+#uesimulatorLyt .drpdwn-cntrl {
+  padding: 0px;
+  margin: 0px;
+}
+#uesimulatorLyt .drpdwn-cntrl > dt {
+  padding: 0px;
+  margin: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#uesimulatorLyt .drpdwn-grp {
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+}
+#uesimulatorLyt .drpdwn-grp.disable .drpdwn-tgl {
+  cursor: default;
+  pointer-events: none;
+  color: #cccccc;
+}
+#uesimulatorLyt .drpdwn {
+  display: none;
+  min-width: 90px;
+  /*width:300px;*/
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-top: 2px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  float: left;
+  position: absolute;
+  z-index: 50;
+  left: 0px;
+  top: 100%;
+  cursor: default;
+  background-image: none;
+  background-color: #454545;
+  border: none;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+  -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+}
+#uesimulatorLyt .drpdwn-grp.open .drpdwn {
+  display: block;
+}
+#uesimulatorLyt .drpdwn-grp .drpdwn-tgl {
+  display: inline-block;
+  height: 30px;
+  font-size: 14px;
+  line-height: 30px;
+  text-decoration: none;
+}
+#uesimulatorLyt .drpdwn-grp .drpdwn-tgl span.icn {
+  font-size: inherit;
+  position: relative;
+  top: -2px;
+}
+#uesimulatorLyt .drpdwn ul,
+#uesimulatorLyt .drpdwn li {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+}
+#uesimulatorLyt .drpdwn li > a,
+#uesimulatorLyt .drpdwn li > a:active {
+  display: block;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  margin: 0px;
+  clear: both;
+  position: relative;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: left;
+  line-height: normal;
+  white-space: nowrap;
+}
+#uesimulatorLyt .drpdwn li > a:hover,
+#uesimulatorLyt .drpdwn li.selected > a {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #1dabe7;
+}
+#uesimulatorLyt .drpdwn .dvdr {
+  height: 1px;
+  margin: 1px 0;
+  overflow: hidden;
+  background-color: #dddddd;
+}
+/*----------------------------------*/
+/*----- TEMPLATE CARDS STYLING -----*/
+#uetemplatesLyt ul {
+  padding: 0px;
+  margin: 0px;
+}
+#uetemplatesLyt ul li {
+  display: block;
+  width: 100%;
+  min-height: 100px;
+  padding: 0px;
+  margin: 0px;
+}
+#uetemplatesLyt ul li > dl {
+  padding: 6px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #454545;
+  -webkit-transition: background-color 0.3s ease-out;
+  -o-transition: background-color 0.3s ease-out;
+  -moz-transition: background-color 0.3s ease-out;
+  -ms-transition: background-color 0.3s ease-out;
+  -kthtml-transition: background-color 0.3s ease-out;
+  transition: background-color 0.3s ease-out;
+}
+#uetemplatesLyt ul li > dl:hover {
+  background-color: #555555;
+}
+#uetemplatesLyt ul li.selected > dl {
+  border: 1px solid rgba(29, 171, 231, 0.5);
+  -webkit-box-shadow: 0px 0px 5px 0px #1dabe7;
+  -moz-box-shadow: 0px 0px 5px 0px #1dabe7;
+  box-shadow: 0px 0px 5px 0px #1dabe7;
+  -webkit-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  -kthtml-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+}
+#uetemplatesLyt ul li.selected:hover > dl {
+  border: 1px solid #1dabe7;
+  -webkit-box-shadow: 0px 0px 10px 0px #1dabe7;
+  -moz-box-shadow: 0px 0px 10px 0px #1dabe7;
+  box-shadow: 0px 0px 10px 0px #1dabe7;
+}
+/**/
+#uetemplatesLyt ul li > dl dt {
+  padding: 0px;
+  margin-bottom: 4px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 22px;
+  font-weight: 200;
+}
+#uetemplatesLyt ul li > dl dd {
+  padding: 0px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 6px;
+}
+#uetemplatesLyt ul li > dl dd dl {
+  padding: 0px;
+  margin: 0px;
+}
+#uetemplatesLyt ul li > dl dd dl dt {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#uetemplatesLyt ul li > dl dd dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+/**/
+#uetemplatesLyt ul li > dl dd.ranges {
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl {
+  padding: 10px;
+  margin: 0px;
+  background-color: #333333;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl dt {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl dd dl {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 12px;
+  padding-right: 0px;
+  margin: 0px;
+  float: none;
+  border: none;
+  background-color: transparent;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl dd dl dt {
+  padding: 0px;
+  margin: 0px;
+}
+#uetemplatesLyt ul li > dl dd.ranges dl dd dl dd {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+}
+#uetemplatesLyt ul li > dl dd.script {
+  margin-top: 5px;
+}
+#uetemplatesLyt ul li > dl dd.script dl.selected {
+  display: inline-block;
+  width: 100%;
+  height: 60px;
+  padding: 10px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  border-top: 1px solid #454545;
+  border-bottom: 1px solid #454545;
+  background-color: #333333;
+}
+#uetemplatesLyt ul li > dl dd.script dl.state {
+  display: inline-block;
+  width: 50%;
+  height: 60px;
+  padding: 10px;
+  margin: 0px;
+  float: left;
+  border-right: 1px solid #454545;
+  background-color: #333333;
+}
+#uetemplatesLyt ul li > dl dd.script dl.elapsed {
+  display: inline-block;
+  width: 50%;
+  height: 60px;
+  padding: 10px;
+  margin: 0px;
+  background-color: #333333;
+}
+/*---------------------------------*/
+/*----- Template Info Styling -----*/
+#templateInfoCntnt > dl {
+  padding: 0px;
+  margin: 0px;
+}
+#templateInfoCntnt > dl dt.title {
+  padding: 0px;
+  margin-bottom: 4px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 22px;
+  font-weight: 200;
+}
+#templateInfoCntnt > dl dd.description {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 6px;
+  color: #cccccc;
+  font-size: 14px;
+}
+#templateInfoCntnt > dl dd.ranges {
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 10px;
+}
+#templateInfoCntnt > dl dd.ranges dl {
+  padding: 10px;
+  margin: 0px;
+  background-color: #333333;
+}
+#templateInfoCntnt > dl dd.ranges dl dt {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#templateInfoCntnt > dl dd.ranges dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+#templateInfoCntnt > dl dd.ranges dl dd dl {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 12px;
+  padding-right: 0px;
+  margin: 0px;
+  float: none;
+  border: none;
+  background-color: transparent;
+}
+#templateInfoCntnt > dl dd.ranges dl dd dl dt {
+  padding: 0px;
+  margin: 0px;
+}
+#templateInfoCntnt > dl dd.ranges dl dd dl dd {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+}
+#templateInfoCntnt > dl dd.mode,
+#templateInfoCntnt > dl dd.script {
+  padding: 0px;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 10px;
+}
+#templateInfoCntnt > dl dd.mode dl,
+#templateInfoCntnt > dl dd.script dl {
+  padding: 0px;
+  margin: 0px;
+}
+#templateInfoCntnt > dl dd.mode dl dt,
+#templateInfoCntnt > dl dd.script dl dt {
+  padding: 0px;
+  margin: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#templateInfoCntnt > dl dd.mode dl dd,
+#templateInfoCntnt > dl dd.script dl dd {
+  padding: 0px;
+  margin: 0px;
+}
+#templateInfoCntnt > dl dd.script-values {
+  display: inline-block;
+  width: 50%;
+  padding: 0px;
+  margin: 0px;
+}
+#templateInfoCntnt > dl dd.script-values dl {
+  padding: 10px;
+  margin: 0px;
+  background-color: #333333;
+  border-bottom: 1px solid #454545;
+  border-right: 1px solid #454545;
+}
+#templateInfoCntnt > dl dd.script-values dl dt {
+  padding: 0px;
+  margin-left: 0px;
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#templateInfoCntnt > dl dd.script-values dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+#templateInfoCntnt > dl dd.actions {
+  padding-top: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  margin-left: 0px;
+  margin-top: 10px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  border-top: 1px solid #333333;
+}
+#templateInfoCntnt > dl dd.actions ul {
+  padding: 0px;
+  margin: 0px;
+  float: right;
+  list-style: none;
+}
+#templateInfoCntnt > dl dd.actions ul li {
+  padding: 0px;
+  margin-left: 20px;
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  float: left;
+  list-style: none;
+}
+/**/
+/**/
+#scriptSelectLyt {
+  position: relative;
+}
+#scriptSelectLyt .left {
+  height: 400px;
+  /*width:220px;*/
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  z-index: 1;
+  left: 0px;
+  -webkit-transition: width 0.2s ease-out;
+  -o-transition: width 0.2s ease-out;
+  -moz-transition: width 0.2s ease-out;
+  -ms-transition: width 0.2s ease-out;
+  -kthtml-transition: width 0.2s ease-out;
+  transition: width 0.2s ease-out;
+}
+#scriptSelectLyt .left .content {
+  position: relative;
+  background-color: #333333;
+}
+#scriptSelectLyt:not(.loaded) .left .content .shadow-top,
+#scriptSelectLyt:not(.loaded) .left .content .shadow-bottom {
+  display: none;
+}
+#scriptSelectLyt .left .content ul {
+  height: 400px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 0;
+  list-style: none;
+}
+#scriptSelectLyt .left .content ul li {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+  cursor: pointer;
+}
+#scriptSelectLyt .left .content ul li dl {
+  padding: 10px;
+  margin: 0px;
+  background-color: #333333;
+  border-bottom: 1px solid #454545;
+  border-right: 1px solid #454545;
+  -webkit-transition: background-color 0.2s ease-out;
+  -o-transition: background-color 0.2s ease-out;
+  -moz-transition: background-color 0.2s ease-out;
+  -ms-transition: background-color 0.2s ease-out;
+  -kthtml-transition: background-color 0.2s ease-out;
+  transition: background-color 0.2s ease-out;
+}
+#scriptSelectLyt .left .content ul li dl:hover,
+#scriptSelectLyt .left .content ul li.selected dl {
+  background-color: #1dabe7;
+}
+#scriptSelectLyt .left .content ul li dl dt {
+  padding: 0px;
+  margin: 0px;
+  color: #1dabe7;
+  font-size: 14px;
+}
+#scriptSelectLyt .left .content ul li dl:hover dt,
+#scriptSelectLyt .left .content ul li.selected dl dt {
+  color: #ffffff;
+}
+#scriptSelectLyt .left .content ul li dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #cccccc;
+  font-size: 12px;
+}
+#scriptSelectLyt .left .content ul li dl:hover dd,
+#scriptSelectLyt .left .content ul li.selected dl dd {
+  color: #ffffff;
+}
+#scriptSelectLyt .right {
+  height: 400px;
+  width: 100%;
+  /*padding-left:220px;*/
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  margin: 0px;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+  -webkit-transition: padding-left 0.2s ease-out;
+  -o-transition: padding-left 0.2s ease-out;
+  -moz-transition: padding-left 0.2s ease-out;
+  -ms-transition: padding-left 0.2s ease-out;
+  -kthtml-transition: padding-left 0.2s ease-out;
+  transition: padding-left 0.2s ease-out;
+}
+#scriptSelectLyt .right .content {
+  height: 400px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: auto;
+  background-color: #333333;
+}
+#scriptSelectLyt pre code {
+  font-size: 14px;
+  background-color: transparent;
+}
+/**/
+/**/
+#scriptCallLyt .content {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+  min-height: 480px;
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+}
+#scriptCallLyt dl {
+  display: block;
+  padding: 10px;
+  margin: 0px;
+  float: left;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1;
+  border-top: 1px solid #454545;
+  border-right: 1px solid #454545;
+  background-color: #333333;
+}
+#scriptCallLyt dl.height-1 {
+  height: 60px;
+}
+#scriptCallLyt dl.height-2 {
+  height: 120px;
+}
+#scriptCallLyt dl.height-3 {
+  height: 180px;
+}
+#scriptCallLyt dl.height-4 {
+  height: 240px;
+}
+#scriptCallLyt dl.width-1 {
+  width: 20%;
+}
+#scriptCallLyt dl.width-2 {
+  width: 40%;
+}
+#scriptCallLyt dl.width-3 {
+  width: 60%;
+}
+#scriptCallLyt dl.width-4 {
+  width: 80%;
+}
+#scriptCallLyt dl.width-5 {
+  width: 100%;
+}
+#scriptCallLyt dl.call-item-1 {
+  left: 0%;
+  top: 0px;
+}
+#scriptCallLyt dl.call-item-2 {
+  left: 20%;
+  top: 0px;
+}
+#scriptCallLyt dl.call-item-3 {
+  left: 40%;
+  top: 0px;
+}
+#scriptCallLyt dl.call-item-4 {
+  left: 60%;
+  top: 0px;
+}
+#scriptCallLyt dl.call-item-5 {
+  left: 80%;
+  top: 0px;
+}
+#scriptCallLyt dl.call-item-6 {
+  left: 60%;
+  top: 60px;
+}
+#scriptCallLyt dl.call-item-7 {
+  left: 0%;
+  top: 60px;
+}
+#scriptCallLyt dl.call-item-8 {
+  left: 0%;
+  top: 120px;
+}
+#scriptCallLyt dl.call-item-9 {
+  left: 40%;
+  top: 120px;
+}
+#scriptCallLyt dl.call-item-10 {
+  left: 60%;
+  top: 180px;
+}
+#scriptCallLyt dl.call-item-11 {
+  left: 60%;
+  top: 300px;
+}
+#scriptCallLyt dl.call-item-12 {
+  left: 0%;
+  top: 360px;
+}
+#scriptCallLyt dl.call-item-13 {
+  left: 40%;
+  top: 360px;
+}
+#scriptCallLyt dl dt {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 200;
+}
+#scriptCallLyt dl dd {
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+#scriptCallLyt dl dd dl {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 12px;
+  padding-right: 0px;
+  margin: 0px;
+  float: none;
+  border: none;
+  background-color: transparent;
+}
+#scriptCallLyt dl dd dl dt {
+  padding: 0px;
+  margin: 0px;
+}
+#scriptCallLyt dl dd dl dd {
+  padding: 0px;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+}
+/**/
+/**/
+#scriptLogLyt .content {
+  display: block;
+  padding: 0px;
+  margin: 0px;
+}
+#scriptLogLyt .content react-log #reactlog {
+  display: block;
+  height: 400px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 14px;
+  background-color: #333333;
+}
+#scriptLogLyt .content react-log #reactlog .w2ui-even {
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+  margin: 0px;
+}
+#scriptLogLyt .content react-log #reactlog .w2ui-odd {
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+  margin: 0px;
+}
+#scriptLogLyt .controls {
+  padding: 0px;
+  margin-top: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
+#scriptLogLyt .controls > ul {
+  padding: 0px;
+  margin: 0px;
+  float: right;
+  list-style: none;
+}
+#scriptLogLyt .controls > ul li {
+  padding: 0px;
+  margin-left: 20px;
+  margin-right: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  float: left;
+  list-style: none;
+}

@@ -1,0 +1,31 @@
+module OSPF-MIB-ann {
+  namespace "urn:dummy";
+  prefix dummy;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import OSPF-MIB {
+    prefix x;
+  }
+
+  description
+    "Annotation module for the generated OSPF-MIB YANG module";
+
+  tailf:annotate "/x:OSPF-MIB/x:ospfGeneralGroup" {
+    tailf:callpoint "ospf-snmp" {
+      tailf:transform true;
+    }
+  }
+  tailf:annotate "/x:OSPF-MIB/x:ospfAreaTable" {
+    tailf:callpoint "ospf-snmp" {
+      tailf:transform true;
+    }
+  }
+  tailf:annotate "/x:OSPF-MIB/x:ospfIfTable" {
+    tailf:callpoint "ospf-snmp" {
+      tailf:transform true;
+    }
+  }
+
+}

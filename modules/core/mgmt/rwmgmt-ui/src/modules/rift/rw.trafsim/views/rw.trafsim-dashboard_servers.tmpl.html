@@ -1,0 +1,44 @@
+<div>
+
+    <rw-iconset></rw-iconset>
+
+
+    <div id="gauges" style="height:300px;" class="dashpanel">
+      <div class="gauge-group">
+        <h2>Kcalls/s</h2>
+        <rw-gauge
+                size="{{trafsimDashboardServers.dialSize}}"
+                color="hsla(212, 57%, 50%, 1)"
+                value="{{trafsimDashboardServers.trafsimServer.call_rate / 1000 | nonNaN}}"
+                max="200"
+                ></rw-gauge>
+        <rw-scroll-graph
+                lineColor="#377cc8"
+                strokeColor="rgba(55,124,200,0.7)"
+                value="{{trafsimDashboardServers.trafsimServer.call_rate / 1000 | nonNaN}}"
+                width="{{trafsimDashboardServers.panelWidth}}"
+                max="200"
+                paused="{{!trafsimDashboardServers.g.startedPerceived}}"
+                ></rw-scroll-graph>
+      </div>
+      <div class="gauge-group">
+        <h2>Kmsgs/s</h2>
+        <rw-gauge
+                size="{{trafsimDashboardServers.dialSize}}"
+                color="hsla(260, 35%, 50%, 1)"
+                value="{{trafsimDashboardServers.trafsimServer.tx_msg_per_sec / 1000 | nonNaN }}"
+                max="600"
+                ></rw-gauge>
+        <rw-scroll-graph
+                lineColor="hsla(260, 35%, 50%, 1)"
+                strokeColor="hsla(260, 35%, 50%, 0.7)"
+                value="{{trafsimDashboardServers.trafsimServer.tx_msg_per_sec / 1000 | nonNaN }}"
+                min="0"
+                max="600"
+                width="{{trafsimDashboardServers.panelWidth}}"
+                paused="{{!trafsimDashboardServers.g.startedPerceived}}"
+                ></rw-scroll-graph>
+      </div>
+    </div>
+</div>
+

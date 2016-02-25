@@ -1,0 +1,75 @@
+module range {
+  namespace "http://tail-f.com/ns/example/range";
+  prefix range;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef interface-type {
+    type string {
+      pattern "((FastEthernet-)|(GigaEthernet-))[0-9]+/[0-9]+/[0-9]+";
+    }
+  }
+
+  list server {
+    key name;
+    max-elements 64;
+    leaf name {
+      type int32;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf port {
+      type inet:port-number;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+
+  list interface {
+    key name;
+    max-elements 64;
+    leaf name {
+      type interface-type;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf mtu {
+      type int32;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+    tailf:action reset {
+        tailf:actionpoint reset-point;
+        input {
+            leaf mode {
+                type string;
+                mandatory true;
+            }
+            leaf debug {
+                type empty;
+            }
+        }
+        output {
+            leaf time {
+                type string;
+                mandatory true;
+            }
+        }
+
+    }
+  }
+}

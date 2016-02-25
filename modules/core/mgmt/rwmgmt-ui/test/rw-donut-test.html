@@ -1,0 +1,38 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-donut.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-donut
+    value="{{value}}"
+    id="test0"
+    color="red"
+    label="Test"
+    ></rw-donut>
+  {{value}}
+  <input type="range" min="0" max="100" step="5" value="{{value}}"/>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    this.value = 50;
+  },
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-semi-dnout', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

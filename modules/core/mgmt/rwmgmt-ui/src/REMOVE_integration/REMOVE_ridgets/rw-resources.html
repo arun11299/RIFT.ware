@@ -1,0 +1,89 @@
+<link rel="import" href="rw-resource-diagram.html">
+<link rel="import" href="rw-resource-detail.html">
+<link rel="import" href="rw-splitter.html">
+<link rel="import" href="rw-system-resources-model.html">
+<link rel="import" href="rw-fpath-model.html">
+<link rel="import" href="rw-vcs-model.html">
+
+<!--
+  <img src="rw-resources.png">
+
+  @class rw-resources
+-->
+<polymer-element name="rw-resources">
+<template> 
+  <link rel="stylesheet" type="text/css" href="rw-resources.css"/>
+  <rw-vcs-model
+    id="vcs"
+    rate="50"
+    packetSize="64"
+    on-update="{{updateVcs}}"
+    ></rw-vcs-model>
+  <rw-fpath-model
+    id="fpath"
+    ></rw-fpath-model>
+  <rw-system-resources-model
+    sector="{{$.vcs.sector}}"
+    on-update="{{updateMetrics}}"
+    ></rw-system-resources-model>
+  <rw-resource-diagram
+    id="diagram"
+    sector="{{$.vcs.sector}}"
+    on-select="{{onSelect}}"
+    ></rw-resource-diagram>
+  <rw-splitter 
+    class="horizontal"
+    allowOverflow direction="down"
+    style="z-index:999">
+    <span class="node-label">{{selectedNode.instance_name}}</span>
+    &mdash;
+    <span class="node-description">{{nodeTypeLabel}}</span>
+   </rw-splitter>
+  <rw-resource-detail 
+    id="detail"
+    node="{{selectedNode}}"
+    fabricNode="{{selectedNode._fabricNode}}"
+    style="z-index:999"
+    ></rw-resource-detail>
+</template>
+<script>
+Polymer({
+
+  TYPES: {
+    rwcolony : 'Colony',
+    rwcluster : 'Cluster',
+    RWVM : 'Virtual Machine'
+  },
+
+  onSelect: function(e, node) {
+    this.selectedNode = node;
+    this.nodeTypeLabel = this.TYPES[rw.vcs.nodeType(node)];
+  },
+
+  updateMetrics: function() {
+    this.$.diagram.update();
+  },
+
+  updateVcs: function() {
+    // Build fabric tree as well
+    new rw.VcsVisitor(function(parent, node, i, listType) {
+      var clone = _.clone(node);
+      if (parent) {
+        if (i === 0) {
+          parent._fabricNode[listType] = [];
+        }
+        parent._fabricNode[listType][i] = clone;
+      }
+      node._fabricNode = clone;
+      return node.component_type == 'RWVM' ? false : true;
+    }).visit(this.$.vcs.sector);
+
+    // aggregate external port stats
+    new rw.FpathVcs(this.$.fpath, this.$.vcs.sector);
+
+    // aggregate fabric port stats
+    new rw.FpathVcs(this.$.fpath, this.$.vcs.sector._fabricNode, true);
+  }
+});
+</script>
+</polymer-element>

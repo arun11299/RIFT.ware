@@ -1,0 +1,29 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <x xmlns="http://example.com/example">
+    <host>
+      <name>One</name>
+      <number>1</number>
+      <enabled>true</enabled>
+    </host>
+    <host>
+      <name>Two</name>
+      <number>2</number>
+      <enabled>false</enabled>
+    </host>
+    <host>
+      <name>Three</name>
+      <number>3</number>
+      <enabled>true</enabled>
+    </host>
+    <host>
+      <name>Five</name>
+      <number>5</number>
+      <enabled>false</enabled>
+    </host>
+    <host>
+      <name>Four</name>
+      <number>4</number>
+      <enabled>false</enabled>
+    </host>
+  </x>
+</config>

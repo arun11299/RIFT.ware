@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+.title-background {
+  fill: none;
+  cursor: pointer;
+}
+.title {
+  fill: #ffffff;
+  font: 16px/1.2 open-sans, sans-serif;
+}
+.handle-label {
+  font: 16px/1.2 open-sans, sans-serif;
+}
+.connector {
+  fill: none;
+  stroke: #49bdee;
+  stroke-width: 4;
+}
+.label {
+  fill: black;
+  stroke: none;
+  font: 16px/1.2 open-sans, sans-serif;
+}
+path.hr {
+  stroke: #121212;
+  stroke-width: 0.5;
+}
+.handle path {
+  stroke: #49bdee;
+  stroke-width: 4;
+}
+.handle rect {
+  stroke: #49bdee;
+  stroke-width: 4;
+  fill: #454545;
+}
+.icon rect {
+  fill: #49bdee;
+}
+.icon path {
+  fill: white;
+}
+.title,
+.handle-label {
+  fill: #ffffff;
+}
+.connector {
+  stroke: #49bdee;
+  stroke-width: 3;
+  fill: none;
+}
+:host {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+}
+.service {
+  fill: #454545;
+}
+circle.context {
+  fill: #454545;
+  stroke: #49bdee;
+  stroke-width: 4;
+}
+text.context {
+  fill: #ffffff;
+}
+/**/
+text.title {
+  fill: #cccccc;
+  stroke: none;
+  font-size: 16px;
+  font-family: roboto-condensed, open-sans, sans-serif;
+  font-weight: 200;
+}
+/**/
+rect.iface {
+  fill: #5e5e5e;
+  stroke: #121212;
+  stroke-width: 0.5;
+}
+text.label,
+text.handle-label {
+  fill: #ffffff;
+  stroke: none;
+  font-size: 14px;
+  font-family: roboto-condensed, open-sans, sans-serif;
+  font-weight: 400;
+}
+.selection {
+  fill: none;
+  stroke: #49bdee;
+}
+#diagram {
+  height: 3000px;
+  width: 100%;
+  min-width: 1300px;
+}

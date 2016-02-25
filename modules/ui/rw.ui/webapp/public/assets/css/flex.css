@@ -1,0 +1,102 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+/** Full width cards for CAT **/
+
+.CAT .fleet-card {
+  width: 98%;
+ /* display: flex;
+ */ flex-direction: row;
+  height: auto;
+  flex: 1 1 auto !important;
+  margin-right: 20px;
+  min-height: 403px;
+}
+
+.CAT .fleet-card .layout-col.left {
+   float: none;
+  width: 100%;
+  max-width: 564px;
+
+}
+.CAT .fleet-card .layout-col.right {
+  height: auto;
+  min-width:200px;
+  margin-left: 0px;
+  float: none;
+
+}
+
+.CAT .fleet-card .layout-col.right.img-bg {
+  flex-grow: 1;
+  flex: 1 1 auto;
+  width: auto;
+  border: 2px solid rgba(252,252,252,0.5);
+  border-top: 0;
+  border-bottom: 0;
+}
+.CAT .fleet-card-actions .trafgen-start {
+  background-color: #333333;
+  color: #ffffff;
+  flex: 1 1 80%;
+  margin-right: 2px;
+  padding: 8px 0;
+}
+.CAT .fleet-card .layout-col.right {
+  flex: 0 1 20%;
+}
+.CAT .fleet-card .layout-col.left {
+  float: none;
+  width: 100%;
+}
+.CAT  .fleet-card .layout-col.left {
+  flex: 0 1 40%;
+}
+
+.CAT .fleet-card-toggle-set {
+  border-bottom: 2px solid #f1f1f1;
+  padding: 18px;
+  flex: 1 1;
+}
+.CAT .fleet-card-params{
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-content: stretch;
+}
+.CAT .fleet-card-params-detail{
+  height:auto !important;
+}
+
+.fleet-card-params {
+  background-color: #e5e5e5;
+  border-left: 2px solid rgba(252, 252, 252, 0.5);
+  font-size: 11px;
+  text-align: center;
+  flex: 1;
+}
+/** Connectors on Viewport page **/
+.viewport-dash .navpanel .service-orch li {
+  position:relative;
+}
+.viewport-vim .slider-toggle{
+  flex: 0 1 25% !important;
+}
+
+.slider-toggle-track {
+  display:flex;
+  flex-direction:row;
+}
+
+
+a.slider-toggle-option{
+  color: black;
+}
+
+a.slider-toggle-option.disabled{
+  color:#dadada;
+}

@@ -1,0 +1,89 @@
+module loadhist {
+  namespace "http://tail-f.com/ns/example/loadhist";
+  prefix loadhist;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-xsd-types {
+    prefix xs;
+  }
+
+  typedef ContextSwitchesPerSecond {
+    type int32 {
+      range "0 .. 10000";
+    }
+  }
+  container load {
+    config false;
+    tailf:cdb-oper {
+        tailf:persistent true;
+    }
+    leaf current {
+      type int32;
+      mandatory true;
+    }
+    leaf context_switches {
+      type ContextSwitchesPerSecond;
+      mandatory true;
+    }
+    list sample {
+      key time;
+      max-elements 1000;
+      leaf time {
+        type yang:date-and-time;
+      }
+      leaf load {
+        type int32;
+        mandatory true;
+      }
+    }
+  }
+
+  container chassis {
+    container server-info {
+      leaf system-name {
+        type string;
+      }
+      leaf ftos-version {
+        type string;
+      }
+      leaf location {
+        type string;
+      }
+      container server-health {
+        leaf cpu {
+          config false;
+          tailf:cdb-oper;
+          type uint64;
+        }
+        leaf memory {
+          config false;
+          tailf:cdb-oper;
+          type uint64;
+        }
+        leaf network {
+          config false;
+          tailf:cdb-oper;
+          type uint64;
+        }
+      }
+      list traps {
+        key "trap-oid";
+        leaf trap-oid {
+          type string;
+        }
+        leaf severity {
+          type uint16;
+        }
+      }
+    }
+  }
+
+}

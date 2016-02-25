@@ -1,0 +1,267 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// Flex mixins
+// --------------------------------------------------
+// Flexbox display
+.flex-display(@display: flex) {
+  display: -webkit-box;
+  display: -moz-box;
+  display: ~"-ms-@{display}box";
+  display: ~"-webkit-@{display}";
+  display: ~"-ms-@{display}";
+  display: @display;
+ }
+
+ // Flex Flow Direction
+ // - applies to: flex containers
+ // row | row-reverse | column | column-reverse
+
+.flex-direction(@direction) when (@direction = row) {
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+.flex-direction(@direction) when (@direction = row-reverse) {
+  -webkit-box-direction: reverse;
+  -moz-box-direction: reverse;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+.flex-direction(@direction) when (@direction = column) {
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+.flex-direction(@direction) when (@direction = column-reverse) {
+  -webkit-box-direction: reverse;
+  -moz-box-direction: reverse;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -webkit-flex-direction: @direction;
+  -ms-flex-direction: @direction;
+  flex-direction: @direction;
+}
+
+// Flex Line Wrapping
+// - applies to: flex containers
+// nowrap | wrap | wrap-reverse
+.flex-wrap(@wrap: nowrap) {
+  -webkit-flex-wrap: @wrap;
+  -ms-flex-wrap: @wrap;
+  flex-wrap: @wrap;
+}
+
+// Flex Direction and Wrap
+// - applies to: flex containers
+// <flex-direction> || <flex-wrap>
+.flex-flow(@direction: row, @wrap: nowrap) {
+  .flex-direction(@direction);
+  .flex-wrap(@wrap);
+}
+
+// Axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | space-between | space-around
+.justify-content(@justify) when (@justify = flex-start) {
+  -webkit-box-pack: start;
+  -moz-box-pack: start;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: start;
+  justify-content: @justify;
+}
+
+.justify-content(@justify) when (@justify = flex-end) {
+  -webkit-box-pack: end;
+  -moz-box-pack: end;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: end;
+  justify-content: @justify;
+}
+
+.justify-content(@justify) when (@justify = center) {
+  -webkit-box-pack: @justify;
+  -moz-box-pack: @justify;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: @justify;
+  justify-content: @justify;
+}
+
+.justify-content(@justify) when (@justify = space-between) {
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: justify;
+  justify-content: @justify;
+}
+
+.justify-content(@justify) when (@justify = space-around) {
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -webkit-justify-content: @justify;
+  -ms-flex-pack: distribute;
+  justify-content: @justify;
+}
+
+
+// Cross-axis Alignment
+// - applies to: flex containers
+// flex-start | flex-end | center | baseline | stretch
+.align-items(@align) when (@align = flex-start) {
+  -webkit-box-align: start;
+  -moz-box-align: start;
+  -webkit-align-items: @align;
+  -ms-flex-align: start;
+  align-items: @align;
+}
+
+.align-items(@align) when (@align = flex-end) {
+  -webkit-box-align: end;
+  -moz-box-align: end;
+  -webkit-align-items: @align;
+  -ms-flex-align: end;
+  align-items: @align;
+}
+
+.align-items(@align) when (default()) { // baseline, center, and stretch are all the same
+  -webkit-box-align: @align;
+  -moz-box-align: @align;
+  -webkit-align-items: @align;
+  -ms-flex-align: @align;
+  align-items: @align;
+}
+
+// Packing Flex Lines
+// - applies to: multi-line flex containers
+// flex-start | flex-end | center | space-between | space-around | stretch
+.align-content(@align) when (@align = flex-start) {
+  -webkit-align-content: @align;
+  -ms-flex-line-pack: start;
+  align-content: @align;
+}
+
+.align-content(@align) when (@align = flex-end) {
+  -webkit-align-content: @align;
+  -ms-flex-line-pack: end;
+  align-content: @align;
+}
+
+.align-content(@align) when (@align = space-between) {
+  -webkit-align-content: @align;
+  -ms-flex-line-pack: justify;
+  align-content: @align;
+}
+
+.align-content(@align) when (@align = space-around) {
+  -webkit-align-content: @align;
+  -ms-flex-line-pack: distribute;
+  align-content: @align;
+}
+
+.align-content(@align) when (default()) { // center and stretch are the same
+  -webkit-align-content: @align;
+  -ms-flex-line-pack: @align;
+  align-content: @align;
+}
+
+
+// Flex Item mixins
+// --------------------------------------------------
+
+// Display Order
+// - applies to: flex items
+// <integer>
+.flex-order(@order: 0) {
+  -webkit-box-ordinal-group: @order + 1;
+  -moz-box-ordinal-group: @order + 1;
+  -ms-flex-order: @order;
+  -webkit-order: @order;
+  order: @order;
+}
+
+// Flex grow factor
+// - applies to: flex items
+// <number>
+.flex-grow(@grow: 0) {
+  -webkit-box-flex: @grow;
+  -moz-box-flex: @grow;
+  -webkit-flex-grow: @grow;
+  -ms-flex-grow: @grow;
+  flex-grow: @grow;
+}
+
+// --------------------------------------------------
+// NOTE: there's not great support for flex-shrink or flex-basis in older browsers. If possible, use .flex() instead.
+// Additionally, older browsers may require use of a declared width on the flex item.
+// --------------------------------------------------
+
+// Flex shrink factor
+// - applies to: flex items
+// <number>
+.flex-shrink(@shrink: 1) {
+  -webkit-flex-shrink: @shrink;
+  -moz-flex-shrink: @shrink;
+  -ms-flex-shrink: @shrink;
+  flex-shrink: @shrink;
+}
+
+// Flex basis
+// - the initial main size of the flex item
+// - applies to: flex item
+// <width>
+.flex-basis(@width: auto) {
+  -webkit-flex-basis: @width;
+  -moz-flex-basis: @width;
+  -ms-flex-basis: @width;
+  flex-basis: @width;
+}
+
+// Flex
+// - combination of flex-grow, flex-shrink, and flex-basis
+// <flex-grow: number> <flex-shrink: number> <flex-basis: width>
+.flex(@grow: 0, @shrink: 1, @width: auto) {
+  -webkit-box-flex: @grow;
+  -moz-box-flex: @grow;
+  -webkit-flex: @grow @shrink @width;
+  -ms-flex: @grow @shrink @width;
+  flex: @grow @shrink @width;
+}
+
+
+// Cross-axis Alignment
+// - applies to: flex items
+// auto | flex-start | flex-end | center | baseline | stretch
+.align-self(@align) when (@align = flex-start) {
+  -ms-flex-item-align: start;
+  -webkit-align-self: @align;
+  align-self: @align;
+}
+
+.align-self(@align) when (@align = flex-end) {
+  -ms-flex-item-align: end;
+  -webkit-align-self: @align;
+  align-self: @align;
+}
+
+.align-self(@align) when (default()) { // auto, center, baseline, and stretch are all the same
+  -ms-flex-item-align: @align;
+  -webkit-align-self: @align;
+  align-self: @align;
+}

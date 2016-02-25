@@ -1,0 +1,25 @@
+module quagga {
+  prefix quagga;
+  namespace "http://tail-f.com/ns/example/quagga";
+
+  include confd_top;
+  include confd_common;
+  include zebra_confd;
+  include zebra_confd_if;
+  include zebra_confd_if_ip;
+  include zebra_confd_if_ipv6;
+  include zebra_confd_ip;
+  include zebra_confd_ipv6;
+  include zebra_confd_stats_ip;
+  include zebra_confd_stats_memory;
+  include zebra_confd_acts;
+  include rip_confd_router;
+  include rip_confd_if_ip;
+  include rip_confd_stats_memory;
+  include ospf_confd_router;
+  include ospf_confd_if_ip;
+  include ospf_confd_stats_memory;
+  include ipsec;
+
+  revision "2009-08-27";
+}

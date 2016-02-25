@@ -1,0 +1,16 @@
+// Viewport
+//-------------------------------------------------------------------------
+@import "../base/base";
+
+.viewport {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.viewport__body {
+  &:extend(.viewport);
+  .flex-display();
+  .flex-direction(column);
+}

@@ -1,0 +1,135 @@
+<polymer-element name="rw-trafgen-model" attributes="colonies">
+  <script>
+    Polymer({
+
+      created: function() {
+        this.g = rw.trafgen;
+        this.subscriptions = [];
+        this.info = {};
+        // recognize we've once received actual values from the backend and initialize
+        // values to backend values.
+        if (this.g.startedActual !== null) {
+          this.g.startedPerceived = this.g.startedActual;
+        }
+        if (this.g.rateActual !== null) {
+          this.g.ratePerceived = this.g.rateActual;
+        }
+        if (this.g.packetSizeActual !== null) {
+          this.g.packetSizePerceived = this.g.packetSizeActual;
+        }
+        this.g.rateDejitterT0 = 0;
+        this.rateDejitterTimeout = 60000; //ms
+      },
+
+      coloniesChanged: function() {
+        var self = this;
+        _.each(this.colonies, function(colony) {
+          var socket = new rw.api.SocketSubscriber('web/get');
+          var url = '/api/operational/colony/' + colony + '/port-state?select=portname;trafgen-info(*)';
+          var meta = {
+            url : url,
+            accept: 'application/vnd.yang.collection+json'
+          };
+          socket.subscribeMeta(self.load.bind(self, colony), meta, self.offline.bind(self, colony));
+          self.subscriptions.push(socket);
+        });
+      },
+
+      load: function(colony, data) {
+        this.info[colony] = data.collection['rw-ifmgr-data:port-state'];
+        var states = data.collection['rw-ifmgr-data:port-state'];
+        var info = {};
+        info.byPort = states
+          .filter(function(state) {
+            return 'trafgen-info' in state;
+          })
+          .map(function(state) {
+            var info = state['trafgen-info'];
+            info.port = state.portname;
+            return info;
+          });
+
+        if (info.byPort.length === 0) {
+          info = {
+            'tx_state' : 'Off',
+            'tx_rate' : 0,
+            'pkt_size' : 0
+          }
+        } else if (info.byPort.length > 1) {
+          info = this.aggregateMetrics(info.byPort);
+        } else {
+          _.extend(info, info.byPort[0]);
+        }
+        this.info[colony] = info;
+
+        // which colony has the trafgen, that determines button state.  see if there
+        // is a better way
+        if (/trafgen.*/.test(colony)) {
+          this.determineStartedActual(info);
+        }
+        this.fire("update");
+      },
+
+      aggregateMetrics: function(infos) {
+        // for values like tx_rate, burst, cycles, the first value is as good as any
+        var info = infos[0];
+
+        // aggregate to item 0 with items 1,2,3...
+        for (var i = 1; i < infos.length; i++) {
+          // Opinion: any are off, they show as all off
+          info.tx_state = (infos[i].tx_state == 'Off' ? 'Off' : infos[i].tx_state);
+          if ('latency-distribution' in infos[i]) {
+            for (var j = 0; j < infos[i]['latency-distribution'].length; j++) {
+              info['latency-distribution'][j].packets += infos[i]['latency-distribution'][j].packets;
+            }
+          }
+        }
+
+        info['packet-count'] = infos.reduce(rw.math.sum2('packet-count'), 0);
+        info['maximum-latency'] = infos.reduce(rw.math.max('maximum-latency'), 0);
+        info['jitter'] = infos.reduce(rw.math.avg2('jitter'), 0);
+
+        return info;
+      },
+
+      determineStartedActual: function(info) {
+        var started = (info.tx_state === 'On');
+        var rate = parseInt(info.tx_rate);
+        var packetSize = parseInt(info.pkt_size);
+        if (this.g.startedActual === null) {
+          this.g.startedPerceived = started;
+        }
+        if (this.g.rateActual === null) {
+          this.g.ratePerceived = rate;
+        }
+        if (this.g.packetSizeActual === null) {
+          this.g.packetSizePerceived = packetSize;
+        }
+        this.g.startedActual = started;
+        var rateDejitterT1 = new Date().getTime();
+        if (rateDejitterT1 - this.g.rateDejitterT0 > this.rateDejitterTimeout) {
+          this.g.rateActual = rate;
+          this.g.packetSizeActual = packetSize;
+        }
+      },
+
+      offline: function(colony, data) {
+        this.g.startedActual = this.g.startedPerceived;
+        this.g.rateActual = this.g.ratePerceived;
+        this.g.packetSizeActual = this.g.packetSizePerceived;
+      },
+
+      unsubscribe: function() {
+        _.each(this.subscriptions, function(socket) {
+          socket.unsubscribe();
+        });
+        this.subscriptions.length = 0;
+      },
+
+      detached: function() {
+        this.unsubscribe();
+        this._propertyObserver.disconnect_();
+      }
+    })
+  </script>
+</polymer-element>

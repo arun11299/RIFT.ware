@@ -1,0 +1,33 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-vcs-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-vcs";
+  prefix "rw-vcs-ann";
+
+  import rw-vcs {
+    prefix vcs;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  tailf:annotate "/vcs:vstart" {
+    tailf:actionpoint rw_action;
+  }
+
+//tailf:annotate "/vcs:vrestart" {
+//  tailf:actionpoint rw_action;
+//}
+
+  tailf:annotate "/vcs:vstop" {
+    tailf:actionpoint rw_action;
+  }
+}

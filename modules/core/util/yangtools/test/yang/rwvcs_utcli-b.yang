@@ -1,0 +1,132 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwvcs_utcli-b
+{
+  namespace "http://riftio.com/ns/core/rwvx/rwvcs/test/rwvcs_utcli.yang";
+  prefix "rwvcs_utcli";
+
+  import rw-utcli-ext { prefix "rwutcli"; }
+  import rw-pb-ext { prefix "rwpb"; }
+
+  description "Test unit test CLI callbacks.";
+  revision 2014-06-04 { description "Initial version"; }
+
+  revision 2014-02-13 {
+    description "Initial version";
+    reference "CmdArgs Software Component Document";
+  }
+
+  container show {
+    rwpb:msg-new TestShowT;
+    rwutcli:callback-argv "rwvcs_utcli_show";
+    presence true;
+
+    config false;
+    description "Show command";
+
+    container foo {
+      rwpb:msg-new TestShowFooT;
+      rwutcli:callback-argv "rwvcs_utcli_show_foo";
+      description "Show foo command";
+      presence true;
+
+      leaf a1 { type string; }
+      leaf b2 { type uint32; }
+      leaf c3 { type string; }
+    }
+
+    container rwzk {
+      rwpb:msg-new TestShowRwzkT;
+      rwutcli:callback-argv "rwvcs_utcli_show_rwzk";
+      presence true;
+
+      config false;
+      description "Show rwzk command";
+
+      container foo {
+        rwpb:msg-new TestShowRwzkFooT;
+        rwutcli:callback-argv "rwvcs_utcli_show_rwzk_foo";
+        description "Show rwzk foo command";
+        presence true;
+
+        leaf a1 { type string; }
+        leaf b2 { type uint32; }
+        leaf c3 { type string; }
+      }
+    } // container rwzk
+  } // container show
+
+  container stop-component {
+    description "Stop a VCS component";
+
+    rwpb:msg-new StopComponent;
+    rwutcli:callback-argv "rwvcs_utcli_stop_component";
+
+    list id {
+      key "component_id";
+
+      leaf component_id {
+        type string;
+      }
+    }
+  }
+
+  container start-component {
+    description "Start a VCS component";
+
+    rwpb:msg-new StartComponent;
+    rwutcli:callback-argv "rwvcs_utcli_start_component";
+
+    list id {
+      key "component_id parent_id";
+
+      leaf component_id {
+        type string;
+      }
+
+      leaf parent_id {
+        type string;
+      }
+    }
+  }
+
+  container list-cloud-images {
+    description "List the VM images available on the cloud provider";
+    rwpb:msg-new ListCloudImages;
+    rwutcli:callback-argv "rwvcs_utcli_list_cloud_images";
+  }
+
+  container list-cloud-flavors {
+    description "List the VM flavors available on the cloud provider";
+    rwpb:msg-new ListCloudFlavors;
+    rwutcli:callback-argv "rwvcs_utcli_list_cloud_flavors";
+  }
+
+  container create-vm {
+    description "Create VM";
+    rwpb:msg-new CreateVm;
+    rwutcli:callback-argv "rwvcs_utcli_create_vm";
+
+    list params {
+      key "vm_name flavor_name image_name";
+
+      leaf vm_name {
+        type string;
+      }
+
+      leaf flavor_name {
+        type string;
+      }
+
+      leaf image_name {
+        type string;
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+submodule zebra_confd_if_ip {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+/*  =========================================================  */
+/*  =============== zebra interface/ip configuration ========  */
+/*  =========================================================  */
+
+  augment "/system/interface/ip" {
+
+    list address {
+      key "address prefix-length";
+      leaf address {
+        type inet:ipv4-address;
+      }
+      leaf prefix-length {
+        type PrefixLengthIPv4;
+      }
+      leaf label {
+        type string;
+      }
+    }
+  }
+}

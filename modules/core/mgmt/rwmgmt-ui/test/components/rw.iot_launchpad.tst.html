@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="test">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <!-- -->
+  <script src="/vendor.js"></script>
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../lib/socket.io-client/dist/socket.io.js"></script>
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.browserify.js"></script>
+  <!--<script src="../../integration/_components/_services/dispatchesque.js"></script>-->
+  <script src="../../modules/rift/rw.ui.browserify.js"></script>
+  <script src="../../modules/rift/rw.cmdcntr.browserify.js"></script>
+  <script src="../../modules/rift/rw.services.page.browserify.js"></script>
+  <script src="../../modules/rift/rw.trafgen.browserify.js"></script>
+  <script src="../../modules/rift/rw.trafsim.browserify.js"></script>
+  <script src="../../modules/rift/rw.loadbal.browserify.js"></script>
+  <script src="../../modules/rift/rw.slbalancer.browserify.js"></script>
+  <script src="../../modules/rift/rw.iot.launchpad.browserify.js"></script>
+  <script src="../../lib/nouislider/jquery.nouislider.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="../../lib/nouislider/jquery.nouislider.css"/>
+</head>
+<body>
+<iot-launchpad-environment-card></iot-launchpad-environment-card>
+
+<script>
+  if (typeof window.$rw === 'undefined') {
+    window.$rw = {
+      nav: []
+    };
+  }
+  angular.module('test',['rw.iot.launchpad'])
+
+</script>
+
+</body>
+</html>

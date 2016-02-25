@@ -1,0 +1,58 @@
+.TH "src/transapi.h" 3 "Thu Feb 6 2014" "Version 0.7.0" "libnetconf" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+src/transapi.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <libxml/tree\&.h>\fP
+.br
+\fC#include 'netconf\&.h'\fP
+.br
+\fC#include 'error\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "struct \fBtransapi\fP"
+.br
+.RI "\fIStructure to describe transAPI module and connect it statically with libnetconf using \fBncds_new_transapi_static()\fP\&. \fP"
+.ti -1c
+.RI "struct \fBtransapi_data_callbacks\fP"
+.br
+.RI "\fISame as \fBtransapi_data_callbacks\fP\&. Using libxml2 structures for callbacks parameters\&. \fP"
+.ti -1c
+.RI "struct \fBtransapi_rpc_callbacks\fP"
+.br
+.RI "\fISame as \fBtransapi_rpc_callbacks\fP\&. Using libxml2 structures for callbacks parameters\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMAX_RPC_INPUT_ARGS\fP   64"
+.br
+.ti -1c
+.RI "#define \fBTRANSAPI_VERSION\fP   3"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBXMLDIFF_OP\fP { \fBXMLDIFF_ERR\fP = -1, \fBXMLDIFF_NONE\fP = 0, \fBXMLDIFF_ADD\fP = 1, \fBXMLDIFF_REM\fP = 2, \fBXMLDIFF_MOD\fP = 4, \fBXMLDIFF_CHAIN\fP = 8, \fBXMLDIFF_SIBLING\fP = 16, \fBXMLDIFF_REORDER\fP = 32 }"
+.br
+.RI "\fIEnum specifying states of node in document\&. \fP"
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define MAX_RPC_INPUT_ARGS   64"
+
+.SS "#define TRANSAPI_VERSION   3"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for libnetconf from the source code\&.

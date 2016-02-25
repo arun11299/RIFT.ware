@@ -1,0 +1,78 @@
+#! /usr/bin/bash
+
+set -e
+set -x
+
+SOURCE_DIR=@CMAKE_CURRENT_SOURCE_DIR@
+BINARY_DIR=@CMAKE_CURRENT_BINARY_DIR@
+PROJECT_TOP_DIR=@PROJECT_TOP_DIR@
+QCOW_IMAGE=${RIFT_ROOT}/images/Fedora-x86_64-20-20131211.1-sda.qcow2
+RIFT_QCOW_IMAGE=${RIFT_ROOT}/images/Fedora-x86_64-20-20131211.1-sda.qcow2
+PONG_QCOW_IMAGE=${BINARY_DIR}/ping_pong/Fedora-x86_64-20-20131211.1-sda-pong.qcow2
+PING_QCOW_IMAGE=${BINARY_DIR}/ping_pong/Fedora-x86_64-20-20131211.1-sda-ping.qcow2
+
+# These paths are needed for finding the overrides and so files
+PYTHONPATH=${PYTHONPATH}:@RIFT_SUBMODULE_SOURCE_ROOT@/rwvcs/ra:@RIFT_SUBMODULE_BINARY_ROOT@/models/plugins/yang
+PYTHON3PATH=${PYTHON3PATH}:@RIFT_SUBMODULE_SOURCE_ROOT@/rwvcs/ra:@RIFT_SUBMODULE_BINARY_ROOT@/models/plugins/yang
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:@RIFT_SUBMODULE_BINARY_ROOT@/models/plugins/yang
+
+# Remove any old directories
+rm -rf ${BINARY_DIR}/ping_vnfd
+rm -rf ${BINARY_DIR}/pong_vnfd
+rm -rf ${BINARY_DIR}/ping_pong_nsd
+
+rm -rf ${BINARY_DIR}/ping_vnfd_with_image
+rm -rf ${BINARY_DIR}/pong_vnfd_with_image
+
+rm -rf ${BINARY_DIR}/ping_vnfd_with_epa
+rm -rf ${BINARY_DIR}/pong_vnfd_with_epa
+rm -rf ${BINARY_DIR}/ping_pong_nsd_with_epa
+
+
+# Generate image md5sum
+ping_md5sum="$(md5sum ${PING_QCOW_IMAGE} | cut -f1 -d" ")"
+pong_md5sum="$(md5sum ${PONG_QCOW_IMAGE} | cut -f1 -d" ")"
+
+# Generate the descriptors
+${SOURCE_DIR}/ping_pong_nsd.py --outdir=${BINARY_DIR} --format=xml --ping-image-md5=${ping_md5sum} --pong-image-md5=${pong_md5sum}
+
+# create directories for packages with images
+cp -r ${BINARY_DIR}/ping_vnfd ${BINARY_DIR}/ping_vnfd_with_image
+cp -r ${BINARY_DIR}/pong_vnfd ${BINARY_DIR}/pong_vnfd_with_image
+mkdir -p ${BINARY_DIR}/ping_vnfd_with_image/images
+mkdir -p ${BINARY_DIR}/pong_vnfd_with_image/images
+
+### Generate descriptors with EPA
+${SOURCE_DIR}/ping_pong_nsd.py --outdir=${BINARY_DIR}/with_epa --format=xml --epa --ping-image-md5=${ping_md5sum} --pong-image-md5=${pong_md5sum}
+
+### Move the generated artifacts to appropriate directories
+mv ${BINARY_DIR}/with_epa/ping_vnfd_with_epa ${BINARY_DIR}/ping_vnfd_with_epa
+mv ${BINARY_DIR}/with_epa/pong_vnfd_with_epa ${BINARY_DIR}/pong_vnfd_with_epa
+mv ${BINARY_DIR}/with_epa/ping_pong_nsd_with_epa ${BINARY_DIR}/ping_pong_nsd_with_epa
+
+### ReMove the original directories
+rm -rf ${BINARY_DIR}/with_epa
+
+# copy a dummy image for now
+if [ -e ${PING_QCOW_IMAGE} ]; then
+    cp ${PING_QCOW_IMAGE} ${BINARY_DIR}/ping_vnfd_with_image/images/
+    ${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} ping_vnfd_with_image
+else
+    echo >&2 "Warn: Skipped creating ping_vnfd_with_image due to missing image: ${PING_QCOW_IMAGE}"
+fi
+
+if [ -e ${PONG_QCOW_IMAGE} ]; then
+    cp ${PONG_QCOW_IMAGE} ${BINARY_DIR}/pong_vnfd_with_image/images/
+    ${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} pong_vnfd_with_image
+else
+    echo >&2 "Warn: Skipped creating pong_vnfd_with_image due to missing image: ${PONG_QCOW_IMAGE}"
+fi
+
+# Generate the tar files
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} ping_vnfd
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} pong_vnfd
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} ping_pong_nsd
+
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} ping_vnfd_with_epa
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} pong_vnfd_with_epa
+${PROJECT_TOP_DIR}/bin/generate_descriptor_pkg.sh ${BINARY_DIR} ping_pong_nsd_with_epa

@@ -1,0 +1,7 @@
+<li>
+  <span class="label">{{prop.name}} :</span>
+  <span class="value">{{prop.value}}</span>
+  <ul class="propList" ng-repeat="child in prop.children">
+    <lte-details-property prop="child"></lte-details-property>
+  </ul>
+</li>

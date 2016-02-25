@@ -1,0 +1,120 @@
+ ConfD SNMP Agent Example - YANG to MIB
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The example shows how a MIB can be generated from a YANG module.
+simple.yang is the base for generating TAIL-F-SIMPLE-MIB.mib.
+
+The example has been made up, and is not something taken from the real
+world.
+
+In the YANG module, all objects that we want to have corresponding MIB
+objects are annotated with a tailf:snmp-oid statement, and for some
+objects, the tailf:snmp-name statement.
+
+
+1. Compile the YANG module
+
+  The first step is to compile the YANG module into a fxs file.  
+
+    confdc -c -o simple.fxs simple.yang
+
+2. Generate a MIB
+
+   confdc is used for producing TAIL-F-SIMPLE-MIB.mib from simple.fxs.
+
+     confdc --emit-mib TAIL-F-SIMPLE-MIB.mib.tmp --top tailfSimpleMIB \
+       -f $(CONFD_DIR)/etc/confd -- simple.fxs
+
+3. Compiling the MIB
+
+  The MIB needs to be compiled into a '.bin' file in order to be
+  loaded into the ConfD SNMP Agent.
+
+  In order for confdc to compile the MIB, the file needs to have
+  '.mib' as file extension.
+
+4. Configuring the ConfD SNMP Agent
+   
+  The SNMP Agent is part of the confd daemon and can be enabled from
+  confd.conf file. Per default the SNMP agent is disabled.  Configure
+  the IP address and port of the SNMP agent, and list all the MIBs
+  that should be loaded at startup.
+
+  [confd.conf]
+
+  <snmpAgent>
+    <enabled>true</enabled>
+    <ip>0.0.0.0</ip>
+    <port>4000</port>
+    <mibs>
+      <file>SIMPLE-MIB.bin</file>
+    </mibs>
+  </snmpAgent>
+
+
+  Make the system with
+      > make all
+
+  Start up the system with 
+      > make start
+
+
+5. Accessing data from the CLI
+
+  The configuration can be checked as usual by running the CLI.
+      > confd_cli
+
+  ola connected from 127.0.0.1 using console on saturn.tail-f.com
+  ola@saturn> show simpleObjects
+
+  maxNumberOfServers 10;
+  maxNumberOfHosts   10;
+  hosts {
+      host vega@tail-f.com {
+          enabled false;
+      }
+      host saturn@tail-f.com {
+          enabled true;
+          servers {
+              server ftp {
+                  ip   192.168.0.1;
+                  port 5001;
+              }
+              server www {
+                  ip   192.168.0.1;
+                  port 5000;
+              }
+          }
+      }
+  }
+  services {
+      service 192.168.0.1 5000 {
+          hostName   saturn@tail-f.com;
+          serverName www;
+      }
+      service 192.168.0.1 5001 {
+          hostName   saturn@tail-f.com;
+          serverName ftp;
+      }
+  }
+
+6. Accessing the data from an SNMP Manager
+
+  Use any SNMP manager and connect it to the ConfD SNMP Agent.
+  The example below uses NetSNMP as a manager.
+
+6a. SNMP Walk
+
+      > snmpwalk -m ./TAIL-F-SIMPLE-MIB.mib -c public -v2c localhost:4000 enterprises
+  TAIL-F-SIMPLE-MIB::maxNumberOfServers.0 = Gauge32: 10
+  TAIL-F-SIMPLE-MIB::maxNumberOfHosts.0 = Gauge32: 10
+  TAIL-F-SIMPLE-MIB::hostEnabled."vega@tail-f.com" = INTEGER: false(2)
+  TAIL-F-SIMPLE-MIB::hostEnabled."saturn@tail-f.com" = INTEGER: true(1)
+  TAIL-F-SIMPLE-MIB::hostRowstatus."vega@tail-f.com" = INTEGER: active(1)
+  TAIL-F-SIMPLE-MIB::hostRowstatus."saturn@tail-f.com" = INTEGER: active(1)
+  TAIL-F-SIMPLE-MIB::serverIp."saturn@tail-f.com"."ftp" = IpAddress: 192.168.0.1
+  TAIL-F-SIMPLE-MIB::serverIp."saturn@tail-f.com"."www" = IpAddress: 192.168.0.1
+  TAIL-F-SIMPLE-MIB::serverPort."saturn@tail-f.com"."ftp" = Gauge32: 5001
+  TAIL-F-SIMPLE-MIB::serverPort."saturn@tail-f.com"."www" = Gauge32: 5000
+  TAIL-F-SIMPLE-MIB::serverRowstatus."saturn@tail-f.com"."ftp" = INTEGER: active(1)
+  TAIL-F-SIMPLE-MIB::serverRowstatus."saturn@tail-f.com"."www" = INTEGER: active(1)

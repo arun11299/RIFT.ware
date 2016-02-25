@@ -1,0 +1,47 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-base-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-base-annotation";
+  prefix "rw-base-ann";
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+
+  tailf:annotate "/rwbase:vcs/rwbase:info" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rwbase:vcs/rwbase:instances" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rwbase:version" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rwbase:vcs/rwbase:resource/rwbase:utilization" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rwbase:tracing" {
+    tailf:actionpoint rw_action;
+  }
+
+  tailf:annotate "/rwbase:tracing" {
+    tailf:actionpoint rw_action;
+  }
+
+}

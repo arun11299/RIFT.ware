@@ -1,0 +1,170 @@
+<polymer-element name="rw-bargraph" attributes="values xMin xMax">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-bargraph.css"/>
+    <svg id="plot"></svg>
+  </template>
+  <script>
+    Polymer({
+      color: 'rgba(73, 189, 238, 1)',
+      xMin : 0,
+      xMax: 500,
+
+      created: function() {
+        this.margin = {
+          top: 20,
+          right: 100,
+          bottom: 20,
+          left: 55
+        };
+        this.xDataMargin = 80;
+        this.yDataMargin = 40;
+
+        this.labels = [];
+      },
+
+      domReady: function() {
+        var self = this;
+
+        this.xValue = function(d) { return d.x; };
+        this.yValue = function(d) { return d.label; };
+
+        this.calculateSizes();
+
+        // add the graph canvas to the body of the webpage
+        this.svg = d3.select(this.$.plot);
+
+        this.plot = this.svg
+                .append("g")
+                .attr("transform",
+                  "translate(" + self.margin.left + "," + self.margin.top + ")");
+
+        this.dataG = this.plot
+                .append("rect")
+                .attr('class', 'data');
+
+        this.yAxisG = this.plot.append("g")
+                .attr("class", "y axis");
+
+        this.sizeToFit();
+        this.valuesChanged();
+
+        window.addEventListener("resize", function() {
+          self.async(self.resize.bind(self), 100);
+        });
+      },
+
+      resize: function() {
+        this.calculateSizes();
+        this.sizeToFit();
+        this.valuesChanged();
+      },
+
+      calculateSizes: function() {
+        var self = this;
+        var dim = this.getBoundingClientRect();
+        this.height = Math.floor(dim.height);
+        this.width = Math.floor(dim.width);
+
+        this.plotWidth = this.width - this.margin.left - this.margin.right;
+        this.plotHeight = this.height - this.margin.top - this.margin.bottom;
+
+        this.xScale = d3.scale.linear().range([0, this.plotWidth - 30]);
+        this.xMap = function(d) { return self.xScale(self.xValue(d)); };
+        this.xScale.domain([this.xMin, this.xMax]);
+        this.xWidth = function(d) { return self.xMap(d); };
+
+        this.yScale = d3.scale.ordinal().rangeRoundBands([0, this.plotHeight]);
+        this.yMap = function(d) { return self.yScale(self.yValue(d));};
+        this.yAxis = d3.svg.axis().scale(this.yScale).orient("left").tickSize(0);
+        this.yScale.domain(this.labels);
+      },
+
+      sizeToFit: function() {
+        var self = this;
+        var w = this.plotWidth + self.margin.right + self.margin.left;
+        var h = this.plotHeight + self.margin.top + self.margin.bottom;
+        this.svg
+                .attr("width", w)
+                .attr("height", h);
+
+        this.yAxisG.call(this.yAxis);
+
+        this.dataG
+                .attr("width", w - this.xDataMargin)
+                .attr("height", h - this.yDataMargin);
+      },
+
+      colorChanged: function() {
+        if (typeof(this.dots) === 'undefined') {
+          return;
+        }
+        this.dots
+                .attr("color", this.color);
+      },
+
+      verifyMax: function() {
+        var self = this;
+        var xMax = this.values.reduce(function(xMax, v) {
+          return Math.max(v.x, xMax);
+        }, this.xMax);
+        if (xMax != this.xMax) {
+          this.xMax = xMax;
+          this.calculateSizes();
+        }
+      },
+
+      valuesChanged: function() {
+        if (typeof(this.plot) === 'undefined' || typeof(this.values) === 'undefined') {
+          return;
+        }
+        var self = this;
+        this.verifyMax();
+        this.labels =  this.values.map(this.yValue);
+        this.yScale.domain(this.labels);
+        this.yAxisG.call(this.yAxis);
+
+        this.plot.selectAll('.bar').remove();
+
+        this.bars = this.plot.selectAll('.bar')
+                .data(this.values)
+                .enter()
+                .append("rect")
+                .attr("height", self.yScale.rangeBand)
+                .attr("width", self.xWidth)
+                .attr("x", 0)
+                .attr("y", self.yMap)
+                .attr('class', 'bar')
+                .style("fill", this.color);
+
+        this.plot.selectAll('.txt').remove();
+        this.barsLabel = this.plot.selectAll('.txt')
+                .data(this.values)
+                .enter()
+                .append('text')
+                .attr('class', 'txt')
+                .attr('x', function(d) { return self.xWidth(d) + 10;})
+                .attr('y', function(d) { return self.yMap(d) + (self.yScale.rangeBand(d) / 2); })
+                .text(function(d) { return '' + d.x;});
+      },
+
+      update: function() {
+        var self = this;
+        this.verifyMax();
+        this.bars
+                .transition()
+                .duration(1000)
+                .attr("height", self.yScale.rangeBand)
+                .attr("width", self.xWidth)
+                .attr("y", self.yMap);
+
+        this.barsLabel
+                .transition()
+                .duration(1000)
+                .attr('x', function(d) { return self.xWidth(d) + 10;})
+                .attr('y', function(d) { return self.yMap(d) + (self.yScale.rangeBand(d) / 2); })
+                .text(function(d) { return '' + d.x;});
+
+      }
+    });
+  </script>
+</polymer-element>

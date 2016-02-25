@@ -1,0 +1,38 @@
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+      <dropElem src="alias expansion"/>
+      <multiValue src="alias expansion"/>
+      <suppressMode src="alias "/>
+      <modeName src="aaa ios privilege">
+        <capi><cmdpoint>mode_name</cmdpoint></capi>
+      </modeName>
+
+      <!-- align all ip addresses to the left in tables -->
+      <defaultColumnAlign namespace="urn:ietf:params:xml:ns:yang:inet-types"
+                          name="ip-address" align="left"/>
+
+      <legend path="arp arpe">Arp entries found on system. Permanent means...</legend>
+      <footer path="arp arpe">$(.?% Some entries in the table.
+:% No entries in the table.
+)</footer>
+
+      <columnWidth path="arp arpe ip" width="15"/>
+
+      <columnWidth path="arp arpe ifname" width="9"/>
+      <columnAlign path="arp arpe ifname" align="center"/>
+
+      <columnWidth path="arp arpe hwaddr" width="17"/>
+      <columnWidth path="arp arpe permanent" width="9"/>
+
+      <columnWidth path="arp arpe published" width="10" />
+      <columnAlign path="arp arpe published" align="right" />
+
+    </modifications>
+  </operationalMode>
+
+
+  <configureMode>
+  </configureMode>
+</clispec>

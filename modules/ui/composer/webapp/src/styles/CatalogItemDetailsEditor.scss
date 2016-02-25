@@ -1,0 +1,170 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+.CatalogItemDetailsEditor {
+	border: 1px solid transparent;
+	transform: translate3d(0, 0, 0);
+	height: 100%;
+	div,
+	label {
+		display: block;
+		position: relative;
+		margin: 8px 4px 16px 4px;
+		border: none;
+		border-radius: 1px;
+		div {
+			margin: 0px;
+		}
+		.label {
+			display: block;
+			width: 100%;
+			white-space: nowrap;
+			padding: 0 0 0 14px;
+			text-align: left;
+			color: #aeaeae;
+			font-size: 12px;
+			font-style: normal;
+			line-height: 16px;
+			text-transform: uppercase;
+			position: relative;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			small {
+				margin-left: 4px;
+				&.value {
+					text-transform: none;
+				}
+			}
+		}
+		.description {
+			display: none;
+			font-size: xx-small;
+			padding: 0 0 0 8px;
+			color: rgba(35,16,16,0.67);
+		}
+		&.-is-required:before {
+			content: "*";
+			padding: 4px;
+			font-size: x-small;
+			color: rgba(255, 95, 95, 0.75);
+		}
+		&.property-group {
+			.property-group {
+				border: none;
+				div, label {
+					margin-left: 0px;
+				}
+			}
+		}
+		small.warning {
+			font-size: xx-small;
+		}
+	}
+	input,
+	select,
+	textarea {
+		appearance:none;
+		-webkit-appearance: none;
+		-moz-appearance : none;
+		width: 100%;
+		border: 1px solid rgba(220, 220, 220, 0.5);
+		border-radius: 4px;
+		padding: 10px 8px;
+		font-weight: 400;
+		font-size: 14px;
+		background-color: rgba(255, 255, 255, 1);
+		&::-webkit-input-placeholder {
+			color: #bfbfbf;
+			font-size: 11px;
+		}
+		&:-moz-placeholder {
+			/* Firefox 18- */
+			color: #bfbfbf;
+			font-size: 11px;
+		}
+		&::-moz-placeholder {
+			/* Firefox 19+ */
+			color: #bfbfbf;
+			font-size: 11px;
+		}
+		&:-ms-input-placeholder {
+			color: #bfbfbf;
+			font-size: 11px;
+		}
+		&[readonly]{
+			background-color: rgba(255, 255, 255, .25);
+		}
+	}
+	select {
+		background: rgba(255, 255, 255, 1) url(../images/arrow614.svg) 96% center no-repeat;
+		background-size: 10px;
+	}
+	.basic-properties-group {
+		padding-bottom: 8px;
+	}
+	[data-toggle] {
+		cursor: pointer;
+		small.value {
+			visibility: hidden;
+		}
+		&.-is-toggled {
+			//border-top: 1px solid rgba(192, 192, 192, 0.25);
+			small.value {
+				visibility: visible;
+			}
+		}
+	}
+	h1[data-toggle] {
+		border-top: 1px solid silver;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		&:before {
+			border-top-left-radius: 4px;
+		}
+	}
+	.list {
+		> div {
+			> .property-group {
+				&:nth-child(odd) {
+					//background-color: #7b7b7b;
+					border-left: 2px solid #5b5b5b;
+					&.simple-list {
+						border-left-color: transparent;
+						background-color: rgba(255, 248, 220, 0.33);
+					}
+				}
+				&:nth-child(even) {
+					//background-color: #bfbfbf;
+					border-left: 2px solid #ffffff;
+					&.simple-list {
+						border-left-color: transparent;
+						background-color: rgba(248, 248, 255, 0.33);
+					}
+				}
+				&.simple-list {
+					margin: 4px;
+					position: relative;
+					cursor: pointer;
+					> div {
+						display: inline-block;
+						margin: 14px 5px 14px 14px;
+					}
+					.actions {
+						position: absolute;
+						top: 4px;
+						right: 0;
+						margin: 0;
+						.Button img {
+							width: 15px;
+							margin: 5px;
+						}
+					}
+				}
+			}
+		}
+	}
+}

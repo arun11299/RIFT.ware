@@ -1,0 +1,42 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-loadbal-stats.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-loadbal-stats 
+    id="test0"
+    data="{{data}}"
+    ></rw-loadbal-stats>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    this.data = {
+      fwdBindings : 99,
+      revBindings : 10000,
+      fwdPktXmit: 10100,
+      revPktXmit: 10200,
+      fwdPktReceived: 10300000,
+      revPktReceived: 10400000000,
+      fwdPktDrop: 10500,
+      revPktDrop: 10600
+    };
+  },
+  attached: function() {
+    suite('rw-loadbal-stats', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+})
+</script>
+</polymer-element>  
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test style="width: 400px; margin-left: 100px"></my-test>
+</div>

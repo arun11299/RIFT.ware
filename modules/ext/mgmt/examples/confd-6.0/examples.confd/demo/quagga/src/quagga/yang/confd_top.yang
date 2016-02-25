@@ -1,0 +1,7 @@
+submodule confd_top {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  container system;
+}

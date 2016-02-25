@@ -1,0 +1,15 @@
+<!--
+  if imported twice, sliders disappear
+  -->
+<!--<link rel="import" href="rw-dashboard-control.html">-->
+
+<link rel="import" href="rw-dashboard-netstat.html">
+
+<polymer-element name="rw-dashboard-trafgen" attributes="service" noscript>
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-dashboard-trafgen.css"/>
+  <rw-dashboard-netstat
+    service="{{service}}"
+    ></rw-dashboard-netstat>
+</template>
+</polymer-element>

@@ -1,0 +1,71 @@
+Example for tables based on Example #4
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how you can easily
+customize the show output for tables.
+
+The examples uses Java to implement that data provider. However,
+java is not needed to use the table customization shown in 
+this example. The data provider could just as well have been
+written in some other language, for example, C.
+
+
+Build dependencies.
+~~~~~~~~~~~~~~~~~~~~~
+
+This example requires Java CLASSPATH to include log4j and aspectjrt.
+The example has been tested against aspectjrt-1.6.5.jar and log4j-1.2.14.jar
+See:
+http://www.eclipse.org/aspectj/
+http://logging.apache.org/log4j/
+
+
+
+What the Example does
+~~~~~~~~~~~~~~~~~~~~~
+
+This example demonstrated how we can use a few different table
+tweaking options to customize the formatting of tables. 
+
+The application is monitoring the arp tables by running
+'/sbin/arp -an' whenever a manager asks for the current status. 
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+      $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+      $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try some commands
+
+      # show arp
+
+    Now ping a few of the hosts in your neighborhood and rerun
+    the above status command to see that the newly pinged hosts 
+    are shown in the arp output.
+
+ 4. Try some more commands in the CLI. 
+
+      # show arp arpe | select hwaddr
+      # show arp arpe | select hwaddr | select published
+
+    
+
+Further Reading
+~~~~~~~~~~~~~~~
+
+You can also see some showTemplate in the cli_command example.
+Go the cli_command and build using
+
+   $ make all start
+
+And then start the C-style cli using 'make cli-c' and try
+
+   > show SNMPv2-MIB

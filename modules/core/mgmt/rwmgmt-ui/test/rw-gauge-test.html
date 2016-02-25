@@ -1,0 +1,31 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-gauge.html">
+<link rel="stylesheet" href="../integration/ridgets/css/page.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-gauge 
+    id="test0"
+    value="50"
+    ></rw-gauge>
+</template>
+<script>
+Polymer('my-test', {
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-gauge', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

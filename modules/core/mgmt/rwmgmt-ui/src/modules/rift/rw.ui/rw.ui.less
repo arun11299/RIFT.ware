@@ -1,0 +1,511 @@
+@import "../../../integration/ridgets/css/base/normalize";
+@import "../../../integration/ridgets/css/base/base";
+@import "../../../integration/ridgets/css/fonts/fonts";
+@import "../../../integration/ridgets/css/elements/prototype";
+@import "../../../integration/ridgets/css/elements/header";
+@import "../../../integration/ridgets/css/elements/icons";
+@import "../../../integration/ridgets/css/elements/modal";
+@import "../../../integration/ridgets/css/elements/datagrid";
+@import "../../../integration/ridgets/css/elements/button";
+@import "../../../integration/ridgets/css/elements/section-details";
+@import "../../../integration/ridgets/css/elements/form";
+@import "../../../integration/ridgets/css/elements/panel";
+@import "../../../integration/ridgets/css/elements/viewport";
+
+
+
+.bullet {
+  transition: all 0.5s ease-in-out;
+  -webkit-transition:  all 0.5s ease-in-out;
+  transform-origin: left center;
+  -webkit-transform-origin: left center;
+  transform: scaleX(0);
+  -webkit-transform: scaleX(0);
+}
+
+.bullet-container {
+  stroke: @black;
+  stroke-width: 1;
+  fill: @gray5;
+}
+
+.bullet-marker {
+  stroke: rgba(69, 69, 69, 1);
+  stroke-width: 2;
+}
+
+.bullet-markerText {
+  font-size: 10px;
+  font-family: open-sans;
+  color: rgba(133, 133, 133, 1);
+}
+
+div[splitter]{
+  width:200px;
+  top:0px;
+  height: 800px;
+//  border: 2px solid black;
+}
+//html,
+//body {
+//  height: 100%;
+//}
+
+#handle {
+  z-index: 3;
+  position: relative;
+    cursor: row-resize;
+    min-height:20px;
+}
+
+.splitterContainer {
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  display: flex;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.splitter {
+  height:32px;
+  width:100%;
+  box-shadow: none;
+  background-image: none;
+  align-items: center;
+  padding: 4px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  background-color: @white;
+  z-index: 999;
+}
+
+.splitter .adjust {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin-top: 5px;
+}
+
+//.container(:hover, :active) {
+//  background-color: #454545;
+//}
+
+.vpane-top {
+//  flex: .4;
+//  flex-shrink:1;
+//  justify-content: center;
+//  flex-direction: column;
+  //overflow:hidden;
+  flex: 1;
+  overflow-y:scroll;
+  //height:500px;
+  border-top: 1px solid @gray19;
+  border-bottom: 1px solid @gray19;
+  background-color: @gray19;
+}
+
+.vpane-bottom {
+  display: block;
+  //overflow: hidden;
+  overflow-y: scroll;
+  background-color: @gray19;
+  position: relative;
+//  flex:.6;
+}
+
+.adjust .splitterButtons {
+  position:relative;
+  float:left;
+  border: 1px solid @gray5;
+  border-radius: 8px;
+  fill: @gray5;
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+}
+
+.splitterContainer .content {
+  margin-right:60px;
+}
+
+.donut-mycircliful {
+  display:inline-block;
+  height: 120px;
+  padding:0px;
+  margin:0px;
+
+  font-family: arial,verdana, sans-serif;
+  font-size: 12px;
+}
+
+.dashpanel {
+  // overflow: auto;
+  height:300px;
+
+}
+
+.dashpanel:last-child {
+  margin: 0;
+}
+
+.gauges {
+  .flex(1 1 auto);
+  .flex-display();
+  .justify-content(space-around);
+
+}
+
+.gauge-group {
+  .flex(1 1 auto);
+  .flex-direction(column);
+  .align-content(center);
+}
+
+.gauge-group > h2 {
+  margin-bottom: 0px;
+
+  color:#cccccc;
+  font-weight:200;
+}
+
+rw-gauge {
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.rw-gauge {
+  display: block;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.scatter-axis path,
+.scatter-axis line {
+  fill: none;
+  stroke: @gray10;
+  shape-rendering: crispEdges;
+}
+
+// We disable user select and pointer-events on many
+// texts because dots that are congested were not presenting
+// tooltips as cursor would flip between pointer and text
+.scatter-axis text {
+  fill: white;
+  user-select: none;
+  pointer-events: none;
+}
+
+.scatter-dot {
+  stroke: #000;
+}
+
+.scatter-plotContainer {
+  position: relative;
+}
+
+.scatter-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: @gray5;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.scatter-label {
+  opacity: .5;
+  user-select: none;
+  pointer-events: none;
+}
+
+.scatter-tooltipGuide {
+  stroke: white;
+  fill: white;
+}
+
+.scatter-tooltipGuideLabel {
+  fill: white;
+  font-size: small;
+  user-select: none;
+  pointer-events: none;
+}
+
+/**/
+.noUi-target,
+.noUi-target * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-touch-action: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.noUi-base {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.noUi-origin {
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+.noUi-handle {
+  position: relative;
+  z-index: 1;
+}
+.noUi-stacking .noUi-handle {
+  /* This class is applied to the lower origin when
+     its values is > 50%. */
+  z-index: 10;
+}
+.noUi-stacking + .noUi-origin {
+  /* Fix stacking order in IE7, which incorrectly
+     creates a new context for the origins. */
+  *z-index: -1;
+}
+.noUi-state-tap .noUi-origin {
+  -webkit-transition: left 0.3s, top 0.3s;
+  transition: left 0.3s, top 0.3s;
+}
+.noUi-state-drag * {
+  cursor: inherit !important;
+}
+
+/* Slider size and handle placement;
+ */
+.noUi-horizontal {
+  height: 28px;
+}
+.noUi-horizontal .noUi-handle {
+  width: 34px;
+  height: 28px;
+  left: -17px;
+  top: -6px; //-6px
+}
+.noUi-horizontal.noUi-extended {
+  padding: 0 15px;
+}
+.noUi-horizontal.noUi-extended .noUi-origin  {
+  right: -15px;
+}
+.noUi-vertical {
+  width: 18px;
+}
+.noUi-vertical .noUi-handle {
+  width: 28px;
+  height: 34px;
+  left: 0px;  //-6px
+  top: -17px;
+}
+.noUi-vertical.noUi-extended {
+  padding: 15px 0;
+}
+.noUi-vertical.noUi-extended .noUi-origin  {
+  bottom: -15px;
+}
+
+/* Styling;
+ */
+.noUi-background {
+  /*background: #FAFAFA;
+  box-shadow: inset 0 1px 1px #f0f0f0;
+  background-color: @blue-2;
+  border: 1px solid @gray3;
+  box-shadow: none;*/
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-left:20px;
+  padding-right:20px;
+
+  background-color:transparent;
+}
+.noUi-base{
+  background-color: transparent;
+  /*border: 1px solid @gray3;*/
+  box-shadow: none;
+  border-radius: 0px;
+  border-top: 1px solid @gray17;
+  border-bottom: 1px solid @gray17;
+}
+.noUi-connect {
+  background: #3FB8AF;
+  -webkit-transition: background 450ms;
+  transition: background 450ms;
+}
+.noUi-origin {
+  border-radius: 0px;
+
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+}
+.noUi-target {
+  border-radius: 0px;
+  border: none; //
+  box-shadow: none;
+
+  background-color: transparent;
+}
+.noUi-target.noUi-connect {
+  box-shadow: inset 0 0 3px rgba(51,51,51,0.45), 0 3px 6px -5px #BBB;
+}
+
+/* Handles and cursors;
+ */
+.noUi-dragable {
+  cursor: w-resize;
+}
+.noUi-vertical .noUi-dragable {
+  cursor: n-resize;
+}
+.noUi-handle {
+  cursor: pointer;
+
+  border-radius: 0px;
+  border: 1px solid @blue-2;
+  box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+  background-color: @blue-2;
+  background-image: none;
+}
+.noUi-handle:after, .noUi-handle:before{
+  display:none;
+}
+.noUi-active {
+  /*box-shadow: inset 0 0 1px #FFF,
+  inset 0 1px 7px #DDD,
+  0 3px 6px -3px #BBB;*/
+}
+
+
+/* Disabled state;
+ */
+[disabled].noUi-connect,
+[disabled] .noUi-connect {
+  background: #B8B8B8;
+}
+[disabled] .noUi-handle {
+  cursor: not-allowed;
+}
+
+.bargraph {
+  width: 100%;
+  height: 100%;
+}
+
+.bargraph-axis path,
+.bargraph-axis line {
+  fill: none;
+  stroke: @gray10;
+  shape-rendering: crispEdges;
+}
+
+.y.bargraph-axis text {
+  fill: black;
+}
+
+.bargraph-axis text {
+  fill: white;
+}
+
+.bargraph-bar {
+  stroke: #000;
+}
+
+.bargraph-txt {
+  fill: white;
+}
+
+.bargraph-data {
+  fill : @gray5;
+}
+
+.rw-geomap {
+  height: 100%;
+  width: 100%;
+}
+
+.jvectormap-zoomin, .jvectormap-zoomout {
+  display: none;
+}
+
+.details-cntr {
+    width: 100%;
+    height: 100%;
+    margin:10px 0 0 0;
+    padding: 0;
+    font: 16px/1.2 roboto, sans-serif;
+    color: @gray5;
+    background: transparent;
+  }
+
+  .tabs-list {
+    display:block;
+    position:relative;
+    width:100%;
+    height:40px;
+    margin-left: 0px;
+    margin-top: 8px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    padding: 0 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+    list-style-type: none;
+  }
+
+  .tabs-pane {
+    display:none;
+    background: transparent;
+  }
+
+  .tabs-pane.active {
+    display:block;
+  }
+
+  .tabs-tab {
+    display:block;
+    float:left;
+    position:relative;
+    min-width:20px;
+    margin: 0 0 -1px 0;
+    padding: 0 10px 0;
+    cursor: default;
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    background-color: @gray17;
+    color: @gray5;
+  }
+  .tabs-tab.active {
+    background-color: @blue-2;
+    color: @white;
+  }
+  .tabs-tab span {
+    display: block;
+    position:relative;
+    padding:15px 0px 4px 0px;
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .tabs-tab.active span {
+
+  }
+
+  .scroll-graph{
+    .flex-display();
+  .flex-direction(column);
+}
+
+.scroll-graph canvas {
+  border: 1px solid @gray3;
+  border-radius: 5px;
+}
+.scroll-graph div {
+  text-align:center;
+}
+

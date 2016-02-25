@@ -1,0 +1,84 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// corners.less
+//
+// Styling for corner accents
+//
+// Styling for corner elements used on panels.
+//
+.has-corner-accents {
+  position: relative;
+}
+.corner-accent {
+  border: 1px solid @black;
+  display: block;
+  height: 4px;
+  position: absolute;
+  width: 4px;
+  &.top {
+    border-bottom: 0;
+    top: -1px;
+  }
+  &.right {
+    border-left: 0;
+    right: -1px;
+  }
+  &.bottom {
+    border-top: 0;
+    bottom: -1px;
+  }
+  &.left {
+    border-right: 0;
+    left: -1px;
+  }
+}
+
+.has-diag-corners {
+  position: relative;
+  &.top {
+    &:before {
+      border-left: 149px solid @gray-light;
+      border-top: 134px solid @gray;
+      content: '';
+      position: absolute;
+        left: 0;
+        top: 0;
+      width: 0;
+    }
+    &:after {
+      border-right: 149px solid @gray-light;
+      border-top: 134px solid @gray;
+      content: '';
+      position: absolute;
+        right: 0;
+        top: 0;
+      width: 0;
+    }
+  }
+  &.bottom {
+    &:before {
+      border-right: 149px solid @gray;
+      border-top: 134px solid @gray-light;
+      content: '';
+      position: absolute;
+        left: 0;
+        top: 0;
+      width: 0;
+    }
+    &:after {
+      border-left: 149px solid @gray;
+      border-top: 134px solid @gray-light;
+      content: '';
+      position: absolute;
+        right: 0;
+        top: 0;
+      width: 0;
+    }
+  }
+}

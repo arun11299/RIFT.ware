@@ -1,0 +1,36 @@
+EXTRA_LINK_FLAGS= --yangpath $(CONFD_DIR)/src/confd/snmp/yang
+
+## automatic dependency for all MIBs in the current dir
+MIB ?= $(wildcard *.mib)
+
+# include the automatic dependency files
+-include $(MIB:.mib=.d)
+
+# generate the automatic dependency files
+#   the .bin file depends on all IMPORTED .bin and .fxs files
+#   the .fxs file depends on all IMPORTED .yang and .fxs files
+#   the .d file depends on all IMPORTED .mib files
+SKIP = SNMPv2-TC:SNMPv2-MIB:TRANSPORT-ADDRESS-MIB:IPV6-TC
+
+%.d: %.mib
+	@set -e; \
+	$(SMIDUMP) -c $(CONFD_DIR)/etc/confd/smi.conf -l 0 -f depend \
+		--depend-target $(<:%.mib=%.bin)	\
+		--depend-extension .fxs $<              \
+                --depend-skip $(SKIP) >> $@;            \
+	$(SMIDUMP) -c $(CONFD_DIR)/etc/confd/smi.conf -l 0 -f depend \
+		--depend-target $(<:%.mib=%.bin)	\
+		--depend-extension .bin $<  		\
+                --depend-skip $(SKIP) >> $@;            \
+	$(SMIDUMP) -c $(CONFD_DIR)/etc/confd/smi.conf -l 0 -f depend \
+		--depend-target $(<:%.mib=%.fxs)	\
+		--depend-extension .yang $<            \
+                --depend-skip $(SKIP) >> $@;            \
+	$(SMIDUMP) -c $(CONFD_DIR)/etc/confd/smi.conf -l 0 -f depend \
+		--depend-target $(<:%.mib=%.fxs)	\
+		--depend-extension .fxs $<  		\
+                --depend-skip $(SKIP) >> $@;            \
+	$(SMIDUMP) -c $(CONFD_DIR)/etc/confd/smi.conf -l 0 -f depend \
+		--depend-target $(<:%.mib=%.d)		\
+		--depend-extension .mib $< 		\
+                --depend-skip $(SKIP) >> $@;

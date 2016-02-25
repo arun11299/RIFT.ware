@@ -1,0 +1,43 @@
+<SNMP-USER-BASED-SM-MIB xmlns="http://tail-f.com/ns/mibs/SNMP-USER-BASED-SM-MIB/200210160000Z">
+
+  <usmUserTable>
+    <usmUserEntry>
+      <!-- MyEngine -->
+      <usmUserEngineID>4D:79:45:6E:67:69:6E:65</usmUserEngineID>
+      <usmUserName>initial</usmUserName>
+      <usmUserSecurityName>initial</usmUserSecurityName>
+      <!-- No auth protocol -->
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.1</usmUserAuthProtocol>
+      <!-- No priv protocol -->
+      <usmUserPrivProtocol>1.3.6.1.6.3.10.1.2.1</usmUserPrivProtocol>
+    </usmUserEntry>
+
+   <usmUserEntry>
+      <!-- MyEngine -->
+      <usmUserEngineID>4D:79:45:6E:67:69:6E:65</usmUserEngineID>
+      <usmUserName>initial_auth</usmUserName>
+      <usmUserSecurityName>initial_auth</usmUserSecurityName>
+      <!-- MD5 auth protocol -->
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.2</usmUserAuthProtocol>
+      <!-- No priv protocol -->
+      <usmUserPrivProtocol>1.3.6.1.6.3.10.1.2.1</usmUserPrivProtocol>
+      <!-- keys passwd: "GoTellMom" -->
+      <usmUserAuthKey>10:2C:BD:65:E3:EB:E2:16:0D:63:DB:23:73:F3:17:B2</usmUserAuthKey>
+
+    </usmUserEntry>
+
+   <usmUserEntry>
+      <usmUserEngineID>4D:79:45:6E:67:69:6E:65</usmUserEngineID>
+      <usmUserName>initial_authPriv</usmUserName>
+      <usmUserSecurityName>initial_authPriv</usmUserSecurityName>
+      <!-- MD5 auth protocol -->
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.2</usmUserAuthProtocol>
+      <!-- DES priv protocol -->
+      <usmUserPrivProtocol>1.3.6.1.6.3.10.1.2.2</usmUserPrivProtocol>
+      <!-- keys passwd: "GoTellMom" -->
+      <usmUserAuthKey>10:2C:BD:65:E3:EB:E2:16:0D:63:DB:23:73:F3:17:B2</usmUserAuthKey>
+      <usmUserPrivKey>10:2C:BD:65:E3:EB:E2:16:0D:63:DB:23:73:F3:17:B2</usmUserPrivKey>
+    </usmUserEntry>
+
+  </usmUserTable>
+</SNMP-USER-BASED-SM-MIB>

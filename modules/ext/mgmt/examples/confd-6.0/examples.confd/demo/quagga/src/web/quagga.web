@@ -1,0 +1,132 @@
+<!-- -*- nxml -*- -->
+<webspec xmlns="http://tail-f.com/ns/webspec/1.0"
+	 targetNamespace="http://tail-f.com/ns/example/quagga">
+  <!-- Element settings -->
+
+  <options>
+    <unrollDynamicElements/>
+    <!-- <disableContainerHeuristics/> -->
+  </options>
+
+  <!-- Global -->
+
+  <globalSettings>
+    <options>
+      <prettyPrintMixedCase/>
+      <!-- <disableContainerHeuristics/> -->
+    </options>
+    
+    <navigator>tree</navigator>
+    
+    <header path="/header.html"/>
+    <footer path="/footer.html"/>    
+    
+    <tabs>
+      <tab label="Running" builtin="running"/>
+      <tab label="Tools">
+	<tab label="Device Info&gt;&gt;">
+	  <tab label="CPU Load" callback="LoadTool.show"/>
+	  <tab label="Audit log" callback="LogTool.show"/>
+	</tab>
+	<tab label="Accessories&gt;&gt;">
+	  <tab label="Editor" callback="EditorTool.show"/>
+	  <tab label="Ping" callback="PingTool.show"/>
+	  <tab label="Traceroute" callback="TracerouteTool.show"/>
+	</tab>
+	<tab label="CLI" callback="CliTool.show"/>
+	<tab label="Users" callback="UsersTool.show"/>
+      </tab>
+      <tab label="Wizards" type="write">
+	<tab label="Configure RIP" callback="ConfigRIPWizard.show"/>
+      </tab>
+    </tabs>
+  </globalSettings>
+  
+  <!-- Element group settings -->
+
+
+  <!-- Element settings -->
+
+  <elemSettings tagpath="/system/stats/memory/zebra/total">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/zebra/used">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/zebra/free">
+    <graph>chart</graph>
+  </elemSettings>
+
+  <elemSettings tagpath="/system/stats/memory/rip/total">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/rip/used">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/rip/free">
+    <graph>chart</graph>
+  </elemSettings>
+
+  <elemSettings tagpath="/system/stats/memory/ospf/total">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/ospf/used">
+    <graph>chart</graph>
+  </elemSettings>
+  <elemSettings tagpath="/system/stats/memory/ospf/free">
+    <graph>chart</graph>
+  </elemSettings>
+
+
+  <!-- Include files -->
+
+  <include>
+    <style path="/custom_skins/custom.css"/>
+    <script path="/custom_js/loadTool.js"/>
+    <style path="/custom_skins/loadTool.css"/>
+    <script path="/custom_js/logTool.js"/>
+    <style path="/custom_skins/logTool.css"/>
+    <script path="/custom_js/editorTool.js"/>
+    <style path="/custom_skins/editorTool.css"/>
+    <script path="/custom_js/pingTool.js"/>
+    <style path="/custom_skins/pingTool.css"/>
+    <script path="/custom_js/tracerouteTool.js"/>
+    <style path="/custom_skins/tracerouteTool.css"/>
+    <script path="/custom_js/cliTool.js"/>
+    <style path="/custom_skins/cliTool.css"/>
+    <script path="/custom_js/usersTool.js"/>
+    <style path="/custom_skins/usersTool.css"/>
+    <script path="/custom_js/configRIPWizard.js"/>
+    <style path="/custom_skins/wizard.css"/>
+    <script path="/custom_js/kernelRoutes.js"/>
+    <style path="/custom_skins/kernelRoutes.css"/>
+  </include>
+  
+  <!-- Commands -->
+
+  <exec name="editor">
+    <osCommand>emacs</osCommand>
+    <args>-nw</args>
+  </exec>
+  
+  <exec name="auditLogTrace">
+    <osCommand>tail</osCommand>
+    <args>-f ./log/audit.log</args>
+  </exec>
+  
+  <exec name="ping">
+    <osCommand>ping</osCommand>
+  </exec>
+
+  <exec name="traceroute">
+    <osCommand>traceroute</osCommand>
+  </exec>
+
+  <exec name="cli">
+    <osCommand>./bin/confd_cli</osCommand>
+    <args>-u$(user) -c /tmp --proto http -C</args>
+  </exec>
+
+  <!-- Action settings and customization -->
+
+</webspec>

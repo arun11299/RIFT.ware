@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box;
+}
+.rate-bullet {
+  height: 24px;
+}
+.rate-stack {
+  margin-left: 5px;
+  margin-bottom: 2px;
+}
+.rate-label {
+  font-size: 14px;
+  color: #a1a1a1;
+}
+.rate-result {
+  font-size: 16px;
+  color: #ffffff;
+}
+.rate-scale {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  font-size: 10px;
+  color: #ffffff;
+}
+.rate-scale > div:first-child {
+  -webkit-flex: 1 0 auto;
+  -moz-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+}

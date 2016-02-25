@@ -1,0 +1,3385 @@
+module nexus {
+  namespace 'urn:nexus';
+  prefix c;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+
+  typedef spanning-tree-cost-type {
+    type union {
+      type uint32 {
+        range "1..200000000";
+        tailf:info "<1-200000000>;;Port path cost";
+      }
+      type enumeration {
+        enum auto {
+          tailf:code-name spanning-tree-cost-type-auto;
+          tailf:info "Determine cost based on media speed of this "
+            +"interface";
+        }
+      }
+    }
+  }
+
+  typedef ip-mask {
+    type string {
+      pattern
+        '(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}'
+        + '([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+        + '/(([0-9])|([1-2][0-9])|(3[0-2]))';
+    }
+  }
+
+  typedef mac-address-type {
+    type union {
+      type string {
+        tailf:info "E.E.E;;Static Router MAC address (Option 1)";
+        pattern "[0-9a-fA-F](\.[0-9a-fA-F]){2}";
+      }
+      type string {
+        tailf:info "EE-EE-EE-EE-EE-EE;;Static Router MAC address "
+          +"(Option 2)";
+        pattern "[0-9a-fA-F]{2}(\-[0-9a-fA-F]{2}){5}";
+      }
+      type string {
+        tailf:info "EE.EE.EE.EE.EE.EE;;Static Router MAC address "
+          +"(Option 3)";
+        pattern "[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}";
+      }
+      type string {
+        tailf:info "EEEE.EEEE.EEEE;;Static Router MAC address "
+          +"(Option 4)";
+        pattern "[0-9a-fA-F]{4}(\.[0-9a-fA-F]{4}){2}";
+      }
+    }
+  }
+
+  typedef mac-address-type2 {
+    type union {
+      type string {
+        tailf:info "E.E.E;;MAC address (Option 1)";
+        pattern "[0-9a-fA-F](\.[0-9a-fA-F]){2}";
+      }
+      type string {
+        tailf:info "EE-EE-EE-EE-EE-EE;;MAC address "
+          +"(Option 2)";
+        pattern "[0-9a-fA-F]{2}(\-[0-9a-fA-F]{2}){5}";
+      }
+      type string {
+        tailf:info "EE.EE.EE.EE.EE.EE;;MAC address "
+          +"(Option 3)";
+        pattern "[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}";
+      }
+      type string {
+        tailf:info "EEEE.EEEE.EEEE;;MAC address "
+          +"(Option 4)";
+        pattern "[0-9a-fA-F]{4}(\.[0-9a-fA-F]{4}){2}";
+      }
+    }
+  }
+
+  typedef mst-cost-type {
+    type union {
+      type uint32 {
+        range "1..200000000";
+        tailf:info "<1-200000000>;;Port path cost";
+      }
+      type enumeration {
+        enum auto {
+          tailf:code-name mst_cost_type_auto;
+          tailf:info "Determine cost based on media speed of this "
+            +"interface";
+        }
+      }
+    }
+  }
+
+  typedef vlan-list-type {
+    type uint16 {
+      range "1..3967|4048..4093";
+      tailf:info "<1-3967,4048-4093>  VLAN IDs of the allowed VLANs "
+        +"when this port in trunking mode";
+    }
+  }
+
+  typedef vrf-member-type {
+    type union {
+      type string {
+        length 32;
+        tailf:info "WORD;;VRF name (Max Size 32)";
+      }
+      type enumeration {
+        enum management {
+          tailf:info "(no abbrev) Configurable VRF name";
+        }
+      }
+    }
+  }
+
+  grouping ethernet-settings-grouping {
+    container bandwidth {
+      tailf:info "Set bandwidth information parameter";
+      tailf:cli-sequence-commands {
+        tailf:cli-reset-siblings;
+      }
+      tailf:cli-compact-syntax;
+      leaf inherit {
+        tailf:cli-optional-in-sequence;
+        tailf:info "Specify that bandwith is inherited";
+        type empty;
+      }
+      leaf bandwidth {
+        tailf:cli-drop-node-name;
+        type uint32 {
+          range "1..10000000";
+          tailf:info "<1-10000000>;;Bandwidth in kilobits";
+        }
+      }
+    }
+
+    leaf beacon {
+      tailf:info "Disable/enable the beacon for an interface";
+      tailf:cli-full-command;
+      type empty;
+    }
+
+    leaf "description" {
+      tailf:info "Enter description of maximum 80 characters";
+      tailf:cli-full-command;
+      tailf:cli-multi-value;
+      type string {
+        length "1..80";
+      }
+    }
+
+    leaf cdp {
+      tailf:info "Configure CDP interface parameters";
+      tailf:cli-full-command;
+      type enumeration {
+        enum enable {
+          tailf:code-name ethernet-settings-grouping_cdp_enable;
+          tailf:info "Enable/disable CDP on the interface";
+        }
+      }
+    }
+
+    container channel-group {
+      tailf:info "Configure port channel parameters";
+      tailf:cli-sequence-commands {
+        tailf:cli-reset-siblings;
+      }
+      tailf:cli-compact-syntax;
+      leaf id {
+        tailf:cli-drop-node-name;
+        type uint16 {
+          tailf:info "<1-4096>;;Spedify a port-channel number";
+        }
+      }
+      leaf mode {
+        tailf:info "Specify channeling mode";
+        type enumeration {
+          enum active {
+            tailf:info "Set channeling mode to ACTIVE";
+          }
+          enum on {
+            tailf:info "Set channeling mode to ON";
+          }
+          enum passive {
+            tailf:code-name mode_passive;
+            tailf:info "Set channeling mode to PASSIVE";
+          }
+        }
+      }
+    }
+
+    leaf delay {
+      tailf:info "Specify interface throughput delay";
+      tailf:cli-full-command;
+      type uint32 {
+        range "1..16777215";
+        tailf:info "<1-16777215>;;Throughput delay (tens of "
+          +"microseconds)";
+      }
+    }
+
+    leaf duplex {
+      tailf:info "Enter the port duplex mode";
+      tailf:cli-full-command;
+      type enumeration {
+        enum auto {
+          tailf:code-name duplex_auto;
+          tailf:info "Auto";
+        }
+        enum full {
+          tailf:info "Full";
+        }
+        enum half {
+          tailf:info "Half";
+        }
+      }
+    }
+
+    container fex {
+      tailf:info "Configure FEX fabric";
+      leaf associate {
+        tailf:info "Associate the port to a FEX";
+        type uint8 {
+          tailf:info "<100-199>;;FEX number";
+          range "100..199";
+        }
+      }
+    }
+
+    container flowcontrol {
+      tailf:info "Configure interface flowcontrol";
+      leaf receive {
+        tailf:info "Receive pause frames";
+        tailf:cli-full-command;
+        type enumeration {
+          enum off {
+            tailf:code-name flowcontrol_off;
+            tailf:info "Receive OFF";
+          }
+          enum on {
+            tailf:code-name flowcontrol_on;
+            tailf:info "Receive ON";
+          }
+        }
+      }
+      leaf send {
+        tailf:info "Send pause frames";
+        tailf:cli-full-command;
+        type enumeration {
+          enum off {
+            tailf:code-name send_off;
+            tailf:info "Send OFF";
+          }
+          enum on {
+            tailf:code-name send_on;
+            tailf:info "Send ON";
+          }
+        }
+      }
+    }
+
+    container inherit {
+      tailf:info "Inherit a port-profile";
+      leaf port-profile {
+        tailf:info "Inherit a port-profile";
+
+        type string {
+          tailf:info "WORD;;Enter the name of the profile";
+        }
+      }
+    }
+
+    container ip {
+      tailf:info "Configure IP features";
+      container port {
+        tailf:info "Port policy";
+        container access-group {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+              enum out {
+                tailf:info "Outbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    container ipv6 {
+      tailf:info "Configure IPv6 features";
+      container port {
+        tailf:info "Port policy";
+        container traffic-filter {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    container link {
+      tailf:info "Configure link";
+      container debounce {
+        tailf:info "Configure link debounce timer";
+        presence "Configure link debounce timer";
+        leaf time {
+          tailf:info "Link debounce time";
+          type uint16 {
+            range "0..5000";
+            tailf:info "<0-5000>;;Timer value (in "
+              +"milliseconds)";
+          }
+        }
+      }
+    }
+
+    leaf lldp {
+      tailf:info "Configure Interface LLDP parameters";
+      tailf:cli-full-command;
+      type enumeration {
+        enum receive {
+          tailf:code-name lldp_receive;
+          tailf:info "Enable LLDP reception on interface";
+        }
+        enum transmit {
+          tailf:info "Enable LLDP transmission on interface";
+        }
+      }
+    }
+
+    container load-interval {
+      tailf:info "Specify interval for load calculation for an "
+        +"interface";
+      leaf interval {
+        tailf:cli-drop-node-name;
+        tailf:cli-full-command;
+        type uint16 {
+          range "30..300";
+          tailf:info "<30-300>;;Load interval delay in seconds";
+        }
+      }
+      list counter {
+        tailf:info "Specify counter for this load interval";
+        tailf:cli-incomplete-command;
+        tailf:cli-suppress-mode;
+        key "id";
+        leaf id {
+          type uint8 {
+            range "1..3";
+            tailf:info "<1-3>;;Specify counter for this load "
+              +"interval";
+          }
+        }
+        leaf interval {
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "30..300";
+            tailf:info "<30-300>;;Load interval delay in "
+              +"seconds";
+          }
+        }
+      }
+    }
+
+    container logging {
+      tailf:info "Configure logging for interface";
+      container event {
+        tailf:info "Interface events";
+        container port {
+          tailf:info "Port level events";
+          container linkstatus {
+            tailf:alt-name "link-status";
+            tailf:info "UPDOWN and CHANGE messages";
+            presence "UPDOWN and CHANGE messages";
+            leaf "default" {
+              tailf:info "Use the global default value";
+              type empty;
+            }
+          }
+          container trunk-status {
+            tailf:info "TRUNK status messages";
+            presence "TRUNK status messages";
+            leaf "default" {
+              tailf:info "Use the global default value";
+              type empty;
+            }
+          }
+        }
+      }
+    }
+
+    container mac {
+      tailf:info "MAC configuration commands";
+      container port {
+        tailf:info "Port policy";
+        leaf access-group {
+          tailf:info "Specify access control for packets";
+          type string {
+            length "1..64";
+            tailf:info "WORD;;List name (Max Size 64)";
+          }
+        }
+      }
+    }
+
+    leaf mac-address {
+      tailf:info "Configure interface mac address";
+      tailf:cli-full-command;
+      type mac-address-type;
+    }
+
+    container priority-flow-control {
+      tailf:info "Enable/Disable PFC";
+      leaf mode {
+        tailf:info "PFC Mode";
+        type enumeration {
+          enum auto {
+          tailf:code-name prio_flow_control_auto;
+            tailf:info "Set Auto Mode";
+          }
+          enum off {
+            tailf:code-name prio_flow_off;
+            tailf:info "Force PFC to Off";
+          }
+          enum on {
+            tailf:code-name prio_flow_on;
+            tailf:info "Force PFC to Of";
+          }
+        }
+      }
+    }
+
+    container service-policy {
+      tailf:info "Configure service policy for an interface";
+      tailf:cli-sequence-commands;
+      tailf:cli-compact-syntax;
+      leaf type {
+        tailf:cli-optional-in-sequence;
+        tailf:cli-incomplete-command;
+        type enumeration {
+          enum qos {
+            tailf:code-name service_policy_qos;
+            tailf:info "Qos policy";
+          }
+          enum network-qos {
+            tailf:code-name service_policy_network_qos;
+            tailf:info "Network Qos policy";
+          }
+          enum queuing {
+            tailf:code-name service_policy_queuing;
+            tailf:info "Queuing policy";
+          }
+        }
+        default "qos";
+      }
+      container input {
+        when "../type = 'qos' or ../type = 'queueing'" {
+        }
+        tailf:info "Input Service Policy";
+        tailf:cli-break-sequence-commands;
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf name {
+          tailf:cli-drop-node-name;
+          // FIXME:: should be leaf-ref to policy-map?
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+        leaf no-stats {
+          tailf:info "Disable statistics for this policy";
+          type empty;
+        }
+      }
+      container output {
+        when "../type = 'qos'";
+        tailf:info "Output Service Policy";
+        tailf:cli-break-sequence-commands;
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf name {
+          tailf:cli-drop-node-name;
+          // FIXME:: should be leaf-ref to policy-map?
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+        leaf no-stats {
+          tailf:info "Disable statistics for this policy";
+          type empty;
+        }
+      }
+      leaf name {
+        when "../type = 'network-qos'";
+        tailf:cli-drop-node-name;
+        tailf:cli-full-command;
+        // FIXME:: should be leaf-ref to policy-map?
+        type string {
+          tailf:info "Policy-map name (alphanumeric) "
+            +"(Max Size 40)";
+        }
+      }
+    }
+
+    container snmp {
+      tailf:info "Modify SNMP interface parameters";
+      leaf trap {
+        tailf:info "Allow a specific SNMP trap";
+        type enumeration {
+          enum link-status {
+            tailf:info "Allow SNMP LINKUP and LINKDOWN traps";
+          }
+        }
+      }
+    }
+
+    container spanning-tree {
+      tailf:info "Spanning Tre Subsystem";
+
+      leaf bpdufilter {
+        tailf:info "Don't send or receive BPDUs on this interface";
+        tailf:cli-full-command;
+        type enumeration {
+          enum disable {
+            tailf:code-name bdufilter_disable;
+            tailf:info "Disable BPDU filtering for this "
+              +"interface";
+          }
+          enum enable {
+            tailf:code-name bdufilter_enable;
+            tailf:info "Enable BPDU filtering for this "
+              +"interface";
+          }
+        }
+      }
+      leaf bpduguard {
+        tailf:info "Don't accept BPDUs on this interface";
+        tailf:cli-full-command;
+        type enumeration {
+          enum disable {
+            tailf:code-name bduguard_disable;
+            tailf:info "Disable BPDU Guard for this interface";
+          }
+          enum enable {
+            tailf:code-name bduguard_enable;
+            tailf:info "Enable BPDU Guard for this interface";
+          }
+        }
+      }
+      leaf cost {
+        tailf:info "Change an interface's spanning tree port path "
+          +"cost";
+        // <1-2000000000> | auto
+        type spanning-tree-cost-type;
+      }
+      leaf guard {
+        tailf:info "Change an interface's spanning tree guard mode";
+        tailf:cli-full-command;
+        type enumeration {
+          enum loop {
+            tailf:info "Set guard mode to loop guard on "
+              +"interface";
+          }
+          enum none {
+            tailf:info "Set guard mode to none";
+          }
+          enum root {
+            tailf:info "Set guard mode to root guard on "
+              +"interface";
+          }
+        }
+      }
+      leaf link-type {
+        tailf:info "Specify a link type for spanning tree tree "
+          +"protocol use";
+        tailf:cli-full-command;
+        type enumeration {
+          enum auto {
+          tailf:code-name link_type_auto;
+            tailf:info "Determine link type based on media "
+              +"duplex of this interface";
+          }
+          enum none {
+            tailf:info "Consider the interface as point-to-"
+              +"point";
+          }
+          enum root {
+            tailf:info "Consider the interface as shared";
+          }
+
+        }
+      }
+      container mst {
+        tailf:info "Multiple spanning tree configuration";
+        // FIXME: fix range problem, check cost/port-priority
+        // for example
+        // spanning-tree mst 2,4 port-priority 0
+        // spanning-tree mst 1,3 cost 10
+        // spanning-tree mst 2 cost 100
+        //
+        // then doing
+        // spanning-tree mst 2 cost 10
+        //
+        // spanning-tree mst 2,4 port-priority 0
+        // spanning-tree mst 1-3 cost 10
+        //
+        // doing
+        // spanning-tree mst 2 cost 100
+        //
+        // spanning-tree mst 2,4 port-priority 0
+        // spanning-tree mst 1,3 cost 10
+        // spanning-tree mst 2 cost 100
+        //
+        // doing
+        // spanning-tree mst 1 port-priority 0
+        // spanning-tree mst 3 port-priority 0
+        // spanning-tree mst 2 port-priority 32
+        //
+        // spanning-tree mst 1,3-4 port-priority 0
+        // spanning-tree mst 2 port-priority 32
+        // spanning-tree mst 1,3 cost 10
+        // spanning-tree mst 2 cost 100
+        //
+        // no spanning-tree mst 1 cost
+        // no spanning-tree mst 1 port-priority
+        list port {
+          tailf:cli-drop-node-name;
+          tailf:cli-incomplete-command;
+          tailf:cli-suppress-mode;
+          key "range";
+
+          leaf range {
+            type string {
+              pattern "\d+(\-\d+)?(,\d+(\-\d+)?)*";
+              tailf:info "<0-4094>;;MST instance list, "
+                +"example 0,2-4,6,8-12";
+            }
+          }
+          leaf cost {
+            tailf:cli-full-command;
+            tailf:info "Change an interface's spanning tree "
+              +"port path cost";
+            type mst-cost-type;
+          }
+          leaf port-priority {
+            tailf:cli-full-command;
+            tailf:info "Change an interface's spanning tree "
+              +"port priority";
+            type uint8 {
+              range "0..240";
+              tailf:info "<0-240>;;Port priority in "
+                +"increments of 32";
+            }
+          }
+        }
+        leaf pre-standard {
+          tailf:cli-full-command;
+          tailf:info "Force pre-standard MST BPDU transmission "
+            +"on port";
+          type empty;
+        }
+        container simulate {
+          tailf:info "Enable spanning tree simulation";
+          container pvst {
+            tailf:info "Enable PVST simulation";
+            presence "Enable PVST simulation";
+            leaf disable {
+              tailf:info "Disable PVST simulation on this "
+                +"interface";
+              type empty;
+            }
+          }
+        }
+      }
+
+      container port {
+        tailf:info "Spanning tree port options";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf "type" {
+          tailf:info "Specify a port type for spanning tree "
+            +"protocol use";
+          type enumeration {
+            enum edge {
+              tailf:info "Consider the interface as edge "
+                +"port (enable portfast)";
+            }
+            enum network {
+              tailf:info "Consider the interface as inter-"
+                +"switch link";
+            }
+            enum normal {
+              tailf:info "Consider the interface as normal "
+                +"spanning tree port";
+            }
+          }
+        }
+        leaf trunk {
+          when "../type != 'normal'";
+          tailf:info "Consider the interface as edge port "
+            +"(enable portfast) even in trunk mode";
+          type empty;
+        }
+      }
+      leaf port-priority {
+        tailf:info "Change an interface's spanning tree port "
+          +"priority";
+        type uint8 {
+          range "0|32|64|96|128|160|192|224";
+          tailf:info "<0-224>;;Port priority in increments of 32";
+        }
+      }
+    }
+
+    leaf speed {
+      tailf:info "Enter the port speed";
+      tailf:cli-full-command;
+      type enumeration {
+        enum "10" {
+          tailf:info "10Mb/s";
+        }
+        enum "100" {
+          tailf:code-name speed_100;
+          tailf:info "100Mb/s";
+        }
+        enum "1000" {
+          tailf:info "1Gb/s";
+        }
+        enum "auto" {
+          tailf:code-name ethernet-settings-grouping_auto;
+          tailf:info "Auto negotiate speed";
+        }
+      }
+    }
+
+    container storm-control {
+      tailf:info "Configure Interface storm control";
+
+      container broadcast {
+        tailf:info "Broadcast";
+        presence "Broadcast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+      container unicast {
+        tailf:info "Unicast";
+        presence "Unicast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+      container multicast {
+        tailf:info "Multicast";
+        presence "Multicast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+    }
+
+    container untagged {
+      tailf:info "Default to use for untagged packets on interface";
+      leaf cos {
+        tailf:info "IEEE 802.1Q class of service for QoS "
+          +"classification";
+        type uint8 {
+          range "0..7";
+          tailf:info "<0-7>;;COS value";
+        }
+      }
+    }
+
+    container switchport {
+      tailf:info "Configure switchport parameters";
+      presence "Configure switchport parameters";
+
+      container access {
+        tailf:info "Set access mode characteristics of the "
+          +"interface";
+        leaf vlan {
+          tailf:info "Set VLAN when interface is in access mode";
+          type uint16 {
+            range "1..3967|4048..4093";
+            tailf:info "<1-3967,4048-4093>;;VLAN ID of the "
+              +"VLAN when this port is in access mode";
+          }
+        }
+      }
+      leaf block {
+        tailf:info "Block specified outbound traffic for all VLANs";
+        tailf:cli-full-command;
+        type enumeration {
+          enum multicast {
+            tailf:code-name block_multicast;
+            tailf:info "Block mulitcast traffic";
+          }
+          enum unicast {
+            tailf:code-name block_unicast;
+            tailf:info "Block unknown unicast traffic";
+          }
+        }
+      }
+      leaf description {
+        tailf:info "Enter description of maximum 80 characters";
+        tailf:cli-full-command;
+        tailf:cli-multi-value;
+        type string {
+          length "1..80";
+        }
+      }
+      leaf host {
+        tailf:info "Set port host";
+        type empty;
+      }
+
+      leaf mode {
+        tailf:info "Enter the port mode";
+        tailf:cli-full-command;
+        type enumeration {
+          enum access {
+            tailf:code-name mode_access;
+            tailf:info "Port mode access";
+          }
+          enum fex-fabric {
+            tailf:info "Port mode FEX fabric";
+          }
+          enum trunk {
+            tailf:code-name mode_trunk;
+            tailf:info "Port mode trunk";
+          }
+        }
+      }
+      leaf monitor {
+        tailf:info "Configures an interface as span-destination";
+        tailf:cli-full-command;
+        type empty;
+      }
+      container trunk {
+        tailf:info "Set trunking characteristics of the interface";
+        container allowed {
+          tailf:info "Set allowed VLAN characteristics when "
+            +"interface is in trunking mode";
+          // to suppor the add,remove custom CLI command
+          // should be used.
+          container vlan {
+            tailf:info "Set allowed VLANs when interface is "
+              +"in trunking mode";
+            choice vlan-choice {
+              leaf-list ids {
+                tailf:cli-drop-node-name;
+                tailf:cli-range-list-syntax;
+                type vlan-list-type;
+              }
+              leaf fixed {
+                tailf:cli-drop-node-name;
+                type enumeration {
+                  enum all {
+                    tailf:info "All VLANs";
+                  }
+                  enum none {
+                    tailf:info "No VLANs";
+                  }
+                }
+              }
+              leaf-list except {
+                tailf:cli-range-list-syntax;
+                tailf:info " VLAN IDs of the allowed VLANs "
+                  +"when this port in trunking mode";
+                type vlan-list-type;
+              }
+            }
+          }
+        }
+        container native {
+          tailf:info "Set trunking native characteristics when "
+            +"interface is in trunking mode";
+          leaf vlan {
+            tailf:info "Set native VLAN when interface is in "
+              +"trunking mode";
+            type uint16 {
+              range "1..3967|4048..4093";
+              tailf:info "<1-3967,4048-4093>;;VLAN ID of the "
+                +"native VLAN when this port is in "
+                +"trunking mode";
+            }
+          }
+        }
+      }
+    }
+    leaf shutdown {
+      tailf:info "Enable/disable an interface";
+      tailf:cli-boolean-no;
+      tailf:cli-full-command;
+      type boolean;
+      default "true";
+    }
+  }
+
+  grouping port-channel-settings-grouping {
+    container bandwidth {
+      tailf:info "Set bandwidth information parameter";
+      tailf:cli-sequence-commands {
+        tailf:cli-reset-siblings;
+      }
+      tailf:cli-compact-syntax;
+      leaf inherit {
+        tailf:cli-optional-in-sequence;
+        tailf:info "Specify that bandwith is inherited";
+        type empty;
+      }
+      leaf bandwidth {
+        tailf:cli-drop-node-name;
+        type uint32 {
+          range "1..10000000";
+          tailf:info "<1-10000000>;;Bandwidth in kilobits";
+        }
+      }
+    }
+
+    leaf delay {
+      tailf:info "Specify interface throughput delay";
+      tailf:cli-full-command;
+      type uint32 {
+        range "1..16777215";
+        tailf:info "<1-16777215>;;Throughput delay (tens of "
+          +"microseconds)";
+      }
+    }
+
+    leaf "description" {
+      tailf:info "Enter description of maximum 80 characters";
+      tailf:cli-full-command;
+      tailf:cli-multi-value;
+      type string {
+        length "1..80";
+      }
+    }
+
+    leaf duplex {
+      tailf:info "Enter the port duplex mode";
+      tailf:cli-full-command;
+      type enumeration {
+        enum auto {
+          tailf:code-name  port-channel-settings-grouping-duplex_auto;
+          tailf:info "Auto";
+        }
+        enum full {
+          tailf:info "Full";
+        }
+        enum half {
+          tailf:info "Half";
+        }
+      }
+    }
+
+    container fex {
+      tailf:info "Configure FEX fabric";
+      leaf associate {
+        tailf:info "Associate the port to a FEX";
+        type uint8 {
+          tailf:info "<100-199>;;FEX number";
+          range "100..199";
+        }
+      }
+    }
+
+    container flowcontrol {
+      tailf:info "Configure interface flowcontrol";
+      leaf receive {
+        tailf:info "Receive pause frames";
+        tailf:cli-full-command;
+        type enumeration {
+          enum off {
+            tailf:code-name flowcontrol_receive_off;
+            tailf:info "Receive OFF";
+          }
+          enum on {
+            tailf:code-name flowcontrol_receive_on;
+            tailf:info "Receive ON";
+          }
+        }
+      }
+      leaf send {
+        tailf:info "Send pause frames";
+        tailf:cli-full-command;
+        type enumeration {
+          enum off {
+            tailf:code-name flowcontrol_send_off;
+            tailf:info "Send OFF";
+          }
+          enum on {
+            tailf:code-name flowcontrol_send_on;
+            tailf:info "Send ON";
+          }
+        }
+      }
+    }
+
+    container hardware {
+      tailf:info "Hardware specific configuration";
+      leaf multicast {
+        tailf:info "Multicast traffic configuration";
+        type enumeration {
+          enum hw-hash {
+            tailf:info "Use hardware hashing for multicast traffic "
+              +"(default is software selection)";
+          }
+        }
+      }
+    }
+
+    container inherit {
+      tailf:info "Inherit a port-profile";
+      leaf port-profile {
+        tailf:info "Inherit a port-profile";
+
+        type string {
+          tailf:info "WORD;;Enter the name of the profile";
+        }
+      }
+    }
+
+    container ip {
+      tailf:info "Configure IP features";
+      container port {
+        tailf:info "Port policy";
+        container access-group {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+              enum out {
+                tailf:info "Outbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    container ipv6 {
+      tailf:info "Configure IPv6 features";
+      container port {
+        tailf:info "Port policy";
+        container traffic-filter {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    leaf lacp {
+      tailf:info "Set LACP parameters for the interface";
+      tailf:cli-full-command;
+      type enumeration {
+        enum graceful-convergence {
+          tailf:info "Configure port-channel lacp graceful "
+            +"convergence. Disable this only with lacp ports "
+            +"connected to Non-Nexus peer. Disabling this with "
+            +"Nexus peer can lead to port suspension";
+        }
+        enum suspend-individual {
+          tailf:info "Configure lacp port-channel state. Enabling "
+            +"this will cause lacp to put the port to suspend "
+            +"instead of individual state in case it does not get "
+            +"LACP BPDU from the peer ports in the port-channel";
+        }
+      }
+      default "graceful-convergence";
+    }
+
+    leaf link-state-trap {
+      tailf:info "Enable/disable link state change traps";
+      tailf:cli-full-command;
+      type empty;
+    }
+
+    container load-interval {
+      tailf:info "Specify interval for load calculation for an "
+        +"interface";
+      leaf interval {
+        tailf:cli-drop-node-name;
+        tailf:cli-full-command;
+        type uint16 {
+          range "30..300";
+          tailf:info "<30-300>;;Load interval delay in seconds";
+        }
+      }
+      list counter {
+        tailf:info "Specify counter for this load interval";
+        tailf:cli-incomplete-command;
+        tailf:cli-suppress-mode;
+        key "id";
+        leaf id {
+          type uint8 {
+            range "1..3";
+            tailf:info "<1-3>;;Specify counter for this load "
+              +"interval";
+          }
+        }
+        leaf interval {
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "30..300";
+            tailf:info "<30-300>;;Load interval delay in "
+              +"seconds";
+          }
+        }
+      }
+    }
+
+    container logging {
+      tailf:info "Configure logging for interface";
+      container event {
+        tailf:info "Interface events";
+        container port {
+          tailf:info "Port level events";
+          container linkstatus {
+            tailf:alt-name "link-status";
+            tailf:info "UPDOWN and CHANGE messages";
+            presence "UPDOWN and CHANGE messages";
+            leaf "default" {
+              tailf:info "Use the global default value";
+              type empty;
+            }
+          }
+          container trunk-status {
+            tailf:info "TRUNK status messages";
+            presence "TRUNK status messages";
+            leaf "default" {
+              tailf:info "Use the global default value";
+              type empty;
+            }
+          }
+        }
+      }
+    }
+
+    container mac {
+      tailf:info "MAC configuration commands";
+      container port {
+        tailf:info "Port policy";
+        leaf access-group {
+          tailf:info "Specify access control for packets";
+          type string {
+            length "1..64";
+            tailf:info "WORD;;List name (Max Size 64)";
+          }
+        }
+      }
+    }
+
+    leaf mac-address {
+      tailf:info "Configure interface mac address";
+      tailf:cli-full-command;
+      type mac-address-type;
+    }
+
+    leaf medium {
+      tailf:info "Configure interface medium mode";
+      tailf:cli-full-command;
+      type enumeration {
+        enum broadcast {
+          tailf:code-name medium_broadcast;
+          tailf:info "Broadcast medium";
+        }
+        enum p2p {
+          tailf:info "Point-to-Point medium";
+        }
+      }
+    }
+
+    container priority-flow-control {
+      tailf:info "Enable/Disable PFC";
+      leaf mode {
+        tailf:info "PFC Mode";
+        type enumeration {
+          enum auto {
+         tailf:code-name port-channel-settings-grouping_prio_flow_control_auto;
+            tailf:info "Set Auto Mode";
+          }
+          enum off {
+            tailf:code-name flowcontrol_mode_off;
+            tailf:info "Force PFC to Off";
+          }
+          enum on {
+            tailf:code-name flowcontrol_mode_on;
+            tailf:info "Force PFC to Of";
+          }
+        }
+      }
+    }
+
+    // FIXME: validate towards Nexus 5000
+    container service-policy {
+      tailf:info "Configure service policy for an interface";
+      container input-map {
+        tailf:cli-drop-node-name;
+        tailf:cli-sequence-commands;
+        tailf:cli-compact-syntax;
+        leaf type {
+          tailf:cli-optional-in-sequence;
+          tailf:cli-incomplete-command;
+          type enumeration {
+            enum qos {
+            tailf:code-name input_map_qos;
+              tailf:info "Qos policy";
+            }
+            enum network-qos {
+              tailf:code-name input_map_network_qos;
+              tailf:info "Network Qos policy";
+            }
+            enum queuing {
+              tailf:code-name input_map_queuing;
+              tailf:info "Queuing policy";
+            }
+          }
+          default "qos";
+        }
+        leaf input {
+          when "../type = 'qos' or ../type = 'queueing'" {
+          }
+          tailf:info "Input Service Policy";
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+        leaf no-stats {
+          when "../type = 'qos'";
+          tailf:info "Disable statistics for this policy";
+          type empty;
+        }
+        leaf name {
+          when "../type = 'network-qos'";
+          tailf:cli-drop-node-name;
+          tailf:cli-full-command;
+          // FIXME:: should be leaf-ref to policy-map?
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+      }
+      container output-map {
+        tailf:cli-drop-node-name;
+        tailf:cli-sequence-commands;
+        tailf:cli-compact-syntax;
+        leaf type {
+          tailf:cli-optional-in-sequence;
+          tailf:cli-incomplete-command;
+          type enumeration {
+            enum qos {
+            tailf:code-name output_map_qos;
+              tailf:info "Qos policy";
+            }
+            enum network-qos {
+              tailf:code-name output_map_network_qos;
+              tailf:info "Network Qos policy";
+            }
+            enum queuing {
+              tailf:code-name output_map_queuing;
+              tailf:info "Queuing policy";
+            }
+          }
+          default "qos";
+        }
+        leaf output {
+          when "../type = 'qos'";
+          tailf:info "Output Service Policy";
+          // FIXME:: should be leaf-ref to policy-map?
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+        leaf no-stats {
+          when "../type = 'qos'";
+          tailf:info "Disable statistics for this policy";
+          type empty;
+        }
+        leaf name {
+          when "../type = 'network-qos'";
+          tailf:cli-drop-node-name;
+          tailf:cli-full-command;
+          // FIXME:: should be leaf-ref to policy-map?
+          type string {
+            tailf:info "Policy-map name (alphanumeric) "
+              +"(Max Size 40)";
+          }
+        }
+      }
+    }
+
+    leaf shutdown {
+      tailf:info "Enable/disable an interface";
+      tailf:cli-boolean-no;
+      type boolean;
+      default "true";
+    }
+
+    container spanning-tree {
+      tailf:info "Spanning Tre Subsystem";
+
+      leaf bpdufilter {
+        tailf:info "Don't send or receive BPDUs on this interface";
+        tailf:cli-full-command;
+        type enumeration {
+          enum disable {
+            tailf:code-name spanning-tree-bdufilter_disable;
+            tailf:info "Disable BPDU filtering for this "
+              +"interface";
+          }
+          enum enable {
+            tailf:code-name spanning-tree-bdufilter_enable;
+            tailf:info "Enable BPDU filtering for this "
+              +"interface";
+          }
+        }
+      }
+      leaf bpduguard {
+        tailf:info "Don't accept BPDUs on this interface";
+        tailf:cli-full-command;
+        type enumeration {
+          enum disable {
+            tailf:code-name spanning-tree-bduguard_disable;
+            tailf:info "Disable BPDU Guard for this interface";
+          }
+          enum enable {
+            tailf:code-name spanning-tree-bduguard_enable;
+            tailf:info "Enable BPDU Guard for this interface";
+          }
+        }
+      }
+      leaf cost {
+        tailf:info "Change an interface's spanning tree port path "
+          +"cost";
+        // <1-2000000000> | auto
+        type spanning-tree-cost-type;
+      }
+      leaf guard {
+        tailf:info "Change an interface's spanning tree guard mode";
+        tailf:cli-full-command;
+        type enumeration {
+          enum loop {
+            tailf:info "Set guard mode to loop guard on "
+              +"interface";
+          }
+          enum none {
+            tailf:info "Set guard mode to none";
+          }
+          enum root {
+            tailf:info "Set guard mode to root guard on "
+              +"interface";
+          }
+        }
+      }
+      leaf link-type {
+        tailf:info "Specify a link type for spanning tree tree "
+          +"protocol use";
+        tailf:cli-full-command;
+        type enumeration {
+          enum auto {
+            tailf:code-name link_type_auto;
+            tailf:info "Determine link type based on media "
+              +"duplex of this interface";
+          }
+          enum none {
+            tailf:info "Consider the interface as point-to-"
+              +"point";
+          }
+          enum root {
+            tailf:info "Consider the interface as shared";
+          }
+
+        }
+      }
+      container mst {
+        tailf:info "Multiple spanning tree configuration";
+        // FIXME: fixe range problem, check cost/port-priority
+        list port {
+          tailf:cli-drop-node-name;
+          tailf:cli-incomplete-command;
+          tailf:cli-suppress-mode;
+          key "range";
+
+          leaf range {
+            type string {
+              pattern "\d+(\-\d+)?(,\d+(\-\d+)?)*";
+              tailf:info "<0-4094>;;MST instance list, "
+                +"example 0,2-4,6,8-12";
+            }
+          }
+          leaf cost {
+            tailf:cli-full-command;
+            tailf:info "Change an interface's spanning tree "
+              +"port path cost";
+            type mst-cost-type;
+          }
+          leaf port-priority {
+            tailf:cli-full-command;
+            tailf:info "Change an interface's spanning tree "
+              +"port priority";
+            type uint8 {
+              range "0..240";
+              tailf:info "<0-240>;;Port priority in "
+                +"increments of 32";
+            }
+          }
+        }
+        leaf pre-standard {
+          tailf:cli-full-command;
+          tailf:info "Force pre-standard MST BPDU transmission "
+            +"on port";
+          type empty;
+        }
+        container simulate {
+          tailf:info "Enable spanning tree simulation";
+          container pvst {
+            tailf:info "Enable PVST simulation";
+            presence "Enable PVST simulation";
+            leaf disable {
+              tailf:info "Disable PVST simulation on this "
+                +"interface";
+              type empty;
+            }
+          }
+        }
+      }
+
+      container port {
+        tailf:info "Spanning tree port options";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf "type" {
+          tailf:info "Specify a port type for spanning tree "
+            +"protocol use";
+          type enumeration {
+            enum edge {
+              tailf:info "Consider the interface as edge "
+                +"port (enable portfast)";
+            }
+            enum network {
+              tailf:info "Consider the interface as inter-"
+                +"switch link";
+            }
+            enum normal {
+              tailf:info "Consider the interface as normal "
+                +"spanning tree port";
+            }
+          }
+        }
+        leaf trunk {
+          when "../type != 'normal'";
+          tailf:info "Consider the interface as edge port "
+            +"(enable portfast) even in trunk mode";
+          type empty;
+        }
+      }
+      leaf port-priority {
+        tailf:info "Change an interface's spanning tree port "
+          +"priority";
+        type uint8 {
+          range "0|32|64|96|128|160|192|224";
+          tailf:info "<0-224>;;Port priority in increments of 32";
+        }
+      }
+    }
+
+    leaf speed {
+      tailf:info "Enter the port speed";
+      tailf:cli-full-command;
+      type enumeration {
+        enum "100" {
+          tailf:code-name  port_cahnnels-settings_grouping_speed_100;
+          tailf:info "100Mb/s";
+        }
+        enum "1000" {
+          tailf:code-name  port_cahnnels-settings_grouping_speed_1000;
+          tailf:info "1Gb/s";
+        }
+        enum "10000" {
+          tailf:info "10Gb/s";
+        }
+        enum "auto" {
+          tailf:code-name  port_cahnnels-settings_grouping_auto;
+          tailf:info "Auto";
+        }
+      }
+    }
+    container storm-control {
+      tailf:info "Configure Interface storm control";
+
+      container broadcast {
+        tailf:info "Broadcast";
+        presence "Broadcast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+      container unicast {
+        tailf:info "Unicast";
+        presence "Unicast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+      container multicast {
+        tailf:info "Multicast";
+        presence "Multicast";
+        leaf level {
+          type decimal64 {
+            fraction-digits "2";
+            range "0..100";
+            tailf:info "<0-100>;;Percentage";
+          }
+          default "100";
+        }
+      }
+    }
+    container switchport {
+      tailf:info "Configure switchport parameters";
+      presence "Configure switchport parameters";
+
+      container access {
+        tailf:info "Set access mode characteristics of the "
+          +"interface";
+        leaf vlan {
+          tailf:info "Set VLAN when interface is in access mode";
+          type uint16 {
+            range "1..3967|4048..4093";
+            tailf:info "<1-3967,4048-4093>;;VLAN ID of the "
+              +"VLAN when this port is in access mode";
+          }
+        }
+      }
+      leaf block {
+        tailf:info "Block specified outbound traffic for all VLANs";
+        tailf:cli-full-command;
+        type enumeration {
+          enum multicast {
+            tailf:code-name switchport_block_multicast;
+            tailf:info "Block mulitcast traffic";
+          }
+          enum unicast {
+            tailf:code-name switchport_block_unicast;
+            tailf:info "Block unknown unicast traffic";
+          }
+        }
+      }
+      leaf description {
+        tailf:info "Enter description of maximum 80 characters";
+        tailf:cli-full-command;
+        tailf:cli-multi-value;
+        type string {
+          length "1..80";
+        }
+      }
+      leaf host {
+        tailf:info "Set port host";
+        type empty;
+      }
+
+      leaf mode {
+        tailf:info "Enter the port mode";
+        tailf:cli-full-command;
+        type enumeration {
+          enum access {
+            tailf:code-name switchport_mode_access;
+            tailf:info "Port mode access";
+          }
+          enum fex-fabric {
+            tailf:info "Port mode FEX fabric";
+          }
+          enum trunk {
+            tailf:code-name switchport_mode_trunk;
+            tailf:info "Port mode trunk";
+          }
+        }
+      }
+      leaf monitor {
+        tailf:info "Configures an interface as span-destination";
+        tailf:cli-full-command;
+        type empty;
+      }
+      container trunk {
+        tailf:info "Set trunking characteristics of the interface";
+        container allowed {
+          tailf:info "Set allowed VLAN characteristics when "
+            +"interface is in trunking mode";
+          // to suppor the add,remove custom CLI command
+          // should be used.
+          container vlan {
+            tailf:info "Set allowed VLANs when interface is "
+              +"in trunking mode";
+            choice vlan-choice {
+              leaf-list ids {
+                tailf:cli-drop-node-name;
+                tailf:cli-range-list-syntax;
+                type vlan-list-type;
+              }
+              leaf fixed {
+                tailf:cli-drop-node-name;
+                type enumeration {
+                  enum all {
+                    tailf:info "All VLANs";
+                  }
+                  enum none {
+                    tailf:info "No VLANs";
+                  }
+                }
+              }
+              leaf-list except {
+                tailf:cli-range-list-syntax;
+                tailf:info " VLAN IDs of the allowed VLANs "
+                  +"when this port in trunking mode";
+                type vlan-list-type;
+              }
+            }
+          }
+        }
+        container native {
+          tailf:info "Set trunking native characteristics when "
+            +"interface is in trunking mode";
+          leaf vlan {
+            tailf:info "Set native VLAN when interface is in "
+              +"trunking mode";
+            type uint16 {
+              range "1..3967|4048..4093";
+              tailf:info "<1-3967,4048-4093>;;VLAN ID of the "
+                +"native VLAN when this port is in "
+                +"trunking mode";
+            }
+          }
+        }
+      }
+    }
+    container untagged {
+      tailf:info "Default to use for untagged packets on interface";
+      leaf cos {
+        tailf:info "IEEE 802.1Q class of service for QoS "
+          +"classification";
+        type uint8 {
+          range "0..7";
+          tailf:info "<0-7>;;COS value";
+        }
+      }
+    }
+  }
+
+  grouping mgmt-settings-grouping {
+    leaf "description" {
+      tailf:info "Enter description of maximum 80 characters";
+      tailf:cli-full-command;
+      tailf:cli-multi-value;
+      type string {
+        length "1..80";
+      }
+    }
+
+    leaf cdp {
+      tailf:info "Configure CDP interface parameters";
+      tailf:cli-full-command;
+      type enumeration {
+        enum enable {
+          tailf:code-name cdp_enable;
+          tailf:info "Enable/disable CDP on the interface";
+        }
+      }
+    }
+
+    leaf duplex {
+      tailf:info "Enter the port duplex mode";
+      tailf:cli-full-command;
+      type enumeration {
+        enum auto {
+          tailf:code-name mgmt_duplex_auto;
+          tailf:info "Auto";
+        }
+        enum full {
+          tailf:info "Full";
+        }
+        enum half {
+          tailf:info "Half";
+        }
+      }
+    }
+
+    container ip {
+      tailf:info "Configure IP features";
+
+      container access-group {
+        tailf:info "Specify access control for packets";
+        tailf:cli-sequence-commands;
+        tailf:cli-compact-syntax;
+        leaf name {
+          tailf:cli-drop-node-name;
+          tailf:cli-incomplete-command;
+          type string {
+            length "1..64";
+            tailf:info "WORD;;List name (Max Size 64)";
+          }
+        }
+        leaf inout {
+          tailf:cli-drop-node-name;
+          type enumeration {
+            enum in {
+              tailf:info "Inbound packets";
+            }
+            enum out {
+              tailf:info "Outbound packets";
+            }
+          }
+        }
+      }
+
+      leaf address {
+        tailf:info "Configure IP address on interface";
+        tailf:cli-full-command;
+        type ip-mask {
+          tailf:info "A.B.C.D/LEN;;IP prefix and network mask length "
+            +"in format x.x.x.x/m";
+        }
+      }
+
+      container arp {
+        tailf:info "Configure ARP parameters";
+        tailf:cli-sequence-commands;
+        tailf:cli-compact-syntax;
+        leaf address {
+          tailf:cli-drop-node-name;
+          tailf:cli-incomplete-command;
+          type inet:ipv4-address {
+            tailf:info "A.B.C.D;;IP address";
+          }
+        }
+        leaf mac {
+          tailf:cli-drop-node-name;
+          type mac-address-type2;
+        }
+      }
+
+      leaf directed-broadcast {
+        tailf:info "IP directed-broadcast";
+        tailf:cli-full-command;
+        type empty;
+      }
+
+      leaf port-unreachable {
+        tailf:info "Enable sending ICMP port-unreachable";
+        tailf:cli-full-command;
+        type empty;
+      }
+
+      leaf redirects {
+        tailf:info "Send ICMP Redirect messages";
+        tailf:cli-full-command;
+        type empty;
+      }
+
+      leaf unreachables {
+        tailf:info "Enable sending ICMP unreachables (other than "
+          +"port-unreachable)";
+        tailf:cli-full-command;
+        type empty;
+      }
+
+      container port {
+        tailf:info "Port policy";
+        container access-group {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+              enum out {
+                tailf:info "Outbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    container ipv6 {
+      tailf:info "Configure IPv6 features";
+      container port {
+        tailf:info "Port policy";
+        container traffic-filter {
+          tailf:info "Specify access control for packets";
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf name {
+            tailf:cli-drop-node-name;
+            tailf:cli-incomplete-command;
+            type string {
+              length "1..64";
+              tailf:info "WORD;;List name (Max Size 64)";
+            }
+          }
+          leaf inout {
+            tailf:cli-drop-node-name;
+            type enumeration {
+              enum in {
+                tailf:info "Inbound packets";
+              }
+            }
+          }
+        }
+      }
+    }
+
+    leaf lldp {
+      tailf:info "Configure Interface LLDP parameters";
+      tailf:cli-full-command;
+      type enumeration {
+        enum receive {
+          tailf:code-name mgmt_lldp_receive;
+          tailf:info "Enable LLDP reception on interface";
+        }
+        enum transmit {
+          tailf:info "Enable LLDP transmission on interface";
+        }
+      }
+    }
+
+    container snmp {
+      tailf:info "Modify SNMP interface parameters";
+      leaf trap {
+        tailf:info "Allow a specific SNMP trap";
+        type enumeration {
+          enum link-status {
+            tailf:info "Allow SNMP LINKUP and LINKDOWN traps";
+          }
+        }
+      }
+    }
+
+
+    leaf speed {
+      tailf:info "Enter the port speed";
+      tailf:cli-full-command;
+      type enumeration {
+        enum "1000" {
+          tailf:code-name  mgmt-settings-grouping-speed_1000;
+          tailf:info "1Gb/s";
+        }
+        enum "auto" {
+          tailf:code-name  mgmt-settings-grouping-auto;
+          tailf:info "Auto negotiate speed";
+        }
+      }
+    }
+
+    container vrf {
+      tailf:info "Configure VRF parameters";
+      leaf member {
+        tailf:info "Set interface's VRF membership";
+        type vrf-member-type;
+      }
+    }
+  }
+
+  grouping switchport-grouping {
+    container switchport {
+      tailf:info "Configure switchport parameters";
+      presence "Configure switchport parameters";
+
+      leaf beacon {
+        tailf:info "Disable/enable the beacon for an interface";
+        tailf:cli-full-command;
+        type empty;
+      }
+
+      container fcrxbbcredit {
+        tailf:info "Configure receive BB_credit for the port";
+        choice bbcredit-choice {
+          container creds {
+            tailf:cli-drop-node-name;
+            leaf credit {
+              tailf:cli-drop-node-name;
+              tailf:cli-reset-container;
+              tailf:cli-full-command;
+              type uint8 {
+                range "1..64";
+                tailf:info "<1-64>;;Enter receive BB_credit";
+              }
+            }
+            container ecreds {
+              tailf:cli-drop-node-name;
+              tailf:cli-sequence-commands {
+                tailf:cli-reset-siblings;
+              }
+              tailf:cli-compact-syntax;
+              tailf:cli-incomplete-command;
+              presence "true";
+              leaf credit {
+                tailf:cli-drop-node-name;
+                tailf:cli-incomplete-command;
+                type uint8 {
+                  range "1..64";
+                  tailf:info "<1-64>;;Enter receive "
+                    +"BB_credit";
+                }
+              }
+              leaf mode {
+                tailf:info "Configure receive BB_credit for "
+                  +"specific mode";
+                type enumeration {
+                  enum E {
+                    tailf:info "Configure receive BB_credit"
+                      +" for E or TE mode";
+                  }
+                }
+              }
+            }
+            container fcreds {
+              tailf:cli-drop-node-name;
+              tailf:cli-sequence-commands {
+                tailf:cli-reset-siblings;
+              }
+              tailf:cli-compact-syntax;
+              presence "true";
+              tailf:cli-incomplete-command;
+              leaf credit {
+                tailf:cli-drop-node-name;
+                tailf:cli-incomplete-command;
+                type uint8 {
+                  range "1..64";
+                  tailf:info "<1-64>;;Enter receive "
+                    +"BB_credit";
+                }
+              }
+              leaf mode {
+                tailf:info "Configure receive BB_credit for "
+                  +"specific mode";
+                tailf:cli-value-display-template "F";
+                type enumeration {
+                  // Bug in Cisco Nexus, displays
+                  // Fx but does not accept Fx as input!!
+                  enum Fx {
+                    tailf:info "Configure receive BB_credit"
+                      +" for F mode";
+                  }
+                }
+              }
+            }
+          }
+          leaf "default" {
+            tailf:info "Default receive BB_credit";
+            type empty;
+          }
+        }
+      }
+
+      leaf description {
+        tailf:info "Enter description of maximum 80 characters";
+        tailf:cli-full-command;
+        tailf:cli-multi-value;
+        type string {
+          length "1..80";
+        }
+      }
+
+      container ignore {
+        tailf:info "Enter parameter to be ignored";
+        leaf bit-error {
+          tailf:info "Ignore big-error";
+          type empty;
+        }
+      }
+
+      leaf mode {
+        tailf:info "Enter the port mode";
+        tailf:cli-full-command;
+        type enumeration {
+          enum E {
+            tailf:info "E mode";
+          }
+          enum F {
+            tailf:info "F mode";
+          }
+          enum SD {
+            tailf:info "SD mode";
+          }
+          enum auto {
+            tailf:code-name switchport-grouping_mode_auto;
+            tailf:info "Auto mode";
+          }
+        }
+      }
+
+      leaf speed {
+        tailf:info "Enter the port speed";
+        tailf:cli-full-command;
+        type enumeration {
+          enum 1000 {
+            tailf:code-name switchport-grouping_1000;
+            tailf:info "1000 Mbps speed";
+          }
+          enum 2000 {
+            tailf:info "2000 Mbps speed";
+          }
+          enum 4000 {
+            tailf:info "4000 Mbps speed";
+          }
+          enum 8000 {
+            tailf:info "8000 Mbps speed";
+          }
+          enum auto {
+            tailf:code-name switchport-grouping_speed_auto;
+            tailf:info "Auto negotiate speed";
+          }
+        }
+      }
+
+      container trunk {
+        tailf:info "Set trunking characteristics of the interface";
+        container allowed {
+          tailf:info "Set allowed VLAN characteristics when "
+            +"interface is in trunking mode";
+          // to suppor the add,remove custom CLI command
+          // should be used.
+          container vlan {
+            tailf:info "Set allowed VLANs when interface is "
+              +"in trunking mode";
+            choice vlan-choice {
+              leaf-list ids {
+                tailf:cli-drop-node-name;
+                tailf:cli-range-list-syntax;
+                type vlan-list-type;
+              }
+              leaf fixed {
+                tailf:cli-drop-node-name;
+                type enumeration {
+                  enum all {
+                    tailf:info "All VLANs";
+                  }
+                  enum none {
+                    tailf:info "No VLANs";
+                  }
+                }
+              }
+              leaf-list except {
+                tailf:info " VLAN IDs of the allowed VLANs "
+                  +"when this port in trunking mode";
+                tailf:cli-range-list-syntax;
+                type vlan-list-type;
+              }
+            }
+          }
+        }
+        container native {
+          tailf:info "Set trunking native characteristics when "
+            +"interface is in trunking mode";
+          leaf vlan {
+            tailf:info "Set native VLAN when interface is in "
+              +"trunking mode";
+            type uint16 {
+              range "1..3967|4048..4093";
+              tailf:info "<1-3967,4048-4093>;;VLAN ID of the "
+                +"native VLAN when this port is in "
+                +"trunking mode";
+            }
+          }
+        }
+      }
+    }
+  }
+
+  grouping fc-settings-grouping {
+    container channel-group {
+      tailf:info "Add to/remove from a san-port-channel";
+      choice channel-group-choice {
+        list port {
+          tailf:cli-drop-node-name;
+          tailf:cli-sequence-commands {
+            tailf:cli-reset-siblings;
+          }
+          tailf:cli-compact-syntax;
+          max-elements "1";
+
+          key nr;
+          leaf nr {
+            type uint16 {
+              range "1..256";
+              tailf:info "<1-256>;;Specify a san-port-channel "
+                +"number";
+            }
+          }
+          leaf force {
+            tailf:info "Forcefully add aport";
+            type empty;
+          }
+        }
+        leaf auto {
+          tailf:info "Enable Auto Creation of Port Channel";
+          type empty;
+        }
+      }
+    }
+    container fcdomain {
+      tailf:info "Configure fcdomain parameters";
+      container rcf-reject {
+        tailf:info "Configure the rcf-reject flag";
+        leaf vsan {
+          tailf:info "Specify the vsan range";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+    }
+    container fspf {
+      tailf:info "Configure FSPF parameters";
+      container cost {
+        tailf:info "Configure FSPF link cost";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..30000";
+            tailf:info "FSPF link cost";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container dead-interval {
+        tailf:info "Configure FSPF dead interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "2..65535";
+            tailf:info "Dead interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container hello-interval {
+        tailf:info "Configure FSPF hello-interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..65534";
+            tailf:info "Hello interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container passive {
+        tailf:info "Enable/disable FSPF on the interface";
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container retransmit-interval {
+        tailf:info "Configure FSPF retransmit interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..65535";
+            tailf:info "Retransmit interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+    }
+    container out-of-service {
+      tailf:info "Put an interface out of service.";
+      presence "Put an interface out of service.";
+      leaf force {
+        tailf:info "put an interface out of service";
+        type empty;
+      }
+    }
+    leaf shutdown {
+      tailf:info "Enable/disable an interface";
+      tailf:cli-boolean-no;
+      type boolean;
+      default "true";
+    }
+
+    uses switchport-grouping;
+  }
+
+
+
+  grouping san-settings-grouping {
+    container channel {
+      tailf:info "Set the channel mode for the san-port-channel "
+        +"interface";
+      leaf mode {
+        tailf:info "Set the channel mode for the san-port-channel "
+          +"interface";
+        type enumeration {
+          enum active {
+            tailf:info "Configure ACTIVE san-port-channel";
+          }
+        }
+      }
+    }
+
+    container fcdomain {
+      tailf:info "Configure fcdomain parameters";
+      container rcf-reject {
+        tailf:info "Configure the rcf-reject flag";
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+    }
+
+    container fspf {
+      tailf:info "Configure FSPF parameters";
+      container cost {
+        tailf:info "Configure FSPF link cost";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..30000";
+            tailf:info "FSPF link cost";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "([0-9]+)(\-[0-9]+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container dead-interval {
+        tailf:info "Configure FSPF dead interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "2..65535";
+            tailf:info "Dead interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "(([0-9])+)(\-([0-9])+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container hello-interval {
+        tailf:info "Configure FSPF hello-interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..65534";
+            tailf:info "Hello interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "(([0-9])+)(\-([0-9])+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container passive {
+        tailf:info "Enable/disable FSPF on the interface";
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "(([0-9])+)(\-([0-9])+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+      container retransmit-interval {
+        tailf:info "Configure FSPF retransmit interval";
+        tailf:cli-sequence-commands {
+          tailf:cli-reset-siblings;
+        }
+        tailf:cli-compact-syntax;
+        leaf cost {
+          tailf:cli-incomplete-command;
+          tailf:cli-drop-node-name;
+          type uint16 {
+            range "1..65535";
+            tailf:info "Retransmit interval (in sec)";
+          }
+        }
+        leaf vsan {
+          tailf:info "Enter VSAN";
+          type string {
+            pattern "(([0-9])+)(\-([0-9])+)?";
+            tailf:info "1-4093;; VSAN id range";
+          }
+        }
+      }
+    }
+
+    leaf shutdown {
+      tailf:info "Enable/disable an interface";
+      tailf:cli-boolean-no;
+      type boolean;
+      default "true";
+    }
+
+    uses switchport-grouping;
+  }
+
+  container feature {
+    tailf:info "Command to enable/disable features";
+    leaf dhcp {
+      type empty;
+      tailf:info "Enable/Disable DHCP Snooping";
+    }
+    leaf http-server {
+      type empty;
+      tailf:info "Enable/Disable http-server";
+    }
+    leaf lacp {
+      type empty;
+      tailf:info "Enable/Disable LACP";
+    }
+    leaf netflow {
+      type empty;
+      tailf:info "Enable/Disable NetFlow";
+    }
+    leaf port-profile-roles {
+      type empty;
+      tailf:info "Enable/Disable Port-profile Roles Feature";
+    }
+    leaf private-vlan {
+      type empty;
+      tailf:info "Enable/Disable private-vlan";
+    }
+    leaf ssh {
+      type empty;
+      tailf:cli-show-no;
+      tailf:info "Enable/Disable ssh";
+    }
+    leaf tacacs-plus {
+      tailf:alt-name "tacacs+";
+      type empty;
+      tailf:info "Enable/Disable tacacs+";
+    }
+    leaf telnet {
+      type empty;
+      tailf:cli-show-no;
+      tailf:info "Enable/Disable telnet";
+    }
+    leaf vpd {
+      type empty;
+      tailf:info "Enable/Disable VPC";
+    }
+  }
+
+
+  // FIXME: check on Nexus 5000
+
+  list fex {
+    key id;
+
+    leaf id {
+      type uint16;
+    }
+
+    container pinning {
+      leaf max-links {
+        type uint16;
+      }
+    }
+
+    leaf description {
+      tailf:info "Enter description of maximum 80 characters";
+      tailf:cli-full-command;
+      tailf:cli-multi-value;
+      type string {
+        length "1..80";
+      }
+    }
+  }
+
+  // FIXME: check on Nexus 5000
+  container vlan {
+    tailf:info "Vlan commands";
+
+    list vlan-list {
+      tailf:cli-drop-node-name;
+      tailf:cli-mode-name "config-vlan";
+      key id;
+
+      leaf id {
+        type uint16 {
+          range "1..3967|4048..4093";
+          tailf:info "<1-3967,4048-4093>;;VLAN ID 1-4094 or "
+            +"range(s): 1-5, 10 or 2-5,7-19";
+        }
+      }
+
+      container ip {
+        tailf:info "Configure IP features";
+        container igmp {
+          tailf:info "IGMP configuration commands";
+          container snooping {
+            tailf:info "Configures IGMP Snooping";
+            presence "Configures IGMP Snooping";
+
+            leaf explicit-tracking {
+              tailf:info "Configures Explicit Host tracking for "
+                +"vlan";
+              tailf:cli-full-command;
+              type empty;
+            }
+            leaf fast-leave {
+              tailf:info "Configures Fast leave for the vlan";
+              tailf:cli-full-command;
+              type empty;
+            }
+            leaf last-member-query-interval {
+              tailf:info "Configures interval between group-"
+                +"specific Query transmissions";
+              tailf:cli-full-command;
+              type uint8 {
+                range "1..25";
+                tailf:info "<1-25>  Interval in seconds "
+                  +"(Default value is 1)";
+              }
+              default "1";
+            }
+            leaf link-local-groups-suppression {
+              tailf:info "Configures Vlan link-local groups "
+                +"suppression";
+              tailf:cli-full-command;
+              type empty;
+            }
+            container mrouter {
+              tailf:info "Configures static multicast router "
+                +"interface";
+              container "interface" {
+                tailf:info "Specify interface for "
+                  +"static-mrouter";
+                list Ethernet {
+                  tailf:info "Ethernet IEEE 802.3z";
+                  tailf:cli-allow-join-with-key {
+                    tailf:cli-display-joined;
+                  }
+                  tailf:cli-suppress-mode;
+                  key "name";
+                  leaf name {
+                    type string {
+                      pattern "([0-9])+/([0-9])+(/([0-9])+)?";
+                      tailf:info "<1-66>/<1-128>;;Slot number/Port number";
+                    }
+                  }
+                }
+                list port-channel {
+                  tailf:info "Port Channel interface";
+                  tailf:cli-suppress-mode;
+                  tailf:cli-allow-join-with-key {
+                    tailf:cli-display-joined;
+                  }
+                  key "name";
+
+                  leaf name {
+                    type uint16 {
+                      range "1..4096";
+                      tailf:info "<1-4096>;;Port Channel "
+                        +"number";
+                    }
+                  }
+                }
+              }
+            }
+            leaf static-group {
+              tailf:info "Configures static group membership";
+              tailf:cli-full-command;
+              type inet:ipv4-address {
+                tailf:info "A.B.C.D;;Group IP Address";
+              }
+            }
+          }
+        }
+      }
+
+      leaf name {
+        tailf:info "Ascii name of the VLAN";
+        tailf:cli-full-command;
+        tailf:cli-multi-value;
+        type string {
+          length "1..32";
+          tailf:info "The ascii name for the VLAN (Max Size 32)";
+        }
+      }
+
+      // FIXME: validate towards Nexus 5000
+      container service-policy {
+        tailf:info "Configure service policy for an interface";
+        container input-map {
+          tailf:cli-drop-node-name;
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf type {
+            tailf:cli-optional-in-sequence;
+            tailf:cli-incomplete-command;
+            type enumeration {
+              enum qos {
+                tailf:code-name service_policy_input_map_qos;
+                tailf:info "Qos policy";
+              }
+              enum network-qos {
+                tailf:code-name service_policy_input_map_network_qos;
+                tailf:info "Network Qos policy";
+              }
+              enum queuing {
+                tailf:code-name service_policy_input_map_queuing;
+                tailf:info "Queuing policy";
+              }
+            }
+            default "qos";
+          }
+          leaf input {
+            when "../type = 'qos' or ../type = 'queueing'" {
+            }
+            tailf:info "Input Service Policy";
+            type string {
+              tailf:info "Policy-map name (alphanumeric) "
+                +"(Max Size 40)";
+            }
+          }
+          leaf no-stats {
+            when "../type = 'qos'";
+            tailf:info "Disable statistics for this policy";
+            type empty;
+          }
+          leaf name {
+            when "../type = 'network-qos'";
+            tailf:cli-drop-node-name;
+            tailf:cli-full-command;
+            type leafref {
+              path "/c:policy-map/type/network-qos/name";
+              tailf:info "Policy-map name (alphanumeric) "
+                +"(Max Size 40)";
+            }
+          }
+        }
+        container output-map {
+          tailf:cli-drop-node-name;
+          tailf:cli-sequence-commands;
+          tailf:cli-compact-syntax;
+          leaf type {
+            tailf:cli-optional-in-sequence;
+            tailf:cli-incomplete-command;
+            type enumeration {
+              enum qos {
+                tailf:code-name service_policy_output_map_qos;
+                tailf:info "Qos policy";
+              }
+              enum network-qos {
+                tailf:code-name service_policy_output_map_network_qos;
+                tailf:info "Network Qos policy";
+              }
+              enum queuing {
+                tailf:code-name service_policy_output_map_queuing;
+                tailf:info "Queuing policy";
+              }
+            }
+            default "qos";
+          }
+          leaf output {
+            when "../type = 'qos'";
+            tailf:info "Output Service Policy";
+            type leafref {
+              path "/c:policy-map/type/qos/name";
+              tailf:info "Policy-map name (alphanumeric) "
+                +"(Max Size 40)";
+            }
+          }
+          leaf no-stats {
+            when "../type = 'qos'";
+            tailf:info "Disable statistics for this policy";
+            type empty;
+          }
+          leaf name {
+            when "../type = 'network-qos'";
+            tailf:cli-drop-node-name;
+            tailf:cli-full-command;
+            type leafref {
+              path "/c:policy-map/type/network-qos/name";
+              tailf:info "Policy-map name (alphanumeric) "
+                +"(Max Size 40)";
+            }
+          }
+        }
+      }
+      leaf shutdown {
+        tailf:info "Shutdown VLAN switching";
+        tailf:cli-boolean-no;
+        tailf:cli-full-command;
+        type boolean;
+        default "false";
+      }
+      leaf state {
+        tailf:info "Operational state of the VLAN";
+        tailf:cli-full-command;
+        type enumeration {
+          enum active {
+            tailf:info "VLAN Active State";
+          }
+          enum suspend {
+            tailf:info "VLAN Suspended State";
+          }
+        }
+        default "active";
+      }
+    }
+  }
+
+  typedef dscp-type {
+    type uint16 {
+      range "0..63";
+      tailf:info "<0-63>;;List of DSCP values";
+    }
+  }
+
+  // this model works well in NCS but may not be what you
+  // want in a CLI since you would also want to support
+  // typeing "class-map foo" without reqiering the type xx
+  // prefix. However, this could easily be supported with
+  // a clispec custom command.
+
+  grouping match-grouping {
+    container access-group {
+      tailf:info "Access group";
+      leaf-list name {
+        tailf:info "Named Access List";
+        tailf:cli-list-syntax;
+        type string {
+          length "1..64";
+          tailf:info "WORD;;Access List name (Max Size 64)";
+        }
+      }
+    }
+    leaf-list cos {
+      tailf:info "IEEE 802.1Q class of service";
+      tailf:cli-range-list-syntax;
+      type uint16 {
+        range "0..7";
+        tailf:info "<0-7>;;List of class-of-service values";
+      }
+    }
+    leaf-list dscp {
+      tailf:info "Match DSCP in IP(v4) and IPv6 packets";
+      tailf:cli-range-list-syntax;
+      type dscp-type;
+    }
+    container ip {
+      tailf:info "IP";
+      leaf-list rtp {
+        tailf:cli-range-list-syntax;
+        tailf:info "Real Time Protocol";
+        type uint16 {
+          range "2000..65535";
+          tailf:info "<2000-65535>;;UDP port list that are using RTP";
+        }
+      }
+    }
+    leaf-list precedence {
+      tailf:cli-full-command;
+      tailf:info "Precedence in IP(v4) and IPv6 packets";
+      type uint8 {
+        range "0..7";
+        tailf:info "<0-7>;;List of precedence values";
+      }
+    }
+    container protocol {
+      tailf:info "Protocol";
+      leaf arp {
+        type empty;
+        tailf:info "IP ARP";
+      }
+      leaf clns_es {
+        type empty;
+        tailf:info "ISO CLNS End System";
+      }
+      leaf clns_is {
+        type empty;
+        tailf:info "ISO CLNS Intermediate System";
+      }
+      leaf dhcp {
+        type empty;
+        tailf:info "Dynamic Host Configuration";
+      }
+      leaf ldp {
+        type empty;
+        tailf:info "Label Distribution Protocol";
+      }
+      leaf netbios {
+        type empty;
+        tailf:info "NetBIOS";
+      }
+    }
+  }
+
+  container class-map {
+    tailf:info "Configure a class-map";
+    container type {
+      tailf:info "Specify the type of this class-map";
+      list qos {
+        tailf:info "Qos class";
+        tailf:cli-mode-name "config-cmap-qos";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Class-map name (Max Size 40)";
+          }
+        }
+        leaf prematch {
+          tailf:cli-prefix-key;
+          tailf:cli-drop-node-name;
+          type enumeration {
+            enum match-all {
+              tailf:info "Logical-AND all matching statements under "+
+                "this classmap";
+            }
+            enum match-any {
+              tailf:info "Logical-OR all matching statements under "
+                +"this classmap";
+            }
+          }
+          default match-all;
+        }
+
+        leaf description {
+          tailf:info "Class-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this class-map (up to 200 "+
+              "characters)";
+          }
+        }
+        container match {
+          tailf:info "Classification criteria";
+          uses match-grouping;
+        }
+      }
+      list network-qos {
+        tailf:info "Network Qos class";
+        tailf:cli-mode-name "config-cmap-nq";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Class-map name (Max Size 40)";
+          }
+        }
+        leaf description {
+          tailf:info "Class-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this class-map (up to 200 "+
+              "characters)";
+          }
+        }
+        container match {
+          tailf:info "Classification criteria";
+          leaf qos-group {
+            tailf:info "QoS-group";
+            type uint8 {
+              range "1..5";
+              tailf:info "<1-5>;;QoS-group value";
+            }
+          }
+        }
+      }
+      list queuing {
+        tailf:info "Queuing class";
+        tailf:cli-mode-name "config-cmap-que";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Class-map name (Max Size 40)";
+          }
+        }
+        leaf description {
+          tailf:info "Class-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this class-map (up to 200 "+
+              "characters)";
+          }
+        }
+        container match {
+          tailf:info "Classification criteria";
+          leaf qos-group {
+            tailf:info "QoS-group";
+            type uint8 {
+              range "1..5";
+              tailf:info "<1-5>;;QoS-group value";
+            }
+          }
+        }
+      }
+    }
+  }
+
+  typedef class-name-type {
+    type union {
+      type string {
+        length "1..40";
+        tailf:info "WORD;;Class map name (Max Size 40)";
+      }
+      type enumeration {
+        enum class-default {
+          tailf:info "System default class matching otherwise "+
+            "unclassified packet";
+        }
+      }
+    }
+  }
+
+  grouping policy-map-class-qos-grouping {
+    list class {
+      tailf:info "Policy Criteria";
+      tailf:cli-mode-name "config-pmap-c-qos";
+      key "name";
+      leaf name {
+        type class-name-type;
+      }
+
+      container set {
+        tailf:info "Set attribute";
+        leaf dscp {
+          tailf:info "Set DSCP in IP(v4) and IPv6 packets";
+          tailf:cli-full-command;
+          type dscp-type;
+        }
+        leaf precedence {
+          tailf:info "Precedence in IP(v4) and IPv6 packets";
+          tailf:cli-full-command;
+          type uint8 {
+            range "0..7";
+            tailf:info "<0-7>;;List of precedence values";
+          }
+        }
+        leaf qos-group {
+          tailf:info "QoS-group";
+          tailf:cli-full-command;
+          type uint8 {
+            range "1..5";
+            tailf:info "<1-5>;;QoS-group value";
+          }
+        }
+      }
+    }
+  }
+
+  grouping policy-map-class-network-qos-grouping {
+    container class {
+      tailf:info "Policy Criteria";
+      container type {
+        tailf:info "Specify the type class";
+        list network-qos {
+          tailf:info "Network Qos policy";
+          tailf:cli-mode-name "config-pmap-nq-c";
+
+          key "name";
+          leaf name {
+            type class-name-type;
+          }
+
+          leaf mtu {
+            tailf:info "MTU for the CoS";
+            tailf:cli-full-command;
+            type uint16 {
+              range "1500..9216";
+              tailf:info "<1500-9216>;;MTU value";
+            }
+          }
+
+          leaf multicast-optimize {
+            tailf:info "Optimize multicast traffic distribution";
+            tailf:cli-full-command;
+            type empty;
+          }
+
+          container pause {
+            tailf:info "PAUSE charecteristics (CBFC)";
+            container no-drop {
+              tailf:info "Enable no-drop for the CoS";
+              presence "Enable no-drop for the CoS";
+              tailf:cli-sequence-commands {
+                tailf:cli-reset-all-siblings;
+              }
+              tailf:cli-compact-syntax;
+              leaf buffer-size {
+                tailf:info "Ingress buffer size in bytes";
+                tailf:cli-optional-in-sequence;
+                tailf:cli-incomplete-command;
+                type uint32 {
+                  range "10240..490880";
+                  tailf:info "<10240-490880>;;Ingress buffer of the "
+                    +"no-drop class in bytes";
+                }
+              }
+              leaf pause-threshold {
+                tailf:info "Buffer limit for pausing in bytes";
+                tailf:cli-incomplete-command;
+                when "../buffer-size" {
+                }
+                type uint32 {
+                  range "0..490880";
+                  tailf:info "<0-490880>;;Buffer limit at which"
+                    +" the port pauses the peer";
+                }
+              }
+              leaf resume-threshold {
+                tailf:info "Buffer limit at which to resume in "
+                  +"bytes";
+                when "../buffer-size" {
+                }
+                type uint32 {
+                  range "0..490880";
+                  tailf:info "<0-490880>;;Buffer limit at which "
+                    +"the port resumes the peer";
+                }
+              }
+              leaf-list pfc-cos {
+                tailf:info "Cos values to assert PFC on";
+                tailf:cli-range-list-syntax;
+                type uint8 {
+                  range "0..7";
+                  tailf:info "<0-7>;;PFC COS bitmap";
+                }
+              }
+            }
+          }
+
+          container queue-limit {
+            tailf:info "Configure queue size fo the class";
+            tailf:cli-sequence-commands;
+            tailf:cli-compact-syntax;
+            leaf count {
+              tailf:cli-incomplete-command;
+              tailf:cli-drop-node-name;
+              type uint32 {
+                range "20480..204800";
+                tailf:info "<20480-204800>;;Queue size in bytes";
+              }
+              must "../bytes";
+            }
+            // must be set if the count is set
+            leaf bytes {
+              tailf:info "Bytes";
+              type empty;
+            }
+          }
+
+          container set {
+            tailf:info "Set attribute";
+            leaf qos {
+              tailf:info "IEEE 802.1Q class of service";
+              type uint8 {
+                range "0..7";
+                tailf:info "<0-7>;;IEEE 802.1Q Class of Service value";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  grouping policy-map-class-queuing-grouping {
+    container class {
+      tailf:info "Policy Criteria";
+      container type {
+        tailf:info "Specify the type of class";
+        list queuing {
+          tailf:info "Match on Queuing class";
+          tailf:cli-mode-name "config-pmap-c-que";
+
+          key "name";
+          leaf name {
+            type class-name-type;
+          }
+
+          container bandwidth {
+            tailf:info "Specify bandwidth for the class";
+            leaf percent {
+              tailf:info "Percentage of available bandwidth";
+              type uint8 {
+                range "0..100";
+                tailf:info "<0-100>;;Value in percentage";
+              }
+            }
+          }
+          leaf priority {
+            tailf:info "Configure traffic class priority";
+            tailf:cli-full-command;
+            type empty;
+          }
+        }
+      }
+    }
+  }
+
+  container policy-map {
+    tailf:info "Configure a policy map";
+    container type {
+      tailf:info "Specify the type of this policy-map";
+      list qos {
+        tailf:info "Qos class";
+        tailf:cli-mode-name "policy-pmap-qos";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Policy-map name (Max Size 40)";
+          }
+        }
+
+        leaf description {
+          tailf:info "Policy-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this policy-map (up to 200 "+
+              "characters)";
+          }
+        }
+        uses policy-map-class-qos-grouping;
+      }
+      list network-qos {
+        tailf:info "Network Qos class";
+        tailf:cli-mode-name "config-cmap-nq";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Policy-map name (Max Size 40)";
+          }
+        }
+        leaf description {
+          tailf:info "Policy-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this policy-map (up to 200 "+
+              "characters)";
+          }
+        }
+        uses policy-map-class-network-qos-grouping;
+      }
+      list queuing {
+        tailf:info "Queuing class";
+        tailf:cli-mode-name "config-pmap-que";
+        key name;
+
+        leaf name {
+          type string {
+            length "1..40";
+            tailf:info "WORD;;Policy-map name (Max Size 40)";
+          }
+        }
+        leaf description {
+          tailf:info "Policy-Map description";
+          tailf:cli-multi-value;
+          type string {
+            tailf:info "LINE;;Description of this policy-map (up to 200 "+
+              "characters)";
+          }
+        }
+        uses policy-map-class-queuing-grouping;
+      }
+    }
+  }
+
+  container interface {
+    tailf:info "Configure interfaces";
+
+    list Ethernet {
+      tailf:info "Ethernet IEEE 802.3z";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type string {
+          // pattern "([0-9])+/([0-9])+(/([0-9])+)?";
+          tailf:info "<1-66>/<1-128>;;Slot number/Port number";
+        }
+      }
+
+      uses ethernet-settings-grouping;
+    }
+
+    list fc {
+      tailf:info "Fiber Channel interface";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type string {
+          pattern "[1-2]/([0-9])+";
+          tailf:info "<1-2>/<1-48>;;Slot number/Port number";
+        }
+      }
+
+      uses fc-settings-grouping;
+    }
+
+    list mgmt {
+      tailf:info "Management interface";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type uint16 {
+          range "0";
+          tailf:info "<0-0>;;Management interface number";
+        }
+      }
+
+      uses mgmt-settings-grouping;
+    }
+
+    list port-channel {
+      tailf:info "Port Channel interface";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type uint16 {
+          range "1..4096";
+          tailf:info "<1-4096>;;Port Channel number";
+        }
+      }
+
+      uses port-channel-settings-grouping;
+    }
+
+    list san-port-channel {
+      tailf:info "SAN Port Channel interface";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type uint16 {
+          range "1..256";
+          tailf:info "<1-256>;;Port Channel number";
+        }
+      }
+      uses san-settings-grouping;
+    }
+
+    // FIXME: check with Nexus 5000
+    list Vlan {
+      tailf:info "VLAN interface";
+      tailf:cli-allow-join-with-key {
+        tailf:cli-display-joined;
+      }
+      tailf:cli-mode-name "config-if";
+
+      key "name";
+
+      leaf name {
+        type uint16 {
+          range "1..4096";
+          tailf:info "<0-0>;;VLAN interface number";
+        }
+      }
+
+      uses mgmt-settings-grouping;
+    }
+  }
+}

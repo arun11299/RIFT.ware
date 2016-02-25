@@ -1,0 +1,30 @@
+/*------------------*/
+/*----- LAYOUT -----*/
+.details.row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-content: stretch;
+  align-content: stretch;
+}
+.details.row .col {
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 10px;
+  margin: 0px;
+}
+/**/
+/**/
+.details h2 {
+  border-bottom: 1px solid #121212;
+  box-shadow: 0 1px 0 0 #5e5e5e;
+  color: #cccccc;
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  min-height: inherit;
+  padding-bottom: 5px;
+  text-align: left;
+  text-transform: uppercase;
+}

@@ -1,0 +1,29 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-topology.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+  <template>
+    <rw-topology id="test0"></rw-topology>
+  </template>
+  <script>
+    rw.api.setOffline('test');
+    Polymer({
+      attached: function() {
+        var test0 = this.$.test0;
+        suite('render', function() {
+          test('ok', function() {
+            assert.isTrue(true);
+          });
+        });
+      }
+    });
+  </script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

@@ -1,0 +1,119 @@
+
+<polymer-element name="rw-ue-model" attributes="noRest active">
+  <script>
+    Polymer({
+
+      created: function() {
+        this.subscriptions = [];
+        this.noRest = false;
+        this.mme = null;
+        this.saegw = null;
+        this.ltesims = [];
+      },
+
+      attached: function() {
+        rw.api.get('/api/running/colony?select=trafsim-service/name', 'application/vnd.yang.collection+json').
+                then(this.loadConfig.bind(this));
+      },
+
+      loadConfig: function(data) {
+        if (!this.active) {
+          return;
+        }
+        var self = this;
+        self.unsubscribe();
+        this.ltesims = [];
+        _.each(data.collection['rw-base:colony'], function(colonyRecord) {
+          var colonyId = colonyRecord.name;
+          _.each(colonyRecord['rw-appmgr:trafsim-service'], function(lteRecord) {
+            var ltesim = {
+              colonyId : colonyId,
+              name : lteRecord.name
+            };
+            if (lteRecord.name.indexOf('mme') === 0) {
+              self.mme = ltesim;
+            } else if (lteRecord.name.indexOf('saegw') === 0) {
+              self.saegw = ltesim;
+            }
+            self.ltesims.push(ltesim);
+            var url = '/api/operational/colony/' + ltesim.colonyId + '/trafsim-service/' +
+                    ltesim.name + '/statistics';
+            var socket = new rw.api.SocketSubscriber('web/get');
+            socket.websubscribe(url + '/service/counters',
+                self.loadMetrics.bind(self, ltesim),
+                self.offlineMetrics.bind(self, ltesim));
+            self.subscriptions.push(socket);
+
+            if (!self.noRest) {
+              var socket = new rw.api.SocketSubscriber('web/get');
+              socket.websubscribe(url + '/rest',
+                      self.loadRestMetrics.bind(self, ltesim),
+                      self.offlineRestMetrics.bind(self, ltesim));
+              self.subscriptions.push(socket);
+            }
+          });
+        });
+        this.fire("update-config");
+      },
+
+
+      loadRestMetrics: function(ltesim, metrics) {
+        ltesim.restMetrics = metrics['rw-appmgr:rest'];
+        this.fire("update-rest");
+      },
+
+      loadMetrics: function(ltesim, metrics) {
+        ltesim.metrics = {counters : metrics['rw-appmgr:counters']};
+        ltesim.acceptedTxCalls = this.firstValueOf(ltesim.metrics, [
+          'counters.mme.transmitted.create-session-request',
+          'counters.saegw.transmitted.create-session-response.accepted'
+        ]);
+        ltesim.acceptedRxCalls = this.firstValueOf(ltesim.metrics, [
+          'counters.mme.received.create-session-response.accepted',
+          'counters.saegw.received.create-session-request'
+        ]);
+        this.fire("update");
+      },
+
+      firstValueOf: function(obj, paths) {
+        for (var i = 0; i < paths.length; i++) {
+          var v = jsonPath.eval(obj, paths[i]);
+          if (v.length > 0) {
+            return v[0];
+          }
+        }
+        return 0;
+      },
+
+      // quasi-random
+      offlineMetrics: function(ltesim, metrics) {
+        if (!('metrics' in ltesim)) {
+          this.loadMetrics(ltesim, metrics);
+        }
+
+        // todo
+        //this.fire("update");
+      },
+
+      offlineRestMetrics: function(ltesim, metrics) {
+        if (!('restMetrics' in ltesim)) {
+          this.loadRestMetrics(ltesim, metrics);
+        }
+
+        // todo
+        // this.fire("update-rest");
+      },
+
+      unsubscribe: function() {
+        _.each(this.subscriptions, function(socket) {
+          socket.unsubscribe();
+        });
+        this.subscriptions.length = 0;
+      },
+
+      detached: function() {
+        this.unsubscribe();
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,46 @@
+* {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #787878;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: white;
+  user-select: none;
+  pointer-events: none;
+}
+.dot {
+  stroke: #000;
+}
+#plotContainer {
+  position: relative;
+}
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: #3b3b3b;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.label {
+  opacity: .5;
+  user-select: none;
+  pointer-events: none;
+}
+.tooltipGuide {
+  stroke: white;
+  fill: white;
+}
+.tooltipGuideLabel {
+  fill: white;
+  font-size: small;
+  user-select: none;
+  pointer-events: none;
+}

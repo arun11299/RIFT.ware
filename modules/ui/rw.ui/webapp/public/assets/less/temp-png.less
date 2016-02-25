@@ -1,0 +1,93 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: false, main: core.less
+//
+// temp-png.less
+//
+// Styles for png versions of pages
+//
+
+.viewport-dash {
+  position: relative;
+  .vim-link {
+    display: block;
+    height: 133px;
+    position: absolute;
+      bottom: 0;
+      right: 0;
+    width: 100%;
+  }
+  .vnf-link {
+    display: block;
+    height: 100%;
+    position: absolute;
+      left: 0;
+      top: 0;
+    width: 133px;
+  }
+  .so-link {
+   display: block;
+    height: 133px;
+    position: absolute;
+      top: 0;
+      right: 0;
+    width: 100%;
+  }
+  .platform-link {
+    margin-bottom: 20px;
+    flex: 1 100%;
+    
+    .button-half-border:before, .button-half-border:after {
+      background: @gray-lightest;
+      content: '';
+      display: block;
+      height: 10px;
+      position: absolute;
+      top: 0;
+      width: 4px;
+    }
+
+    a:link {
+      color: hsla(0, 100%, 0%, 1);
+      text-decoration: none;
+    }
+    a:visited {
+      color: hsla(0, 100%, 0%, 1);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: hsla(0, 100%, 0%, 1);
+      text-decoration: none;
+    }
+
+    a:active {
+      color: hsla(0, 100%, 0%, 1);
+      text-decoration: none;
+    }
+  }
+}
+.viewport-vim {
+  position: relative;
+  .dash-link {
+    height: 40px;
+    position: absolute;
+      left: 0;
+      top: 0;
+    width: 100%;
+  }
+}
+.viewport-vnf {
+  position: relative;
+  .dash-link {
+    height: 100%;
+    position: absolute;
+      right: 0;
+      top: 0;
+    width: 40px;
+  }
+}

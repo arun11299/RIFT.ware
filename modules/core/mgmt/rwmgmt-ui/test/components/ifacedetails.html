@@ -1,0 +1,45 @@
+<!-- A test for the iface details component -->
+<!doctype html>
+<html lang="en" class="viewport" ng-app="cmdcntr">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="/vendor.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../lib/socket.io-client/dist/socket.io.js"></script>
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.min.js"></script>
+  <script src="../../integration/_components/_services/dispatchesque.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../modules/rift/rw.cmdcntr.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+
+</head>
+<body class="viewport" ng-controller="ifaceDetailsTestPage">
+
+<iface-details iface="iface" port="port" id="iface-details"></iface-details>
+
+<script>
+  angular.module('cmdcntr')
+    .controller('ifaceDetailsTestPage', function($scope, vnfFactory, $rootScope, dispatcher, $timeout) {
+      vnfFactory.attached().done(function() {
+        $scope.iface = vnfFactory.services[0].connector[0].interface[0];
+        $scope.port = $scope.iface.port[0];
+      });
+    });
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,30 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+@import 'main';
+@import 'variables';
+.DetailsPanel {
+	@extend .panel;
+	border-left: 1px solid $panel-border-color;
+	position: absolute;
+	top: 109px;
+	right: 0;
+	bottom: 0;
+	width: 300px;
+	min-width: 6px;
+	z-index: 2;
+	.DetailsPanelBody {
+		@extend .panel-body;
+		position: absolute;
+		overflow: scroll;
+		-ms-overflow-style: -ms-autohiding-scrollbar;
+		bottom: 0;
+		top: 0;
+		left: 0;
+		right: 0;
+		min-width: 200px;
+	}
+}

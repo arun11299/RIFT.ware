@@ -1,0 +1,89 @@
+SIMPLE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    Integer32, enterprises FROM SNMPv2-SMI
+    DisplayString, RowStatus, TruthValue
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF;
+
+
+simpleMIB MODULE-IDENTITY
+    LAST-UPDATED "201101270000Z"
+    ORGANIZATION "Tail-f Systems AB
+                  http://www.tail-f.com"
+    CONTACT-INFO
+            "Tail-f support
+             E-mail: support@tail-f.com"
+    DESCRIPTION
+            "Basic test objects for CONFD-SNMP integration."
+    REVISION      "201101270000Z"
+    DESCRIPTION
+            "First version."
+    ::= { tailf 4 }
+
+tailf OBJECT IDENTIFIER ::= { enterprises 24961 }
+
+-- Administrative assignments ++++---------------------------------
+
+simpleMIBObjects	OBJECT IDENTIFIER ::= { simpleMIB 1 }
+simpleMIBConformance    OBJECT IDENTIFIER ::= { simpleMIB 2 }
+
+-- ----------------------------------------------------------------
+
+variables     OBJECT IDENTIFIER ::= { simpleMIBObjects 1 }
+tables        OBJECT IDENTIFIER ::= { simpleMIBObjects 2 }
+notifications OBJECT IDENTIFIER ::= { simpleMIBObjects 3 }
+
+
+rebootRouter OBJECT-TYPE
+    SYNTAX     Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION    
+            "When this object is set to '1', the router is
+             rebooted.  Setting the variable to '0' results
+             results in an 'inconsistentValue' error.  Setting it to any
+             other value has no effect.
+
+             When this object is read, the value '0' is returned."
+    ::= { variables 3 }
+
+-- Conformance ----------------------------------------------------
+simpleMIBCompliances OBJECT IDENTIFIER ::= { simpleMIBConformance 1 }
+simpleMIBGroups      OBJECT IDENTIFIER ::= { simpleMIBConformance 2 }
+
+
+-- compliance statements
+
+simpleMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for SNMPv2 entities which
+            implement the SNMPv2 MIB."
+    MODULE  -- this module
+        MANDATORY-GROUPS { thisGroup }
+
+        GROUP   thisGroup
+        DESCRIPTION
+            "This group is mandatory for SNMPv2 entities which
+            support community-based authentication."
+
+    ::= { simpleMIBCompliances 2 }
+
+
+-- units of conformance
+
+thisGroup OBJECT-GROUP
+    OBJECTS { 
+    rebootRouter
+	     }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects providing basic instrumentation and
+            control of Servers."
+    ::= { simpleMIBGroups 1 }
+
+
+END

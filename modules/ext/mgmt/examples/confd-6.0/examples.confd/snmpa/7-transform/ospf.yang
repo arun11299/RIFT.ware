@@ -1,0 +1,129 @@
+module ospf {
+  namespace "http://tail-f.com/test/ospf";
+  prefix "ospf";
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import interface {
+    prefix if;
+  }
+
+  import IF-MIB {
+    prefix IF-MIB;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef AreaID {
+    type inet:ipv4-address;
+  }
+
+  typedef RouterID {
+    type inet:ipv4-address;
+  }
+
+  container ospf {
+
+    leaf disable {
+      type empty;
+    }
+    leaf router-id {
+      type RouterID;
+    }
+    leaf admin-status {
+      type enumeration {
+        enum enabled {
+          value 1;
+        }
+        enum disabled {
+          value 2;
+        }
+      }
+    }
+
+    list area {
+      key "id";
+
+      tailf:callpoint ospf-area-hook {
+        tailf:transaction-hook subtree;
+      }
+
+      leaf id {
+        type AreaID;
+      }
+        container stub {
+          leaf summary {
+            type empty;
+          }
+        }
+        container nssa {
+          leaf summary {
+            type empty;
+          }
+          leaf translator {
+            type enumeration {
+              enum always {
+                value 1;
+              }
+              enum candidate {
+                value 2;
+              }
+            }
+            default candidate;
+          }
+        }
+      list interface {
+        key "name";
+        leaf name {
+          type leafref {
+            path "/if:interface/if:name";
+          }
+        }
+        leaf type {
+          type enumeration {
+            enum broadcast;
+            enum nbma;
+            enum point-to-point;
+            enum point-to-multipoint;
+          }
+        }
+        leaf disable {
+          type empty;
+        }
+        leaf priority {
+          type int32 {
+            range "0..255";
+          }
+        }
+      }
+    }
+  }
+  container snmp-map {
+    presence "";
+    tailf:hidden debug;
+    list ospf-if {
+      key "ospfIfIpAddress ospfAddressLessIf";
+      tailf:sort-order snmp;
+      leaf ospfIfIpAddress {
+        type inet:ipv4-address;
+      }
+      leaf ospfAddressLessIf {
+        type IF-MIB:InterfaceIndexOrZero;
+      }
+      leaf area-id {
+        type AreaID;
+        mandatory true;
+      }
+      leaf if-name {
+        type leafref {
+          path "/if:interface/if:name";
+        }
+        mandatory true;
+      }
+    }
+  }
+
+}

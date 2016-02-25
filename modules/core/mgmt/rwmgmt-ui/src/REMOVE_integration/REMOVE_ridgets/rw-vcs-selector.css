@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+}
+.fieldset {
+  margin: 0 0 30px 0;
+}
+.fieldset__label {
+  margin: 0 0 10px 0;
+  border-bottom: 1px solid #c4c4c4;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #d4d4d4;
+}
+.form__v {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: flex-start;
+  -moz-align-items: flex-start;
+  -ms-align-items: flex-start;
+  align-items: flex-start;
+}
+.form__v--full {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -moz-align-items: stretch;
+  -ms-align-items: stretch;
+  align-items: stretch;
+}
+.form__h {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: flex-end;
+  -moz-align-items: flex-end;
+  -ms-align-items: flex-end;
+  align-items: flex-end;
+}
+.form__v > .form__item,
+.form__v--full > .form__item {
+  margin: 0 0 15px 0;
+}
+.form__h > .form__item {
+  margin: 0 15px 0 0;
+}
+.form__item__label {
+  display: block;
+  font-size: 14px;
+  color: #d4d4d4;
+}
+.form__h > .form__item__label {
+  margin: 0 0 3px 0;
+}
+.form__item__text {
+  display: inline-block;
+  padding: 7px 0 5px 0;
+}
+.form__item__text--small {
+  width: 50px;
+}
+.form__item__text--medium {
+  width: 200px;
+}
+.form__item__text--large {
+  width: 400px;
+}
+.config-system-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 2px;
+}
+.config-system-list li {
+  padding: 5px;
+  cursor: pointer;
+}

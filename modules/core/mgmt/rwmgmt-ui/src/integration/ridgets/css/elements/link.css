@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+.link-button {
+  display: inline;
+  color: #49bdee;
+  cursor: pointer;
+}
+.link-button:hover {
+  color: #78cef2;
+}
+.link-button:focus {
+  outline-color: #e59700;
+}
+.link-button-bar {
+  maring: 0;
+  padding: 0;
+  list-style: none;
+}
+.link-button-bar__item {
+  display: inline-block;
+  margin: 0;
+  padding: 0 10px;
+  border-right: 1px solid #a1a1a1;
+}
+.link-button-bar__item:first-child {
+  padding-left: 0;
+}
+.link-button-bar__item:last-child {
+  border: none;
+}

@@ -1,0 +1,129 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+.create-cloud-account {
+  cursor: pointer;
+}
+.missioncontrol.flex-row .flex-left {
+  flex: 0 1 25%;
+}
+.missioncontrol.flex-row .flex-right {
+  flex: 0 1 75%;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+.missioncontrol .pool-card h2 {
+  padding: 1.25rem;
+}
+.missioncontrol .pool-card a {
+  display:flex;
+  flex-direction:row;
+  padding: 1rem;
+  justify-content: flex-start;
+  text-decoration: none;
+  color: black;
+}
+
+.missioncontrol .pool-card a.new-pool_button {
+  justify-content: space-between;
+}
+.missioncontrol.mainpanel .pool-card a img {
+    height: 1rem;
+}
+
+.missioncontrol .pool-card a:before {
+  text-align:center;
+  font-size:0.575rem;
+  border:1px solid black;
+  border-radius: 4px;
+  padding:0.25rem 0.425rem 0.25rem 0.25rem;
+  height:0.625rem;
+  width: 0.625rem;
+  margin-right: 0.25rem;
+}
+.missioncontrol .pool-card a.vm:before {
+  content: 'VM';
+}
+.missioncontrol .pool-card a.network:before {
+  content: 'NT';
+
+}
+.missioncontrol .pool-card a.port:before {
+  content: 'PT';
+}
+.missioncontrol .viewport-card {
+  background-color: rgba(203, 209, 209, 0.5);
+  flex: 0 1 46%;
+  min-height: 150px;
+  margin: 12px 0 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  flex-direction: column;
+}
+.missioncontrol .viewport-card.empty-card {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  min-height: 150px;
+}
+.missioncontrol.mainpanel .viewport-card h2 {
+  background-color: #fff;
+  margin-bottom: .125rem;
+  font-size: 0.85rem;
+      padding: 0rem 1.125rem 0rem 0rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  max-height: 50px;
+}
+.viewport-card .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: stretch;
+  flex: 1 1 100%;
+}
+.viewport-card .card-env-status{
+    align-items: center;
+    background-color: #7cc118;
+    font-size: 10px;
+    height: 45px;
+    display: flex;
+}
+.missioncontrol.mainpanel .viewport-card .launchpads h2 {
+  background-color: #fff;
+  margin-bottom: .125rem;
+  font-size: 0.85rem;
+  padding: .5rem 1.125rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  max-height: 50px;
+}
+.viewport-card .container .pools {
+  background-color: rgba(203, 209, 209, 0.5);
+  padding: 15px .5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+.viewport-card .container .pools h3 {
+  text-transform: uppercase;
+  margin-bottom: .125rem;
+  font-size: 0.85rem;
+  padding: .0.5rem .75rem;
+}

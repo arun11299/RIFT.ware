@@ -1,0 +1,124 @@
+ ConfD SNMP Agent Example - MIB to YANG
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The example shows how a YANG module can be generated from a MIB.
+SIMPLE-MIB.mib is the base for generating SIMPLE-MIB.yang.
+
+The example has been made up, and is not something taken from the real
+world.
+
+1. Generate a YANG (.yang) module.
+
+   confdc is used for producing SIMPLE-MIB.yang from SIMPLE-MIB.mib.
+
+   There is one object in this fictitious MIB that we don't implement.
+   Using a MIB annotation file we can tell the compiler to not
+   generate a YANG version of the object.  The same MIB annotation
+   file is also used when we compile the MIB, to tell the agent that
+   the object is not implemented.
+
+    confdc --mib2yang --snmp-name --mib-annotation SIMPLE-MIB.miba \
+    	   -o SIMPLE-MIB.yang SIMPLE-MIB.mib
+
+
+2. Compiling the YANG module
+
+  The generated YANG module is compiled into SIMPLE-MIB.fxs.
+
+    confdc --yangpath $CONFD_DIR/src/confd/snmp/yang \
+    	   -c -o SIMPLE-MIB.fxs SIMPLE-MIB.yang
+
+3. Compiling the MIB
+
+  The MIB needs to be compiled into a '.bin' file in order to be
+  loaded into the ConfD SNMP Agent.  For each SNMP object in the MIB
+  there must be a mapping into an element in the YANG module.  The
+  objects for the SIMPLE-MIB are mapped to elements in the YANG
+  module, using tailf:snmp-oid attributes.
+
+  In order for confdc to compile the MIB, the file needs to have
+  '.mib' as file extension.
+
+  The fxs files which SIMPLE-MIB.fxs depends on must be supplied using -f.
+
+
+4. Configuring the ConfD SNMP Agent
+   
+  The SNMP Agent is part of the ConfD daemon and can be enabled from
+  confd.conf file. Per default the SNMP agent is disabled.  Configure
+  the IP address and port of the SNMP agent, and list all the MIBs
+  that should be loaded at startup.
+
+  [confd.conf]
+
+  <snmpAgent>
+    <enabled>true</enabled>
+    <ip>0.0.0.0</ip>
+    <port>4000</port>
+    <mibs>
+      <file>SIMPLE-MIB.bin</file>
+    </mibs>
+  </snmpAgent>
+
+
+  Make the system with
+      > make all
+
+  Start up the system with 
+      > make start
+
+
+5. Accessing data from the CLI
+
+  The configuration can be checked as usual by running the CLI.
+      > confd_cli
+
+  ola connected from 127.0.0.1 using console on saturn.tail-f.com
+  ola@saturn> show configuration SIMPLE-MIB
+
+    SIMPLE-MIB {
+        variables {
+            numberOfHosts 2;
+        }
+        hostTable {
+            hostEntry Kruul {
+                hostEnabled false;
+                hostNumberOfServers 0;
+            }
+            hostEntry Balnazzar {
+                hostEnabled true;
+                hostNumberOfServers 1;
+            }
+        }
+    }
+
+6. Accessing the data from an SNMP Manager
+
+  Use any SNMP manager and connect it to the ConfD SNMP Agent.
+  The example below uses NetSNMP as a manager.
+
+6a. SNMP Walk
+
+      > snmpwalk -m ./SIMPLE-MIB.mib -c public -v2c localhost:4000 enterprises
+      SIMPLE-MIB::numberOfHosts.0 = INTEGER: 2
+      SIMPLE-MIB::hostEnabled."Kruul" = INTEGER: false(2)
+      SIMPLE-MIB::hostEnabled."Balnazzar" = INTEGER: true(1)
+      SIMPLE-MIB::hostNumberOfServers."Kruul" = INTEGER: 0
+      SIMPLE-MIB::hostNumberOfServers."Balnazzar" = INTEGER: 1
+      SIMPLE-MIB::hostRowStatus."Kruul" = INTEGER: active(1)
+      SIMPLE-MIB::hostRowStatus."Balnazzar" = INTEGER: active(1)
+
+6b. SNMP get
+
+      > snmpget -m ./SIMPLE-MIB.mib -c public -v2c localhost:4000 numberOfHosts.0
+      SIMPLE-MIB::numberOfHosts.0 = INTEGER: 2
+
+
+
+6c. SNMP set
+
+      > snmpset -m ./SIMPLE-MIB.mib -c public -v2c localhost:4000 \
+         numberOfHosts.0 = 42
+      SIMPLE-MIB::numberOfHosts.0 = INTEGER: 42
+
+

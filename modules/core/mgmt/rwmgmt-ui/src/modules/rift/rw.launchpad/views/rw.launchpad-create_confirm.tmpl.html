@@ -1,0 +1,79 @@
+<div id="confirm" class="section hide">
+  <h3>Confirm</h3>
+  <form class="horizontal">
+    <div class="form-group">
+      <label class="control-label">Name</label>
+      <input type="text" class="form-control" value="{{confirm.environment.name}}" readonly/>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Description</label>
+      <textarea class="form-control" rows="6" readonly>{{confirm.environment.description}}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Mode</label>
+      <input type="text" class="form-control" value="{{confirm.environment.mode}}" readonly/>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Resource Pool</label>
+      <input type="text" class="form-control" value="{{confirm.environment.pool.name}}" readonly />
+    </div>
+    <!--<div class="form-group">-->
+    <!--<label class="control-label">VM Count</label>-->
+    <!--<textarea class="form-control" rows="6" readonly>{{confirm.environment.vm_count}}</textarea>-->
+    <!--</div>-->
+    <div class="form-group">
+      <label class="control-label">Resources</label>
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Lead</th>
+          <th>Name</th>
+          <th>Reservation</th>
+          <th>Controller</th>
+          <th>IP Address</th>
+          <th>CPUs</th>
+          <th>Ram <em>(mb)</em></th>
+          <th>Type</th>
+          <th>OS Image</th>
+          <th>Descriptqion</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="vm in confirm.resourceCache | filter: confirm.filterSelectedVM">
+          <td style="text-align:center;font-weight:bold;"><span ng-if="vm.name == confirm.confirm.lead">Yes</span></td>
+          <td>{{vm.name}}</td>
+          <td>{{vm.reservation}}</td>
+          <td>{{vm.controller}}</td>
+          <td>{{vm.ip_address}}</td>
+          <td>{{vm.cpu}}</td>
+          <td>{{vm.ram}}</td>
+          <td>{{vm.type}}</td>
+          <td>{{vm.os_image}}</td>
+          <td>{{vm.comments}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="form-group">
+      <label class="control-label">Image Application</label>
+      <input type="text" class="form-control" value="{{confirm.environment.app_image.name}}" readonly />
+    </div>
+    <div class="form-group">
+      <label class="control-label">Image OS</label>
+      <input type="text" class="form-control" value="Existing" readonly />
+    </div>
+    <div class="form-group">
+      <label class="control-label">Config File</label>
+      <input type="text" class="form-control" value="Auto Generated" readonly />
+    </div>
+    <!-- -->
+
+    <ul class="list-inline controls">
+      <li><a ng-click="create.cancel()" class="btn link" href>Cancel Environment</a></li>
+      <li><a class="btn link" href ng-click="confirm.create()">Save</a></li>
+      <li><a ng-click="confirm.create(true)" href class="btn primary">Save &amp; Launch</a></li>
+    </ul>
+    <!-- -->
+</div>

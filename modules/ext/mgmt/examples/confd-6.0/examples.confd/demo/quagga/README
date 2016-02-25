@@ -1,0 +1,498 @@
+ConfD Quagga Demo
+~~~~~~~~~~~~~~~~~
+
+This example is a real integration of ConfD and the Quagga open-source
+routing suite. Visit http://www.quagga.net for more information on the
+Quagga initiative.
+
+The integration manages the Quagga core modules (access lists, key
+chains, logging, route maps) and the RIP and OSPF routing
+modules. Other routing modules could be added using the same
+technique.
+
+This demo can also be run without Quagga being installed and
+running. Some functionality, status information in particular, will be
+disabled in this case. From a ConfD perspective, it's no problem to
+configure any part of the system even when Quagga is not
+running, although nothing will happen routing-wise, obviously.
+
+This README file makes a tour of ConfD using configuration examples in
+the Quagga routing domain. No routing knowledge is required,
+however. The tour focuses on the Web UI because it's very visual and
+easy to use. The Command Line Interfaces (CLI) and NETCONF interface
+will be demonstrated as well. In fact, the same configuration
+operations could be performed using any of the management interfaces.
+
+Optional: Setting up Quagga
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This demo will try to connect to the Quagga routing daemons in order
+to manage them. If they are not installed and running, the demo will
+run fine without interacting with Quagga at all.
+
+In this case, if you check the ConfD status, you will see:
+
+    $ confd --status
+    ...
+    callpoints:
+      id=ospfGetMemory ** not registered
+      id=ripGetMemory ** not registered
+      id=zebraGetMemory ** not registered
+      id=zebraGetRoutes ** not registered
+    ...
+
+If you would like to ensure the demo connects to Quagga, you need to
+install and enable the zebra, ripd and ospfd daemons and give them the
+default configuration.
+
+    # cd /etc/quagga
+    # cp zebra.conf.sample zebra.conf
+    # /etc/init.d/zebra start
+    # cp ripd.conf.sample ripd.conf
+    # /etc/init.d/ripd start
+    # cp ospfd.conf.sample ospfd.conf
+    # /etc/init.d/ospfd start
+
+Demo Script
+~~~~~~~~~~~
+
+Here follows detailed instructions to taking the demo tour. Each
+section starts with a sequence of commands, then an explanation of
+what you just did.
+
+To make these instructions a bit easier to read and follow, we use
+some short hand notation:
+
+Keyboard:
+> (the greater-than character) means the <TAB> key
+<ENTER> means <ENTER> key
+^X means <CTRL>+<X> keys
+
+Mouse:
+{xxx} means click the "xxx" button found above the main page,
+      in the breadcrumbs bar or in a popup
+[yyy] means click the "yyy" element found in the main view
+(zzz) means click the "zzz" element found in the sidebar
+
+-- is a comment
+
+======================================================================
+BUILD & START
+
+1. Install ConfD
+2. Type '. <confd-install-dir>/confdrc'
+   -- source this file to set PATH etc
+3. Type 'cd <confd-install-dir>/examples.confd/demo/quagga'
+4. Type 'make clean all'
+   -- build the quagga demo applications
+5. Type 'make start'
+   -- start ConfD and the demo applications
+6a. Type 'make https'
+    -- start firefox locally & connect to ConfD over https
+-or-
+6b. Direct your browser to http://127.0.0.1:8008
+7. In Firefox/other browser, log in as 'admin'/'admin'
+
+    You have now logged in to the ConfD Web UI management interface,
+    and identified yourself as the 'admin' user. In this example, the
+    admin user has been given full access privileges. ConfD supports
+    any number of users logging in from any of the management
+    interfaces. The user can specify limits to how many simultaneous
+    sessions of each kind should be allowed, if desired.
+
+    If you have Quagga installed and would like this demo to connect
+    to and configure Quagga, there are some configuration tips at the
+    bottom of this file.
+
+======================================================================
+EDIT MODE
+
+1. Click [Create router] in the Ospf section
+   -- Transaction was now created, see green status on Commit button
+2. Click on the OSPF link above the icon.
+   A new tab, with the name /quagga:system/router/ospf, is opened.
+
+3. Click the [area] tab
+4. Click the add icon.
+
+5. Type '0.0.0.172'
+6. Click [Ok]
+
+7. Click the [network-ip] tab
+8. Click the add icon.
+9. Type '172.16.0.0'>'16' and select area '0.0.0.172'
+10. Click [Ok]
+
+11. Select the [neighbor] tab
+12. Click the add icon.
+13. Type '172.16.1.1'
+14. Click [Ok]
+
+15. Double-click in the [priority] cell in the table
+16. Type '4'><ESC>
+
+17. Click {Commit}, click {Ok}
+16. Click the [Quagga] tab to get back to the main page
+
+    The web UI allows you to change the configuration of the device.
+    As soon as you start editing a transaction is automatically created
+    and the green button "save" is highlighted.
+
+    We're reconfiguring the 'Running' configuration, i.e. the
+    configuration that is currently used by the device.  Your changes
+    in this session are not visible to any other session until you
+    decide to commit the changes. At that time, the changes go live
+    and are immediately visible to all other operators.
+
+======================================================================
+WIZARD
+
+1. Click [Create Router] button in the Rip section
+2. Click the down arrow on the [Actions] button to the right in the
+   Rip section, then select [Quick Setup] in the dropdown
+3. Click {Apply}
+
+4. Click the down arrow on the {Commit} button at the top of the screen
+   and select {View changes} in the dropdown
+6. Click {Commit} and {Ok}
+7. Click the [Quagga] tab. 
+
+    In the example you just ran, notice the difference in how many
+    fields you had to input and how many the wizard filled in for you.
+
+    By using the 'Commit' button to keep the changes, but not
+    immediately committing them, you can override any configuration
+    setting the wizard provided for you.
+
+======================================================================
+DATA ENTRY & VALIDATION
+
+1. On the [Quagga] page, click the [OSPF] link
+2. Click the [ospf] tab
+3. Click in the [auto-cost-reference-bandwidth] field
+4. Type 'foo'>
+5. A '"foo" is not a valid value.' is shown below the field.
+6. All field validation is done on the server side.
+7. Click in the [auto-cost-reference-bandwidth] field
+8. Type 1>
+9. The message is removed.
+
+    It is of course vitally important to make sure operators only
+    enter valid configurations. ConfD will not commit a transaction
+    unless all validators have accepted the configuration. Validation
+    in an intrinsic part of the commit sequence. It is also possible
+    for an operator to explicitly ask for validation 'now', without
+    committing.
+
+    One situation where explicit validation is useful could be when an
+    operator wants to copy the configuration from a running device to
+    a newly deployed device. The operator logs in to the running
+    device, makes a few changes to reflect the configuration for the
+    new device, validates to make sure there are no errors in the
+    configuration, saves the configuration to a file, then aborts the
+    transaction. The operator then logs on to the new device and loads
+    the saved file from there.
+
+    ConfD provides several levels of protection against
+    misconfiguration which you can leverage in your device.
+
+    Semantic checks. ConfD automatically checks that constraints given
+    in the data model hold. Elements that are declared unique
+    are checked to be so. Elements that are references are checked to
+    actually refer to an existing element. This is checked when a
+    transaction is about to be committed.
+
+    Validation functions. It is also possible for ConfD users to add
+    validation functions to check for more complex properties or
+    dependencies. This might be that a configuration value must be a
+    prime number or have any other property. The user may add any
+    number of validation functions to assert properties of this
+    kind. This is checked when a transaction is about to be committed.
+
+    Validation functions may also issue warnings. If a validation
+    function detects that a particular configuration is acceptable,
+    but perhaps unusual, has adverse effects or is risky, it may issue
+    a validation warning. E.g. "The new configuration will terminate
+    the service for 2200 users. Proceed/Abort?" For machine to machine
+    management interfaces (NETCONF, SNMP, REST), no questions will be
+    asked.
+
+    Resource reservations. Resource reservation functions can check
+    and allocate system resources so that they can be guaranteed to be
+    available when the transaction is committed, and freed if it is
+    aborted.
+
+======================================================================
+OPERATIONAL MODE
+
+1. Click [System load] in the Quagga menu
+2. Watch the readings
+   -- On some operating systems the readings are fake values
+
+    Operators can switch to and from the operational view of the
+    system as they please. In the operational view, operators can see
+    the 'Running' system configuration as well as operational data,
+    e.g. statistics. Operational data may be displayed as a dial or
+    graph. In the example above the 1-minute average system load is
+    displayed as a graph. The current number of context switches per
+    second is displayed as a dial. The syslog entries in the system
+    log file /var/log/messages are displayed as a table.
+
+======================================================================
+TOOLS - CLI
+
+1. Click {CLI} in the top bar
+2. Hit the TAB key to see the available commands
+3. Type 'con>t>'  (config terminal)
+4. Type 'sy>>ro>>r >o>de>m>100' (system router ospf default-metric 100)
+5. Click the close button in the upper right corner to minimize CLI
+6. Click the [OSPF] link in the [Quagga] tab.
+7. Look at the (default-metric) field in the {ospf} tab 
+   -- there's no change
+8. Click the {CLI} button again
+9. Type 'commit'
+10. Minimize CLI again (top-right)
+11. Select the {area} tab and then the {ospf} tab again.
+12. Look at the {default-metric} field
+    -- now changed to 100
+13. Click {CLI}
+14. Type 'do ssh localhost'
+    -- requires you to have an ssh server running on the ConfD machine
+15. Type 'top'
+    -- starts a popular process monitor program
+16. Close the CLI using the {x} button in the top right corner
+17. Click {Home}
+
+    Here we are running the ConfD CLI and transporting the characters
+    to the Web UI. The Web UI is actually totally unaware that the
+    application we are running has anything to do with ConfD.  This is
+    the Cisco XR style CLI, automatically rendered from the data
+    model.
+
+    Note that the CLI is advising the operator that there is another
+    configuration session going on in parallel.
+
+    The CLI has been configured with an extra command, ssh. This ConfD
+    CLI command simply launches the Unix SSH client program. If you
+    have an SSH server running on the device, you can login to your
+    ordinary shell on the device.
+
+
+======================================================================
+JUNIPER STYLE CLI
+
+1. Open a terminal window in the 'example.confd/demo/quagga' directory
+2. Type 'make cli'
+3. Type 'conf>'  (configure)
+4. Type 'ed>sy>ro>r o>'  (edit system router ospf)
+5. Type 'set de>m> 250'  (set default-metric 250)
+6. Type 'commit'
+7. Switch back to the Web UI and select the {area} tab and then the 
+   {ospf} tab again
+8. Look at (default-metric)
+   -- now changed to 250
+
+    The different kinds of CLIs can run in parallel, and different
+    operators could select the variant they feel most productive with,
+    if the developer decides to leave this option open.
+
+    The Juniper style CLI is automatically generated from the data
+    model, just like the Cisco XR style CLI. Extra commands can be
+    added, etc.
+
+======================================================================
+CONFLICT
+
+1. Click the {OSPF} link in the {Quagga} tab.
+2. Select the {distance-ospf} tab
+3. Click in the [external] field
+4. Type '20>'
+5. Click {Commit}{Ok}
+6. Click {CLI}
+7. Type 'config terminal'  (unless already in config mode)
+8. Type 'system router ospf distance-ospf external 40'
+   -- use TAB-completion to speed this up
+9. Minimize CLI (top right)
+
+10. Click in the [external] field under {distance-ospf} tab
+11. Replace the '20' with '90>'
+12. Click the {CLI} button again
+13. Type 'commit'
+14. Close the CLI using the {x} in the top right corner
+15. Click {Commit}{Ok}
+    -- conflict dialog is displayed 
+16. Click {Close}
+17. Click in the [external] field
+18. Replace the '90' with '60>'
+19. Click {Commit}{Ok}
+
+    In case several operators are changing the same configuration
+    setting at the same time, ConfD will help the operators resolve
+    the configuration conflict.
+
+    Let's say an operator modifies a number of configuration settings,
+    and eventually commits them. If any of the values modified were
+    also changed by someone or something else during this time, the
+    commit will be aborted and the operator will see a message
+    explaining that there is a conflict.
+
+    This message shows the value set by each operator. The operator
+    can choose to keep his value, the other operator's value or go
+    back and edit the transaction again to set a different value. When
+    done with the changes, the operator just commits again.
+
+======================================================================
+SENDING IN A NETCONF EDIT CONFIG
+
+1. Click [Yang Models | quagga | system] in the model tree 
+2. Click the [log] tab and select the file link.
+3. Open a terminal window in the 'example.confd/demo/quagga' directory
+4. Type 'make netconf-set'
+   -- The script sent a NETCONF message to ConfD, you should see the
+   -- <ok/> reply
+5. Switch back to the Web UI
+6. Reload the page and select the [quagga:file] tab again. 
+   
+7. Note that the log file name and level changed
+
+    Another one of ConfD's management interfaces is the NETCONF
+    interface. Here we send in a NETCONF configuration change request
+    by using a trivial command-line NETCONF manager tool. This tool
+    basically just sends in a NETCONF XML request and waits for a
+    reply, then displays the XML output.
+
+    This particular command sets the Quagga log file name and level.
+    If you are interested, you can inspect the NETCONF command in
+    src/netconf/cmd-enable-detailed-log.xml
+
+    NETCONF is a powerful machine to machine configuration protocol
+    (RFC 6241) specified by IETF. SNMP was originally intended to be
+    the preferred machine to machine configuration protocol. In
+    reality, SNMP is seldom used for configuration nowadays because of
+    a number of inherent limitations in SNMP, which is why IETF
+    decided to develop an alternative. SNMP is still very popular for
+    device monitoring.
+
+======================================================================
+ROLLBACK
+
+1. Click {Rollbacks} item under the Commit button.
+2. Click the [rollback0] file
+   -- these are the changes required to undo the last transaction
+3. Click the {Load} button and select Cumulative
+4. Click the down arrow on {Commit} and select {View changes}
+5. Close the window using the {x} in the upper right corner
+6. Click {Save}{Ok}
+7. Reload the page and click the {Rollback} item again
+   -- there is now one more rollback file
+
+    Rollbacks are an optional feature of ConfD. When enabled, a
+    rollback file is automatically created every time a transaction is
+    committed.  This way, the operators can always return to a
+    previous state.
+
+    To apply a rollback, just start a transaction and select the
+    rollback file to go back to. Each rollback file is marked with
+    time, date and name of the operator that committed the
+    transaction. The operator who is rolling back can examine the
+    changes and do additional edits to the configuration, or abort the
+    rollback. When the configuration is right, the operator commits
+    the transaction and the configuration rolls back.
+
+    There is no difference in applying a rollback versus doing other
+    configuration changes in the system. A rollback is simply another
+    transaction, but with content that makes the system configuration
+    the same as it was at a previous point in time.
+
+    It is user configurable how many rollback files are saved. The
+    default is 50. It is also user configurable whether the rollback
+    files are 'deltas', i.e. contain undo information for the changes
+    only, or 'snapshots', which are complete configurations.
+
+======================================================================
+AUTHORIZATION, USERS TOOL
+
+1. Open a terminal window in 'example.confd/demo/quagga' directory
+2. Type 'make cli-oper'
+   -- logging in as operator user
+3. Type 'show configuration'
+   -- nothing is displayed, the operator user has insufficient
+   -- privileges; there is no access rule to grant access for 'oper'
+   -- connecting over CLI
+4. Switch back to the Web UI and click [Yang Models | ietf-netconf-acm | nacm]
+   in the model tree.
+5. Select the [oper] item in the {rule-list} tab 
+6. Click the add icon in the {rule} tab table
+7. Type 'reading-is-fine' in the Name field
+8. Click [Ok]
+9. Click in the [Access Operations] field and type 'read'
+10. Write 'permit' in the [action] column 
+11. Click {Commit}{ok}
+
+12. Switch back to terminal window
+13. Type 'show configuration'
+    -- nothing is displayed, the change is still not in effect
+
+
+14. Exit the CLI terminal. 
+15. Type 'make cli-oper'
+16. Type 'show configuration'
+    -- the configuration is now displayed
+
+    ConfD has an extensive and extensible AAA-subsystem
+    (Authentication, Authorization and Auditing/Accounting). The
+    Authentication subsystem verifies that the user is who he claims
+    to be. The Authorization subsystem decides what access privileges
+    that user will have. The Auditing subsystem keeps an audit trail
+    of what the user does.
+
+    ConfD can perform authentication in a number of ways. In this
+    example, ConfD is configured with two users, admin and oper, each
+    with a hashed password and a crypto certificate. Other
+    alternatives for authentication is to use Linux Pluggable
+    Authentication Modules (PAM), local UNIX login or an external
+    server such as a Tacacs+, RADIUS, DIAMETER or LDAP server.
+
+    ConfD implements a Role Based Access Control (RBAC) system, which
+    means that every user belongs to one or more groups/roles. Every
+    command issued by the user is evaluated against a table of
+    authorization rules that controls what is allowed and disallowed
+    for each group.
+
+    The authorization rules control read, write and execute
+    permissions to data elements and commands. Rules can be
+    arbitrarily fine grained, from controlling access to individual
+    data elements or actions to branches of the data model and command
+    tree.
+
+    In the example above, when the oper user logs in, there is no
+    access rule to grant him any access to the data tree. So when oper
+    tries to display the configuration, the command succeeds but shows
+    nothing.
+
+    Then the admin user updates the authorization table, adding a rule
+    that grants read access to everything for everyone, and commits
+    that. The oper user has to log out and in again in order for these
+    changes to take effect. When oper logs in again, the new access
+    rules apply and oper can display the configuration.
+
+    Why didn't the access rights for oper change right away, you may
+    ask. The reason is that many strange situations could arise if
+    data elements that the oper user has changed are no longer
+    accessible to him.
+
+    Another reason is that the access rules must be evaluated
+    extremely quickly, because they are evaluated very often when the
+    users access data. Therefore ConfD builds up a decision tree for
+    every new session that is established. This minimizes the number
+    of tests to make and removes any access rules that do not apply to
+    this session (e.g. rules that talk about groups that this user
+    doesn't belong to).
+
+======================================================================
+
+This is the end of the demo tour. Hope you found it interesting. Any
+feedback that you may have is always appreciated. Please direct it to
+your support contact at Tail-f, or to eval-support@tail-f.com.
+
+======================================================================

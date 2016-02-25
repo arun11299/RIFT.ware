@@ -1,0 +1,146 @@
+/*------------------*/
+/*----- LAYOUT -----*/
+.details{}
+.details.row{
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-content: stretch;
+  align-content: stretch;
+  width:100%;
+}
+.details.row .col{
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding:10px;
+  margin:0px;
+}
+.details.row .col.no-pad{
+  padding:0px !important;
+}
+/*---- Custom layouts widths----*/
+#calls.col, #interfaces-details.col{
+  -webkit-flex: none;
+  flex: none;
+  width:200px;
+}
+#traffic.col{
+  width:50%;
+}
+#bar.col{
+  width:50%;
+}
+#interfaces-ports.col{
+  width:100%;
+}
+/*-------------------*/
+/*----- STYLING -----*/
+.details h2{
+  .etched-bottom();
+
+  display:block;
+  min-height: inherit;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+
+  color: @gray5;
+  font-size:16px;
+  text-align: left;
+  text-transform:uppercase;
+}
+.details dl{
+  padding:0px;
+  margin-top:0px;
+  margin-left:0px;
+  margin-right:0px;
+  margin-bottom:8px;
+}
+.details dl dt{
+  padding:0px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:14px;
+  font-weight:200;
+}
+.details dl dd{
+  padding:0px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:16px;
+  font-weight:400;
+}
+.details table{
+  width:100%;
+
+  border-collapse: collapse;
+}
+.details table thead{
+  vertical-align: middle;
+}
+.details table thead tr{}
+.details table thead tr th{
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:10px;
+  padding-bottom:10px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:14px;
+  font-weight:700;
+  text-transform: uppercase;
+  text-align: left;
+
+  background-color: @gray17;
+  border-bottom:1px solid transparent;
+}
+.details table thead tr th.blank{
+  border-bottom:1px solid transparent;
+}
+.details table tbody{}
+.details table tbody tr{}
+.datagrid tbody tr:nth-of-type(odd) {
+  background-color: @gray18;
+}
+.datagrid tbody tr:nth-of-type(even) {
+  background-color: @gray17;
+}
+.details table tbody tr th{
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:10px;
+  padding-bottom:10px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:14px;
+  font-weight:700;
+  text-transform: uppercase;
+
+  background-color: @gray17;
+  border-right:1px solid transparent;
+}
+.details table tbody tr td{
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:10px;
+  padding-bottom:10px;
+  margin:0px;
+
+  color: @gray5;
+  font-size:16px;
+  font-weight:400;
+  text-align: left;
+  white-space:nowrap;
+
+  border-bottom:1px solid transparent;
+}
+.details table tbody tr td > .icon{
+  width:22px;
+  height:22px;
+  padding:0px;
+  margin-right:5px;
+}

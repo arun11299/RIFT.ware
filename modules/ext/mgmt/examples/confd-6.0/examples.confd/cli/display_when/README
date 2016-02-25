@@ -1,0 +1,43 @@
+Example ordered: exemplify how displayWhen can be used for cli commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how displayWhen can be used
+in the CLI.
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make clean all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and see which commands are available
+
+        # reset ?
+
+ 4. Enter configure mode and set 'has_crypto_card' to 'true'
+
+        # config
+        (config)# has_crypto_card true
+        (config)# commit
+        (config)# exit
+        # reset ?
+
+ 5. Enter configure mode and delete all dns servers
+
+        # config
+        (config)# no dns
+        (config)# commit
+        (config)# exit
+        # reset ?
+
+
+        
+
+

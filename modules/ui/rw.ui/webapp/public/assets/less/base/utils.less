@@ -1,0 +1,31 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// utils.less
+//
+// Utility styles
+//
+.clearfix() {
+  &:before,
+  &:after {
+    content: " ";
+    display: block;
+  }
+  &:after {
+    clear: both;
+  }
+}
+.has-drop-shadow {
+  box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+}
+em.circle {
+  border: 1px solid @gray-darkest;
+  border-radius: 50%;
+  display: inline-block;
+  padding: 0 0.225rem;
+}

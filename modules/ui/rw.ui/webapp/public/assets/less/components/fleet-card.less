@@ -1,0 +1,276 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// fleet-card.less
+//
+// Styles for fleet cards
+//
+.fleet-card {
+  background-color: rgba(203, 209, 209, 0.5);
+  flex: 0 1 48%;
+  height: 403px;
+  margin: 12px 0 12px 20px;
+  .layout-col {
+    &.left {
+      flex: 0 1 69%;
+    }
+    &.right {
+      flex: 0 1 31%;
+    }
+  }
+  &-header {
+    color: @white;
+  }
+  &-pwr-status {
+    background-color: @brand-green-light;
+    position: relative;
+    .clearfix;
+    a[href] {
+      display: inline-block;
+      height: 53px;
+      width: 89%;
+    }
+    h2 {
+      color: @white;
+      float: left;
+      font-size: 16px;
+      font-weight: normal;
+      margin: 21px 0 0 24px;
+      text-transform: uppercase;
+    }
+    .button-open-viewport {
+      position: absolute;
+        right: 12px;
+        top: 19px;
+      width: 20px;
+    }
+  }
+  &-pwr-btn {
+    background-color: @gray-darkest;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.35);
+    color: @brand-green-light;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    padding: 12px;
+  }
+  &-env-status {
+    align-items: center;
+    background-color: @brand-green;
+    font-size: 10px;
+    height: 75px;
+    display: flex;
+    justify-content: flex-start;
+    h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    i {
+      float: left;
+      font-size: 30px;
+      margin: 12px;
+    }
+    > div {
+      float: left;
+      margin-left: 22px;
+    }
+  }
+  &-graph {
+    border: 2px solid rgba(252, 252, 252, 0.5);
+    border-right: 0;
+    border-bottom: 0;
+    flex: 0 1 50%;
+    padding: 24px 0;
+    text-align: center;
+    &:first-child {
+      border-left: 0;
+    }
+    h3 {
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    img {
+      margin-top: 18px;
+      width: 75%;
+    }
+    &-container {
+      height: 271px;
+    }
+  }
+  &-params {
+    background-color: @gray-lighter;
+    border-left: 2px solid rgba(252, 252, 252, 0.5);
+    font-size: 11px;
+    text-align: center;
+    dt {
+      background-color: @gray;
+      padding: 8px 0 4px;
+      text-transform: uppercase;
+    }
+    dd {
+      background-color: @gray;
+      border-bottom: 2px solid @gray-lightest;
+      padding: 4px 0 8px;
+    }
+    &-detail {
+      background: @white;
+      box-sizing: border-box;
+      // display: none;
+      font-size: 11px;
+      text-align: center;
+      &.sla-panel,
+      &.nfvi-panel {
+        cursor: pointer;
+        height: 403px;
+        padding: 0 20px;
+      }
+      h4 {
+        padding-top: 24px;
+        text-transform: uppercase;
+        i {
+          font-size: 16px;
+          margin-left: 18px;
+        }
+      }
+      li {
+        border-top: 1px solid @gray-lighter;
+        margin-top: 20px;
+        padding-top: 20px;
+        &:first-child {
+          border: 0;
+        }
+      }
+      &.trafgen-panel {
+        height: 403px;
+        position: relative;
+        h4 {
+          padding-top: 24px;
+          text-transform: uppercase;
+          i {
+            font-size: 16px;
+            margin-left: 18px;
+          }
+        }
+        .slider-container {
+          font-size: 12px;
+          padding: 0 50px;
+          margin-top: 48px;
+          justify-content: space-between;
+        }
+        .slider-vert {
+          flex: 0 1 25%;
+          margin: 0;
+        }
+        .slider-vert-track {
+          width: 30px;
+        }
+        .slider-vert-header {
+          font-size: 10px;
+          margin-bottom: 6px;
+        }
+        .slider-vert-start-val {
+          margin-bottom: 3px;
+        }
+        .slider-vert-end-val {
+          margin-top: 3px;
+        }
+        .packet-size-slider {
+          .slider-vert-header {
+            margin-left: -16px;
+          }
+          .slider-vert-position {
+            top: 130px;
+            &.left {
+              width: 69p
+            }
+          }
+        }
+        .rate-slider {
+          .slider-vert-position {
+            top: 40px;
+          }
+        }
+      }
+    }
+  }
+  &-toggle-set {
+    border-bottom: 2px solid @gray-lightest;
+    padding: 18px;
+    a[role="button"] {
+      .has-drop-shadow;
+    }
+    a:last-child {
+      margin-bottom: 0;
+    }
+  }
+  &-actions {
+    background-color: @gray;
+    padding: 22px 18px;
+    .button-set {
+      margin-top: 6px;
+    }
+    a[role="button"] {
+      display: block;
+      float: left;
+      text-align: center;
+      text-transform: uppercase;
+      .has-drop-shadow;
+    }
+    .trafgen-start {
+      background-color: @gray-darkest;
+      color: @white;
+      flex: 0 1 80%;
+      margin-right: 2px;
+      padding: 8px 0;
+      i {
+        margin-right: 6px;
+      }
+    }
+    .trafgen-toggle {
+      background-color: @white;
+      color: @gray-darkest;
+      flex: 0 1 20%;
+      padding: 2px 8px 2px 11px;
+      font-size: 21px;
+    }
+  }
+  &-toggle {
+    background-color: @white;
+    box-shadow: 4px 4px @gray-lighter;
+    color: @brand-blue-light;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 12px;
+    padding: 20px;
+    h4 {
+      color: @black;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+  }
+  &.empty-card {
+    font-size: 12px;
+    text-align: center;
+    text-transform: uppercase;
+    a {
+      color: @black;
+      display: block;
+      font-weight: bold;
+      height: 100%;
+      text-decoration: none;
+      width: 100%;
+      img {
+        margin-top: 130px;
+      }
+      p {
+        margin-top: 24px;
+      }
+    }
+  }
+}

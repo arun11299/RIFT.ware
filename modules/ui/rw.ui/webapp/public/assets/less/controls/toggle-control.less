@@ -1,0 +1,32 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// toggle-control.less
+//
+// Styles for toggle controls
+//
+.toggle-set {
+  .flex-center;
+}
+.toggle-control {
+  align-content: center;
+  display: flex;
+  width: 18.75rem;
+  .has-drop-shadow;
+  > a {
+    background-color: @white;
+    color: @gray-darkest;
+    flex: 0 1 9.375rem;
+    padding: 0.625rem 0;
+    .flex-center;
+    &.selected {
+      background-color: @brand-blue;
+      color: @white;
+    }
+  }
+}

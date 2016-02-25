@@ -1,0 +1,43 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-vcs-metrics-model.html">
+<script src="data/vcs-test-data.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <rw-vcs-metrics-model id="test0"
+    colonies="{{colonies}}"
+    rate="50"
+    pause="false"
+    ></rw-vcs-metrics-model>
+  colony.cpu.capacity = {{$.test0.colony.cpu.capacity}}
+  colony.bps.utilization = {{$.test0.colony.bps.utilization}}
+</template>
+<script>
+Polymer('my-test', {
+
+  ready: function() {
+    this.$.test0.coloniesChanged = sinon.stub();
+  },
+
+  attached: function() {
+    var test0 = this.$.test0;
+    test0.colony = customColony(1,1,1,1);
+    suite('model', function() {
+      test('set colonyId', function() {
+        test0.initializeMetrics(test0.colony);
+        test0.updateMetrics();
+        assert.isTrue(test0.colony.cpu.capacity > 1);
+        assert.isTrue(test0.colony.cpu.utilization >= 0);
+      });
+    });
+  }
+})
+</script>
+</polymer-element>
+
+<div class="viewport__body"> 
+  <div id="mocha"></div>
+  <my-test></my-test>
+</div>

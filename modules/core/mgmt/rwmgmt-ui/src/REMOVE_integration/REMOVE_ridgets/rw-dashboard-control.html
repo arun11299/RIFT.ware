@@ -1,0 +1,155 @@
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-slider.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  <img src="dashboard-control.png">
+
+  @class rw-dashboard-control
+-->
+
+<!--
+  @attribute started
+  @attribute rate 0-100
+  @attribute packetSize
+-->
+<polymer-element name="rw-dashboard-control" attributes="testModeEnabled">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-dashboard-control.css" />
+        <rw-iconset></rw-iconset>
+
+        <template if="{{orientation == 'vertical'}}">
+            <div id="controlPanel" class="form__v">
+                <div class="primaryButtons">
+                    <span class="{{ {'button--is-on' : g.startedPerceived} | tokenList}} button button__size--full" on-click="{{toggleStarted}}">
+                        <span class="button__box">
+                            <core-icon class="icon {{ {'loading-icon' : loading} | tokenList}}" icon="rw-iconset:{{buttonIcon}}" size="28"></core-icon>
+                            <span class="button__label">{{g.startedPerceived ? 'Active' : 'Off'}}</span>
+                        </span>
+                    </span>
+                </div>
+
+                <div class="dash-label">
+                    <label for="rate" class="form__item__label">Gbps</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">0</div>
+                    <rw-slider id="rateRange" name="rate" min="0" max="100" step="1" value="{{g.ratePerceived}}"></rw-slider>
+                    <div class="dash-slider-end">100</div>
+                </div>
+                <div class="dash-slider-value">{{g.ratePerceived}}</div>
+                <div class="dash-label">
+                    <label for="packetSize" class="form__item__label">Packet Size</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">64</div>
+                    <rw-slider id="packetSizeRange" name="rate" min="64" max="1400" step="64" value="{{g.packetSizePerceived}}"></rw-slider>
+                    <div class="dash-slider-end">1400</div>
+                </div>
+                <div class="dash-slider-value">
+                    <span>{{g.packetSizePerceived}}</span>
+                </div>
+            </div>
+        </template>
+        <template if="{{orientation == 'horizontal'}}">
+            <div id="controlPanel">
+                <div class="primaryButtons horizontal">
+                    <div class="{{ {'button--is-on' : g.startedPerceived} | tokenList}} button button__size--short button__size--medium" on-click="{{toggleStarted}}">
+                        <div class="button__box">
+                            <core-icon class="icon--small {{ {'loading-icon' : loading} | tokenList}}" icon="rw-iconset:{{buttonIcon}}"></core-icon>
+                            <span class="button__label">{{g.startedPerceived ? 'Active' : 'Off'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <template if="{{testModeEnabled}}">
+                    <div class="secondaryButtons">
+                        <div class="{{ {'button--is-on' : g.testing} | tokenList}} button button__size--short button__size--full" on-click="{{toggleTesting}}">
+                            <div class="button__box">
+                                <core-icon class="icon--small" icon="rw-iconset:icon-test"></core-icon>
+                                <span class="button__label">Test</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="slider-component horizontal">  <!-- Had to add this markup in to create a grouping of the component for this view-->
+                    <div class="dash-label">
+                        <label for="rate" class="form__item__label">Rate</label>
+                    </div>
+                    <div class="dash-slider">
+                        <div class="dash-slider-start">0</div>
+                        <rw-slider id="rateRange" name="rate" min="0" max="100" step="1" value="{{g.ratePerceived}}"></rw-slider>
+                        <div class="dash-slider-end">100</div>
+                    </div>
+                    <div class="dash-slider-value">{{g.ratePerceived}}</div>
+                </div>
+                <div class="slider-component horizontal">
+                    <div class="dash-label">
+                        <label for="packetSize" class="form__item__label">Packet Size</label>
+                    </div>
+                    <div class="dash-slider">
+                        <div class="dash-slider-start">64</div>
+                        <rw-slider id="packetSizeRange" name="rate" min="64" max="1400" step="64" value="{{g.packetSizePerceived}}"></rw-slider>
+                        <div class="dash-slider-end">1400</div>
+                    </div>
+                    <div class="dash-slider-value">
+                        <span>{{g.packetSizePerceived}}</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </template>
+<script>
+Polymer({
+  observe:{
+    'g.startedActual' : 'globalStartedChanged',
+    'g.rateActual' : 'globalRateChanged',
+    'g.packetSizeActual' : 'globalPacketSizeChanged'
+  },
+
+  created: function() {
+    this.g = rw.trafgen;
+    this.updateButtonIcon();
+  },
+
+  attached: function() {
+    this.orientation = this.classList.contains('horizontal') ? 'horizontal' : 'vertical';
+  },
+
+  globalStartedChanged: function() {
+    this.g.startedPerceived = this.g.startedActual;
+    this.updateButtonIcon();
+  },
+
+  globalRateChanged: function() {
+    this.g.ratePerceived = this.g.rateActual;
+  },
+
+  globalPacketSizeChanged: function() {
+    this.g.packetSizePerceived = this.g.packetSizeActual;
+  },
+
+  toggleStarted: function() {
+    this.g.startedPerceived = ! this.g.startedPerceived;
+    this.updateButtonIcon();
+  },
+
+  updateButtonIcon: function() {
+    if (this.g.startedPerceived != this.g.startedActual) {
+      this.buttonIcon = 'icon-loading';
+      this.loading = true;
+    } else if (this.g.startedPerceived) {
+      this.buttonIcon = 'icon-power-on';
+      this.loading = false;
+    } else {
+      this.buttonIcon = 'icon-power-off';
+      this.loading = false;
+    }
+  },
+
+  detached:function() {
+    this._propertyObserver.disconnect_();
+  }
+});
+</script>
+<polymer-element>

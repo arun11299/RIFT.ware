@@ -1,0 +1,25 @@
+<div class='resources splitterContainer'>
+    <div class="vpane vpane-top">
+        <div style="position:absolute; width: 100%; height: 100%">
+            <resources-diagram
+            id="resources-diagram"
+            sector="resources.vcsFactory.sector"
+            >
+            </resources-diagram>
+        </div>
+    </div>
+    <splitter>
+        <span class="node-label">{{resources.selectedNode.instance_name}}</span>
+        &mdash;
+        <span class="node-description">{{resources.nodeTypeLabel}}</span>
+    </splitter>
+    <div class="vertical vpane-bottom" style="height:200px; z-index:9000; margin-bottom:-75px">
+        <resources-detail
+        id="resources-detail"
+        vcs-node="resources.selectedNode"
+        fabric-node="resources.selectedNode._fabricNode"
+        style="z-index:999"
+        >
+        </resources-detail>
+    </div>
+</div>

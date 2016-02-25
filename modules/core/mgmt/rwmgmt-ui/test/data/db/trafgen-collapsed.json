@@ -1,0 +1,2845 @@
+{
+  "/fpath/": {
+    "url": "/fpath/",
+    "data": {
+      "network": {
+        "network-context": [
+          {
+            "name": "trafgen-lb",
+            "interface": [
+              {
+                "name": "N1TenGi-1",
+                "ip": {"address": "11.0.1.4/24"},
+                "bind": {"port": ["trafgen/2/1"]},
+                "colonyId": "trafgen",
+                "port": [
+                  {
+                    "name": "trafgen/2/1",
+                    "receive-q-length": "2",
+                    "open": {"application": {"trafgen": {}}},
+                    "trafgen": {
+                      "transmit-params": {"transmit-mode": {"range": {}}},
+                      "range-template": {
+                        "packet-size": {
+                          "start": "512",
+                          "increment": "1",
+                          "maximum": "512",
+                          "minimum": "512"
+                        },
+                        "source-ip": {
+                          "start": "11.0.1.4",
+                          "increment": "1",
+                          "minimum": "11.0.1.4",
+                          "maximum": "11.0.1.4"
+                        },
+                        "destination-ip": {
+                          "start": "11.0.1.3",
+                          "increment": "1",
+                          "minimum": "11.0.1.3",
+                          "maximum": "11.0.1.3"
+                        },
+                        "source-port": {
+                          "start": "10000",
+                          "increment": "1",
+                          "maximum": "10128",
+                          "minimum": "10000"
+                        },
+                        "destination-port": {
+                          "start": "5678",
+                          "increment": "1",
+                          "maximum": "5678",
+                          "minimum": "5678"
+                        },
+                        "destination-mac": {"dynamic": {"gateway": "11.0.1.3"}}
+                      }
+                    },
+                    "colonyId": "trafgen",
+                    "private-name": "eth_sim:name=trafgenport",
+                    "id": "1",
+                    "descr-string": {},
+                    "state": "up",
+                    "speed": "10000",
+                    "duplex": "full-duplex",
+                    "app-name": "rw_trafgen",
+                    "receive-queues": "2",
+                    "transmit-queues": "40",
+                    "numa-socket": "0",
+                    "mac-address": "00:00:00:ab:02:01",
+                    "fastpath-instance": "2"
+                  }
+                ],
+                "speed": "10000",
+                "state": "up"
+              }
+            ]
+          },
+          {
+            "name": "trafgen-lb",
+            "interface": [
+              {
+                "name": "N2TenGigi-1",
+                "ip": {"address": "11.0.1.3/24"},
+                "bind": {"port": ["trafsink/4/1"]},
+                "colonyId": "trafsink",
+                "port": [
+                  {
+                    "name": "trafsink/4/1",
+                    "receive-q-length": "2",
+                    "open": {"application": {"ip-fastpath": {}}},
+                    "colonyId": "trafsink",
+                    "private-name": "eth_sim:name=lbport1",
+                    "id": "2",
+                    "descr-string": {},
+                    "state": "up",
+                    "speed": "10000",
+                    "duplex": "full-duplex",
+                    "app-name": "rw_ipfp",
+                    "receive-queues": "2",
+                    "transmit-queues": "40",
+                    "numa-socket": "0",
+                    "mac-address": "00:00:00:ab:04:02",
+                    "fastpath-instance": "4"
+                  }
+                ],
+                "speed": "10000",
+                "state": "up"
+              },
+              {
+                "name": "N2TenGigi-2",
+                "ip": {"address": "12.0.1.3/24"},
+                "bind": {"port": ["trafsink/4/2"]},
+                "colonyId": "trafsink",
+                "port": [
+                  {
+                    "name": "trafsink/4/2",
+                    "receive-q-length": "2",
+                    "open": {"application": {"ip-fastpath": {}}},
+                    "colonyId": "trafsink",
+                    "private-name": "eth_sim:name=lbport2",
+                    "id": "3",
+                    "descr-string": {},
+                    "state": "up",
+                    "speed": "10000",
+                    "duplex": "full-duplex",
+                    "app-name": "rw_ipfp",
+                    "receive-queues": "2",
+                    "transmit-queues": "40",
+                    "numa-socket": "0",
+                    "mac-address": "00:00:00:ab:04:03",
+                    "fastpath-instance": "4"
+                  }
+                ],
+                "speed": "10000",
+                "state": "up"
+              }
+            ],
+            "lb-profile": {
+              "name": "lb1",
+              "destination-nat": {
+                "real-ip": "12.0.1.4",
+                "source-ip": "12.0.1.3",
+                "tcp-port": "5001"
+              }
+            },
+            "load-balancer": {
+              "name": "x1",
+              "lb-profile": "lb1",
+              "tcp-port": "5678",
+              "virtual-ip": "11.0.1.3"
+            }
+          },
+          {
+            "name": "lb-trafsink",
+            "interface": [
+              {
+                "name": "N3TenGigi-1",
+                "ip": {"address": "12.0.1.4/24"},
+                "bind": {"port": ["trafsink/5/1"]},
+                "colonyId": "trafsink",
+                "port": [
+                  {
+                    "name": "trafsink/5/1",
+                    "receive-q-length": "2",
+                    "open": {"application": {"trafgen": {}}},
+                    "trafgen": {"receive-param": {"receive-echo": {"on": {}}}},
+                    "colonyId": "trafsink",
+                    "private-name": "eth_sim:name=trafsinkport",
+                    "id": "2",
+                    "descr-string": {},
+                    "state": "up",
+                    "speed": "10000",
+                    "duplex": "full-duplex",
+                    "app-name": "rw_trafgen",
+                    "receive-queues": "2",
+                    "transmit-queues": "40",
+                    "numa-socket": "0",
+                    "mac-address": "00:00:00:ab:05:02",
+                    "fastpath-instance": "5"
+                  }
+                ],
+                "speed": "10000",
+                "state": "up"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafgen": {
+    "url": "/fpath/port/port-state/counters/trafgen",
+    "data": {
+      "counters": {
+        "port": [
+          {
+            "name": "vfap/2/1",
+            "id": "0",
+            "fastpath-instance": "2",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "3",
+            "tx-rate-pps": "3",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "28796",
+            "output-packets": "28786",
+            "input-bytes": "2",
+            "output-bytes": "2"
+          },
+          {
+            "name": "trafgen/2/1",
+            "id": "1",
+            "fastpath-instance": "2",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "0",
+            "output-packets": "0",
+            "input-bytes": "0",
+            "output-bytes": "0"
+          },
+          {
+            "name": "vfap/1/1",
+            "id": "0",
+            "fastpath-instance": "1",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "3",
+            "tx-rate-pps": "3",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "28796",
+            "output-packets": "28786",
+            "input-bytes": "2",
+            "output-bytes": "2"
+          }
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafgen/port/trafgen|2|1": {
+    "url": "/fpath/port/port-state/counters/trafgen/port/trafgen|2|1",
+    "data": {
+      "counters": {
+        "port": [
+          "trafgen/2/1",
+          {"name": {}}
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafsink": {
+    "url": "/fpath/port/port-state/counters/trafsink",
+    "data": {
+      "counters": {
+        "port": [
+          {
+            "name": "vfap/4/1",
+            "id": "0",
+            "fastpath-instance": "4",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "107787",
+            "output-packets": "107780",
+            "input-bytes": "10",
+            "output-bytes": "10"
+          },
+          {
+            "name": "vfap/4/2",
+            "id": "1",
+            "fastpath-instance": "4",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "107787",
+            "output-packets": "107777",
+            "input-bytes": "10",
+            "output-bytes": "10"
+          },
+          {
+            "name": "trafsink/4/1",
+            "id": "2",
+            "fastpath-instance": "4",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "0",
+            "output-packets": "0",
+            "input-bytes": "0",
+            "output-bytes": "0"
+          },
+          {
+            "name": "trafsink/4/2",
+            "id": "3",
+            "fastpath-instance": "4",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "0",
+            "output-packets": "0",
+            "input-bytes": "0",
+            "output-bytes": "0"
+          },
+          {
+            "name": "vfap/3/1",
+            "id": "0",
+            "fastpath-instance": "3",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "143722",
+            "output-packets": "143716",
+            "input-bytes": "13",
+            "output-bytes": "13"
+          },
+          {
+            "name": "vfap/5/1",
+            "id": "0",
+            "fastpath-instance": "5",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "107792",
+            "output-packets": "107785",
+            "input-bytes": "10",
+            "output-bytes": "10"
+          },
+          {
+            "name": "vfap/5/2",
+            "id": "1",
+            "fastpath-instance": "5",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "107792",
+            "output-packets": "107782",
+            "input-bytes": "10",
+            "output-bytes": "10"
+          },
+          {
+            "name": "trafsink/5/1",
+            "id": "2",
+            "fastpath-instance": "5",
+            "state": "up",
+            "speed": "10000",
+            "duplex": "full-duplex",
+            "rx-rate-pps": "0",
+            "tx-rate-pps": "0",
+            "rx-rate-mbps": "0",
+            "tx-rate-mbps": "0",
+            "input-errors": "0",
+            "output-errors": "0",
+            "input-packets": "0",
+            "output-packets": "0",
+            "input-bytes": "0",
+            "output-bytes": "0"
+          }
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafsink/port/trafsink|4|1": {
+    "url": "/fpath/port/port-state/counters/trafsink/port/trafsink|4|1",
+    "data": {
+      "counters": {
+        "port": [
+          "trafsink/4/1",
+          {"name": {}}
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafsink/port/trafsink|4|2": {
+    "url": "/fpath/port/port-state/counters/trafsink/port/trafsink|4|2",
+    "data": {
+      "counters": {
+        "port": [
+          "trafsink/4/2",
+          {"name": {}}
+        ]
+      }
+    }
+  },
+  "/fpath/port/port-state/counters/trafsink/port/trafsink|5|1": {
+    "url": "/fpath/port/port-state/counters/trafsink/port/trafsink|5|1",
+    "data": {
+      "counters": {
+        "port": [
+          "trafsink/5/1",
+          {"name": {}}
+        ]
+      }
+    }
+  },
+  "/loadbal/state/trafgen": {
+    "url": "/loadbal/state/trafgen",
+    "data": {
+      "load-balancer": {
+        "fastpath": [
+          {
+            "instance": "2",
+            "worker": [
+              {
+                "id": "0",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "1",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "2",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "3",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "4",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "5",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "6",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "7",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "8",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "9",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "10",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "11",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "12",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "13",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "14",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "15",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              }
+            ]
+          },
+          {
+            "instance": "1",
+            "worker": [
+              {
+                "id": "0",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "1",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "2",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "3",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "4",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "5",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "6",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "7",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "8",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "9",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "10",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "11",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "12",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "13",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "14",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "15",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "/loadbal/state/trafsink": {
+    "url": "/loadbal/state/trafsink",
+    "data": {
+      "load-balancer": {
+        "fastpath": [
+          {
+            "instance": "4",
+            "worker": [
+              {
+                "id": "0",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "1",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "2",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "3",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "4",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "5",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "6",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "7",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "8",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "9",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "10",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "11",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "12",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "13",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "14",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "15",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              }
+            ]
+          },
+          {
+            "instance": "3",
+            "worker": [
+              {
+                "id": "0",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "1",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "2",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "3",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "4",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "5",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "6",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "7",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "8",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "9",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "10",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "11",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "12",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "13",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "14",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "15",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              }
+            ]
+          },
+          {
+            "instance": "5",
+            "worker": [
+              {
+                "id": "0",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "1",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "2",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "3",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "4",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "5",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "6",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "7",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "8",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "9",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "10",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "11",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "12",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "13",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "14",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              },
+              {
+                "id": "15",
+                "fwd-bindings": "0",
+                "rev-bindings": "0",
+                "fwd-pkt-received": "0",
+                "fwd-pkt-xmit": "0",
+                "fwd-pkt-drop": "0",
+                "rev-pkt-received": "0",
+                "rev-pkt-xmit": "0",
+                "rev-pkt-drop": "0"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "/netconf/config/": {
+    "url": "/netconf/config/",
+    "data": {
+      "root": {
+        "rw-base:colony": {
+          "rw-base:name": "trafsink",
+          "rw-base:network-context": [
+            {
+              "rw-base:name": "trafgen-lb",
+              "rw-fpath:interface": {
+                "rw-fpath:name": "N2TenGigi-2",
+                "rw-fpath:ip": {"rw-fpath:address": "12.0.1.3/24"},
+                "rw-fpath:bind": {"rw-fpath:port": ["trafsink/4/2"]}
+              },
+              "rw-fpath:lb-profile": {
+                "rw-fpath:name": "lb1",
+                "rw-fpath:destination-nat": [
+                  {
+                    "rw-fpath:real-ip": "12.0.1.4",
+                    "rw-fpath:source-ip": "12.0.1.3",
+                    "rw-fpath:tcp-port": "5001"
+                  }
+                ]
+              },
+              "rw-fpath:load-balancer": {
+                "rw-fpath:name": "x1",
+                "rw-fpath:lb-profile": "lb1",
+                "rw-fpath:tcp-port": "5678",
+                "rw-fpath:virtual-ip": "11.0.1.3"
+              }
+            },
+            {
+              "rw-base:name": "lb-trafsink",
+              "rw-fpath:interface": {
+                "rw-fpath:name": "N3TenGigi-1",
+                "rw-fpath:ip": {"rw-fpath:address": "12.0.1.4/24"},
+                "rw-fpath:bind": {"rw-fpath:port": ["trafsink/5/1"]}
+              }
+            }
+          ],
+          "rw-fpath:port": [
+            {
+              "rw-fpath:name": "trafsink/4/1",
+              "rw-fpath:receive-q-length": "2",
+              "rw-fpath:open": {"rw-fpath:application": {"rw-fpath:ip-fastpath": {}}}
+            },
+            {
+              "rw-fpath:name": "trafsink/4/2",
+              "rw-fpath:receive-q-length": "2",
+              "rw-fpath:open": {"rw-fpath:application": {"rw-fpath:ip-fastpath": {}}}
+            },
+            {
+              "rw-fpath:name": "trafsink/5/1",
+              "rw-fpath:receive-q-length": "2",
+              "rw-fpath:open": {"rw-fpath:application": {"rw-fpath:trafgen": {}}},
+              "rw-fpath:trafgen": {"rw-fpath:receive-param": {"rw-fpath:receive-echo": {"rw-fpath:on": {}}}}
+            }
+          ]
+        }
+      }
+    }
+  },
+  "/trafsim/config": {
+    "url": "/trafsim/config",
+    "data": {"trafsims": {}}
+  },
+  "/vcs-resources/all/": {
+    "url": "/vcs-resources/all/",
+    "data": {
+      "root": {
+        "vcs": {
+          "resources": {
+            "vm": [
+              {
+                "id": "4",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805380",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805380",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "1",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "2",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "5",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "3",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "6",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087944",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087944",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              },
+              {
+                "id": "7",
+                "cpu": {
+                  "aggregate": {
+                    "user": "21.087987",
+                    "system": "7.805423",
+                    "idle": "69.712633"
+                  },
+                  "individual": [
+                    {
+                      "id": "1",
+                      "user": "21.087987",
+                      "system": "7.805423",
+                      "idle": "69.712633"
+                    }
+                  ]
+                },
+                "memory": {
+                  "curr-usage": "5358796",
+                  "total": "16435764"
+                },
+                "storage": {
+                  "curr-usage": "2303696",
+                  "total": "4061956"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "/vcs/": {
+    "url": "/vcs/",
+    "data": {
+      "sector": {
+        "colony": [
+          {
+            "component_type": "RWCOLONY",
+            "component_name": "rwcolony",
+            "instance_id": "1",
+            "instance_name": "rwcolony-1",
+            "state": "STARTED",
+            "rwcomponent_children": [
+              "RW_VM_CLI-1",
+              "master-1",
+              "trafgen-2",
+              "trafsink-3"
+            ],
+            "colony_info": {},
+            "vm": [
+              {
+                "component_type": "RWVM",
+                "component_name": "RW_VM_CLI",
+                "instance_id": "1",
+                "instance_name": "RW_VM_CLI-1",
+                "state": "STARTED",
+                "rwcomponent_parent": "rwcolony-1",
+                "rwcomponent_children": [
+                  "RW.uAgent-1",
+                  "RW.Proc_1-1"
+                ],
+                "vm_info": {
+                  "vm-ip-address": "127.0.0.1",
+                  "pid": "3969"
+                },
+                "process": [
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_1",
+                    "instance_id": "1",
+                    "instance_name": "RW.Proc_1-1",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW_VM_CLI-1",
+                    "rwcomponent_children": ["RW.Cli-1"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.Cli",
+                        "instance_id": "1",
+                        "instance_name": "RW.Cli-1",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_1-1",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "cluster": [
+              {
+                "component_type": "RWCLUSTER",
+                "component_name": "master",
+                "instance_id": "1",
+                "instance_name": "master-1",
+                "state": "STARTED",
+                "rwcomponent_parent": "rwcolony-1",
+                "rwcomponent_children": ["RW_VM_MGMT-2"],
+                "cluster_info": {},
+                "vm": [
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW_VM_MGMT",
+                    "instance_id": "2",
+                    "instance_name": "RW_VM_MGMT-2",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "master-1",
+                    "rwcomponent_children": ["RW.Proc_2-2"],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_2",
+                        "instance_id": "2",
+                        "instance_name": "RW.Proc_2-2",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW_VM_MGMT-2",
+                        "rwcomponent_children": ["RW.Msgbroker-1"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Msgbroker",
+                            "instance_id": "1",
+                            "instance_name": "RW.Msgbroker-1",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_2-2",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "component_type": "RWCLUSTER",
+                "component_name": "trafgen",
+                "instance_id": "2",
+                "instance_name": "trafgen-2",
+                "state": "STARTED",
+                "rwcomponent_parent": "rwcolony-1",
+                "rwcomponent_children": [
+                  "RW.VM.TG.LEAD-3",
+                  "RW.VM.trafgen.1-4"
+                ],
+                "cluster_info": {},
+                "vm": [
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW.VM.TG.LEAD",
+                    "instance_id": "3",
+                    "instance_name": "RW.VM.TG.LEAD-3",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "trafgen-2",
+                    "rwcomponent_children": [
+                      "RW.Proc_3-3",
+                      "RW.Proc_4-4",
+                      "RW.Proc_5-5",
+                      "RW.Proc_6-6",
+                      "RW.Proc_7-7"
+                    ],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_3",
+                        "instance_id": "3",
+                        "instance_name": "RW.Proc_3-3",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.TG.LEAD-3",
+                        "rwcomponent_children": ["RW.FpCtrl-2"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.FpCtrl",
+                            "instance_id": "2",
+                            "instance_name": "RW.FpCtrl-2",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_3-3",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_4",
+                        "instance_id": "4",
+                        "instance_name": "RW.Proc_4-4",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.TG.LEAD-3",
+                        "rwcomponent_children": ["RW.NcMgr-2"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.NcMgr",
+                            "instance_id": "2",
+                            "instance_name": "RW.NcMgr-2",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_4-4",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_5",
+                        "instance_id": "5",
+                        "instance_name": "RW.Proc_5-5",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.TG.LEAD-3",
+                        "rwcomponent_children": ["RW.Fpath-1"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Fpath",
+                            "instance_id": "1",
+                            "instance_name": "RW.Fpath-1",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_5-5",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_6",
+                        "instance_id": "6",
+                        "instance_name": "RW.Proc_6-6",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.TG.LEAD-3",
+                        "rwcomponent_children": ["RW.IfMgr-2"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.IfMgr",
+                            "instance_id": "2",
+                            "instance_name": "RW.IfMgr-2",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_6-6",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_7",
+                        "instance_id": "7",
+                        "instance_name": "RW.Proc_7-7",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.TG.LEAD-3",
+                        "rwcomponent_children": ["RW.AppMgr-1"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.AppMgr",
+                            "instance_id": "1",
+                            "instance_name": "RW.AppMgr-1",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_7-7",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "fpath-id": ["1"]
+                  },
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW.VM.trafgen.1",
+                    "instance_id": "4",
+                    "instance_name": "RW.VM.trafgen.1-4",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "trafgen-2",
+                    "rwcomponent_children": [
+                      "RW.Proc_8-8",
+                      "RW.Proc_9-9"
+                    ],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "fpath-id": ["2"],
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_8",
+                        "instance_id": "8",
+                        "instance_name": "RW.Proc_8-8",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.trafgen.1-4",
+                        "rwcomponent_children": ["RW.Fpath-2"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Fpath",
+                            "instance_id": "2",
+                            "instance_name": "RW.Fpath-2",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_8-8",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_9",
+                        "instance_id": "9",
+                        "instance_name": "RW.Proc_9-9",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.trafgen.1-4",
+                        "rwcomponent_children": ["RW.AppMgr-2"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.AppMgr",
+                            "instance_id": "2",
+                            "instance_name": "RW.AppMgr-2",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_9-9",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "connector": [
+                      {
+                        "interface": [
+                          {
+                            "name": "N1TenGi-1",
+                            "ip": {"address": "11.0.1.4/24"},
+                            "bind": {"port": ["trafgen/2/1"]},
+                            "colonyId": "trafgen",
+                            "port": [
+                              {
+                                "name": "trafgen/2/1",
+                                "receive-q-length": "2",
+                                "open": {"application": {"trafgen": {}}},
+                                "trafgen": {
+                                  "transmit-params": {"transmit-mode": {"range": {}}},
+                                  "range-template": {
+                                    "packet-size": {
+                                      "start": "512",
+                                      "increment": "1",
+                                      "maximum": "512",
+                                      "minimum": "512"
+                                    },
+                                    "source-ip": {
+                                      "start": "11.0.1.4",
+                                      "increment": "1",
+                                      "minimum": "11.0.1.4",
+                                      "maximum": "11.0.1.4"
+                                    },
+                                    "destination-ip": {
+                                      "start": "11.0.1.3",
+                                      "increment": "1",
+                                      "minimum": "11.0.1.3",
+                                      "maximum": "11.0.1.3"
+                                    },
+                                    "source-port": {
+                                      "start": "10000",
+                                      "increment": "1",
+                                      "maximum": "10128",
+                                      "minimum": "10000"
+                                    },
+                                    "destination-port": {
+                                      "start": "5678",
+                                      "increment": "1",
+                                      "maximum": "5678",
+                                      "minimum": "5678"
+                                    },
+                                    "destination-mac": {"dynamic": {"gateway": "11.0.1.3"}}
+                                  }
+                                },
+                                "colonyId": "trafgen",
+                                "private-name": "eth_sim:name=trafgenport",
+                                "id": "1",
+                                "descr-string": {},
+                                "state": "up",
+                                "speed": "10000",
+                                "duplex": "full-duplex",
+                                "app-name": "rw_trafgen",
+                                "receive-queues": "2",
+                                "transmit-queues": "40",
+                                "numa-socket": "0",
+                                "mac-address": "00:00:00:ab:02:01",
+                                "fastpath-instance": "2"
+                              }
+                            ],
+                            "speed": "10000",
+                            "state": "up"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "component_type": "RWCLUSTER",
+                "component_name": "trafsink",
+                "instance_id": "3",
+                "instance_name": "trafsink-3",
+                "state": "STARTED",
+                "rwcomponent_parent": "rwcolony-1",
+                "rwcomponent_children": [
+                  "RW.VM.APP.LEAD-5",
+                  "RW.VM.loadbal.1-6",
+                  "RW.VM.trafsink.1-7"
+                ],
+                "cluster_info": {},
+                "vm": [
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW.VM.APP.LEAD",
+                    "instance_id": "5",
+                    "instance_name": "RW.VM.APP.LEAD-5",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "trafsink-3",
+                    "rwcomponent_children": [
+                      "RW.Proc_10-10",
+                      "RW.Proc_11-11",
+                      "RW.Proc_12-12",
+                      "RW.Proc_13-13",
+                      "RW.Proc_14-14"
+                    ],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_10",
+                        "instance_id": "10",
+                        "instance_name": "RW.Proc_10-10",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.APP.LEAD-5",
+                        "rwcomponent_children": ["RW.FpCtrl-3"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.FpCtrl",
+                            "instance_id": "3",
+                            "instance_name": "RW.FpCtrl-3",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_10-10",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_11",
+                        "instance_id": "11",
+                        "instance_name": "RW.Proc_11-11",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.APP.LEAD-5",
+                        "rwcomponent_children": ["RW.NcMgr-3"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.NcMgr",
+                            "instance_id": "3",
+                            "instance_name": "RW.NcMgr-3",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_11-11",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_12",
+                        "instance_id": "12",
+                        "instance_name": "RW.Proc_12-12",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.APP.LEAD-5",
+                        "rwcomponent_children": ["RW.Fpath-3"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Fpath",
+                            "instance_id": "3",
+                            "instance_name": "RW.Fpath-3",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_12-12",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_13",
+                        "instance_id": "13",
+                        "instance_name": "RW.Proc_13-13",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.APP.LEAD-5",
+                        "rwcomponent_children": ["RW.IfMgr-3"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.IfMgr",
+                            "instance_id": "3",
+                            "instance_name": "RW.IfMgr-3",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_13-13",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_14",
+                        "instance_id": "14",
+                        "instance_name": "RW.Proc_14-14",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.APP.LEAD-5",
+                        "rwcomponent_children": ["RW.AppMgr-3"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.AppMgr",
+                            "instance_id": "3",
+                            "instance_name": "RW.AppMgr-3",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_14-14",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "fpath-id": ["3"]
+                  },
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW.VM.loadbal.1",
+                    "instance_id": "6",
+                    "instance_name": "RW.VM.loadbal.1-6",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "trafsink-3",
+                    "rwcomponent_children": [
+                      "RW.Proc_15-15",
+                      "RW.Proc_16-16"
+                    ],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "fpath-id": ["4"],
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_15",
+                        "instance_id": "15",
+                        "instance_name": "RW.Proc_15-15",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.loadbal.1-6",
+                        "rwcomponent_children": ["RW.Fpath-4"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Fpath",
+                            "instance_id": "4",
+                            "instance_name": "RW.Fpath-4",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_15-15",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_16",
+                        "instance_id": "16",
+                        "instance_name": "RW.Proc_16-16",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.loadbal.1-6",
+                        "rwcomponent_children": ["RW.AppMgr-4"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.AppMgr",
+                            "instance_id": "4",
+                            "instance_name": "RW.AppMgr-4",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_16-16",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "connector": [
+                      {
+                        "interface": [
+                          {
+                            "name": "N2TenGigi-1",
+                            "ip": {"address": "11.0.1.3/24"},
+                            "bind": {"port": ["trafsink/4/1"]},
+                            "colonyId": "trafsink",
+                            "port": [
+                              {
+                                "name": "trafsink/4/1",
+                                "receive-q-length": "2",
+                                "open": {"application": {"ip-fastpath": {}}},
+                                "colonyId": "trafsink",
+                                "private-name": "eth_sim:name=lbport1",
+                                "id": "2",
+                                "descr-string": {},
+                                "state": "up",
+                                "speed": "10000",
+                                "duplex": "full-duplex",
+                                "app-name": "rw_ipfp",
+                                "receive-queues": "2",
+                                "transmit-queues": "40",
+                                "numa-socket": "0",
+                                "mac-address": "00:00:00:ab:04:02",
+                                "fastpath-instance": "4"
+                              }
+                            ],
+                            "speed": "10000",
+                            "state": "up"
+                          }
+                        ]
+                      },
+                      {
+                        "interface": [
+                          {
+                            "name": "N2TenGigi-2",
+                            "ip": {"address": "12.0.1.3/24"},
+                            "bind": {"port": ["trafsink/4/2"]},
+                            "colonyId": "trafsink",
+                            "port": [
+                              {
+                                "name": "trafsink/4/2",
+                                "receive-q-length": "2",
+                                "open": {"application": {"ip-fastpath": {}}},
+                                "colonyId": "trafsink",
+                                "private-name": "eth_sim:name=lbport2",
+                                "id": "3",
+                                "descr-string": {},
+                                "state": "up",
+                                "speed": "10000",
+                                "duplex": "full-duplex",
+                                "app-name": "rw_ipfp",
+                                "receive-queues": "2",
+                                "transmit-queues": "40",
+                                "numa-socket": "0",
+                                "mac-address": "00:00:00:ab:04:03",
+                                "fastpath-instance": "4"
+                              }
+                            ],
+                            "speed": "10000",
+                            "state": "up"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "component_type": "RWVM",
+                    "component_name": "RW.VM.trafsink.1",
+                    "instance_id": "7",
+                    "instance_name": "RW.VM.trafsink.1-7",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "trafsink-3",
+                    "rwcomponent_children": [
+                      "RW.Proc_17-17",
+                      "RW.Proc_18-18"
+                    ],
+                    "vm_info": {
+                      "vm-ip-address": "127.0.0.1",
+                      "pid": "3969"
+                    },
+                    "fpath-id": ["5"],
+                    "process": [
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_17",
+                        "instance_id": "17",
+                        "instance_name": "RW.Proc_17-17",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.trafsink.1-7",
+                        "rwcomponent_children": ["RW.Fpath-5"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.Fpath",
+                            "instance_id": "5",
+                            "instance_name": "RW.Fpath-5",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_17-17",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      },
+                      {
+                        "component_type": "RWPROC",
+                        "component_name": "RW.Proc_18",
+                        "instance_id": "18",
+                        "instance_name": "RW.Proc_18-18",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.VM.trafsink.1-7",
+                        "rwcomponent_children": ["RW.AppMgr-5"],
+                        "proc_info": {
+                          "pid": "3969",
+                          "native": "false"
+                        },
+                        "tasklet": [
+                          {
+                            "component_type": "RWTASKLET",
+                            "component_name": "RW.AppMgr",
+                            "instance_id": "5",
+                            "instance_name": "RW.AppMgr-5",
+                            "state": "STARTED",
+                            "rwcomponent_parent": "RW.Proc_18-18",
+                            "tasklet_info": {}
+                          }
+                        ]
+                      }
+                    ],
+                    "connector": [
+                      {
+                        "interface": [
+                          {
+                            "name": "N3TenGigi-1",
+                            "ip": {"address": "12.0.1.4/24"},
+                            "bind": {"port": ["trafsink/5/1"]},
+                            "colonyId": "trafsink",
+                            "port": [
+                              {
+                                "name": "trafsink/5/1",
+                                "receive-q-length": "2",
+                                "open": {"application": {"trafgen": {}}},
+                                "trafgen": {"receive-param": {"receive-echo": {"on": {}}}},
+                                "colonyId": "trafsink",
+                                "private-name": "eth_sim:name=trafsinkport",
+                                "id": "2",
+                                "descr-string": {},
+                                "state": "up",
+                                "speed": "10000",
+                                "duplex": "full-duplex",
+                                "app-name": "rw_trafgen",
+                                "receive-queues": "2",
+                                "transmit-queues": "40",
+                                "numa-socket": "0",
+                                "mac-address": "00:00:00:ab:05:02",
+                                "fastpath-instance": "5"
+                              }
+                            ],
+                            "speed": "10000",
+                            "state": "up"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "/vnf/": {
+    "url": "/vnf/",
+    "data": {
+      "vnfs": {
+        "vnf": [
+          {
+            "name": "trafgen - RW.VM.trafgen.1",
+            "type": "trafgen",
+            "vm": [
+              {
+                "component_type": "RWVM",
+                "component_name": "RW.VM.trafgen.1",
+                "instance_id": "4",
+                "instance_name": "RW.VM.trafgen.1-4",
+                "state": "STARTED",
+                "rwcomponent_parent": "trafgen-2",
+                "rwcomponent_children": [
+                  "RW.Proc_8-8",
+                  "RW.Proc_9-9"
+                ],
+                "vm_info": {
+                  "vm-ip-address": "127.0.0.1",
+                  "pid": "3969"
+                },
+                "fpath-id": ["2"],
+                "process": [
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_8",
+                    "instance_id": "8",
+                    "instance_name": "RW.Proc_8-8",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.trafgen.1-4",
+                    "rwcomponent_children": ["RW.Fpath-2"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.Fpath",
+                        "instance_id": "2",
+                        "instance_name": "RW.Fpath-2",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_8-8",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  },
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_9",
+                    "instance_id": "9",
+                    "instance_name": "RW.Proc_9-9",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.trafgen.1-4",
+                    "rwcomponent_children": ["RW.AppMgr-2"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.AppMgr",
+                        "instance_id": "2",
+                        "instance_name": "RW.AppMgr-2",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_9-9",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "connector": [
+              {
+                "@networkId": "trafgen-lb",
+                "@id": "trafgen|trafgen-lb",
+                "@context": "trafgen-lb",
+                "interface": [
+                  {
+                    "name": "N1TenGi-1",
+                    "ip": {"address": "11.0.1.4/24"},
+                    "bind": {"port": ["trafgen/2/1"]},
+                    "colonyId": "trafgen",
+                    "port": [
+                      {
+                        "name": "trafgen/2/1",
+                        "receive-q-length": "2",
+                        "open": {"application": {"trafgen": {}}},
+                        "trafgen": {
+                          "transmit-params": {"transmit-mode": {"range": {}}},
+                          "range-template": {
+                            "packet-size": {
+                              "start": "512",
+                              "increment": "1",
+                              "maximum": "512",
+                              "minimum": "512"
+                            },
+                            "source-ip": {
+                              "start": "11.0.1.4",
+                              "increment": "1",
+                              "minimum": "11.0.1.4",
+                              "maximum": "11.0.1.4"
+                            },
+                            "destination-ip": {
+                              "start": "11.0.1.3",
+                              "increment": "1",
+                              "minimum": "11.0.1.3",
+                              "maximum": "11.0.1.3"
+                            },
+                            "source-port": {
+                              "start": "10000",
+                              "increment": "1",
+                              "maximum": "10128",
+                              "minimum": "10000"
+                            },
+                            "destination-port": {
+                              "start": "5678",
+                              "increment": "1",
+                              "maximum": "5678",
+                              "minimum": "5678"
+                            },
+                            "destination-mac": {"dynamic": {"gateway": "11.0.1.3"}}
+                          }
+                        },
+                        "colonyId": "trafgen",
+                        "private-name": "eth_sim:name=trafgenport",
+                        "id": "1",
+                        "descr-string": {},
+                        "state": "up",
+                        "speed": "10000",
+                        "duplex": "full-duplex",
+                        "app-name": "rw_trafgen",
+                        "receive-queues": "2",
+                        "transmit-queues": "40",
+                        "numa-socket": "0",
+                        "mac-address": "00:00:00:ab:02:01",
+                        "fastpath-instance": "2"
+                      }
+                    ],
+                    "speed": "10000",
+                    "state": "up"
+                  }
+                ],
+                "destination": ["loadbal|trafgen-lb"]
+              }
+            ]
+          },
+          {
+            "name": "loadbal - RW.VM.loadbal.1",
+            "type": "loadbal",
+            "vm": [
+              {
+                "component_type": "RWVM",
+                "component_name": "RW.VM.loadbal.1",
+                "instance_id": "6",
+                "instance_name": "RW.VM.loadbal.1-6",
+                "state": "STARTED",
+                "rwcomponent_parent": "trafsink-3",
+                "rwcomponent_children": [
+                  "RW.Proc_15-15",
+                  "RW.Proc_16-16"
+                ],
+                "vm_info": {
+                  "vm-ip-address": "127.0.0.1",
+                  "pid": "3969"
+                },
+                "fpath-id": ["4"],
+                "process": [
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_15",
+                    "instance_id": "15",
+                    "instance_name": "RW.Proc_15-15",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.loadbal.1-6",
+                    "rwcomponent_children": ["RW.Fpath-4"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.Fpath",
+                        "instance_id": "4",
+                        "instance_name": "RW.Fpath-4",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_15-15",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  },
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_16",
+                    "instance_id": "16",
+                    "instance_name": "RW.Proc_16-16",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.loadbal.1-6",
+                    "rwcomponent_children": ["RW.AppMgr-4"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.AppMgr",
+                        "instance_id": "4",
+                        "instance_name": "RW.AppMgr-4",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_16-16",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "connector": [
+              {
+                "@networkId": "trafgen-lb",
+                "@id": "loadbal|trafgen-lb",
+                "@context": "trafgen-lb",
+                "interface": [
+                  {
+                    "name": "N2TenGigi-1",
+                    "ip": {"address": "11.0.1.3/24"},
+                    "bind": {"port": ["trafsink/4/1"]},
+                    "colonyId": "trafsink",
+                    "port": [
+                      {
+                        "name": "trafsink/4/1",
+                        "receive-q-length": "2",
+                        "open": {"application": {"ip-fastpath": {}}},
+                        "colonyId": "trafsink",
+                        "private-name": "eth_sim:name=lbport1",
+                        "id": "2",
+                        "descr-string": {},
+                        "state": "up",
+                        "speed": "10000",
+                        "duplex": "full-duplex",
+                        "app-name": "rw_ipfp",
+                        "receive-queues": "2",
+                        "transmit-queues": "40",
+                        "numa-socket": "0",
+                        "mac-address": "00:00:00:ab:04:02",
+                        "fastpath-instance": "4"
+                      }
+                    ],
+                    "speed": "10000",
+                    "state": "up"
+                  },
+                  {
+                    "name": "N2TenGigi-2",
+                    "ip": {"address": "12.0.1.3/24"},
+                    "bind": {"port": ["trafsink/4/2"]},
+                    "colonyId": "trafsink",
+                    "port": [
+                      {
+                        "name": "trafsink/4/2",
+                        "receive-q-length": "2",
+                        "open": {"application": {"ip-fastpath": {}}},
+                        "colonyId": "trafsink",
+                        "private-name": "eth_sim:name=lbport2",
+                        "id": "3",
+                        "descr-string": {},
+                        "state": "up",
+                        "speed": "10000",
+                        "duplex": "full-duplex",
+                        "app-name": "rw_ipfp",
+                        "receive-queues": "2",
+                        "transmit-queues": "40",
+                        "numa-socket": "0",
+                        "mac-address": "00:00:00:ab:04:03",
+                        "fastpath-instance": "4"
+                      }
+                    ],
+                    "speed": "10000",
+                    "state": "up"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "trafsink - RW.VM.trafsink.1",
+            "type": "trafsink",
+            "vm": [
+              {
+                "component_type": "RWVM",
+                "component_name": "RW.VM.trafsink.1",
+                "instance_id": "7",
+                "instance_name": "RW.VM.trafsink.1-7",
+                "state": "STARTED",
+                "rwcomponent_parent": "trafsink-3",
+                "rwcomponent_children": [
+                  "RW.Proc_17-17",
+                  "RW.Proc_18-18"
+                ],
+                "vm_info": {
+                  "vm-ip-address": "127.0.0.1",
+                  "pid": "3969"
+                },
+                "fpath-id": ["5"],
+                "process": [
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_17",
+                    "instance_id": "17",
+                    "instance_name": "RW.Proc_17-17",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.trafsink.1-7",
+                    "rwcomponent_children": ["RW.Fpath-5"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.Fpath",
+                        "instance_id": "5",
+                        "instance_name": "RW.Fpath-5",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_17-17",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  },
+                  {
+                    "component_type": "RWPROC",
+                    "component_name": "RW.Proc_18",
+                    "instance_id": "18",
+                    "instance_name": "RW.Proc_18-18",
+                    "state": "STARTED",
+                    "rwcomponent_parent": "RW.VM.trafsink.1-7",
+                    "rwcomponent_children": ["RW.AppMgr-5"],
+                    "proc_info": {
+                      "pid": "3969",
+                      "native": "false"
+                    },
+                    "tasklet": [
+                      {
+                        "component_type": "RWTASKLET",
+                        "component_name": "RW.AppMgr",
+                        "instance_id": "5",
+                        "instance_name": "RW.AppMgr-5",
+                        "state": "STARTED",
+                        "rwcomponent_parent": "RW.Proc_18-18",
+                        "tasklet_info": {}
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "connector": [
+              {
+                "@networkId": "lb-trafsink",
+                "@id": "trafsink|lb-trafsink",
+                "@context": "lb-trafsink",
+                "interface": [
+                  {
+                    "name": "N3TenGigi-1",
+                    "ip": {"address": "12.0.1.4/24"},
+                    "bind": {"port": ["trafsink/5/1"]},
+                    "colonyId": "trafsink",
+                    "port": [
+                      {
+                        "name": "trafsink/5/1",
+                        "receive-q-length": "2",
+                        "open": {"application": {"trafgen": {}}},
+                        "trafgen": {"receive-param": {"receive-echo": {"on": {}}}},
+                        "colonyId": "trafsink",
+                        "private-name": "eth_sim:name=trafsinkport",
+                        "id": "2",
+                        "descr-string": {},
+                        "state": "up",
+                        "speed": "10000",
+                        "duplex": "full-duplex",
+                        "app-name": "rw_trafgen",
+                        "receive-queues": "2",
+                        "transmit-queues": "40",
+                        "numa-socket": "0",
+                        "mac-address": "00:00:00:ab:05:02",
+                        "fastpath-instance": "5"
+                      }
+                    ],
+                    "speed": "10000",
+                    "state": "up"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

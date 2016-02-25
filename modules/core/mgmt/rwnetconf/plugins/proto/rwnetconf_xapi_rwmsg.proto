@@ -1,0 +1,70 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+/**
+ * @file rwnetconf_xapi_rwmsg.proto
+ * @author Tom Seidenberg
+ * @date 2014/05/21
+ * @brief RW.Netconf transport: RW.Msg API definitions
+ */
+package rwnetconf_xapi_rwmsg;
+
+import "descriptor.proto";
+import "rwpbapi.proto";
+option cc_generic_services = true;
+
+/**
+ * An XML blob
+ */
+message XmlBlob {
+  /// Unlimited length string containing XML data
+  required string xml_blob = 1;
+}
+
+enum Netconf_Operations {
+  default = 0; // backward compatiability?
+  get = 1;
+  get_config = 2;
+  edit_config = 3;
+  rpc_exec = 4;
+}
+
+/**
+ * A netconf-ish request message.
+ */
+message NetconfReq {
+  /// The request data.
+  optional XmlBlob xml_blob = 1;
+
+  // ATTN: user, other request types
+
+  /// Requested operation
+  optional Netconf_Operations operation = 2;
+}
+
+/**
+ * A response to a netconf-ish request.
+ */
+message NetconfRsp {
+  /// The response data. May be missing or empty.
+  optional XmlBlob xml_response = 3;
+
+  // ATTN: user, other request types
+}
+
+/**
+ * uAgent service
+ */
+service RwNetconfRwMsg {
+  option (rw_srvopts) = { srvnum:101 };
+
+  rpc netconf_request (NetconfReq) returns(NetconfRsp) {
+    option (rw_methopts) = { methno:2 blocking:true };
+  };
+}
+

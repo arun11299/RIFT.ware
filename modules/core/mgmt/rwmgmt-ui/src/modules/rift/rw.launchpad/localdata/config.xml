@@ -1,0 +1,80 @@
+<root>
+    <logging xmlns="http://riftio.com/ns/riftware-1.0/rwlog-mgmt">
+        <rwlog-mgmt:default-severity xmlns:rwlog-mgmt="http://riftio.com/ns/riftware-1.0/rwlog-mgmt">
+            <rwlog-mgmt:severity>info</rwlog-mgmt:severity>
+            <rwlog-mgmt:category>all</rwlog-mgmt:category>
+        </rwlog-mgmt:default-severity>
+    </logging>
+    <colony xmlns="http://riftio.com/ns/riftware-1.0/rw-base">
+        <rw-base:name xmlns:rw-base="http://riftio.com/ns/riftware-1.0/rw-base">trafgen</rw-base:name>
+        <rw-base:network-context xmlns:rw-base="http://riftio.com/ns/riftware-1.0/rw-base">
+            <rw-base:name>epc</rw-base:name>
+            <rw-fpath:interface xmlns:rw-fpath="http://riftio.com/ns/riftware-1.0/rw-fpath">
+                <rw-fpath:name>mme_enb_s11_s1u</rw-fpath:name>
+                <rw-fpath:ip>
+                    <rw-fpath:address>11.0.1.4/24</rw-fpath:address>
+                </rw-fpath:ip>
+                <rw-fpath:bind>
+                    <rw-fpath:port>trafgen/1/1</rw-fpath:port>
+                </rw-fpath:bind>
+            </rw-fpath:interface>
+        </rw-base:network-context>
+    </colony>
+    <colony xmlns="http://riftio.com/ns/riftware-1.0/rw-base">
+        <rw-base:name xmlns:rw-base="http://riftio.com/ns/riftware-1.0/rw-base">trafgen</rw-base:name>
+        <rw-fpath:port xmlns:rw-fpath="http://riftio.com/ns/riftware-1.0/rw-fpath">
+            <rw-fpath:name>trafgen/1/1</rw-fpath:name>
+            <rw-fpath:open>
+                <rw-fpath:application>
+                    <rw-fpath:ip-fastpath/>
+                </rw-fpath:application>
+            </rw-fpath:open>
+            <rw-fpath:receive-q-length>2</rw-fpath:receive-q-length>
+        </rw-fpath:port>
+    </colony>
+    <colony xmlns="http://riftio.com/ns/riftware-1.0/rw-base">
+        <rw-base:name xmlns:rw-base="http://riftio.com/ns/riftware-1.0/rw-base">trafgen</rw-base:name>
+        <rwappmgr:trafsim-service xmlns:rwappmgr="http://riftio.com/ns/riftware-1.0/rwappmgr">
+            <rwappmgr:name>mme-enb</rwappmgr:name>
+            <rwappmgr:protocol-mode>
+                <rwappmgr:lte-sim>
+                    <rwappmgr:operational-mode>
+                        <rwappmgr:mme-enb-sim>
+                            <rwappmgr:network-context>
+                                <rwappmgr:name>epc</rwappmgr:name>
+                            </rwappmgr:network-context>
+                            <rwappmgr:mme>
+                                <rwappmgr:s11-address>11.0.1.4</rwappmgr:s11-address>
+                                <rwappmgr:serving-network>
+                                    <rw-3gpp:mcc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">123</rw-3gpp:mcc>
+                                    <rw-3gpp:mnc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">456</rw-3gpp:mnc>
+                                </rwappmgr:serving-network>
+                            </rwappmgr:mme>
+                            <rwappmgr:enb>
+                                <rwappmgr:gtpu-address>11.0.1.4</rwappmgr:gtpu-address>
+                                <rwappmgr:tai>
+                                    <rw-3gpp:mcc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">123</rw-3gpp:mcc>
+                                    <rw-3gpp:mnc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">345</rw-3gpp:mnc>
+                                    <rw-3gpp:tac xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">1234</rw-3gpp:tac>
+                                </rwappmgr:tai>
+                                <rwappmgr:ecgi>
+                                    <rw-3gpp:mcc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">123</rw-3gpp:mcc>
+                                    <rw-3gpp:mnc xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">455</rw-3gpp:mnc>
+                                    <rw-3gpp:eci xmlns:rw-3gpp="http://riftio.com/ns/riftware-1.0/rwappmgr">1234567</rw-3gpp:eci>
+                                </rwappmgr:ecgi>
+                            </rwappmgr:enb>
+                        </rwappmgr:mme-enb-sim>
+                    </rwappmgr:operational-mode>
+                </rwappmgr:lte-sim>
+            </rwappmgr:protocol-mode>
+        </rwappmgr:trafsim-service>
+    </colony>
+    <ltesim xmlns="http://riftio.com/ns/riftware-1.0/rwappmgr">
+        <rwappmgr:ue-sim xmlns:rwappmgr="http://riftio.com/ns/riftware-1.0/rwappmgr">
+            <rwappmgr:name>Mobile_Node</rwappmgr:name>
+            <rwappmgr:imsi>123456789012345</rwappmgr:imsi>
+            <rwappmgr:imei>12345678901234</rwappmgr:imei>
+            <rwappmgr:msisdn>1122334556667</rwappmgr:msisdn>
+        </rwappmgr:ue-sim>
+    </ltesim>
+</root>

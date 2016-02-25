@@ -1,0 +1,55 @@
+<link rel="import" href="rw-loadbal-model.html">
+<link rel="import" href="rw-loadbal-stats.html">
+<link rel="import" href="rw-dashboard-netstat.html">
+
+<polymer-element name="rw-trafsim-summary" attributes="trafsim service">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-trafsim-summary.css"/>
+    <div class="rate-stack">
+      <div class="rate-result">
+        {{trafsim.call_rate | k}}calls/s
+      </div>
+      <rw-bullet
+              id="datagrid__tx"
+              min="0"
+              max="{{maxCallRate}}"
+              bulletColor="{{theme.txBps}}"
+              value="{{trafsim.call_rate}}"
+              ></rw-bullet>
+      <div class="rate-scale">
+        <div>0</div>
+        <div>{{maxCallRate | k}}calls/s</div>
+      </div>
+      <div class="rate-result">
+        {{trafsim.tx_msg_per_sec | k}}msgs/s
+      </div>
+      <rw-bullet
+              id="datagrid__tx"
+              min="0"
+              max="{{maxMsgRate}}"
+              bulletColor="{{theme.txPps}}"
+              value="{{trafsim.tx_msg_per_sec | noNan}}"
+              ></rw-bullet>
+      <div class="rate-scale">
+        <div>0</div>
+        <div>{{maxMsgRate | k}}msgs/s</div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer(Platform.mixin({
+
+      maxCallRate : 200000,
+
+      maxMsgRate: 600000,
+
+      k : function(n) {
+        return rw.ui.fmt(this.noNan(n), '0a');
+      },
+
+      noNan: function(n) {
+        return isNaN(n) ? 0 : n;
+      }
+    }, rw, rw.ui));
+  </script>
+</polymer-element>

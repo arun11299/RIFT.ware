@@ -1,0 +1,47 @@
+<div id="scriptSelectLyt"
+     ng-class="{'loaded' : sb.scripts.length > 0 && !sb.scriptState}">
+  <h2>Script Selection</h2>
+  <!--<h3 ng-if="!sb.currentScriptObject['read-only'] && sb.scripts.length > 0" ng-click="sb.editScript()">Edit</h3>-->
+  <div class="working-curtain">
+    <div ng-if="!(sb.scripts.length > 0)" class="working-label">Fetching Script List</div>
+    <div ng-if="sb.scriptState == 1" class="working-label">Script Activating</div>
+    <div ng-if="sb.scriptState == 2" class="working-label">Script Running</div>
+    <div ng-if="sb.scriptState == 3" class="working-label">Script Terminating</div>
+    <div class="working"><div class="dot-1"></div><div class="dot-2"></div><div class="dot-3"></div></div>
+  </div>
+  <div class="left">
+    <div class="content">
+      <div class="shadow-top"></div>
+      <ul>
+        <li ng-repeat="script in sb.scripts" ng-class="{'selected':$index === sb.currentScriptIndex}"> <!-- , 'editable': !script['read-only'] -->
+          <dl class="description" ng-click="sb.selectScript($index,script); $event.stopPropagation();">
+            <dt title="{{script.name}}">{{script.name}}</dt>
+            <dd>{{script.description}}</dd>
+          </dl>
+          <!-- -->
+          <dl class="edit-button" ng-if="!script['read-only']" ng-click="sb.editScript(script)">
+            <dd><span class="icn fa-pencil-square"></span> Edit Script</dd>
+          </dl>
+        </li>
+      </ul>
+      <div class="shadow-bottom"></div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="content">
+        <dl class="arguments">
+            <dt>Script Arguments</dt>
+            <dd ng-if="sb.currentScriptObject['extra-args'] !== ''"><code>{{sb.currentScriptObject["extra-args"]}}</code></dd>
+            <dd ng-if="sb.currentScriptObject['extra-args'] === ''">…</dd>
+        </dl>
+        <div class="codemirror-component" ui-codemirror= "{
+             lineNumbers: true,
+             theme:'mbo',
+             lineWrapping : true,
+             mode: 'python',
+             indentUnit:4,
+             readOnly:true
+           }"ng-model="sb.currentScriptObject.code"></div>
+    </div>
+  </div>
+</div>

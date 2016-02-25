@@ -1,0 +1,28 @@
+@import "css/base/base";
+@import "css/elements/header";
+@import "css/elements/datagrid";
+@import "css/elements/button";
+@import "css/elements/section-details";
+
+:host {
+  display: block;
+  .flex-display();
+  background-color: @gray6;
+}
+
+/**
+ * .fieldset has large bottom margin, if i take it off
+ * i can fit more before details starts to scroll 
+ */
+#details {
+  .flex(2);
+  margin: 10px 10px 0 10px;
+}
+
+#details .fieldset {
+  margin: 0;
+}
+
+#ports {
+  .flex(9);
+}

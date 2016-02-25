@@ -1,0 +1,103 @@
+{
+    "data": {
+        "response": [
+            {
+                "@endpoint": "/R/rwinit/5"
+            },
+            {
+                "@endpoint": "/R/RW.FpCtrl/2"
+            },
+            {
+                "@endpoint": "/R/RW.uAgent/2",
+                "debug-info": "from-self"
+            },
+            {
+                "@endpoint": "/R/rwinit/7"
+            },
+            {
+                "@endpoint": "/R/rwinit/8"
+            },
+            {
+                "@endpoint": "/R/RW.Msgbroker/1"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/4"
+            },
+            {
+                "@endpoint": "/R/rwinit/4"
+            },
+            {
+                "@endpoint": "/R/rwinit/1"
+            },
+            {
+                "@endpoint": "/R/rwinit/6"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/6"
+            },
+            {
+                "@endpoint": "/R/RW.NcMgr/3"
+            },
+            {
+                "@endpoint": "/R/rwinit/9"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/1",
+                "node": {
+                    "rw-fpath:counters": {
+                        "rw-fpath:port": [
+                            {
+                                "rw-fpath:duplex": "full-duplex",
+                                "rw-fpath:id": "0",
+                                "rw-fpath:input-bytes": "92",
+                                "rw-fpath:input-errors": "0",
+                                "rw-fpath:input-packets": "122478",
+                                "rw-fpath:name": "eth_sim:name=fabric",
+                                "rw-fpath:output-bytes": "92",
+                                "rw-fpath:output-errors": "0",
+                                "rw-fpath:output-packets": "122410",
+                                "rw-fpath:rx-rate-mbps": "0",
+                                "rw-fpath:rx-rate-pps": "0",
+                                "rw-fpath:speed": "10000",
+                                "rw-fpath:state": "up",
+                                "rw-fpath:tx-rate-mbps": "0",
+                                "rw-fpath:tx-rate-pps": "0"
+                            }
+                        ]
+                    },
+                    "rw-fpath:port-state": {}
+                }
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/7"
+            },
+            {
+                "@endpoint": "/R/RW.FpCtrl/3"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/5"
+            },
+            {
+                "@endpoint": "/R/rwinit/2"
+            },
+            {
+                "@endpoint": "/R/rwinit/3"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/3"
+            },
+            {
+                "@endpoint": "/R/rwinit/10"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/8"
+            },
+            {
+                "@endpoint": "/R/RW.NcMgr/2"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/2"
+            }
+        ]
+    }
+}

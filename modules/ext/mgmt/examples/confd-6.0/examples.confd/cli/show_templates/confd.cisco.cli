@@ -1,0 +1,39 @@
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+      <dropElem src="alias expansion"/>
+      <multiValue src="alias expansion"/>
+      <suppressMode src="alias "/>
+      <addPipeFlags src="show">show_bignum humanreadable</addPipeFlags>
+      <modeName src="aaa ios privilege">
+        <capi><cmdpoint>mode_name</cmdpoint></capi>
+      </modeName>
+    </modifications>
+  </operationalMode>
+
+
+  <configureMode>
+  </configureMode>
+
+  <pipeCmds>
+    <cmd name="humanreadable">
+      <info/>
+      <help/>
+      <options>
+        <pipeFlags>humanreadable</pipeFlags>
+      </options>
+    </cmd>
+  </pipeCmds>
+
+  <pipeCmds>
+    <cmd name="show_bignum">
+      <info/>
+      <help/>
+      <options>
+        <pipeFlags>show_bignum</pipeFlags>
+      </options>
+    </cmd>
+  </pipeCmds>
+
+</clispec>

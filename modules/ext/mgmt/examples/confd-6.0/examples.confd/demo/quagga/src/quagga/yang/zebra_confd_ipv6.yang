@@ -1,0 +1,106 @@
+submodule zebra_confd_ipv6 {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  leaf forwarding {
+    type boolean;
+    default false;
+  }
+  typedef DefaultValueType {
+    type enumeration {
+      enum default;
+    }
+  }
+  typedef DistanceOrDefault {
+    type union {
+      type DistanceRangeType;
+      type DefaultValueType;
+    }
+  }
+
+/*  =========================================================  */
+/*  =============== zebra ip configuration ==================  */
+/*  =========================================================  */
+
+  augment "/system/ipv6" {
+
+    list route-gw {
+      key "destination dst-prefix-length gw distance";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv6-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv6;
+      }
+      leaf gw {
+        type inet:ipv6-address;
+      }
+      leaf distance {
+        type DistanceOrDefault;
+      }
+      leaf operation {
+        type OperationType;
+      }
+    }
+    list route-if {
+      key "destination dst-prefix-length interface distance";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv6-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv6;
+      }
+      leaf interface {
+        type leafref {
+          path "../../../interface/name";
+        }
+      }
+      leaf distance {
+        type DistanceOrDefault;
+      }
+      leaf operation {
+        type OperationType;
+      }
+    }
+    list route-gw-if {
+      key "destination dst-prefix-length gw interface distance";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv6-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv6;
+      }
+      leaf gw {
+        type inet:ipv6-address;
+      }
+      leaf interface {
+        type leafref {
+          path "../../../interface/name";
+        }
+      }
+      leaf distance {
+        type DistanceOrDefault;
+      }
+      leaf operation {
+        type OperationType;
+      }
+    }
+  }
+}

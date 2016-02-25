@@ -1,0 +1,83 @@
+submodule zebra_confd_ip {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+/*  =========================================================  */
+/*  =============== zebra ip configuration ==================  */
+/*  =========================================================  */
+
+  augment "/system/ip" {
+
+    leaf forwarding {
+      type boolean;
+      default false;
+    }
+    list route-gw {
+      key "destination dst-prefix-length gw";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv4-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv4;
+      }
+      leaf gw {
+        type inet:ipv4-address;
+      }
+      leaf operation {
+        type OperationType;
+      }
+      leaf distance {
+        type DistanceRangeType;
+      }
+    }
+    list route-if {
+      key "destination dst-prefix-length interface";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv4-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv4;
+      }
+      leaf interface {
+        type leafref {
+          path "../../../interface/name";
+        }
+      }
+      leaf operation {
+        type OperationType;
+      }
+      leaf distance {
+        type DistanceRangeType;
+      }
+    }
+    list route-null {
+      key "destination dst-prefix-length";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf destination {
+        type inet:ipv4-address;
+      }
+      leaf dst-prefix-length {
+        type PrefixLengthIPv4;
+      }
+      leaf distance {
+        type DistanceRangeType;
+      }
+    }
+  }
+}

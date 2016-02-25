@@ -1,0 +1,56 @@
+<link rel="import" href="../lib/core-icons/core-icons.html">
+<link rel="import" href="../lib/core-icon/core-icon.html">
+
+<polymer-element name="sort-controller" attributes="itemSelector">
+  <script>
+    Polymer({
+      itemSelectorChanged: function() {
+        this.sortItems = this.parentNode.querySelectorAll(this.itemSelector);
+        var self = this;
+        Array.prototype.forEach.call(this.sortItems, function(sortItem) {
+          sortItem.addEventListener("sort", self.sortItemClicked.bind(self));
+        });
+      },
+      sortItemClicked: function(e) {
+        Array.prototype.forEach.call(this.sortItems, function(sortItem) {
+          if (e.srcElement !== sortItem) {
+            sortItem.ordered = false;
+          }
+        });
+        this.fire("sort", e.detail);
+      }
+    });
+  </script>
+</polymer-element>
+
+<polymer-element name="sort-item" on-click="sort" layout horizontal attributes="token ordered ascending">
+  <template>
+    <style>
+      .sortIcon {
+        width: 16px;
+        height: 16px;
+      }
+      .blankIcon {
+        display: inline-block;
+      }
+    </style>
+    <content flex></content>
+    <template if="{{ordered}}">
+      <core-icon class="sortIcon " icon="{{ascending ? 'arrow-drop-up' : 'arrow-drop-down'}}"></core-icon>
+    </template>
+    <template if="{{!ordered}}">
+      <div class="sortIcon blankIcon"></div>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      ascending : false,
+      ordered : false,
+      sort: function() {
+        this.ordered = true;
+        this.ascending = ! this.ascending;
+        this.fire("sort", {token: this.token, ascending : this.ascending});
+      }
+    });
+  </script>
+</polymer-element>

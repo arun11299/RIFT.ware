@@ -1,0 +1,169 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// viewport-vnf.less
+//
+// Styles for viewport vnf screen
+//
+.viewport-vnf {
+  h2 {
+    padding-bottom: 2rem;
+  }
+  h3 {
+    background: @white;
+    font-size: 0.875rem;
+    padding: 1.125rem;
+    .all-caps
+  }
+  h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.5625rem;
+    .all-caps;
+  }
+  &.navpanel-container {
+    background-color: @gray-lightest;
+  }
+  .flex-row {
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+    .link-diagram {
+      position: absolute;
+      bottom: -3.813rem;
+      left: 13.5%;
+      img {
+        width: 80%;
+      }
+    }
+  }
+  .mainpanel {
+    margin: 0 0 5rem 5rem;
+  }
+  .vnf-card {
+    flex: 0 1 30.5%;
+    margin-right: 2rem;
+    background-color:@gray-lighter;
+    &:first-child {
+      margin-left: 0;
+    }
+    &:last-child {
+      margin-right: 0;
+    }
+    table {
+      width: 100%;
+    }
+    td {
+      border-bottom: 2px solid @gray-lightest;
+      border-right: 2px solid @gray-lightest;
+      padding: 1.125em 0;
+      text-align: center;
+      width: 50%;
+      &:last-child {
+        border-right: 0;
+      }
+      img {
+        width: 75%;
+
+      }
+      small {
+        display: block;
+        margin-bottom: 1.5em;
+      }
+    }
+    tr:first-child td {
+      background-color: @gray-lighter;
+    }
+    tr:last-child td {
+      background-color: @gray-light;
+    }
+    > ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      width: 99.8%;
+      border-bottom: 2px solid @gray-lightest;
+      li {
+        background-color: @gray-lighter;
+        flex: 1 1 auto;
+        margin-right: 0.125rem;
+        padding: 1.5em 0.75em;
+        text-align: center;
+        &:first-child {
+          flex: 0 1 18%;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    > div {
+      background-color: @gray-light;
+      box-sizing: border-box;
+      margin-top: 0.125rem;
+      padding: 0.75rem 1.5rem 1.5rem;
+      text-align: center;
+      width: 99.8%;
+      .button-action-toggle {
+        font-size: 0.75rem;
+      }
+    }
+    &.vlb {
+      .bindings {
+        padding: 1.125rem 1.5rem;
+        em {
+          display: block;
+          margin: 1.063rem 0;
+        }
+        img {
+          width: 0.75rem;
+        }
+      }
+    }
+  }
+  .navpanel {
+    &.top,
+    &.bottom {
+      background-color: @gray-lightest;
+      height: 38px;
+      overflow: hidden;
+      padding: 0;
+      position: relative;
+      .tilt {
+        background-color: @gray-light;
+        height: 38px;
+        position: absolute;
+          left: 0;
+          top: -25px;
+        transform: rotate(1.4deg);
+        width: 100%;
+      }
+      &:before {
+        border: 0;
+      }
+    }
+    &.top {
+      &:after {
+        border-right: 48px solid @gray;
+        border-top: 38px solid @gray-light;
+      }
+    }
+    &.bottom {
+      transform: scaleY(-1);
+      &:after {
+        border-left: 48px solid @gray-light;
+        border-top: 38px solid @gray;
+        transform: scaleY(-1);
+      }
+    }
+    &.right {
+      background-color: @gray;
+      width: 48px;
+      .flex-center;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module ntp-tailf {
+
+  namespace "http://riftio.com/ns/core/mgmt/rwuagent/test/ntp-tailf";
+  prefix "ntp-tailf";
+
+  import ntp {
+    prefix "ntp";
+  }
+
+  import tailf-common {
+    prefix "tailf";
+  }
+
+  tailf:annotate "/ntp:ntp/ntp:server/ntp:status" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/ntp:configure-rpc" {
+    tailf:actionpoint rw_action;
+  }
+}

@@ -1,0 +1,129 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file rw-generic.yang
+ * @author Austin Cormier
+ * @date 01/04/2014
+ * @brief Log events for generic logging
+ */
+
+module rw-generic
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-generic";
+  prefix "rwgeneric";
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import rw-cli-ext {
+    prefix "rwcli";
+  }
+
+  import rw-pb-ext {
+    prefix "rwpb";
+  }
+
+  import rw-yang-types {
+    prefix "rwt";
+  }
+
+  import rw-notify-ext {
+    prefix "rwnotify";
+  }
+
+  import rw-log {
+    prefix "rwlog";
+  }
+
+  revision 2014-01-04 {
+    description
+      "Initial revision.";
+    reference
+      "RIFT Generic Logging";
+  }
+
+  /*
+   * Generic Logger Log Events - ID space 60000 - 60099
+   */
+  notification debug {
+    rwpb:msg-new Debug;
+    rwnotify:log-event-id 60000;
+      description
+         "Generic Debug Log";
+      uses rwlog:severity-debug;
+      leaf category {
+        type string;
+      }
+      leaf log  {
+        type string;
+      }
+  }
+
+  notification info {
+    rwpb:msg-new Info;
+    rwnotify:log-event-id 60001;
+      description
+         "Generic Info Log";
+      uses rwlog:severity-info;
+      leaf category {
+        type string;
+      }
+      leaf log  {
+        type string;
+      }
+  }
+
+  notification warn {
+    rwpb:msg-new Warn;
+    rwnotify:log-event-id 60002;
+      description
+         "Generic Warning Log";
+      uses rwlog:severity-warning;
+      leaf category {
+        type string;
+      }
+      leaf log  {
+        type string;
+      }
+  }
+
+  notification error {
+    rwpb:msg-new Error;
+    rwnotify:log-event-id 60003;
+      description
+         "Generic Warning Log";
+      uses rwlog:severity-error;
+      leaf category {
+        type string;
+      }
+      leaf log  {
+        type string;
+      }
+  }
+
+  notification critical {
+    rwpb:msg-new Critical;
+    rwnotify:log-event-id 60004;
+      description
+         "Generic Critical Log";
+      uses rwlog:severity-critical;
+      leaf category {
+        type string;
+      }
+      leaf log  {
+        type string;
+      }
+  }
+
+  /*
+   * END - generic log events
+   */
+}

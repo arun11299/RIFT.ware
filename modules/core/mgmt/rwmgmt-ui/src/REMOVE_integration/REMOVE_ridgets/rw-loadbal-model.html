@@ -1,0 +1,64 @@
+
+<polymer-element name="rw-loadbal-model" attributes="colony workers sum">
+<script>
+Polymer({
+
+  created: function() {
+    this.workers = [];
+    this.sum = {};
+  },
+
+  ready: function() {
+    this.socket = new rw.api.SocketSubscriber('web/get');
+  },
+
+  colonyChanged: function() {
+    this.update();
+  },
+
+  update: function() {
+    if (this.colony === null) {
+      return;
+    }
+    var url = '/api/operational/colony/' + this.colony + '/load-balancer?deep';
+    this.socket.websubscribe(url, this.updateData.bind(this), this.offlineRandomize.bind(this));
+  },
+
+  updateData: function(config) {
+    var nextWorkers = [];
+    for (var i = 0; i < config['rw-fpath:load-balancer'].fastpath.length; i++) {
+      var fpath = config['rw-fpath:load-balancer'].fastpath[i];
+      for (var j = 0; j < fpath.worker.length; j++) {
+        nextWorkers.push(this.workerRow(fpath.worker[j]));
+      }
+    }
+
+    rw.inplaceUpdate(this.workers, nextWorkers);
+    rw.math.run(this.sum, this.workers, rw.math.sum);
+  },
+
+  workerRow: function(wkr) {
+    var row = {
+      fwdBindings : parseInt(wkr['fwd-bindings']),
+      fwdPktReceived :parseInt(wkr['fwd-pkt-received']),
+      fwdPktXmit :parseInt(wkr['fwd-pkt-xmit']),
+      fwdPktDrop :parseInt(wkr['fwd-pkt-drop']),
+      revBindings :parseInt(wkr['rev-bindings']),
+      revPktReceived :parseInt(wkr['rev-pkt-received']),
+      revPktXmit :parseInt(wkr['rev-pkt-xmit']),
+      revPktDrop :parseInt(wkr['rev-pkt-drop'])
+    };
+    return row;
+  },
+
+  offlineRandomize: function(data) {
+    console.log('TODO: randomize load balancer');
+    this.updateData(data);
+  },
+
+  detached: function() {
+    this.socket.unsubscribe();
+  }
+});
+</script>
+</polymer-element>

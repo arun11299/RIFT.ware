@@ -1,0 +1,98 @@
+<polymer-element name="rw-ltesim-details" attributes="ltesim service lteModel">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-ltesim-details.css" />
+        <div id="ltesimdetails" class="row details">
+
+            <!-- reusable template -->
+            <template id="prop">
+              <li><span class="label">{{name}} :</span> <span class="value">{{value}}</span>
+                <ul class="propList">
+                  <template ref="prop" repeat="{{children}}"></template>
+                </ul>
+              </li>
+            </template>
+
+            <template repeat="{{counter in counters}}">
+                <div id="traffic" class="col">
+                    <h2>{{counter.name}}</h2>
+                    <ul class="propList">
+                        <template repeat="{{counter.children}}" ref="prop"></template>
+                    </ul>
+                </div>
+            </template>
+            <div class="col">
+              <h2>REST</h2>
+              <ul class="propList">
+                <template repeat="{{restMetrics}}" ref="prop"></template>
+              </ul>
+            </div>
+        </div>
+    </template>
+  <script>
+    Polymer(Platform.mixin({
+      observe : {
+        'ltesim.metrics' : 'ltesimChanged',
+        'ltesim.restMetrics' : 'ltesimRestChanged'
+      },
+
+      lteModelChanged: function() {
+        var self = this;
+        self.lteModel.addEventListener("update-config", function(e) {
+          // avoid race-condition that service is loaded lte data
+          if (self.service && !(self.ltesim)) {
+            self.serviceChanged();
+          }
+        });
+      },
+
+      serviceChanged: function() {
+        if (this.service.type == 'ltemmesim') {
+          this.ltesim = this.lteModel.mme;
+        } else {
+          this.ltesim = this.lteModel.saegw;
+        }
+      },
+
+      ltesimChanged: function() {
+        if (!('metrics' in this.ltesim) || !('counters' in this.ltesim.metrics)) {
+          return;
+        }
+        var self = this;
+        var counters = [];
+        for (var service in this.ltesim.metrics.counters) {
+          var container = this.ltesim.metrics.counters[service];
+          for (var counterProp in container) {
+            var counter = container[counterProp];
+            if (!jQuery.isEmptyObject(counter)) {
+              //var data = JSON.stringify(counter, null, '  ');
+              var children = self.getChildren(counter);
+              counters.push({name : counterProp, children : children});
+            }
+          }
+        }
+        this.counters = counters;
+      },
+
+      ltesimRestChanged: function() {
+        if (!('restMetrics' in this.ltesim)) {
+          return;
+        }
+
+        this.restMetrics = this.getChildren(this.ltesim.restMetrics);
+      },
+
+      getChildren: function(obj) {
+        var children = [];
+        for (var prop in obj) {
+          if (typeof(obj[prop]) == 'object') {
+            var grandChildren = this.getChildren(obj[prop]);
+            children.push({name : prop, children : grandChildren})
+          } else {
+            children.push({name : prop, value : obj[prop]});
+          }
+        }
+        return children;
+      }
+    }, rw, rw.ui));
+  </script>
+</polymer-element>

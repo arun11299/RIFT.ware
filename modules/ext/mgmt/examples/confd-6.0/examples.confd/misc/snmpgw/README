@@ -1,0 +1,137 @@
+Example: Using the SNMP gateway
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example illustrates the use of the Confd->SNMP gateway.  A number
+of standard MIB modules are translated into YANG modules, which are
+then compiled to fxs files.  When ConfD has loaded those fxs files,
+accesses to the nodes in them (using e.g. CLI or NETCONF) are
+automatically routed to the SNMP agent.  This makes the SNMP MIB
+information appear as an integral part of the CLI and NETCONF
+interfaces.
+
+A separate SNMP agent must already be running somewhere, implementing
+the MIBs IF-MIB and HOST-RESOURCES-MIB.  If not, installing a NET-SNMP
+agent (see http://www.net-snmp.org/) ought to be relatively painless.
+
+
+What the Example does
+~~~~~~~~~~~~~~~~~~~~~
+
+The MIBs we want to make available through ConfD in this example are
+IF-MIB and HOST-RESOURCES-MIB.
+
+The first step in the process is to convert the MIB into a YANG
+module.  This is done with 'confdc'.  The conversion follows the
+standard rules defined in draft-ietf-netmod-smi-yang-05.txt.
+
+    $ confdc --mib2yang-std IF-MIB.mib
+
+IF-MIB does not stand on its own, but depends on a handful of other
+MIBs: IANAifType-MIB, SNMPv2-TC, SNMPv2-CONF, SNMPv2-SMI, and
+SNMPv2-MIB.  The SNMP MIBs are already converted and delivered with
+ConfD, but other MIBs, in this case IANAifType-MIB, must also be
+converted.
+
+The HOST-RESOURCES-MIB contains the TEXTUAL-CONVENTION
+InternationalDisplayString, which is translated by the standard rules
+into:
+
+    typedef InternationalDisplayString {
+        type binary;
+        ...
+    }
+
+This means that all objects in HOST-RESOURCES-MIB of this type are
+base64 encoded, for example:
+
+    <hrSWRunPath>L3Vzci9saWIvZGNvbmYvZGNvbmYtc2VydmljZQ==</hrSWRunPath>
+
+This is not very user-friendly to display in a user interface, so in
+order to instruct ConfD's user interface agents (the CLI and WebUI) to
+try to display this as a normal string, we annotate this
+TEXTUAL-CONVENTION with a special display hint.  This is done in the
+file HOST-RESOURCES-MIB.miba.  The result is that this will look like
+this in the CLI:
+
+    hrSWRunPath       /usr/lib/dconf/dconf-service;
+
+In order to use this mib annotation file, it needs to be converted to
+YANG, and used when the YANG file is compiled:
+
+    $ confdc --mib2yang-mods --keep-readonly \
+        --mib-annotation HOST-RESOURCES-MIB.miba \
+        -o HOST-RESOURCES-MIB-ann.yang \
+        HOST-RESOURCES-MIB.mib
+
+Once all YANG modules have been produced, they are compiled
+into .fxs files using confdc, by passing the flag --snmpgw.
+
+    $ confdc -c --snmpgw IF-MIB.yang
+
+    $ confdc -c --snmpgw ---annotate HOST-RESOURCES-MIB-ann.yang \
+	HOST-RESOURCES-MIB.yang
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files by typing
+
+        $ make all
+
+    This will use the 'confdc' program to translate the MIBs into YANG
+    modules, then compile the YANG modules into .fxs files.
+
+ 2. Configure SNMP agent access
+
+    Indicate in the <snmpgw> section in confd.conf how
+    to access the SNMP agent:
+
+      <snmpgw>
+	<enabled>true</enabled>
+	<agent>
+	  <name>a1</name>
+	  <subscriptionId>a1</subscriptionId>
+	  <ip>127.0.0.1</ip>
+	  <port>161</port>
+	  <community>public</community>
+	  <version>v2c</version>
+	  <timeout>PT2S</timeout>
+          <!-- list all modules implemented by this agent -->
+	  <module>IF-MIB</module>
+	  <module>HOST-RESOURCES-MIB</module>
+	</agent>
+      </snmpgw>
+
+    If you have NET-SNMP installed, you can check the connectivity
+    using:
+
+        $ snmpget -m ./IF-MIB.mib -v 2c -c public localhost ifNumber.0
+
+ 3. Start ConfD by typing
+
+        $ make start
+
+ 4. Start the CLI with 'make cli'
+
+        > show status IF-MIB
+
+        > show status HOST-RESOURCES-MIB
+
+    SNMP statistics will be returned from the agent.
+
+    For comparison, in case the NET-SNMP tools are installed, the
+    command
+
+        $ snmpwalk -v 2c -c public localhost
+
+    does an equivalent access.
+
+ 5. Retrieve information over NETCONF
+
+        $ make query-if
+
+        $ make query-host
+
+    This invokes netconf-console-tcp to give us the same information as
+    in step 5, but in XML format.

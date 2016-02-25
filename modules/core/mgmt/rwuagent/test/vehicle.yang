@@ -1,0 +1,53 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file flat-conversion.yang
+ * @author Vinod Kamalaraj
+ * @date 2014/11/12
+ * @brief YANG definition for unit testing uagent 
+ */
+
+module vehicle
+{
+  namespace "http://riftio.com/ns/core/mgmt/uagent/test/vehicle";
+  prefix "vehicle";
+
+  import rw-pb-ext { prefix "rwpb"; }
+  
+  description
+    "Base yang for testing xml to pb and pb to xml conversion with flat PB";
+
+  
+
+  
+  revision 2014-11-12 {
+    description "Initial version"; }
+
+  list car {
+    key "brand";
+
+    leaf brand {
+      type string;
+    }
+
+    list models {
+      key "name";
+      rwpb:application-request-point;
+      
+      leaf name {
+        type string;
+      }
+
+      leaf capacity {
+        type uint8;
+      }
+    }
+  }
+}

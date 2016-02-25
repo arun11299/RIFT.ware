@@ -1,0 +1,196 @@
+submodule ospf_confd_if_ip {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+  include ospf_confd_router;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  typedef authType {
+    type enumeration {
+      enum message-digest;
+      enum null;
+    }
+  }
+  typedef OspfDeadIntHelloMultRangeType {
+    type uint8 {
+      range "1 .. 10";
+    }
+  }
+  typedef OspfNetworkType {
+    type enumeration {
+      enum broadcast;
+      enum non-broadcast;
+      enum point-to-multipoint;
+      enum point-to-point;
+    }
+  }
+
+  augment "/system/interface/ip" {
+
+    container ospf {
+      container authentication {
+        presence "";
+        leaf type {
+          type authType;
+        }
+      }
+      list authentication-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf type {
+          type authType;
+        }
+      }
+      leaf authentication-key {
+        type string;
+      }
+      list authentication-key-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf authentication-key {
+          type string;
+          mandatory true;
+        }
+      }
+      leaf cost {
+        type CostRangeType;
+      }
+      list cost-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf cost {
+          type CostRangeType;
+          mandatory true;
+        }
+      }
+      container dead-interval {
+        presence "";
+        choice interval-type {
+          mandatory true;
+          leaf dead-interval {
+            type OspfIntervalRangeType;
+          }
+          leaf dead-interval-minimal-hello-multiplier {
+            type OspfDeadIntHelloMultRangeType;
+          }
+        }
+      }
+      list dead-interval-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        choice interval-type {
+          mandatory true;
+          leaf dead-interval {
+            type OspfIntervalRangeType;
+          }
+          leaf dead-interval-minimal-hello-multiplier {
+            type OspfDeadIntHelloMultRangeType;
+          }
+        }
+      }
+      leaf hello-interval {
+        type OspfIntervalRangeType;
+      }
+      list hello-interval-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf hello-interval {
+          type OspfIntervalRangeType;
+          mandatory true;
+        }
+      }
+      list message-digest-key {
+        key key-id;
+        leaf key-id {
+          type uint8;
+        }
+        leaf md5 {
+          type string;
+          mandatory true;
+        }
+      }
+      list message-digest-key-ip {
+        key "key-id if-address";
+        leaf key-id {
+          type uint8;
+        }
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf md5 {
+          type string;
+          mandatory true;
+        }
+      }
+      leaf mtu-ignore {
+        type boolean;
+        default false;
+      }
+      list mtu-ignore-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+      }
+      leaf network {
+        type OspfNetworkType;
+        default broadcast;
+      }
+      leaf priority {
+        type uint8;
+      }
+      list priority-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf priority {
+          type uint8;
+          mandatory true;
+        }
+      }
+      leaf retransmit-interval {
+        type OspfIntervalRangeType;
+      }
+      list retransmit-interval-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf retransmit-interval {
+          type OspfIntervalRangeType;
+          mandatory true;
+        }
+      }
+      leaf transmit-delay {
+        type OspfIntervalRangeType;
+      }
+      list transmit-delay-ip {
+        key if-address;
+        leaf if-address {
+          type inet:ipv4-address;
+        }
+        leaf transmit-delay {
+          type OspfIntervalRangeType;
+          mandatory true;
+        }
+      }
+    }
+  }
+}

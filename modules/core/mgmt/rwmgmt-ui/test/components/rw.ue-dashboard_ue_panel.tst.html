@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" class="viewport"  ng-app="ue">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/angular/angular.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../lib/socket.io-client/dist/socket.io.js"></script>
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.min.js"></script>
+  <script src="../../integration/_components/_services/dispatchesque.js"></script>
+  <script src="../../modules/rift/rw.ue.min.js"></script>
+  <script src="../../modules/rift/ui.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+
+</head>
+<body class="viewport" style="margin:100px;" ng-controller="testController">
+<rw-dashboard-ue-panel class="row dash-gauges" ng-if="hasMme || hasSaegw" has-mme="hasMme" has-saegw='hasSaegw'></rw-dashboard-ue-panel>
+<script>
+angular.module('ue')
+.controller('testController', function($scope, ueFactory, dispatcher) {
+ var self = $scope;
+     self.hasMme = true;
+     self.hasSaegw = true;
+})
+</script>
+</body>
+</html>
+

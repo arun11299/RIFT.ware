@@ -1,0 +1,80 @@
+@import "css/network-diagram";
+
+:host {
+  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  padding:0px;
+  margin:0px;
+}
+
+rect.service {
+  fill: @gray6;
+  stroke : @gray2;
+  stroke-width: 1;
+}
+
+path.fabricPattern {
+  stroke: @gray5;
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+text.as {
+  fill: @white;
+//  baseline-shift: -50%;
+//  dominant-baseline: central;
+}
+
+rect.as, rect.iface{
+  stroke: @white;
+  fill: @gray8;
+  stroke: @gray2;
+}
+
+rect.fabric {
+  stroke : @gray5;
+  stroke-width: 1;
+}
+
+text.fabric {
+  fill : @gray6;
+}
+
+rect.vmicon {
+  stroke: @gray6;
+  stroke-width: 12; // large because in a 512 viewbox
+  fill: @gray8;
+}
+
+text.label {
+  fill: @white;
+}
+
+.selection {
+  fill: none;
+  stroke: @blue-glow;
+}
+
+#diagram {
+  height: 100%;
+  width: 100%;
+  min-width: 1500px;
+}
+
+text.title{
+  fill:#cccccc;
+  stroke:none;
+
+  font-size: 16px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:200;
+}
+text.label{
+  fill:#ffffff;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}

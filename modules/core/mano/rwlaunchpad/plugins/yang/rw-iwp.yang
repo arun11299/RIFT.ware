@@ -1,0 +1,184 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file rw-iwp.yang
+ * @author Austin Cormier
+ * @date 2015/09/21
+ * @brief Intelligent Workload Placement Yang
+ */
+
+module rw-iwp
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-iwp";
+  prefix "rw-iwp";
+
+
+  import rw-pb-ext {
+    prefix "rwpb";
+  }
+
+  import rw-cli-ext {
+    prefix "rwcli";
+  }
+
+  import rw-yang-types {
+    prefix "rwt";
+  }
+
+  import rwcal {
+    prefix "rwcal";
+  }
+
+  import ietf-yang-types {
+    prefix "yang";
+  }
+
+  import mano-types {
+    prefix "manotypes";
+  }
+
+  revision 2015-09-21 {
+    description
+      "Initial revision.";
+  }
+
+  container resource-mgr {
+    rwpb:msg-new ResourceManagerConfig;
+    container mission-control {
+      leaf mgmt-ip {
+        type string;
+      }
+    }
+
+    container mgmt-domain {
+      leaf name {
+        description "The mgmt domain name this launchpad is associated with.";
+        type string;
+      }
+    }
+
+    container pools {
+      rwpb:msg-new ResourcePools;
+      description "Pools configured for this mgmt domain.";
+
+      list vm-pool {
+        rwpb:msg-new VmResourcePool;
+        key "name";
+        leaf name {
+          type string;
+        }
+        list resources {
+          rwpb:msg-new VmPoolResource;
+          key "vm-id";
+
+          leaf vm-id {
+            rwpb:field-string-max 64;
+            type string;
+          }
+
+          leaf is_reserved {
+            description "Flag indicating whether resource is reserved";
+            type boolean;
+            default false;
+            config false;
+          }
+        }
+      }
+
+      list network-pool {
+        rwpb:msg-new NetworkResourcePool;
+        key "name";
+        leaf name {
+          type string;
+        }
+        list resources {
+          rwpb:msg-new NetworkPoolResource;
+          key "network-id";
+
+          leaf network-id {
+            rwpb:field-string-max 64;
+            type string;
+          }
+
+          leaf is_reserved {
+            description "Flag indicating whether resource is reserved";
+            type boolean;
+            default false;
+            config false;
+          }
+        }
+      }
+    }
+
+    container network-request {
+      config false;
+
+      list requests {
+        rwpb:msg-new NetworkRequest;
+        key "request-id";
+        leaf request-id {
+          description "Identifier for the Network Request";
+          type yang:uuid;
+        }
+        container network-response {
+          rwpb:msg-new NetworkResponse;
+          leaf network-id {
+            description "Allocated network id";
+            type string;
+          }
+          leaf network-pool {
+            description "Pool that network resource was allocated from";
+            type string;
+          }
+        }
+      }
+    }
+
+    container vm-request {
+      config false;
+
+      list requests {
+        rwpb:msg-new VMRequest;
+        key "request-id";
+        leaf request-id {
+          description "Identifier for the VM Request";
+          type yang:uuid;
+        }
+
+        uses manotypes:vm-flavor;
+        uses manotypes:guest-epa;
+        uses manotypes:vswitch-epa;
+        uses manotypes:hypervisor-epa;
+        uses manotypes:host-epa;
+
+        leaf image {
+          description "File/URL path to the software image";
+          type string;
+        }
+
+        container vm-response {
+          rwpb:msg-new VMResponse;
+          leaf vm-id {
+            description "Allocated VM id";
+            type string;
+          }
+          leaf vm-ip {
+            description "Management IP Address of the VM";
+            type string;
+          }
+          leaf vm-pool {
+            description "Pool that vm resource was allocated from";
+            type string;
+          }
+        }
+      }
+    }
+  }
+}

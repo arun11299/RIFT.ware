@@ -1,0 +1,61 @@
+@import "css/network-diagram";
+
+:host {
+  position: relative;
+}
+
+#diagram {
+  position: absolute;
+  width: 100%;
+  height: 10000px;
+  //hacky fix for safari ios
+  min-width:1400px;
+}
+
+#metrics {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.metric {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.selection {
+  fill: none;
+  stroke: @blue-glow;
+}
+
+.service {
+  fill: @gray6;
+
+  // Polymer shadowdom bug - it rewrites urls
+  // with complete page.css#dropshadow which isn't right
+  // so we set filter property on svg rect in js core
+  //    filter: url(#dropshadow);
+}
+
+text.title{
+  fill:#cccccc;
+  stroke:none;
+
+  font-size: 16px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:200;
+
+  cursor:pointer;
+}
+
+text.label, text.handle-label{
+  fill:#ffffff;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}

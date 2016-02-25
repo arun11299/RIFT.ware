@@ -1,0 +1,37 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-vnfr-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-vnfr-annotation";
+  prefix "rw-vnfr-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import rw-vnfr {
+    prefix rw-vnfr;
+  }
+
+  import vnfr {
+    prefix vnfr;
+  }
+
+  tailf:annotate "/vnfr:vnfr-catalog/rw-vnfr:vnfd-ref-count" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/vnfr:vnfr-catalog/vnfr:vnfr/rw-vnfr:operational-events" {
+    tailf:callpoint base_show;
+  }
+}

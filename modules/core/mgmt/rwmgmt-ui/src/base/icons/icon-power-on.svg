@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="512px" height="512px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+    <title>TitleHere</title>
+    <desc>DescriptionHere</desc>
+  <g id="icon-power-on">
+    <title>power-on</title>
+    <path id="8512f98af0d764c1a2c60e14a8554b53power-on-2-icon" d="M256,90c44.34,0,86.025,17.267,117.379,48.621C404.732,169.974,422,211.66,422,256  s-17.268,86.025-48.621,117.379S300.34,422,256,422s-86.026-17.268-117.38-48.621C107.268,342.025,90,300.34,90,256  c0-44.34,17.268-86.026,48.62-117.38C169.974,107.267,211.66,90,256,90 M256,50C142.229,50,50,142.229,50,256  c0,113.77,92.229,206,206,206c113.77,0,206-92.23,206-206C462,142.229,369.77,50,256,50z M291,348h-70V164h70V348z" />
+  </g>
+</svg>

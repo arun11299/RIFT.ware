@@ -1,0 +1,43 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-services-model.html">
+<link rel="import" href="../integration/ridgets/rw-system-resources-model.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+  <template>
+    <rw-services-model
+        id="vnf"
+      ></rw-services-model>
+    <rw-system-resources-model
+        id="test0"
+        services="{{$.vnf.services}}"
+        on-update="{{dataLoaded}}"
+        ></rw-system-resources-model>
+  </template>
+  <script>
+    Polymer({
+
+      dataLoaded: function() {
+        if ('ran' in this) {
+          return;
+        }
+        this.ran = true;
+        var self = this;
+        var test0 = this.$.test0;
+        suite('model', function() {
+          test('data', function() {
+            assert.isNotNull(self.$.vnf.services[0].vm[0].cpu);
+          });
+        });
+        htmlTestRunner(mocha.run());
+      }
+    });
+  </script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

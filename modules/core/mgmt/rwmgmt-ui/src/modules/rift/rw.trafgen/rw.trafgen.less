@@ -1,0 +1,225 @@
+@import "../../../integration/ridgets/css/base/base";
+
+/**
+@import "../../../integration/ridgets/css/elements/section-details";
+
+
+@import "../../../integration/ridgets/rw-dashboard-control";
+*/
+
+
+#traffic-control-dashpanel {
+  width: 250px;
+  min-width: 250px;
+  .etched-right();
+  padding-right:10px;
+  .flex(1);
+  max-width: 400px;
+}
+
+#traffic-control-dashpanel-vnf {
+  width: 400px;
+  min-width: 250px;
+  height: 280px;
+  border-right: 1px solid @gray2;
+  padding: 35px;
+}
+
+
+/*------------------*/
+/*----- LAYOUT -----*/
+.trafgen-page {
+
+.details{}
+.details.row{
+  .flex-display();
+  .flex-direction(row);
+  .align-items(stretch);
+}
+
+.details.row .col {
+  .flex(1);
+  padding:10px;
+  margin:0px;
+}
+
+.hide {
+  display: none;
+}
+
+#traffic-metrics {
+  min-width: 300px;
+}
+}
+
+.bargraph-axis.y {
+  height: 100%;
+}
+
+#tgen-barGraph {
+  height: 300px;
+}
+
+
+
+/*------------------*/
+/*----- TRAFGEN CONTROL -----*/
+
+.trafControlPanel.vertical > div{
+  display:flex;
+}
+
+hr.horizontal {
+  display: none;
+}
+
+hr {
+  width: 100%;
+}
+
+.rw-traffic-stats__reset {
+  margin-left: auto;
+  display: inline-block;
+  text-decoration: underline;
+  color: @datagrid-blue;
+  cursor: pointer;
+}
+
+.rw-traffic-stats__control {
+  white-space: nowrap;
+}
+.dash-label {
+  padding-bottom: 6px;
+
+  color: @gray5;
+  font-weight:200;
+  font-size: 14px;
+}
+.dash-slider-start {
+  width: 20px;
+  height:30px;
+
+  color: @gray5;
+  font-size:14px;
+  text-align: right;
+  font-weight:200;
+  line-height: 30px;
+}
+
+.dash-slider-end {
+  width: 35px;
+  height:30px;
+
+  color: @gray5;
+  font-size:14px;
+  text-align: left;
+  font-weight:200;
+  line-height: 30px;
+}
+.dash-slider-value {
+  color: @gray5;
+  font-size: 22px;
+  font-weight:400;
+}
+
+.dash-slider rw-slider {
+  .flex(1 0 auto);
+  margin: 0px;
+}
+.dash-slider-value {
+  .justify-content(center);
+}
+
+.secondaryButtons span.button {
+  flex: 1;
+}
+/**/
+
+/**/
+// Vertical-only
+
+#controlPanel.form__v > .dash-slider {
+  .flex-display();
+  margin: 0 0 0px;
+}
+
+#controlPanel.form__v > div {
+  width: 100%;
+  .flex-display();
+  .flex-direction(row);
+}
+
+#controlPanel.form__v > .primaryButtons {
+  .etched-bottom();
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.dash-slider-value {
+  font-size: 22px;
+}
+#controlPanel{
+  display:block;
+}
+
+.primaryButtons.horizontal{
+  float:left;
+
+  line-height:50px;
+}
+/**/
+/**/
+.slider-component{
+  display:inline-block;
+  width:auto;
+  min-width:370px;
+  height:100%;
+  padding:0px;
+  margin:0px;
+  float:left;
+}
+.slider-component.horizontal{
+  height:52px;
+  margin-left:20px;
+}
+.slider-component.horizontal .dash-label{
+  display:block;
+  width:100%;
+}
+.slider-component.horizontal .dash-slider{
+  display:inline-block;
+  height:30px;
+  padding:0px;
+  margin:0px;
+  float:left;
+}
+.slider-component.horizontal .dash-slider .dash-slider-start{
+  float:left;
+}
+.slider-component.horizontal .dash-slider .dash-slider-end{
+  float:left;
+}
+.slider-component.horizontal .dash-slider rw-slider{
+  width:250px;
+  float:left;
+}
+.slider-component.horizontal .dash-slider-value{
+  display:inline-block;
+  height:30px;
+  width:auto;
+  padding-left:6px;
+  padding-top:0px;
+  padding-bottom:0px;
+  padding-right:0px;
+  margin-left:6px;
+  margin-right:0px;
+  margin-top:0px;
+  margin-bottom:0px;
+  float:left;
+
+  line-height:30px;
+
+  border-left:1px solid @gray5;
+}
+
+

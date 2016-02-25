@@ -1,0 +1,256 @@
+module jdemo {
+    namespace "http://tail-f.com/ns/example/jdemo";
+    prefix jdemo;
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+    import tailf-common {
+        prefix tailf;
+    }
+
+    container arp {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-table-legend
+              "Arp entries found on system. Permanent means...";
+            tailf:cli-table-footer
+              "$(.?% Some entries in the table.
+               :% No entries in the table.
+               )";
+            tailf:cli-suppress-key-sort;
+            leaf ip {
+                tailf:display-column-name "Address";
+                tailf:cli-column-width "15";
+                type inet:ip-address;
+            }
+            leaf ifname {
+                tailf:display-column-name "Interface";
+                tailf:cli-column-width "9";
+                tailf:cli-column-align "center";
+                type string;
+            }
+            leaf hwaddr {
+                tailf:display-column-name "HW Address";
+                tailf:cli-column-width "17";
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                tailf:display-column-name "Permanent";
+                tailf:cli-column-width "9";
+                tailf:cli-value-display-template "$(.==true?perm:temp)";
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                tailf:display-column-name "Published";
+                tailf:cli-column-width "10";
+                tailf:cli-column-align "right";
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp0 {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-compact-stats {
+                tailf:cli-wrap;
+                tailf:cli-width "80";
+                tailf:cli-delimiter ":";
+                tailf:cli-prettify;
+                tailf:cli-spacer "  ";
+            }
+            tailf:cli-suppress-table;
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp1 {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-suppress-key-sort;
+            tailf:cli-incomplete-show-path {
+                tailf:cli-min-keys "1";
+            }
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp2 {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-enforce-table;
+            tailf:cli-full-show-path {
+                tailf:cli-max-keys "1";
+            }
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp3 {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                tailf:cli-suppress-show-path;
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                tailf:cli-suppress-show-match;
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp4 {
+        config false;
+        tailf:callpoint jarp_data;
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-no-key-completion;
+            tailf:cli-no-match-completion;
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                tailf:cli-suppress-show-path;
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+    container arp5 {
+        config false;
+        tailf:callpoint jarp_data;
+        tailf:cli-show-template "Arp entries found on system
+$(arpe|show:mySOME=Some:my_entries=entries)
+";
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-suppress-table;
+            tailf:cli-show-template-legend "Address         Interface   $(.selected~=hwaddr?HW Address         )$(.selected~=permanent?Permant  )$(.selected~=published?Published)
+============================$(.selected~=hwaddr?===================)$(.selected~=permanent?=========)$(.selected~=published?=========)
+";
+            tailf:cli-show-template-enter "";
+            tailf:cli-show-template "$(ip|ljust:15) $(ifname|ljust:9) - $(.selected~=hwaddr?$(hwaddr|ljust:17)  )$(.selected~=permanent?$(permanent|ljust:8) )$(.selected~=published?$(published|ljust:7))
+" { tailf:cli-auto-legend; }
+            tailf:cli-show-template-footer "$(.?% $(.mySOME) $(.my_entries) in the table.
+:% No entries in the table.
+)";
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                tailf:cli-suppress-show-path;
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+        }
+    }
+
+}

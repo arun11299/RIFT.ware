@@ -1,0 +1,231 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ConfD SNMP Agent Example - Simple V3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  The example is the same as the "Simple" example but it is extended
+  to use SNMP V3 instead.
+
+  SNMP v3 uses USM (User-based Security Model).  We need to provide
+  initial information in an usm_init.xml file which will add three
+  initial user's to our system with different security settings.
+
+  The snmpusm command in NET-SNMP can be used to create new users from
+  already existing ones (cloning), and to change the passwords.
+
+
+------------------------------------------------------------
+               SNMP Agent Setup for V3
+------------------------------------------------------------
+
+1. Examine the usm_init.xml
+ 
+  This file contains a couple of initial users with different settings
+  for the authentication and privacy protocols.  This is because the
+  preferred way to add new users via the SNMP interface is to clone
+  them from already existing users.  So having one user of each type
+  of security settings we want to support is a good start.
+
+  Let's have a closer look at the usm_init.xml file.
+  It contains user entries like this:
+
+   <usmUserEntry>
+      <!-- MyEngine -->
+      <usmUserEngineID>4D:79:45:6E:67:69:6E:65</usmUserEngineID>
+      <usmUserName>initial</usmUserName>
+      <usmUserSecurityName>initial</usmUserSecurityName>
+      <!-- No auth protocol -->
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.1</usmUserAuthProtocol>
+      <!-- No priv protocol -->
+      <usmUserPrivProtocol>1.3.6.1.6.3.10.1.2.1</usmUserPrivProtocol>
+    </usmUserEntry>
+
+
+  Each entry have a username mapped into a security name, which is
+  usually the same as the user id.  The security name is used when
+  selecting the view in VACM.
+
+  The authentication crypto protocol which should be used:
+
+    1.3.6.1.6.3.10.1.1.1 = usmNoAuthProtocol
+    1.3.6.1.6.3.10.1.1.2 = usmHMACMD5AuthProtocol
+    1.3.6.1.6.3.10.1.1.3 = usmHMACSHAAuthProtocol
+
+  So it's either none, MD5, or SHA.
+
+  The privacy crypto protocol which should be used:
+
+    1.3.6.1.6.3.10.1.2.1 = usmNoPrivProtocol
+    1.3.6.1.6.3.10.1.2.2 = usmDESPrivProtocol
+    1.3.6.1.6.3.10.1.2.4 = usmAesCfb128Protocol
+
+  So it's either none, DES, or AES.
+
+  Setting up a user with pre-generated keys is possible by filling in
+  the Auth / Priv protocols and providing keys for them.  Note that
+  the keys are specific for the engine ID.  Key generation for this
+  can be done with the confdc compiler if needed.  See below for more
+  info about how to do this.
+
+  For now, the initial user's in this example have pre-generated keys
+  for the auth and privacy protocols. So there's no need to generated
+  new keys, unless you change the EngineID.
+
+  In this example we will use the initial user "initial_auth" and
+  create (by cloning) another user "andy" via the SNMP interface with
+  the 'snmpusm' command.
+
+
+2. Enable SNMP V3 in confd.conf
+
+  First we need to make sure SNMP v3 is enabled in confd.conf.  All
+  versions are per default enabled so need to change it if is already
+  enabled. (It is already enabled in this example.)
+
+   <snmpVersions>
+	<v3>true</v3>
+   </snmpVersions>
+
+
+3. Load the SNMP-USER-BASED-SM-MIB
+
+  In order to remotely create users we need to load the
+  SNMP-USER-BASED-SM-MIB into the agent.  Because if the MIB that
+  contain the user table is not loaded, we will have no access from it
+  from SNMP.  (Of course users can be added from the CLI as well, but
+  since this example demonstrates the usage of snmpusm, we need to
+  load this MIB.)
+ 
+    <mibs>
+      <file>SNMP-USER-BASED-SM-MIB.bin</file>
+      <file>TAIL-F-TEST-MIB.bin</file>
+    </mibs>    
+
+  No need to copy the compiled MIB file it into this directory.  The
+  SNMP agent will load all built-in MIBs from a private directory.
+
+  By loading this MIB we make user table available via the SNMP
+  interface.
+
+
+------------------------------------------------------------
+           Creating users with SNMPUSM
+------------------------------------------------------------
+
+4. Creating new users
+
+  Users can be added via the SNMP interface with the snmpusm
+  command. The only way to add new users with snmpusm is to clone them
+  from an already existing user. That is why the initial users in the
+  usm_init.xml file is important.  It's not possible to change the
+  authentication and privacy settings for a given user via the SNMP
+  interface, unless we clone it from another user, this means that the
+  agent should be initialized with at least one user for each
+  combination of authentication and privacy protocols that we want to
+  use.  Passwords may be changed later using the snmpusm command.
+
+  a) First check that we have access to the user table:
+
+    $ snmptable -v3 -n "" -A GoTellMom -l authNoPriv -u initial_auth \
+        localhost:4000 usmUserTable 
+
+    Our initial users should be listed.
+
+
+  b) Create new user by cloning.
+
+    With "snmpusm" we can create a new user and clone it from the
+    "initial_auth" user above.
+
+    Unfortunately, the snmpusm command in net-snmp (as of version
+    5.4.1) has a bug where it always createAndGo the new user.
+    However, RFC 3414 specifies that the user's auth and / or priv
+    passwords must be changed before the new user is activated.
+    (Prior to ConfD-3.1, ConfD would not enforce this check, which is
+    why snmpusm could be used earlier).  So we need to create the user
+    with snmpset
+
+    $ snmpset -v3 -u initial_auth -n "" -A GoTellMom -l authNoPriv \
+        localhost:4000 \
+        usmUserCloneFrom.\"MyEngine\".\"andy\" o \
+          usmUserSecurityName.\"MyEngine\".\"initial_auth\" \
+        usmUserStatus.\"MyEngine\".\"andy\" = createAndWait
+        
+  c) Set the new password
+ 
+    $ snmpusm -v3 -n "" -u initial_auth -A GoTellMom -l authNoPriv \
+        localhost:4000 \
+        -Ca passwd GoTellMom GifDasGoat andy
+
+  d) Activate the new user
+
+    $ snmpusm -v3 -n "" -u initial_auth -A GoTellMom -l authNoPriv \
+        localhost:4000 \
+        activate andy
+
+  e) Give the new user access.
+
+    Make sure the new user's security name have a mapping into a group
+    name in the vacmSecurityToGroupTable.  Either we have added it
+    from beginning using the vacm_init.xml file or we add an entry
+    dynamically either via CLI or SNMP for example (using CLI this
+    time):
+
+    ola@saturn% configure private
+    ola@saturn% set SNMP-VIEW-BASED-ACM-MIB vacmSecurityToGroupTable \
+                vacmSecurityToGroupEntry 3 andy vacmGroupName initial
+    ola@saturn% commit
+    [ok][2008-05-12 15:23:37]
+
+    This maps security model 3 (= SNMP v3) and user "andy" into the
+    group "initial". The group "initial" is later mapped in the
+    vacmAccessTable to specific views. (But no need to add anything
+    there. It's already done.)
+
+  f) Now verify that our user exists and is working properly by testing it.
+
+    $ snmptable -v3 -u andy -A GifDasGoat -n "" -l authNoPriv localhost:4000 \
+        usmUserTable
+
+  The complete table should be listed if everything works properly.
+
+
+5. More about the Initial users
+
+  Initial users in a system should be created from an init file or
+  created from the CLI. The key generation can be done with the confdc
+  compiler, as described below.  Given a pass phrase a localized key
+  is generated.
+
+  Each key is bound to the specific system engine ID.  The engine ID
+  is written in the confd.conf.  The UserName is only given for the
+  convenience to have a complete usmUserEntry output that directly
+  can be pasted into an usm_init.xml file for example.
+
+  Format is:
+
+  confdc --snmpuser EngineID User AuthProto PrivProto PassPhrase
+
+  $ confdc --snmpuser MyEngineID ola SHA DES GoTellMum
+
+  <usmUserEntry>
+    <!-- MyEngineID -->
+    <usmUserEngineID>4D:79:45:6E:67:69:6E:65:49:44</usmUserEngineID>
+    <usmUserName>ola</usmUserName>
+    <usmUserSecurityName>ola</usmUserSecurityName>
+    <!-- usmHMACSHAAuthProtocol -->
+    <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.3</usmUserAuthProtocol>
+    <!-- usmDESPrivProtocol -->
+    <usmUserPrivProtocol>1.3.6.1.6.3.10.1.2.2</usmUserPrivProtocol>
+    <usmUserAuthKey>14:90:2A:ED:07:B6:BA:08:B8:1D:60:ED:AB:1C:9F:EE:52:C8:0C:71</usmUserAuthKey>
+    <usmUserPrivKey>14:90:2A:ED:07:B6:BA:08:B8:1D:60:ED:AB:1C:9F:EE</usmUserPrivKey>
+  </usmUserEntry>
+
+
+
+
+
+
+
+
+
+

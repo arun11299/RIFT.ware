@@ -1,0 +1,312 @@
+<link rel="import" href="rw-scroll-graph.html">
+<link rel="import" href="rw-bullet.html">
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-vcs-status-led.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  rw-traffic-stats - visually display port stats and aggregated results
+
+  <img src="trafgen-stats.png"/>
+
+  @class rw-traffic-stats
+-->
+<polymer-element name="rw-traffic-stats" attributes="service vcsNode started showFabric">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-traffic-stats.css" />
+    <rw-iconset></rw-iconset>
+    <table id="statsTable" class="datagrid">
+        <colgroup class="datagrid__port-params">
+        <colgroup class="datagrid__port-params">
+        <colgroup span="3" class="datagrid__tx">
+        <colgroup span="3" class="datagrid__rx">
+        <thead class="datagrid">
+      <tr>
+        <th>Port</th>
+        <th>Status</th>
+        <th>Tx Speed</th>
+        <th> </th>
+        <th></th>
+        <th>Rx Speed</th>
+        <th></th>
+        <th></th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th>Last min</th>
+        <th>Current</th>
+        <th>Err</th>
+        <th>Last Min</th>
+        <th>Current</th>
+        <th>Err</th>
+      </tr>
+    </thead>
+
+    <tbody class="datagrid__summary">
+      <tr template
+          repeat="{{item, itemIndex in visibleItems}}"
+          data-index="{{itemIndex}}"
+          on-click="{{toggleExpand}}">
+        <td nowrap style="padding-left:{{item | indent}}px;">
+          <template if="{{item | hasChildren}}">
+            <core-icon class="icon--small" icon="rw-iconset:icon-node-{{item.open ? 'open' : 'closed'}}" ></core-icon>
+          </template>
+          <core-icon class="icon--small" icon="rw-iconset:{{item.icon}}"></core-icon>
+          {{item.label}}
+        </td>
+        <td nowrap>
+          <rw-vcs-status-led
+            state="{{item.data.linkState}}"
+            stateString="{{item.data.linkStateString}}"
+            ></rw-vcs-status-led>
+        </td>
+        <td>
+          <rw-scroll-graph
+            lineColor="{{theme.txBps}}"
+            strokeColor="{{theme.txBpsTranslucent}}"
+            lineColor2="{{theme.txPps}}"
+            strokeColor2="{{theme.txPpsTranslucent}}"
+            width="100"
+            height="40"
+            labels="false"
+            paused="{{ !started}}"
+            value="{{item.data.tx_percent}}"
+            value2="{{{rate: item.data.tx_rate_pps, max:item.data.speed} | ppsUtilizationMax}}"
+            ></rw-scroll-graph>
+        </td>
+        <td id="datagrid__tx">
+          <div class="rate">
+            <div class="rate-value">{{item.data.tx_rate_mbps | bits}} ({{item.data.tx_percent}}%)</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+              value="{{item.data.tx_percent}}"
+              bulletColor="{{theme.txBps}}"
+              marker="{{service.rate}}"
+              ></rw-bullet>
+            <div class="rate-max">{{item.data.speed | bits}}</div>
+          </div>
+          <div class="rate">
+            <div class="rate-value">{{item.data.tx_rate_pps | fmt('0a') | upperCase}}pps</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+               value="{{item.data.tx_rate_pps}}"
+               max="{{item.data.speed * 1000000 | bpsAsPps}}"
+               bulletColor="{{theme.txPps}}"
+               ></rw-bullet>
+            <div class="rate-max">{{item.data.speed | mbpsAsPps}}pps</div>
+          </div>
+        </td>
+        <td class="{{ {tgHasError : item.data.output_errors > 0} | tokenList }}">{{item.data.outputErrorsString}}</td>
+        <td>
+          <rw-scroll-graph
+            lineColor="{{theme.rxBps}}"
+            strokeColor="{{theme.rxBpsTranslucent}}"
+            lineColor2="{{theme.rxPps}}"
+            strokeColor2="{{theme.rxPpsTranslucent}}"
+            width="100"
+            height="40"
+            labels="false"
+            paused="{{ !started}}"
+            value="{{item.data.rx_percent}}"
+            value2="{{{rate: item.data.rx_rate_pps, max:item.data.speed} | ppsUtilizationMax}}"
+            ></rw-scroll-graph>
+        </td>
+        <td id="datagrid__rx">
+          <div class="rate">
+            <div class="rate-value">{{item.data.rx_rate_mbps | bits}} ({{item.data.rx_percent}}%)</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+              value="{{item.data.rx_percent}}"
+              bulletColor="{{theme.rxBps}}"
+              ></rw-bullet>
+            <div class="rate-max">{{item.data.speed | bits}}</div>
+          </div>
+          <div class="rate">
+            <div class="rate-value">{{item.data.rx_rate_pps | fmt('0a') | upperCase}}pps</div>
+            <div class="rate-min">0</div>
+            <rw-bullet
+              value="{{item.data.rx_rate_pps}}"
+              max="{{item.data.speed * 1000000 | bpsAsPps}}"
+              bulletColor="{{theme.rxPps}}"
+              ></rw-bullet>
+            <div class="rate-max">{{item.data.speed | mbpsAsPps}}pps</div>
+          </div>
+        </td>
+        <td class="{{ {tgHasError : item.data.input_errors > 0} | tokenList }}">{{item.data.inputErrorsString}}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+<script>
+
+Polymer(Platform.mixin({
+  showFabric: false,
+
+  created: function() {
+    this.items = [];
+    this.open = true;
+    this.started = true;
+  },
+
+  //Public methods
+  serviceChanged: function() {
+    if (this.service === null || this.service.connector === null) {
+      return;
+    }
+    this.items.length = 0;
+    this.label = this.service.name;
+
+    // not sure how to do this.......
+    if (this.showFabric) {
+      this.vnfFabricPortStats();
+    } else {
+      this.vnfExternalPortStats();
+    }
+    this.determineVisibleItems();
+  },
+
+  vcsNodeChanged: function() {
+    if (this.vcsNode === null) {
+      return;
+    }
+    this.items.length = 0;
+    this.pushVcsNode(this, this.vcsNode);
+    this.items.reverse();
+    this.determineVisibleItems();
+  },
+
+  vnfExternalPortStats: function() {
+    var self = this;
+    _.each(this.service.connector, function (connector) {
+      connector.name = 'connector';
+      var citem = {data: connector, label: connector.name, parent: self, open: false, icon: 'icon-connector', type: 'connector'};
+      self.items.push(citem);
+      _.each(connector.interface, function (iface) {
+        var iitem = {data: iface, label: iface.name, parent: citem, open: false, icon: 'icon-interface-group', type: 'interface'};
+        self.items.push(iitem);
+        _.each(iface.port, function(port) {
+          self.items.push({data: port, label: port.name, parent: iitem, open: false, icon: 'icon-port',  type: 'port'});
+        });
+      });
+    });
+  },
+
+  vnfFabricPortStats: function() {
+    var self = this;
+    _.each(this.service.vm, function(vm) {
+      if ('fabric' in vm && 'port' in vm.fabric && vm.fabric.port.length > 0) {
+        var vitem = {data: vm, label: vm.component_name, parent: self, open: false, icon: 'icon-vm2', type: vm.component_type};
+        self.items.push(vitem);
+        _.each(vm.fabric.port, function (port) {
+          var pitem = {data: port, label: port.name, parent: vitem, open: false, icon: 'icon-fabric', type: 'fabric'};
+          self.items.push(pitem);
+        });
+      }
+    });
+  },
+
+  /*
+    NOTE: We build list in reverse order so we can remove parents that have no children.  I.E. If a cluster
+    has zero vms that have zero ports then don't push it to the items list, which can only be done
+    if we push parents after we've recursed thru children.
+   */
+  pushVcsNode: function(parent, node) {
+    var self = this;
+    var n = 0;
+    var item = {data: node, label: node.component_name, parent: parent, open: false, icon: 'icon-connector', type: node.component_type};
+    var forEachPush = function(parentItem, children) {
+      var forEachN = 0;
+      _.each(children, function(child) {
+        // recursive!
+        forEachN += self.pushVcsNode(parentItem, child);
+      });
+      return forEachN;
+    };
+    switch (rw.vcs.nodeType(node)) {
+      case 'rwcolony':
+        item.icon = 'icon-colony';
+        n += forEachPush(item, node.collection);
+        n += forEachPush(item, node.vm);
+        break;
+      case 'rwcluster':
+        item.icon = 'icon-cluster';
+        n += forEachPush(item, node.collection);
+        n += forEachPush(item, node.vm);
+        break;
+      case 'RWVM':
+        item.icon = 'icon-vm2';
+        if (this.showFabric) {
+          if ('fabric' in node && 'port' in node.fabric) {
+            _.each(node.fabric.port, function(p) {
+              n += 1;
+              self.items.push({data: p, label: p.name, parent: item, open: false, icon: 'icon-fabric', type: 'port'});
+            });
+          }
+        } else {
+          _.each(node.port, function(p) {
+            n += 1;
+            self.items.push({data: p, label: p.name, parent: item, open: false, icon: 'icon-port', type: 'port'});
+          });
+        }
+        break;
+    }
+    if (n > 0) {
+      this.items.push(item);
+      n += 1;
+    }
+    return n;
+  },
+
+  indent: function(n) {
+    var level = -1;
+    var i = n.parent;
+    while (i) {
+      level += 1;
+      i = i.parent;
+    }
+    return level * 16;
+  },
+
+  hasChildren: function(n) {
+    for (var i = 0; i < this.items.length; i++) {
+      if (this.items[i].parent === n) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  toggleExpand: function(e, detail, trElement) {
+    var index = parseInt(trElement.attributes['data-index'].value);
+    var item = this.visibleItems[index];
+    item.open = ! item.open;
+    this.determineVisibleItems();
+  },
+
+  determineVisibleItems: function() {
+    this.visibleItems = this.items.filter(function(item) {
+      return item.parent.open;
+    });
+  },
+
+  resetPortCounters: function() {
+    _.each(this.items, function(item) {
+      if (item.type == 'interface') {
+        var data = {
+          input : {
+            colony : {
+              name : item.data.colonyId,
+              counters: "all"
+            }
+          }
+        };
+        rw.api.rpc('/api/operations/clear', data).done(function() {
+          console.log('cleared stats for ', iface.name);
+        });
+      }
+    });
+  }
+}, rw, rw.ui));
+</script>
+</polymer-element>

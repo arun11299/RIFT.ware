@@ -1,0 +1,260 @@
+<script src="js/network.js"></script>
+
+<!--
+  Show network interface and groups and how they are connected
+  at the interface group level.
+
+  <img width="300px" height="250px" src="network.png"/>
+
+  @class rw-network-diagram
+-->
+
+<!--
+ Fired when a network interface is selected. 
+
+ @event select-iface
+ @param {Object} iface - interface
+ @param {Object} ifaceGroup - interface's parent
+ @param {Object} service - interface's parent's parent
+-->
+<polymer-element name="rw-network-diagram" attributes="services">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-network-diagram.css"/>
+  <svg id="diagram">
+    <!-- duplicate copy of these svg defs in rw-dashboard.html -->
+    <defs>
+      <filter id="dropshadow" height="130%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+        <feOffset dx="0" dy="2" result="offsetblur"/>
+        <feMerge> 
+          <feMergeNode/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <filter id="blueglow">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/>
+        <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>    
+  </svg>
+</template>
+<script>
+Polymer('rw-network-diagram', {
+
+  /**
+   * Full object tree of services, their interface groups, interfaces and ports
+   * see test/network-seed.js for example
+   *
+   * @attribute services
+   */
+  created: function() {
+    this.services = [];
+    this.run = false;
+
+  },
+domReady:function(){
+  var self = this;
+  setTimeout(function(){
+    self.selectInterface(self.firstIface)
+  },1000)
+
+},
+  servicesChanged: function() {
+    var self = this;
+    var serviceLayout = {
+      curveRadius : 4
+    };
+    var ifaceLayout = {
+      h: 35,
+      margin : 10
+    };
+    var handleLayout = {
+      h: 30,
+      w: 80
+    };
+    var x = function(o) {
+      return o.x;
+    };
+    var y = function(o) {
+      return o.y;
+    };
+    var w = function(o) {
+      return o.w;
+    };
+    var h = function(o) {
+      return o.h;
+    };
+    var icon = "M328.047,50l-60.643,145.755l144.312-16.243l-33.971,39.608l-215.225,25.37L328.047,50z "
+     + "M348.578,259.808l-214.541,25.288l-33.754,40.206l141.002-15.558L171.775,462L348.578,259.808z";
+
+    var gxDiagram = d3.select(this.$.diagram);
+    var layout = new TopologyLayout();
+    this.layout = layout;
+    layout.dim.xMargin = [20, 550, 550];
+
+    var gxServices = gxDiagram.selectAll("g.service")
+      .data(function() {
+        var countPorts = function(n, connector) {
+          return 'interface' in connector ? n + connector.interface.length : 0;
+        };
+        for (var i = 0; i < self.services.length; i++) {
+          var service = self.services[i];
+          var n;
+          if (service.connector) {
+            n = service.connector.reduce(countPorts, 0);
+          } else {
+            n = 0;
+          }
+          var bodyHeight = (n * ifaceLayout.h) + ((n + 1) * ifaceLayout.margin);
+          service.numberPorts = n;
+          layout.layoutTitledPanel(service, layout.colIndex(service, self.services), bodyHeight);
+        }
+        return self.services;
+      })
+      .enter()
+      .append("g")
+      .classed('service', true);
+
+    layout.appendTitledPanel(gxServices);
+    layout.appendTitle(gxServices);
+
+    var gxIfaces = layout.appendIfaces(gxServices, 
+      function(service) {
+        return 0;
+      },
+      function(connector, service, h) {
+        connector.x = service.x;
+        connector.y = service.yBody + h;
+        connector.w = layout.dim.width;
+        var n = 'interface' in connector ? connector.interface.length : 0;
+        connector.h = (n * (ifaceLayout.h + ifaceLayout.margin));
+        return h + connector.h;
+      }
+    );
+
+    layout.appendConnectorHandles(gxIfaces);
+    links = layout.appendConnectors(gxDiagram);
+
+    gxDiagram.selectAll("circle.context")
+      .data(function() { return links; })
+      .enter()
+      .append("circle")
+      .classed('context', true)
+      .attr('cx', function(l) { return l.xStart + l.xMiddle;})
+      .attr('cy', function(l) { return l.yStart + l.yMiddle;})
+      .attr('r', 45)
+      .attr("filter", "url(#blueglow)");
+
+    gxDiagram.selectAll("text.context")
+      .data(function() { return links; })
+      .enter()
+      .append("text")
+      .text(function(l) {
+        return l.source['@context'];
+       })
+      .classed('context', true)
+      .attr('text-anchor', 'middle')
+      .attr('x', function(l) { return l.xStart + l.xMiddle;})
+      .attr('y', function(l) { return l.yStart + l.yMiddle;});
+
+    var gxPorts = gxIfaces.selectAll("svg.iface")
+      .data(function(connector) {
+        if (!('interface' in connector)) {
+          return [];
+        }
+        for (var i = 0; i < connector.interface.length; i++) {
+          var iface = connector.interface[i];
+          iface.x = connector.x + ifaceLayout.margin;
+          iface.y = connector.y + ifaceLayout.margin +
+            (i * (ifaceLayout.h + ifaceLayout.margin));
+          iface.h = ifaceLayout.h;
+          iface.w = connector.w - (2 * ifaceLayout.margin);
+          // provide reference back to group for useful event firing
+          iface.parent = connector;
+          if(i == 0 && !self.run){
+            self.run = true;
+            self.firstIface = iface;
+          }
+        };
+        return connector.interface;
+      })
+      .enter()
+      .append("svg")
+      .classed('iface', true)
+      .attr("x", x)
+      .attr("y", y)
+      .attr("width", w)
+      .attr("height", h)
+      .on('click', function(iface,index) {
+        self.selectInterface.call(self, iface);
+      });
+
+    gxPorts
+      .append("rect")
+      .classed('iface', true)
+      .attr("width", w)
+      .attr("height", h);
+
+    gxPorts
+      .append("text")
+      .classed('label', true)
+      .text(function(iface) {
+        return iface.name;
+      })
+      .attr("x", function(iface) {
+        return 40;
+      })
+      .attr("y", function(iface) {
+        return 24;
+      });
+
+    var gxIcon = gxPorts
+      .append("svg")
+      .classed('icon', true)
+      .attr('width', h)
+      .attr('height', h)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('viewBox', '0 0 512 512');
+
+    gxIcon
+      .append("rect")
+      .attr('width', 512)
+      .attr('height', 512);
+
+    gxIcon  
+      .append("path")
+      .attr('fill', 'white')
+      .attr('d', icon);
+  },
+
+  selectInterface : function(iface) {
+    if (typeof(iface) == 'undefined') {
+      return;
+    }
+    if (!this.selectBox) {
+      this.selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      this.selectBox.setAttribute("class", "selection");
+      var w = iface.w + 8;
+      var h = iface.h + 8;
+      this.selectBox.setAttribute("width", w);
+      this.selectBox.setAttribute("height", h);
+      var dashArray = this.layout.buildSelectBox(w, h, 20);
+      this.selectBox.setAttribute("stroke-dasharray", dashArray);
+      this.$.diagram.appendChild(this.selectBox);
+    }
+
+    this.selectBox.setAttribute("x", iface.x - 4);
+    this.selectBox.setAttribute("y", iface.y - 4);
+
+    this.fire("select-interface", {
+      iface : iface,
+      service : iface.parent.parent
+    });
+  }
+});
+</script>
+</polymer-element>

@@ -1,0 +1,440 @@
+Example: Using the REST API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  This example shows how to enable the HTTP-based RESTful API to ConfD,
+  and how to use this API.
+
+  No special programming is needed in order to enable REST in ConfD.
+  The REST server is enabled in confd.conf.
+
+  The API is demonstrated by walking through some queries.  In this
+  example, we use the command line tool 'curl' to communicate with
+  ConfD.  Additionally, the Python program 'basic.py' in this
+  directory demonstrates programmatic usage of the RESTful API.
+
+  In the example, we use an example YANG module from
+  www.yang-central.org, dhcp.yang.  It has some configuration
+  parameters, some status data, and an action.  We initialize the 
+  configuration with data from dhcp_init.xml and then we load some 
+  dummy operational data from dhcp_oper.xml into CDB, just so we have 
+  some data to retrieve.
+
+
+Python Program
+~~~~~~~~~~~~~~
+
+  In addition to the resource operation demonstrations using 'curl'
+  shown below, this example includes 'basic.py' which demonstrates
+  RESTful API access from Python.  In order to run basic.py, you also
+  need to have installed the Requests package for Python.  Requests'
+  home page is http://www.python-requests.org.
+
+  Running the Python example:
+
+    $ ./basic.py
+
+
+curl Demonstration
+~~~~~~~~~~~~~~~~~~
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+  Build the data model and set up the initial files:
+
+    $ make all
+
+  Start ConfD
+
+    $ make start
+
+  ConfD is now started with some pre-populated data (found in dhcpd_init.xml).
+
+
+Sending REST requests
+~~~~~~~~~~~~~~~~~~~~~
+
+  In this example, we will authenticate as the user 'admin' with
+  password 'admin'.
+
+1.  Top-level GET
+
+  Send the first REST query to get a representation of the top-level
+  resource, which is accessible through the well-known path '/api':
+
+  $ curl -v -u admin:admin http://localhost:8008/api?verbose
+  * About to connect() to localhost port 8008 (#0)
+  *   Trying ::1... Connection refused
+  *   Trying 127.0.0.1... connected
+  * Connected to localhost (127.0.0.1) port 8008 (#0)
+  * Server auth using Basic with user 'admin'
+  > GET /api HTTP/1.1
+  > Authorization: Basic YWRtaW46YWRtaW4=
+  > User-Agent: curl/7.21.6 (x86_64-pc-linux-gnu) libcurl/7.21.6 OpenSSL/1.0.0e zlib/1.2.3.4 libidn/1.22 librtmp/2.3
+  > Host: localhost:8008
+  > Accept: */*
+  >
+  < HTTP/1.1 200 OK
+  < Server: ConfD
+  < Date: Thu, 16 Feb 2012 13:42:43 GMT
+  < Content-Length: 216
+  < Content-Type: application/vnd.yang.api+xml
+  <
+  <api xmlns="http://tail-f.com/ns/rest"
+       xmlns:y="http://tail-f.com/ns/rest"
+       y:self="/api">
+    <version>0.3</version>
+    <config y:self="/api/config"/>
+    <running y:self="/api/running"/>
+    <operational y:self="/api/operational"/>
+    <operations/>
+  </api>
+  * Connection #0 to host localhost left intact
+  * Closing connection #0
+
+  As can be seen from the result, the server in this example exposes
+  three additional resources; config, running, and operational.
+
+  Note:
+
+    o  See the content-type header; contains the media-type for the
+       resource.
+
+  The result can be returned as JSON format as well. This is specified
+  using an alternative MIME type for the Accept header, e.g.
+
+  $ curl -H "Accept: application/vnd.yang.api+json" -u admin:admin \
+    http://localhost:8008/api
+{"api":{"_self":"/api","version":"0.3","config":{"_self":"/api/config"},"running":{"_self":"/api/running"},"operational":{"_self":"/api/operational"},"operations":[],"rollbacks":{"_self":"/api/rollbacks"}}}[jocke@spock:~/work/trunk/examples.confd/rest/basic]$ 
+
+2.  GET of running
+
+  We can get the running config datastore by following the link above:
+
+  $ curl -s -u admin:admin http://localhost:8008/api/running
+
+  (add -H "Accept: application/vnd.yang.datastore+json" for JSON format)
+
+  Note:
+
+    o  the y:self attribute; available on all resources
+
+    o  links to sub-resources
+
+    o  See the content-type header; contains the media-type for the
+       resource.
+
+    o  RESTful clients do not construct resource URIs, they follow links.
+
+3.  GET with selector
+
+  We can also get more or less of the data tree:
+
+  $ curl -s -u admin:admin http://localhost:8008/api/running\?shallow
+
+  $ curl -s -u admin:admin http://localhost:8008/api/running\?deep
+
+  (add -H "Accept: application/vnd.yang.datastore+json" for JSON format)
+
+4.  Delete parts of the config
+
+  First we find a resource to delete.  Follow the dhcp link above:
+
+  $ curl -s -u admin:admin http://localhost:8008/api/running/dhcp\?shallow
+
+  Then save the resource we want to delete to a local file, in this
+  case the subnet resource:
+
+  $ curl -s -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22?deep \
+    | xsltproc remove-attributes.xsl - > saved-subnet
+
+  or
+
+  $ curl -H "Accept: application/vnd.yang.data+json" -s \
+    -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22?deep > \
+    saved-subnet.json
+
+  Note that we use a XSLT script to remove all XML attributes from the
+  resulting file.  This is not necessary, but is only used to show
+  that the REST server can handle simple XML without all the
+  attributes (including 'xmlns' attributes).
+
+  Now we can delete the resource:
+
+  $ curl -v -X DELETE -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  < HTTP/1.1 204 No Content
+
+  Make sure it not there anymore:
+
+  $ curl -v -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  < HTTP/1.1 404 Not Found
+
+
+5.  Create a new resource
+
+  Let's re-create the subnet resource we just deleted.
+
+  In order to create a resource, we POST the resource to its parent:
+
+  $ curl -v -X POST -T saved-subnet -u admin:admin \
+    http://localhost:8008/api/running/dhcp
+
+  or
+
+  $ curl -H "Content-Type: application/vnd.yang.data+json" -v -X POST \
+    -T saved-subnet.json -u admin:admin http://localhost:8008/api/running/dhcp
+
+  < HTTP/1.1 201 Created
+  < Server: ConfD
+  < Location: http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  The Location header contains the URL for the newly created resource.
+
+
+6a.   Modify an existing resource (XML)
+
+  Go to (6b) if you prefer to work with JSON format.
+
+  The PATCH method is used to modify an existing resource:
+
+  $ cat > patch-subnet
+  <subnet>
+    <max-lease-time>3333</max-lease-time>
+  </subnet>
+  [Ctrl-D]
+
+  $ curl -X PATCH -T patch-subnet -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  Verify the change:
+
+  $ curl -u admin:admin http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22\?select=max-lease-time
+
+  Note how the 'select' query parameter was used to get a single leaf.
+
+6b.   Modify an existing resource (JSON)
+
+  Do the same as in (6a) but with JSON payload.
+
+  The PATCH method is used to modify an existing resource:
+
+  $ cat > patch-subnet.json
+  {"subnet": { "max-lease-time": 3333 }}
+  [Ctrl-D]
+
+  $ curl -H "Content-Type: application/vnd.yang.data+json" -X PATCH -T patch-subnet.json -u admin:admin http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  Verify the change:
+
+  $ curl -H "Accept: application/vnd.yang.data+json" -u admin:admin http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22\?select=max-lease-time
+
+  Note how the 'select' query parameter was used to get a single leaf.
+
+
+7.  Replace an existing resource
+
+  PUT is used to completely replace an existing resource:
+
+  $ curl -X PUT -T saved-subnet -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  or
+
+  $ curl -H "Content-Type: application/vnd.yang.data+json" -X PUT \
+    -T saved-subnet.json -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22
+
+  Verify the change:
+
+  $ curl -u admin:admin \
+    http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22\?select=max-lease-time
+  <max-lease-time>1200</max-lease-time>
+
+  or
+
+  $ curl -H "Accept: application/vnd.yang.data+json" -u admin:admin http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22\?select=max-lease-time
+  {
+    "subnet": {
+      "_self": "/api/running/dhcp/subnet/%2210.254.239.0/27%22", 
+      "_path": "/dhcp:dhcp/dhcp:subnet[dhcp:net=\"10.254.239.0/27\"]", 
+      "max-lease-time": 1200
+    }
+  }
+
+8.  Evaluate an action
+
+  A POST request is used to evaluate an action. dhcp.yang defines an
+  action "set-clock" under /dhcp with a well defined set of input and
+  output parameters, i.e.
+
+  tailf:action set-clock {
+    tailf:actionpoint actions;
+    input {
+      leaf clockSettings {
+        type yang:date-and-time;
+        mandatory true;
+      }
+      leaf utc {
+        type boolean;
+        default true;
+      }
+      leaf syncHardwareClock {
+        type boolean;
+        default false;
+        description "Make sure that the hardware clock is synchronized.";
+      }
+    }
+    output {
+      leaf systemClock {
+        type yang:date-and-time;
+        mandatory true;
+      }
+      leaf hardwareClock {
+        type yang:date-and-time;
+        mandatory true;
+      }
+    }
+  }
+
+  Available actions can be listed with a GET request, e.g. the
+  "set-clock" action ends up under "operations" in the "dhcp" container:
+
+  $ curl -u admin:admin http://localhost:8008/api/running/dhcp
+  <dhcp xmlns="http://yang-central.org/ns/example/dhcp" y:self="/api/running/dhcp" xmlns:y="http://tail-f.com/ns/rest"  xmlns:dhcp="http://yang-central.org/ns/example/dhcp" y:path="/dhcp:dhcp">
+    ...
+    <y:operations>
+      <set-clock y:self="/api/running/dhcp/_operations/set-clock"/>
+    </y:operations>
+  </dhcp>
+
+  The resource for the "set-clock" action is
+  "/api/running/dhcp/_operations/set-clock" and in order to evaluate
+  it input parameters such as these are prepared:
+
+  $ cat action-params.xml
+  <input>
+    <clockSettings>1992-12-12T11:11:11</clockSettings>
+    <utc>true</utc>
+    <syncHardwareClock>true</syncHardwareClock>
+  </input>
+
+  which then can be used in a POST request to evaluate the action:
+
+  $ curl -v -X POST -T action-params.xml -u admin:admin http://localhost:8008/api/running/dhcp/_operations/set-clock
+  <output>
+    <systemClock>0000-00-00T03:00:00+00:00</systemClock>
+    <hardwareClock>0000-00-00T04:00:00+00:00</hardwareClock>
+  </output>
+
+  Done!
+
+9.  Rollbacks
+
+  Configurations can be rolled back to previous incarnations using the
+  rollback resource:
+
+  $ curl -u admin:admin -s http://localhost:8008/api
+  <api xmlns="http://tail-f.com/ns/rest" xmlns:y="http://tail-f.com/ns/rest" y:self="/api">
+    <version>0.2</version>
+    <running y:self="/api/running"/>
+    <operational y:self="/api/operational"/>
+    <operations/>
+    <rollbacks y:self="/api/rollbacks"/>
+  </api>
+
+  A GET request towards the rollback resource ("/api/rollbacks") lists
+  all available rollback files:
+
+  $ curl -u admin:admin http://localhost:8008/api/rollbacks
+  <rollbacks xmlns="http://tail-f.com/ns/rest"
+             xmlns:y="http://tail-f.com/ns/rest">
+    <file y:self="/api/rollbacks/0">
+      <name>0</name>
+      <creator>admin</creator>
+      <date>2013-06-03 08:41:08</date>
+      <via>rest</via>
+      <label></label>
+      <comment></comment>
+    </file>
+    <file y:self="/api/rollbacks/1">
+      <name>1</name>
+      <creator>admin</creator>
+      <date>2013-06-03 08:40:36</date>
+      <via>rest</via>
+      <label></label>
+      <comment></comment>
+    </file>
+    <file y:self="/api/rollbacks/2">
+      <name>2</name>
+      <creator>admin</creator>
+      <date>2013-06-03 08:39:36</date>
+      <via>rest</via>
+      <label></label>
+      <comment></comment>
+    </file>
+    <file y:self="/api/rollbacks/3">
+      <name>3</name>
+      <creator>admin</creator>
+      <date>2013-06-03 08:38:55</date>
+      <via>rest</via>
+      <label></label>
+      <comment></comment>
+    </file>
+  </rollbacks>
+
+  (The above rollback files are available if all previous steps in the
+  README file have been performed.)
+
+  To inspect the content of a rollback file perform a GET request on
+  a suitable rollback file resource, e.g. "/api/rollbacks/0":
+
+  $ curl -u admin:admin http://localhost:8008/api/rollbacks/0
+  # Created by: admin
+  # Date: 2013-06-03 08:41:08
+  # Via: rest
+  # Type: delta
+  # Label: 
+  # Comment: 
+  # No: 10003
+
+  dhcp {
+    subnet 10.254.239.0/27 {
+      max-lease-time 3333;
+    }
+  }
+
+  To apply a rollback file to a database use the appropriate
+  "rollback" resource/operation in the datastore of your choice, e.g. 
+
+  $ curl -u admin:admin http://localhost:8008/api/running
+  <data xmlns:y="http://tail-f.com/ns/rest"
+      y:self="/api/running">
+  <dhcp xmlns="http://yang-central.org/ns/example/dhcp" y:self="/api/running/dhcp">
+    <max-lease-time>7200</max-lease-time>
+    ...
+  <operations>
+    <lock y:self="/api/running/_lock"/>
+    <rollback y:self="/api/running/_rollback"/>
+  </operations>
+
+  Note the "/api/running/_rollback" resource/operation.
+
+  POST an appropriate rollback file name to "/api/running/_rollback"
+  resource to apply it, e.g.
+
+  $ cat > use-rollback.xml
+  <file>0</file>
+  [Ctrl-D]
+  $ curl -v -u admin:admin -X POST -T use-rollback.xml http://localhost:8008/api/running/_rollback
+
+  Verify the rollback attempt:
+
+  $ curl -u admin:admin http://localhost:8008/api/running/dhcp/subnet/%2210.254.239.0/27%22/max-lease-time
+  <max-lease-time xmlns="http://yang-central.org/ns/example/dhcp" xmlns:y="http://tail-f.com/ns/rest" xmlns:dhcp="http://yang-central.org/ns/example/dhcp" y:path="/dhcp:dhcp/dhcp:subnet%5Bdhcp:net%3D%2210.254.239.0/27%22%5D/dhcp:max-lease-time">3333</max-lease-time>
+
+  Looks good.

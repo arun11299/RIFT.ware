@@ -1,0 +1,214 @@
+module types {
+    namespace "http://tail-f.com/ns/example/types";
+    prefix types;
+    import ietf-yang-types {
+        prefix yang;
+    }
+    import ietf-inet-types {
+        prefix inet;
+    }
+    import tailf-common {
+        prefix tailf;
+    }
+    import tailf-xsd-types {
+        prefix xs;
+    }
+    container types {
+        container basicTypes {
+            leaf string {
+                type string;
+                units "string unit";
+            }
+            leaf int {
+                type uint32 {
+                    range "min | 1..42 | 78 | 92..101 | max";
+                }
+                units "uint32 unit bajs";
+                description "uint32 description fipp";
+                default 42;
+            }
+            leaf asteriskString {
+                type string;
+                tailf:suppress-echo true;
+            }
+            leaf boolean {
+                type boolean;
+                default true;
+            }
+            leaf decimal64 {
+                type decimal64 {
+                    fraction-digits 3;
+                }
+            }
+            leaf uri {
+                type inet:uri;
+                default "http://acme.com";
+            }
+            leaf bitsType {
+                type myBitsType;
+                default "foo bar";
+            }
+        }
+        container enumerationType {
+            leaf decimalEnumeration {
+                type decimalEnumerationType;
+                default 6.666;
+            }
+            leaf stringEnumeration {
+                type stringEnumerationType;
+                default "always";
+            }
+        }
+        container dateTypes {
+            container pointInTime {
+                leaf dateTime {
+                    type yang:date-and-time;
+                    default 2001-10-26T21:32:52+02:00;
+                }
+            }
+            container periodsOfTime {
+                leaf date {
+                    type xs:date;
+                    default 2001-10-26Z;
+                }
+            }
+            container recurringPointInTime {
+                leaf time {
+                    type xs:time;
+                    default 21:32:51.12679;
+                }
+            }
+            container recurringPeriodInTime {
+                leaf duration {
+                    type xs:duration;
+                    default P1Y2M3DT5H20M30.123S;
+                }
+            }
+        }
+        container confdTypes {
+            leaf inetAddressIPv4 {
+                type inet:ipv4-address;
+                default 192.168.2.1;
+            }
+            leaf inetAddressIPv6 {
+                type inet:ipv6-address;
+                default 192:168:2:1:3:1:4:89;
+            }
+            leaf size {
+                type tailf:size;
+                default S234M;
+            }
+            leaf MD5DigestString {
+                type tailf:md5-digest-string;
+                default $1$fB$NlWVsVPs/9q60aFdS6uSdQ==;
+            }
+            leaf DES3CBCEncryptedString {
+                type tailf:des3-cbc-encrypted-string;
+                default $3$HAYSHETY2YA8AJJA;
+            }
+            leaf AESCFB128EncryptedString {
+                type tailf:aes-cfb-128-encrypted-string;
+                default $4$HAYSHETY2YA8AJJA;
+            }
+        }
+        container listTypes {
+            leaf-list listOfDurations {
+                type xs:duration;
+            }
+            leaf-list listOfDurationEnumerations {
+                type durationEnumerationsType;
+            }
+        }
+        container customTypes {
+            leaf myUnion {
+                type int32EnumerationUnionType;
+                default always;
+            }
+            leaf myCustomUnion {
+                type int32EnumerationUnionType;
+                default always;
+            }
+            leaf myBoolean {
+                type boolean;
+                default true;
+            }
+            leaf myCustomBoolean {
+                type myCustomBooleanType;
+                default true;
+            }
+        }
+        container displayWhenTypes {
+            leaf string {
+                type string;
+                tailf:display-when "../myBoolean = 'true'";
+            }
+            leaf myBoolean {
+                type boolean;
+                default true;
+            }
+        }
+        container customErrorMessages {
+            leaf ifType {
+                type enumeration {
+                    enum ethernet;
+                    enum atm;
+                }
+                default "ethernet";
+            }
+            leaf ifMTU {
+                type uint32;
+                default "1500";
+                must "../ifType != 'ethernet' or . = 1500" {
+                    error-message "An Ethernet MTU must be 1500";
+                }
+            }
+            leaf typeErrorMessage {
+                type myCustomIntegerType;
+            }
+        }
+    }
+    typedef myBitsType {
+        type bits {
+            bit foo { position 0; }
+            bit bar { position 2; }
+            bit baz { position 7; }
+        }
+    }
+    typedef myCustomBooleanType {
+        type boolean {
+        }
+    }
+    typedef decimalEnumerationType {
+        type enumeration {
+            enum 6.486;
+            enum 6.666;
+            enum 5.277;
+        }
+    }
+    typedef durationEnumerationsType {
+        type enumeration {
+            enum PT130S;
+            enum P1DT2S;
+            enum P1Y2M3DT5H20M30.123S;
+        }
+    }
+    typedef int32EnumerationUnionType {
+        type union {
+            type int32;
+            type stringEnumerationType;
+        }
+    }
+    typedef stringEnumerationType {
+        type enumeration {
+            enum always;
+            enum never;
+        }
+    }
+    typedef myCustomIntegerType {
+        type uint8 {
+            range "0..8" {
+                error-message "8 is the largest possible value";
+            }
+        }
+    }
+}

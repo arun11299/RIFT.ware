@@ -1,0 +1,55 @@
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+@import "../../styles/_colors.scss";
+.topologyView {
+
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch;
+	flex: 1;
+	position: relative;
+	margin: 0.5rem;
+	min-width: 1340px;
+
+	.dashboardCard {
+		flex: 0 1 auto;
+		width: auto;
+		height: auto;
+		margin: 0px;
+
+		.corner-accent {
+			display: none;
+		}
+		header {
+			background-color: white;
+		}
+		&.recordDetails {
+			flex: 1 1 auto;
+
+			pre {
+				margin: 0;
+				white-space: pre-wrap;
+			}
+		}
+	}
+	svg {
+		.node {
+			cursor: pointer;
+
+			circle {
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+		}
+		.link {
+			fill: none;
+			stroke: gray;
+			stroke-width: 1.5px;
+		}
+	}
+}

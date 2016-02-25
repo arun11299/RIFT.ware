@@ -1,0 +1,16 @@
+<div>
+  <div class="row details">
+    <div class="col">
+      <div><span class="label">Name :</span> {{slbalancerConfig.slb.name}}</div>
+      <div><span class="label">Script :</span> {{slbalancerConfig.slb['plugin-script']['script-name'] | none}}</div>
+    </div>
+  </div>
+  <div class="row details">
+    <div ng-repeat="func in slbalancerConfig.funcs" class="col">
+      <h2>{{$index + 1}}. {{func.name}}</h2>
+      <ul class="propList">
+        <slbalancer-config-property children="func.children"></slbalancer-config-property>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,302 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+      <defaultConfirmOption>no</defaultConfirmOption>
+      <showTemplate path="SNMPv2-MIB">System Description $(system/sysDescr)
+($(system/sysDescr|upper), $(system/sysDescr|lower), $(system/sysDescr|capfirst))
+  Object ID $(system/sysObjectID)
+  Up time $(system/sysUpTime) seconds ($(system/sysUpTime|filesizeformat), $(system/sysUpTime|floatformat), $(system/sysUpTime|floatformat:-2), $(system/sysUpTime|floatformat:3))
+  System services $(system/sysServices) |$(system/sysServices|rjust:8)|$(system/sysServices|ljust:8)|$(system/sysServices|ljust:1)|$(system/sysServices|rjust:1)|
+  System services $(system/sysServices|dict:72=many)
+  $(system/sysServices|show)$(system/sysORLastChange == 0 ?No system changes:Last system change $(system/sysORLastChange))
+</showTemplate>
+<showTemplate path="SNMP-MPD-MIB snmpMPDStats snmpUnknownSecurityModels">Unknown security modes $(.)
+</showTemplate>
+    </modifications>
+    <cmd name="snmp" mount="show">
+      <info>Show SNMP statistics</info>
+      <help>Show SNMP statistics</help>
+      <callback>
+        <exec>
+          <osCommand>./show_snmp</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+    </cmd>
+    <cmd name="xsnmp" mount="show">
+      <info>Show SNMP statistics</info>
+      <help>Show SNMP statistics</help>
+      <callback>
+        <exec>
+          <osCommand>./show_snmp.sh</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+    </cmd>
+
+    <!-- This command has the format
+
+           test1 [host <hostname>] [port <port-id>] [user <user-name>]
+
+         where the arguments can occur in any order. The host argument
+         is mandatory and must occur somewhere on the command line
+    -->
+
+    <cmd name="test1">
+      <info>parameter example command</info>
+      <help>parameter example command</help>
+      <callback>
+        <exec>
+          <osCommand>/bin/echo</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+      <params mode="choice" max="3">
+        <param>
+          <name>host</name>
+          <type>
+            <!-- Use the empty namespace for the YANG types -->
+            <simpleType namespace="" name="string" />
+          </type>
+          <mandatory/>
+          <prefix>--host=</prefix>
+        </param>
+        <param>
+          <name>port</name>
+          <type>
+            <!-- Use the empty namespace for the YANG types -->
+            <simpleType namespace="" name="uint32"/>
+          </type>
+          <prefix>--port=</prefix>
+        </param>
+        <param>
+          <name>user</name>
+          <type>
+            <!-- Use the empty namespace for the YANG types -->
+            <simpleType namespace="" name="string"/>
+          </type>
+          <prefix>--user=</prefix>
+        </param>
+      </params>
+    </cmd>
+
+    <!-- This command has the format
+
+           test2 host <hostname> [port <port-id>] [user <user-name>]
+
+         In this command the host argument must be entered first, the
+         rest (port and user) can occur in any order and are optional
+    -->
+
+    <cmd name="test2">
+      <info>parameter example command</info>
+      <help>parameter example command</help>
+      <callback>
+        <exec>
+          <osCommand>/bin/echo</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+      <params>
+        <param>
+          <name>host</name>
+          <type>
+            <!-- Use the empty namespace for the YANG types -->
+            <simpleType namespace="" name="string" />
+          </type>
+          <prefix>--host=</prefix>
+          <!-- sub-parameters to the 'host' parameter -->
+          <params mode="choice" min="0" max="2">
+            <param>
+              <name>port</name>
+              <type>
+                <!-- Use the empty namespace for the YANG types -->
+                <simpleType namespace="" name="uint32"/>
+              </type>
+              <prefix>--port=</prefix>
+            </param>
+            <param>
+              <name>user</name>
+              <type>
+                <!-- Use the empty namespace for the YANG types -->
+                <simpleType namespace="" name="string"/>
+              </type>
+              <prefix>--user=</prefix>
+            </param>
+          </params>
+        </param>
+      </params>
+    </cmd>
+
+    <!-- This command has the format
+
+           test3 host <hostname> [port <port-id> [remote <port-id>]] [user <user-name>]
+
+         In this command the host argument must be entered first, the
+         rest (port and user) can occur in any order and are optional.
+         If port is given then the user can optionally also enter
+         a 'remote' argument.
+    -->
+
+    <cmd name="test3">
+      <info>parameter example command</info>
+      <help>parameter example command</help>
+      <callback>
+        <exec>
+          <osCommand>/bin/echo</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+      <params>
+        <param>
+          <name>host</name>
+          <type>
+            <!-- Use the empty namespace for the YANG types -->
+            <simpleType namespace="" name="string" />
+          </type>
+          <prefix>--host=</prefix>
+          <!-- sub-parameters to the 'host' parameter -->
+          <params mode="choice" min="0" max="2">
+            <param>
+              <name>port</name>
+              <type>
+                <!-- Use the empty namespace for the YANG types -->
+                <simpleType namespace="" name="uint32"/>
+              </type>
+              <prefix>--port=</prefix>
+              <!-- sub-parameter to [port <port-id>] -->
+              <params mode="choice" min="0">
+                <param>
+                  <name>remote</name>
+                  <type>
+                    <!-- Use the empty namespace for the YANG types -->
+                    <simpleType namespace="" name="uint32"/>
+                  </type>
+                  <prefix>--remote=</prefix>
+                </param>
+              </params>
+            </param>
+            <param>
+              <name>user</name>
+              <type>
+                <!-- Use the empty namespace for the YANG types -->
+                <simpleType namespace="" name="string"/>
+              </type>
+              <prefix>--user=</prefix>
+            </param>
+          </params>
+        </param>
+      </params>
+    </cmd>
+
+    <!-- This command has the format
+
+           test4 host <hostname> server <servername>
+
+           Select any server
+    -->
+
+    <cmd name="test4">
+      <info>parameter example command</info>
+      <help>parameter example command</help>
+      <callback>
+        <exec>
+          <osCommand>/bin/echo</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+      <params>
+        <param>
+          <name>host</name>
+          <type>
+            <xpath expr="/simpleObjects/hosts/host/name" />
+          </type>
+          <flag>--host</flag>
+          <id>hostname</id>
+        </param>
+        <param>
+          <name>server</name>
+          <type>
+            <xpath expr="/simpleObjects/hosts/host/servers/server/name" />
+          </type>
+          <flag>--server</flag>
+        </param>
+      </params>
+    </cmd>
+
+    <!-- This command has the format
+
+           test5 host <hostname> server <servername>
+
+           Select a server under the given host
+    -->
+
+    <cmd name="test5">
+      <info>parameter example command</info>
+      <help>parameter example command</help>
+      <callback>
+        <exec>
+          <osCommand>/bin/echo</osCommand>
+          <options>
+            <noInput/>
+          </options>
+        </exec>
+      </callback>
+      <params>
+        <param>
+          <name>host</name>
+          <type>
+            <xpath expr="/simpleObjects/hosts/host/name" lax="false" />
+          </type>
+          <flag>--host</flag>
+          <id>hostname</id>
+        </param>
+        <param>
+          <name>server</name>
+          <type>
+            <xpath expr="servers/server/name"
+                   ctx="/simpleObjects/hosts/host{$(hostname)}"/>
+          </type>
+          <flag>--server</flag>
+        </param>
+      </params>
+    </cmd>
+
+  </operationalMode>
+
+  <configureMode>
+    <!-- This will add the command adduser to the mode
+         aaa authentication users user <user>
+    -->
+    <modifications>
+      <defaultConfirmOption>no</defaultConfirmOption>
+    </modifications>
+    <cmd name="adduser" mode="aaa authentication users user">
+      <info>Add a user</info>
+      <help>Add a user</help>
+      <confirmText defaultOption="yes">
+        Do you really want to run the wizard?
+      </confirmText>
+      <callback>
+        <exec>
+          <osCommand>./add_user</osCommand>
+          <options>
+            <uid>user</uid>
+          </options>
+        </exec>
+      </callback>
+    </cmd>
+  </configureMode>
+</clispec>

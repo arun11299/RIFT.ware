@@ -1,0 +1,106 @@
+
+<!--
+
+  Find services, interface and ports in your system
+
+  @class rw-trafgen-controller
+-->
+<polymer-element name="rw-trafgen-controller" attributes="colony service ports">
+  <script>
+    Polymer({
+      observe : {
+        'g.startedPerceived': 'startedChanged',
+        'g.ratePerceived': 'debouncedRateChanged',
+        'g.packetSizePerceived': 'debouncedPacketSizeChanged'
+      },
+
+      created: function() {
+        this.g = rw.trafgen;
+
+        // RIFT-5794 - Too many quick changes cause thrashing on backend
+        this.debouncedRateChanged = _.debounce(this.rateChanged.bind(this), 200);
+        this.debouncedPacketSizeChanged = _.debounce(this.packetSizeChanged.bind(this), 200);
+      },
+
+      serviceChanged: function() {
+        // missing fabric ports? can they generate traffic too?
+        this.ports = jsonPath.eval(this.service, "vm[*].port[*]");
+        if (this.ports.length > 0) {
+          // all ports for a service should be in same colony
+          this.colony = this.ports[0].colonyId;
+        }
+      },
+
+      startedChanged: function() {
+        var change = this.g.startedActual !== null && this.g.startedActual != this.g.startedPerceived;
+        if (this.colony && change) {
+          var command = this.g.startedPerceived ? 'start' : 'stop';
+          var data = {
+            input : {
+              colony : {
+                name : this.colony,
+                traffic : {
+                  all : ""
+                }
+              }
+            }
+          };
+          rw.api.rpc('/api/operations/' + command, data);
+          // send the rate when starting in case perceived != actual
+          if (this.g.startedPerceived) {
+            this.sendRateChange();
+          }
+        }
+      },
+
+      rateChanged: function() {
+        if (this.g.rateActual !== null) {
+          this.sendRateChange();
+        }
+      },
+
+      sendRateChange: function() {
+        this.g.rateDejitterT0 = new Date().getTime();
+        var url = '/api/running/colony/' + this.colony + '/port/@PORT@/trafgen/transmit-params';
+        this.ajaxEachPort(url, {
+            'transmit-params' : {
+              'tx-rate' : this.g.ratePerceived
+            }
+          }
+        );
+      },
+
+      packetSizeChanged: function() {
+        if (this.g.rateActual !== null) {
+          this.sendPacketSizeChange();
+        }
+      },
+
+      sendPacketSizeChange: function() {
+        this.g.rateDejitterT0 = new Date().getTime();
+        var self = this;
+        var url = '/api/running/colony/' + this.colony + '/port/@PORT@/trafgen/range-template/packet-size';
+        this.ajaxEachPort(url, {
+            'packet-size' : {
+              increment: 1,
+              start: self.g.packetSizePerceived,
+              minimum: self.g.packetSizePerceived,
+              maximum: self.g.packetSizePerceived
+            }
+          }
+        );
+      },
+
+      ajaxEachPort: function(url, meta) {
+        _.each(this.ports, function(port) {
+          var portUrl = url.replace(/@PORT@/g, rw.api.encodeUrlParam(port.name));
+          rw.api.put(portUrl, meta, 'application/vnd.yang.data+json');
+        });
+      },
+
+      detached:function() {
+        this._propertyObserver.disconnect_();
+      }
+    });
+  </script>
+</polymer-element>

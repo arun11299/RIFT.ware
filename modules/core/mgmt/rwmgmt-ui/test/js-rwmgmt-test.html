@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="../lib/mocha/mocha.css">
+<script src="../lib/mocha/mocha.js"></script>
+<script src="../lib/chai/chai.js"></script>
+<script src="../lib/jquery/dist/jquery.js"></script>
+<script src="../js/rwmgmt.js"></script>
+<script src="helper.js"></script>
+
+<div id="mocha"></div>
+
+<script>
+mocha.setup('tdd');
+expect = chai.expect;
+assert = chai.assert;
+
+suite('Array', function() {
+  suite('setValues', function() {
+    var x = ['a', 'b'];
+    setValues(x, ['c', 'd']);
+    test('changes values', function() {
+      assert.deepEqual(['c', 'd'], x);      
+    })
+  })
+})
+
+$(document).ready(function() {
+  htmlTestRunner(mocha.run());  
+})
+</script>

@@ -1,0 +1,53 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="j">
+  <operationalMode>
+    <modifications>
+      <defaultConfirmOption>no</defaultConfirmOption>
+    </modifications>
+    <cmd name="snmp" mount="show">
+      <info>Show SNMP statistics</info>
+      <help>Show SNMP statistics</help>
+      <callback>
+        <exec>
+          <osCommand>./show_snmp</osCommand>
+        </exec>
+      </callback>
+    </cmd>
+  </operationalMode>
+
+  <configureMode>
+    <modifications>
+      <defaultConfirmOption>no</defaultConfirmOption>
+    </modifications>
+    <cmd name="wizard">
+      <info>Configuration wizards</info>
+      <help>Configuration wizards</help>
+      <cmd name="adduser">
+        <info>Add a user</info>
+        <help>Add a user</help>
+        <confirmText defaultOption="yes">
+          Do you really want to run the wizard?
+        </confirmText>
+        <callback>
+          <exec>
+            <osCommand>./add_user</osCommand>
+            <options>
+              <uid>user</uid>
+            </options>
+          </exec>
+        </callback>
+      </cmd>
+      <cmd name="shell-adduser">
+        <info>Add a user using a shell script</info>
+        <help>Add a user using a shell script</help>
+        <callback>
+          <exec>
+            <osCommand>./add_user.sh</osCommand>
+            <options>
+              <uid>user</uid>
+            </options>
+          </exec>
+        </callback>
+      </cmd>
+    </cmd>
+  </configureMode>
+</clispec>

@@ -1,0 +1,241 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+//This needs to be refactored. There are cross styles between managementDomainCard and LP card. The header needs to be refactored into a common set of styles and markup
+
+@import '../../../styles/_colors.scss';
+
+.managementDomainCard {
+  width:400px;
+  height:300px;
+
+  &_create {
+    display:flex;
+    flex-direction:column;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 88px;
+      padding:1rem;
+    }
+  }
+  &_content {
+    height:300px;
+    overflow:hidden;
+
+    .content {
+      width:400px;
+      padding:0rem;
+      overflow-y:scroll;
+
+      ul, dl{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:wrap;
+        align-items:flex-start;
+         font-size: 0.825rem;
+        li{
+          flex:1 1 30%;
+        }
+      }
+      dl {
+        margin: 0.5rem 0 0.5rem 0;
+        dt{
+          width:100%;
+          margin: 1.2rem 0 0 0;
+          padding:0rem;
+          text-align:center;
+          text-transform:uppercase;
+          font-size:1.0rem;
+          font-weight:bold;
+        }
+        dd{
+          width:100%;
+          margin: 0 0 0 0;
+          padding:0rem;
+          border:none;
+          text-align:center;
+          font-size:1.6rem;
+          font-weigth:100;
+        }
+      }
+    }
+  }
+  &_header {
+    color:white;
+    &-link, a {
+      display:flex;
+      align-items:center;
+    }
+    &-link {
+      margin-left:0.5rem;
+      cursor:pointer;
+    }
+    .fleet-card-pwr-btn {
+      padding:5px;
+    }
+    .oi {
+      margin: -0.25rem 0.5rem -0.25rem 0.725rem;
+    }
+    &-title {
+      display: flex;
+      line-height: 3rem;
+      background-color: $brand-green-light;
+      //background-color: $primary-header;
+      position: relative;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      padding-right:1rem;
+      &-off {
+        background-color:white;
+        color:black;
+      }
+    }
+
+    &-actions {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      h3{
+        padding-right:0.25rem;
+      }
+      .activeIcon{
+          color: #dadada;
+          position:relative;
+        span:after{
+          content: '\25b2';
+          color:#dadada;
+          width:0.5rem;
+          height:0.5rem;
+          position: absolute;
+          top: 17px;
+          left: 8px;
+        }
+      }
+      .inActiveIcon {
+        color:white;
+        position:relative;
+      }
+    }
+    &-status {
+      background-color: $brand-green;
+      &-current {
+        display:flex;
+        justify-content:space-between;
+        padding: 0.5rem 0;
+        span,a {
+          padding: 0 0.25rem;
+        }
+        a{
+          cursor:pointer;
+          &:hover {
+            text-decoration:underline;
+          }
+        }
+      }
+    }
+    &-operational-status {
+      &_loading {
+        display:flex;
+        flex-direction:column;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
+        color:$gray-darkest;
+     }
+      &_open {
+        overflow:hidden;
+        background: #ddd;
+        height: 693px;
+        visibility:visible;
+        opacity:1;
+        position:absolute;
+        width:100%;
+            z-index: 99;
+           display: flex;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+        ul,li {
+          margin:0.25rem 1rem 0 0.825rem;
+          list-style-type:disc;
+          color:black;
+        }
+        ul {
+          width:100%;
+          overflow: auto;
+          padding-right: 1rem;
+          margin-right: 0.5rem;
+          height: inherit;
+        }
+      }
+      &_close {
+        height: 0;
+        visibility:hidden;
+        opacity:0;
+      }
+    }
+    &-vnfr_management-links {
+      &_loading {
+        display:flex;
+        flex-direction:column;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
+        color:$gray-darkest;
+     }
+      &_open {
+        overflow:hidden;
+        background: #ddd;
+        height: 693px;
+        visibility:visible;
+        opacity:1;
+        position:absolute;
+        width:100%;
+        z-index: 99;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        color:black;
+        h2 {
+          padding:2rem;
+        }
+        ul,li {
+          margin:0.25rem 1rem 0 0.825rem;
+          list-style-type:disc;
+          color:black;
+        }
+        ul {
+          width:100%;
+          overflow: auto;
+          padding-right: 1rem;
+          margin-right: 0.5rem;
+          height: inherit;
+        }
+        li {
+          justify-content: space-around;
+          display: flex;
+        }
+      }
+      &_close {
+        height: 0;
+        visibility:hidden;
+        opacity:0;
+      }
+    }
+    .failed {
+      background-color:white;
+      color:black;
+      a {
+        color:black !important;
+      }
+    }
+  }
+}

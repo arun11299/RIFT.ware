@@ -1,0 +1,15 @@
+set hlsearch
+set incsearch
+set title
+set expandtab
+
+au BufRead,BufNewFile *.yang set filetype=yang
+au! Syntax yang source ~/.vim/yang-syntax-google-indent.vim
+
+au BufRead,BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h set filetype=cpp
+au! Syntax cpp source ~/.vim/google.vim
+
+au BufRead,BufNewFile *.cmake,CMakeLists.txt set filetype=cmake
+au! Syntax cmake source ~/.vim/cmake-syntax.vim
+au! Syntax cmake source ~/.vim/cmake-indent.vim
+

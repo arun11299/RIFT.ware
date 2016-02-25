@@ -1,0 +1,37 @@
+<!doctype html>
+<html class="viewport" ng-app="configEditor">
+<head>
+  <script src="../../lib/angular/angular.js"></script>
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../lib/socket.io-client/dist/socket.io.js"></script>
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../src/integration/ridgets/js/rw.js"></script>
+  <script src="../../src/modules/rift/rw.helper/rw.helpers.mod.js"></script>
+  <script src="../../src/modules/rift/rw.config.editor/config.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../src/integration/ridgets/css/config-editor.css"/>
+  <script>
+
+//    var configUrl = '/api/running/colony?deep';
+//    var yangUrl = '/model/config/rw-composite';
+    var configUrl = '../data/api_running_colony.json';
+    var yangUrl = '../data/model_config_rw-composite.json';
+    angular.module('configEditor')
+      .factory('configFactory', function() {
+        return {
+          get: function() {
+            return $.when(
+              rw.api.get(configUrl, 'application/vnd.yang.collection+json'),
+              rw.api.json(yangUrl)
+            );
+          }
+        };
+      });
+  </script>
+</head>
+<body class="cb-page viewport">
+  <div><h1>Config Editor</h1></div>
+  <config-editor browser="browser"></config-editor>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<div class="cb-explorer">
+  <div class="cb-toolbar">
+    <div><input ng-change="queryUpdated()" ng-model="query" size="64"></div>
+  </div>
+  <div class="cb-editor">
+    <div ng-class="{hide : !showResults}" class="cb-col cb-search-results">
+      <div>{{nResults}} result(s)</div>
+      <div ng-if="results.byValue.length > 0">
+        <div class="cb-bucket-label">Values</div>
+        <ul class="cb-results-list">
+          <li ng-repeat="result in results.byValue" class="cb-result" ng-click="openSearchResult(result)">
+            <div class="cb-result-label">{{result.label}}</div>
+            <div title="{{result.info}}" class="cb-info-icon">i</div>
+          </li>
+        </ul>
+      </div>
+      <div ng-if="results.byKey.length > 0">
+        <div class="cb-bucket-label">Property</div>
+        <ul class="cb-results-list">
+          <li class="cb-result" ng-repeat="result in results.byKey" ng-click="openSearchResult(result)">
+            <div class="cb-result-label">{{result.label}}</div>
+            <div title="{{result.info}}" class="cb-info-icon">i</div>
+          </li>
+        </ul>
+      </div>
+      <div ng-if="results.byDescription.length > 0">
+        <div class="cb-bucket-label">Description</div>
+        <ul class="cb-results-list">
+          <li ng-repeat="result in results.byDescription" class="cb-result" ng-click="openSearchResult(result)">
+            <div class="cb-result-label">{{result.label}}</div>
+            <div title="{{result.info}}" class="cb-info-icon">i</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="cb-cols">
+      <div class="cb-col" ng-repeat="items in columns">
+        <ul ng-repeat="item in items" class="cb-container-props">
+          <li>
+            <config-tree
+                    item="item"
+                    editor="$parent.$parent"
+                    column="$parent.$index + 1"></config-tree>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="cb-details" ng-class="{hide : !showDetails}">
+      <config-details item="details"></config-details>
+    </div>
+  </div>
+  <div class="cb-status">
+    <div class="cb-crumbs">
+      <div class="cb-crumb" ng-repeat="crumb in crumbs">
+        <span ng-if="$index != 0">&gt;</span> <a href="#" ng-click="showDetails(crumb.col, crumb)">{{crumb.label}}</a>
+      </div>
+    </div>
+    <div>
+      <button>Copy Path</button>
+    </div>
+  </div>
+</div>

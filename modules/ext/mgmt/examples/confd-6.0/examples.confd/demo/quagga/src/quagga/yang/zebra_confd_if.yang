@@ -1,0 +1,45 @@
+submodule zebra_confd_if {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  typedef BandwidthRangeType {
+    type uint64 {
+      range "1 .. 10000000000";
+    }
+  }
+  typedef MulticastType {
+    type enumeration {
+      enum yes;
+      enum no;
+      enum if-default;
+    }
+  }
+
+/*  =========================================================  */
+/*  =============== zebra interface configuration ===========  */
+/*  =========================================================  */
+
+  augment "/system/interface" {
+
+    leaf bandwidth {
+      type BandwidthRangeType;
+    }
+    leaf link-detect {
+      type boolean;
+      default false;
+    }
+    leaf multicast {
+      type MulticastType;
+      default if-default;
+    }
+    /*  once multicast is set to "yes" or "no", it cannot be reverted back to interface-default!  */
+    leaf up {
+      type boolean;
+      default true;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// navpanels.less
+//
+// Styles for nav panels cards
+//
+.navpanel-container {
+  background-color: @gray-light;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row wrap;
+}
+.navpanel {
+  background-color: @gray;
+  box-sizing: border-box;
+  color: @black;
+  padding: 1.5rem 0;
+  text-align: center;
+  text-decoration: none;
+  &.top {
+    flex: 1 0 100%;
+    order: 1;
+  }
+  &.right {
+    order: 4;
+  }
+  &.bottom {
+    align-self: baseline;
+    flex: 0 1 100%;
+    order: 5;
+  }
+  &.left {
+    order: 2;
+  }
+  &.left,
+  &.right {
+    background-color: @gray-light;
+    flex: 0 1 auto;
+    padding: 0 1.5rem;
+    width: 148px;
+  }
+}
+.mainpanel {
+  flex: 2 1;
+  order: 3;
+}

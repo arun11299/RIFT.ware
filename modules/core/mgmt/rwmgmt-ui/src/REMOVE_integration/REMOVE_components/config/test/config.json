@@ -1,0 +1,247 @@
+{
+  "colony": [
+    {
+      "name": "trafgen",
+      "network-context": [
+        {
+          "name": "trafgen-lb",
+          "rw-fpath:interface": [
+            {
+              "name": "N1TenGi-1",
+              "ip": [
+                {
+                  "address": "11.0.1.4/24"
+                }
+              ],
+              "bind": {
+                "port": "trafgen/2/1"
+              }
+            }
+          ]
+        }
+      ],
+      "rw-fpath:port": [
+        {
+          "name": "trafgen/2/1",
+          "open": {
+            "application": {
+              "trafgen": [
+                null
+              ]
+            }
+          },
+          "receive-q-length": 2,
+          "trafgen": {
+            "transmit-params": {
+              "transmit-mode": {
+                "range": [
+                  null
+                ]
+              }
+            },
+            "receive-param": {},
+            "range-template": {
+              "destination-mac": {
+                "dynamic": {
+                  "gateway": "11.0.1.3"
+                }
+              },
+              "source-ip": {
+                "start": "11.0.1.4",
+                "minimum": "11.0.1.4",
+                "maximum": "11.0.1.4",
+                "increment": 1
+              },
+              "destination-ip": {
+                "start": "11.0.1.3",
+                "minimum": "11.0.1.3",
+                "maximum": "11.0.1.3",
+                "increment": 1
+              },
+              "source-port": {
+                "start": 10000,
+                "minimum": 10000,
+                "maximum": 10128,
+                "increment": 1
+              },
+              "destination-port": {
+                "start": 5678,
+                "minimum": 5678,
+                "maximum": 5678,
+                "increment": 1
+              },
+              "packet-size": {
+                "start": 512,
+                "minimum": 512,
+                "maximum": 512,
+                "increment": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "trafsink",
+      "network-context": [
+        {
+          "name": "lb-trafsink",
+          "rw-fpath:interface": [
+            {
+              "name": "N2TenGigi-2",
+              "ip": [
+                {
+                  "address": "12.0.1.3/24"
+                }
+              ],
+              "bind": {
+                "port": "trafsink/4/2"
+              }
+            }
+          ]
+        },
+        {
+          "name": "lb-trafsink1",
+          "rw-fpath:interface": [
+            {
+              "name": "N3TenGigi-1",
+              "ip": [
+                {
+                  "address": "12.0.1.4/24"
+                }
+              ],
+              "bind": {
+                "port": "trafsink/5/1"
+              }
+            }
+          ]
+        },
+        {
+          "name": "trafgen-lb",
+          "rw-fpath:interface": [
+            {
+              "name": "N2TenGigi-1",
+              "ip": [
+                {
+                  "address": "11.0.1.3/24"
+                }
+              ],
+              "bind": {
+                "port": "trafsink/4/1"
+              }
+            }
+          ],
+          "rw-fpath:scriptable-lb": [
+            {
+              "name": "abc",
+              "receive-function": {
+                "function-type": "builtin",
+                "builtin": {
+                  "basic-lb": {
+                    "address": "11.0.1.3",
+                    "ip-proto": "proto-tcp",
+                    "port": 5678
+                  }
+                }
+              },
+              "classify-function": {
+                "function-type": "builtin",
+                "builtin": {
+                  "basic-lb": {
+                    "key-type": "basic-5tuple"
+                  }
+                }
+              },
+              "server-selection-function": {
+                "server-group": [
+                  {
+                    "name": "grp1",
+                    "server": [
+                      {
+                        "address": "12.0.1.4",
+                        "port": 5000
+                      }
+                    ],
+                    "nat-address": {
+                      "src-address": "12.0.1.3",
+                      "network-context": "lb-trafsink"
+                    }
+                  }
+                ],
+                "function-type": "builtin",
+                "builtin": {
+                  "basic-lb": {
+                    "selection-type": "basic-round-robin"
+                  }
+                }
+              },
+              "transform-function": {
+                "function-type": "builtin",
+                "builtin": {
+                  "basic-transform": {
+                    "transform-type": "double-nat"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "rw-fpath:port": [
+        {
+          "name": "trafsink/4/1",
+          "open": {
+            "application": {
+              "ip-fastpath": {}
+            }
+          },
+          "receive-q-length": 2,
+          "trafgen": {
+            "transmit-params": {
+              "transmit-mode": {}
+            },
+            "receive-param": {}
+          }
+        },
+        {
+          "name": "trafsink/4/2",
+          "open": {
+            "application": {
+              "ip-fastpath": {}
+            }
+          },
+          "receive-q-length": 2,
+          "trafgen": {
+            "transmit-params": {
+              "transmit-mode": {}
+            },
+            "receive-param": {}
+          }
+        },
+        {
+          "name": "trafsink/5/1",
+          "open": {
+            "application": {
+              "trafgen": [
+                null
+              ]
+            }
+          },
+          "receive-q-length": 2,
+          "trafgen": {
+            "transmit-params": {
+              "transmit-mode": {}
+            },
+            "receive-param": {
+              "receive-echo": {
+                "on": [
+                  null
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

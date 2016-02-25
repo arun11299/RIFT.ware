@@ -1,0 +1,27 @@
+@import "css/base/base";
+@import "css/elements/header";
+@import "rw-gaugeset";
+
+:host {
+  display: block;
+  .flex(1 1 auto);
+
+  .flex-display();
+}
+
+#traffic-control-dashpanel {
+  width: 250px;
+  min-width: 250px;
+  .etched-right();
+  padding-right:10px;
+  .flex(1);
+  max-width: 400px;
+}
+
+#traffic-control-dashpanel-vnf {
+  width: 400px;
+  min-width: 250px;
+  height: 280px;
+  border-right: 1px solid @gray2;
+  padding: 35px;
+}

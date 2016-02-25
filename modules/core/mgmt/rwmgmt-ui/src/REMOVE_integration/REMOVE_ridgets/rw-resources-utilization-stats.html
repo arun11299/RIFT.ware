@@ -1,0 +1,151 @@
+<link rel="import" href="rw-scroll-graph.html">
+<link rel="import" href="rw-bullet.html">
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-vcs-status-led.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  Utilization table like CPU, mem and port traffic
+
+  @class rw-resources-utilization-stats
+-->
+<polymer-element name="rw-resources-utilization-stats" attributes="node">
+    <template>
+        <rw-iconset></rw-iconset>
+        <link rel="stylesheet" type="text/css" href="rw-traffic-stats.css" />
+        <!-- Table build -->
+        <table id="statsTable" class="datagrid panel__panel-body">
+            <thead class="datagrid">
+                <tr>
+                    <th>Virtual Component System</th>
+                    <th>Status</th>
+                    <th>VCPU Count</th>
+                    <th>VCPU Last 10 Sec</th>
+                    <th>VCPU Current</th>
+                    <th></th>
+                    <th>Mem Last 10 Sec</th>
+                    <th>Mem Current</th>
+                    <th></th>
+                    <th>Storage</th>
+                </tr>
+            </thead>
+            <tbody class="datagrid__summary">
+                <tr template repeat="{{node in targetNodes}}">
+                    <td class="{{node | showNodeIcon}}">
+                        <core-icon class="icon" icon="rw-iconset:icon-{{node | showNodeIcon}}"></core-icon> {{node.instance_name}}
+                    </td>
+                    <td>
+                        <status-led state="{{node.state}}" stateString="{{nodeStateString(node)}}"></status-led>
+                    </td>
+                  <td style="text-align:right;">
+                    {{node.cpu.ncores}}
+                  </td>
+                    <td>
+                        <rw-scroll-graph linecolor="{{theme.cpu}}" strokecolor="{{theme.cpuTranslucent}}" width="100%" height="40" labels="false" value="{{node.cpu.percent}}" paused="false"></rw-scroll-graph>
+                    </td>
+                    <td>
+        <div class="rate">
+          <div class="rate-value">{{node.cpu.percent}}%</div>
+          <div class="rate-min">0</div>
+          <rw-bullet
+              value="{{node.cpu.percent}}"
+              bulletColor="{{theme.cpu}}"
+              ></rw-bullet>
+          <div class="rate-max">100</div>
+        </div>
+      </td>
+      <td></td>
+      <td>
+        <rw-scroll-graph
+          linecolor="{{theme.memory}}"
+          strokecolor="{{theme.memoryTranslucent}}"
+          width="100"
+          height="40"
+          labels="false"
+          value="{{node.memory.percent}}"
+          paused="false"
+          ></rw-scroll-graph></td>
+      <td>
+        <div class="rate">
+          <div class="rate-value">{{node.memory['curr-usage'] | bytes}}
+            ({{node.memory.percent}}%)</div>
+          <div class="rate-min">0</div>
+          <rw-bullet
+              value="{{node.memory.percent}}"
+              bulletColor="{{theme.memory}}"
+              ></rw-bullet>
+          <div class="rate-max">{{node.memory.total | bytes}}</div>
+        </div>
+      </td>
+      <td></td>
+      <td>{{node.storage['curr-usage'] | bytes(node.storage.total)}}/{{node.storage.total | bytes}}</td>
+    </tr>
+  </table>
+</template>
+<script>
+  Polymer(Platform.mixin({
+
+    created: function () {
+      this.node = {};
+      this.theme = rw.theme;
+      this.targetNodes = [];
+    },
+
+    nodeChanged: function () {
+      console.log('this node', this.node);
+      this.targetNodes = this.nodeChildren(this.node);
+      console.log('targetNodes', this.targetNodes);
+    },
+
+    showNodeIcon: function(node) {
+      switch (rw.vcs.nodeType(node)) {
+        case 'rwcolony':
+          return 'colony';
+        case 'rwcluster':
+          return 'cluster';
+        default:
+          return 'vm2';
+      }
+    },
+
+    nodeStateString: function(target) {
+      var children = this.nodeChildren(target);
+      var up = 0;
+      var chiledrenLen = 0;
+      for (var i = 0; i < children.length; i++) {
+        if(!children[i].children) {
+          if (children[i].state == 'STARTED') {
+            up++;
+          }
+          chiledrenLen++;
+        }
+      }
+      return up + '/' + chiledrenLen + ' Up'
+    },
+
+    nodeChildren: function(node) {
+      var ret = [node];
+      if ('children' in node) {
+        for (var i = 0; i < node.children.length; i++) {
+          ret = ret.concat(this.nodeChildren(node.children[i]));
+        }
+      }
+      return ret;
+    },
+
+    status: function(node) {
+      var active = 0;
+      var children = this.nodeChildren(node);
+      if (children.length == 1) {
+        return children[0].state;
+      }
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].state == "STARTED") {
+          active++;
+        }
+      }
+      return String(active) + "/" + String(children.length) + " Up"
+    }
+  }, rw.ui));
+</script>
+</polymer-element>

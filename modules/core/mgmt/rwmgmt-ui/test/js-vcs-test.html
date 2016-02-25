@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="../lib/mocha/mocha.css">
+<script src="../lib/mocha/mocha.js"></script>
+<script src="../lib/chai/chai.js"></script>
+<script src="helper.js"></script>
+<script src="../lib/jquery/dist/jquery.js"></script>
+<script src="../lib/underscore/underscore.js"></script>
+<script src="../integration/ridgets/js/rwmgmt.js"></script>
+<script src="../integration/ridgets/js/vcs.js"></script>
+
+<div id="mocha"></div>
+
+<script>
+mocha.setup('tdd');
+assert = chai.assert;
+
+var colony1 = {
+    "component_name": "rwcolony", 
+    "component_type": "RWCOLONY", 
+    "instance_id": "1", 
+    "instance_name": "colony1", 
+    "rwcolony_info": {}, 
+    "rwcomponent_children": [
+        "vm1", 
+        "vm2", 
+    ]
+};
+var vm1 = {
+    "component_name": "vm1 comp", 
+    "component_type": "RWVM", 
+    "instance_id": "1", 
+    "instance_name": "vm1", 
+    "rwcomponent_parent": "colony1", 
+    "rwvm_info": {
+        "pid": "7112", 
+        "vm_ip_address": "10.0.0.18"
+    }
+};
+var vm2 = {
+    "component_name": "vm2 comp", 
+    "component_type": "RWVM", 
+    "instance_id": "2", 
+    "instance_name": "vm2", 
+    "rwcomponent_parent": "colony1", 
+    "rwvm_info": {
+        "pid": "7112", 
+        "vm_ip_address": "10.0.0.18"
+    },
+    "rwcomponent_children": [
+        "tasklet1"
+    ],
+
+};
+var tasklet1 = {
+  "component_name": "tasklet1 comp", 
+  "component_type": "RWTASKLET", 
+  "instance_id": "1", 
+  "instance_name": "tasklet1", 
+  "rwcomponent_parent": "vm2", 
+  "rwtasklet_info": {}
+}
+var info = [ colony1, vm1, vm2, tasklet1 ];
+var meta = { 'data' : { 'response' : [
+  { 'RwvcsRwcomponentInfo' : info }
+]}};
+var vcs = new VcsDigester();
+
+suite('Vcs', function() {
+  test('foo', function() {
+    assert.equal(1, 1);
+  });
+  test('_findChildren', function() {
+    var info = [vm1, vm2, tasklet1];
+    var actual = vcs._findChildren(info, 'RWVM', ['vm2', 'tasklet1']);
+    assert.equal(1, actual.length);
+    assert.deepEqual([vm2], actual);
+  });
+  test('_loadColony', function() {
+    var cluster = vcs._loadCluster(info);
+    assert.isNotNull(cluster);
+    assert.equal(2, cluster.vms.length);
+    assert.deepEqual([vm1, vm2], cluster.vms);
+    assert.equal(1, cluster.vms[1].tasklets.length);
+    assert.deepEqual([tasklet1], cluster.vms[1].tasklets);
+  });
+  test('colonies', function() {
+    var colonies = vcs.colonies(meta);
+    assert.equal(1, colonies.length);
+    assert.equal(1, colonies[0].clusters.length);
+  });
+});
+
+$(document).ready(function() {
+  htmlTestRunner(mocha.run());  
+});
+
+</script>

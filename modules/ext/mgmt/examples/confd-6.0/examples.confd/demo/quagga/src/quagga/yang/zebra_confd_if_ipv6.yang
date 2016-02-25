@@ -1,0 +1,157 @@
+submodule zebra_confd_if_ipv6 {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef LifetimeRangeType {
+    type uint32 {
+      range "0 .. 4294967295";
+    }
+  }
+  typedef LifetimeRangeInfiniteType {
+    type union {
+      type LifetimeRangeType;
+      type InfiniteType;
+    }
+  }
+  typedef RaIntRangeType {
+    type uint32 {
+      range "3 .. 1800";
+    }
+  }
+  typedef RaLifetimeRangeType {
+    type uint32 {
+      range "0 .. 9000";
+    }
+  }
+  typedef ReachableTimeRangeType {
+    type uint32 {
+      range "0 .. 3600000";
+    }
+  }
+  typedef HomeAgendLifetimeRangeType {
+    type uint32 {
+      range "0 .. 65520";
+    }
+  }
+  typedef HomeAgendPreferenceRangeType {
+    type uint32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef TimeUnitType {
+    type enumeration {
+      enum sec;
+      enum msec;
+    }
+  }
+
+/*  =========================================================  */
+/*  ============ zebra interface/ipv6 configuration =========  */
+/*  =========================================================  */
+
+  augment "/system/interface/ipv6" {
+
+    list address {
+      key "address prefix-length";
+      tailf:validate valAddrPrefixPair {
+      }
+      leaf address {
+        type inet:ipv6-address;
+      }
+      leaf prefix-length {
+        type PrefixLengthIPv6;
+      }
+    }
+    container nd {
+      leaf adv-interval-option {
+        type boolean;
+      }
+      leaf home-agent-config-flag {
+        type boolean;
+      }
+      leaf home-agent-lifetime {
+        type HomeAgendLifetimeRangeType;
+      }
+      leaf home-agent-preference {
+        type HomeAgendPreferenceRangeType;
+      }
+      leaf managed-config-flag {
+        type boolean;
+        default false;
+      }
+      leaf other-config-flag {
+        type boolean;
+        default false;
+      }
+      list prefix {
+        key "address prefix-length";
+        tailf:validate valPrefixCombination {
+        }
+        /*  only some of the lifetime/off-link/no-autoconfig/router-address combinations are valid  */
+        leaf address {
+          type inet:ipv6-address;
+        }
+        leaf prefix-length {
+          type PrefixLengthIPv6;
+        }
+        container lifetime {
+          presence "";
+          tailf:validate valLifeTime {
+          }
+          leaf preferred-lifetime {
+            type LifetimeRangeInfiniteType;
+            mandatory true;
+          }
+          leaf valid-lifetime {
+            type LifetimeRangeInfiniteType;
+            mandatory true;
+          }
+        }
+        leaf off-link {
+          type boolean;
+          default false;
+        }
+        leaf no-autoconfig {
+          type boolean;
+          default false;
+        }
+        leaf router-address {
+          type boolean;
+          default false;
+        }
+      }
+      container ra-interval {
+        presence "";
+        leaf value {
+          type RaIntRangeType;
+          mandatory true;
+        }
+        leaf unit {
+          type TimeUnitType;
+          default sec;
+        }
+      }
+      leaf ra-lifetime {
+        type RaLifetimeRangeType;
+      }
+      leaf reachable-time-msec {
+        type ReachableTimeRangeType;
+      }
+      leaf suppress-ra {
+        type boolean;
+        default true;
+      }
+    }
+  }
+}

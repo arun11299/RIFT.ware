@@ -1,0 +1,54 @@
+Example router config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how parts of the CLI
+of the Cisco Nexus router can be modelled in YANG and annotated
+with Tail-f CLI extensions to get a CLI similar to the CLI on the
+Nexus box.
+
+Some constructs used are:
+
+tailf:cli-allow-join-with-key {
+     tailf:cli-display-joined;
+}
+
+It indicates that the leaf name may be written together with the first
+key, without requiring a whitespace in between, ie allowing all of
+
+  interface ethernet1/1 
+  interface ethernet 1/1
+  interface eth1/1
+  interface eth 1/1
+  interface Eth1/1
+  interface e1/1
+
+etc
+
+The tailf:cli-display-joined tells ConfD to not insert a whitespace
+between the list name and the first key when displaying the running
+configuration.
+
+For example:
+
+    container interface {
+        tailf:info "Configure interfaces";
+        
+        list ethernet {
+            tailf:info "Ethernet IEEE 802.3z";
+            tailf:cli-allow-join-with-key {
+                tailf:cli-display-joined;
+            }
+            tailf:cli-mode-name "config-if";
+
+            key "name";
+
+            leaf name {
+                tailf:info "<1-66>/<1-128>;;Slot number/Port number";
+                type string {
+                    pattern "(([1-9])|([1-6][0-9]*))/([1-9]|(11[0-9])|"
+                        +"(12[0-8]))";
+                }
+            }
+            
+...
+

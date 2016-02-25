@@ -1,0 +1,17 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+    </modifications>
+
+    <show path="data">
+      <callback>
+        <capi>
+          <cmdpoint>show-point</cmdpoint>
+        </capi>
+      </callback>
+    </show>
+  </operationalMode>
+
+  <configureMode>
+  </configureMode>
+</clispec>

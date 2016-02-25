@@ -1,0 +1,70 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: false
+//
+// LIBS
+// Import all 3rd party libs first, so we can overwrite if necessary. Most
+// of these should be straight css.
+//
+@import "../vendor/css-reset-2.0/css-reset.css";
+//
+// BASE
+// Styling common to all pages: reset, typography, palette, mixins etc.
+//
+@import "base/utils.less";                 // common utils (mixins, etc)
+@import "base/palette.less";               // contains all palette vars.
+@import "base/type.less";                  // contains all typography vars and styles.
+@import "base/vars.less";                  // common vars (borders, tables, etc).
+//
+// LAYOUT
+// Our grid system, common page sections (header, body, footer).
+//
+@import "layout/layout.less";               // general screen layout
+@import "layout/header.less";               // header layout
+@import "layout/app-body.less";             // application body layout
+@import "layout/footer.less";               // footer layout
+//
+// ACCENTS
+// Visual accent styles (corner elements, state signifiers, etc)
+//
+@import "accents/corners.less";             // corner elements used on panels
+@import "accents/states.less";               // handle states (active, disabled, etc)
+//
+// COMPONENTS
+// Common components such as forms, tables, lists. App-specific components as well.
+//
+@import "components/dropdowns.less";        // styles for dropdowns
+@import "components/fleet-card.less";       // styles for fleet cards
+@import "components/nav-panels.less";       // styles for navigation panels
+@import "components/progress-bars.less";    // styles for progress bars
+@import "components/config-viewer.less";    // styles for config viewer
+//
+// CONTROLS
+// UI controls such as buttons, pagination, form controls.
+//
+@import "controls/slider.less";             // styles for slider controls
+@import "controls/buttons.less";            // styles for button controls
+@import "controls/step-control.less";       // styles for incrementor controls
+@import "controls/toggle-control.less";     // styles for toggle controls
+@import "controls/splitter.less";       	// styles for splitter controls
+//
+// SCREENS
+// Screen-specific styles here.
+//
+@import "screens/launchpad.less";           // styles for launchpad
+@import "screens/create-fleet.less";        // styles for create-fleet
+@import "screens/viewport-dash.less";       // styles for viewport
+@import "screens/viewport-so.less";			// styles for viewport service orchestrator
+@import "screens/viewport-vim.less";       // styles for viewport vim
+@import "screens/viewport-vnf.less";       // styles for viewport vnf
+@import "screens/wag.less";           	   // styles for wag
+//
+// TEMP
+// Temp styles here, to be removed as more pages are built out.
+//
+@import "temp-png.less";                    // temp styles png-based screens
+@import "login.less";                   	// Login screen (unsure where this goes)

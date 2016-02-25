@@ -1,0 +1,44 @@
+<link rel="import" href="rw-services-model.html">
+<link rel="import" href="rw-splitter.html">
+<link rel="import" href="rw-network-diagram.html">
+<link rel="import" href="rw-iface-details.html">
+
+<polymer-element name="rw-network">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-network.css"/>    
+  <rw-services-model
+    id="services"
+    ></rw-services-model>
+  <rw-network-diagram 
+    id="diagram"
+    services="{{$.services.services}}" 
+    on-select-interface="{{selectInterface}}"
+    ></rw-network-diagram>
+  <rw-splitter
+    id="splitter"
+    class="horizontal"
+    allowOverflow direction="down"
+  >
+    <span class="node-label">{{port.name}}</span>
+  </rw-splitter>
+  <rw-iface-details 
+    id="details"
+    port="{{port}}" 
+    iface="{{iface}}"
+    style="height:300px"
+    ></rw-iface-details>
+</template>
+<script>
+Polymer({
+
+  created: function() {
+    this.port = null;
+    this.iface = null;
+  },
+
+  selectInterface: function(e, detail) {
+    this.iface = detail.iface;
+  }
+});  
+</script>
+</polymer-element>

@@ -1,0 +1,15 @@
+<div>
+  <h2>{{item.label}}</h2>
+  <span class="cb-success-msg">{{message}}</span>
+  <ul class="cb-form" ng-repeat="leaf in leafs">
+    <li>
+      <label>
+        <span>{{leaf.name}}</span>
+        <input type="text" ng-model="leaf.value">
+      </label>
+    </li>
+  </ul>
+  <div>
+    <button ng-click="save()">Save</button>
+  </div>
+</div>

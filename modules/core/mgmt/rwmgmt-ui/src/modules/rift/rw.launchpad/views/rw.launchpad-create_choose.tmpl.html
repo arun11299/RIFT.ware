@@ -1,0 +1,27 @@
+<!-- -------------- -->
+<!-- CHOOSE SECTION -->
+<div id="choose" class="section wizard">
+  <h3>Choose</h3>
+  <form class="form-horizonal" role="form">
+    <ul class="list-inline content clear-fix">
+      <li ng-repeat="tmpl in choose.templates">
+        <label ng-class="{'active':choose.selectedTemplate == tmpl.id}">
+          <input type="radio" ng-value="tmpl.id" ng-model="choose.selectedTemplate"
+                 class="btn btn-default btn-lg" ng-click="choose.setTemplate(tmpl.id)"/>
+          <dl>
+            <dt>{{tmpl.name}}</dt>
+            <!-- <dd class="snapshot-author"></dd> -->
+            <dd class="description">{{ tmpl.description }}</dd>
+          </dl>
+        </label>
+      </li>
+    </ul>
+    <!-- -->
+    <ul class="list-inline controls">
+      <li><a ng-click="create.cancel()" class="btn link" href="">Cancel Environment</a></li>
+      <li><a ng-class="{'disabled':choose.selectedTemplate == ''}"
+             ng-click="choose.next('Build')" class="btn primary" href="">Continue</a></li>
+    </ul>
+    <!-- -->
+  </form>
+</div>

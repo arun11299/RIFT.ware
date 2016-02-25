@@ -1,0 +1,59 @@
+@import "css/base/base";
+
+:host {
+  .flex(1 1 auto);
+  .flex-display();
+  .flex-direction(column);
+  overflow: auto;
+}
+
+.row {
+  display:flex;
+  flex-direction:row;
+  height: auto !important;
+  padding: 0px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 0px;
+  margin-top: 20px;
+  overflow:hidden;
+}
+
+#dash-cloud.row{
+  min-height:510px;
+  margin-bottom:20px;
+}
+
+#dash-aggr.row{
+  min-height:482px;
+}
+
+#dash-cloud .panel{
+  width:100%;
+}
+
+.panel{
+  flex:1 1 auto;
+  min-height: 200px;
+  padding:0px;
+  margin:0px;
+
+  border-radius: 5px;
+  background-color: @gray6;
+}
+/**/
+
+.panel__panel-body {
+  .flex(1 1 auto);
+
+}
+
+.panel__panel-header__panel-title{
+  display:block;
+  padding:0px;
+  margin:0px;
+
+  color:#ffffff;
+  font-size: 16px;
+  text-transform: uppercase;
+}

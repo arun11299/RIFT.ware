@@ -1,0 +1,54 @@
+<div id="build" class="section wizard hide">
+  <h3>Build</h3>
+  <form class="horizontal" role="form">
+    <div class="form-group">
+      <label for="name" class="control-label">Name</label>
+      <input id="name" type="text" class="form-control" placeholder="Title your Environment" ng-model="build.environment.name" />
+    </div>
+    <div class="form-group">
+      <label for="description" class="control-label">Description</label>
+      <div class="textarea-group">
+        <textarea id="description" class="form-control" rows="6" placeholder="Describe your Environment"
+                  maxlength="240" ng-model="build.environment.description" ng-trim="false"></textarea>
+        <span class="countdown">{{240 - build.environment.description.length}}</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Mode</label>
+      <div class="radio-group">
+        <div class="radio">
+          <label>
+            <input type="radio" value="Production" ng-model="build.environment.mode" name="environmentmode"
+                   id="environmentmode-production">
+            Production</label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" value="Testing"  ng-model="build.environment.mode"  name="environmentmode"
+                   id="environmentmode-testing">
+            Testing</label>
+        </div>
+      </div>
+    </div>
+    <div>
+    </div>
+    <div class="form-group">
+      <label for="resourcepool" class="col-sm-2 control-label">Resource Pool</label>
+      <div class="col-sm-10">
+        <select class="form-control" ng-model="build.environment.pool"
+                ng-options="pool as pool.name for pool in build.pools">
+          <option disabled selected value="">Select a pool environment</option>
+        </select>
+      </div>
+    </div>
+    <build-inputs ng-if="build.environment.fields"
+                  ng-repeat="field in build.environment.fields track by $index" field="field" >
+    </build-inputs>
+    <ul class="list-inline controls">
+      <li><a href="" ng-click="create.cancel()" class="btn link">Cancel Environment</a></li>
+      <li><button href="" ng-click="build.next()" ng-class="{'btn':true, 'primary':true,
+                disabled:build.environment.name.length == 0 || build.environment.description.length == 0 }">Continue</button></li>
+    </ul>
+    <!-- -->
+  </form>
+</div>

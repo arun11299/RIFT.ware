@@ -1,0 +1,21 @@
+<SNMP-USER-BASED-SM-MIB xmlns="http://tail-f.com/ns/mibs/SNMP-USER-BASED-SM-MIB/200210160000Z">
+
+  <usmUserTable>
+    <!-- this ("local") entry is used for v3 traps -->
+    <usmUserEntry>
+      <usmUserEngineID>80:00:61:81:05:01</usmUserEngineID>
+      <usmUserName>public</usmUserName>
+      <usmUserSecurityName>public</usmUserSecurityName>
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.2</usmUserAuthProtocol>
+      <usmUserAuthKey>64:46:8A:DA:82:A3:C6:A5:25:1C:7B:31:C3:3E:03:5B</usmUserAuthKey>
+    </usmUserEntry>
+    <!-- this ("remote") entry is used for v3 informs -->
+    <usmUserEntry>
+      <usmUserEngineID>80:00:1F:88:04:74:65:73:74:69:6E:67</usmUserEngineID>
+      <usmUserName>remote</usmUserName>
+      <usmUserSecurityName>remote</usmUserSecurityName>
+      <usmUserAuthProtocol>1.3.6.1.6.3.10.1.1.2</usmUserAuthProtocol>
+      <usmUserAuthKey>64:46:8A:DA:82:A3:C6:A5:25:1C:7B:31:C3:3E:03:5B</usmUserAuthKey>
+    </usmUserEntry>
+  </usmUserTable>
+</SNMP-USER-BASED-SM-MIB>

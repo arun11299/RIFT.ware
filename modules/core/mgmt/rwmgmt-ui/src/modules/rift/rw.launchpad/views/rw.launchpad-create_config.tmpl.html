@@ -1,0 +1,21 @@
+<!-- -------------- -->
+<!-- CONFIG SECTION -->
+<div id="config" class="section hide">
+  <h3>Config</h3>
+  <form class="horizontal" role="form">
+    <div class="form-group">
+      <label class="control-label">Auto Generated Configuration File</label>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-12">
+        <textarea id="configfile" class="form-control" rows="30" ng-model="config.config" style="resize: none; overflow-y:scroll;" placeholder=""></textarea>
+      </div>
+    </div>
+    <!-- -->
+    <ul class="list-inline controls">
+      <li><a ng-click="create.cancel()" class="btn link">Cancel Environment</a></li>
+      <li><a ng-click="config.next();" href class="btn primary">Continue</a></li>
+    </ul>
+    <!-- -->
+  </form>
+</div>

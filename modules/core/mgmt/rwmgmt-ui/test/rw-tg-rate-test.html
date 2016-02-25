@@ -1,0 +1,67 @@
+<link rel="import" href="../integration/ridgets/rw-trafgen-dashboard.html">
+
+<link rel="stylesheet" href="../lib/mocha/mocha.css">
+<link rel="stylesheet" href="../css/trafgen-dashboard.css">
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<script src="../lib/mocha/mocha.js"></script>
+<script src="../lib/chai/chai.js"></script>
+<script src="../lib/sinonjs/sinon.js"></script>
+<script src="../lib/jquery/dist/jquery.js"></script>
+<script src="helper.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <rw-tg-rate id="test0"></rw-tg-rate>
+  <rw-tg-rate id="test1"></rw-tg-rate>
+  <rw-tg-meta id="test2"></rw-tg-meta>
+  <div id="mocha"></div>
+</template>
+<script>
+mocha.setup('tdd')
+expect = chai.expect
+assert = chai.assert
+
+Polymer('my-test', {
+  ready: function() {
+    stubAjax()
+  },
+  attached: function() {
+    var test0 = this.$.test0
+    var test1 = this.$.test1
+    suite('rw-tg-rate-knob', function() {
+      suite('default state', function() {
+        test('edit xml', function() {
+          var template = jQuery.ajax({ url: "trafgen-change-base.xml",
+            async: false }).responseText
+          var expected = jQuery.ajax({ url: "trafgen-change-expected.xml",
+            async: false }).responseText
+          var actual = test0.editXml_(template, function(dom) {
+            var foo = dom.createElement("rwfpath:foo")
+            foo.innerHTML = '<rwfpath:bar>10</rwfpath:bar>'
+            dom.getElementsByTagName('transmit-param')[0].appendChild(foo)
+          })
+          assert.equal(expected, actual)
+        })
+        test('should be startable', function() {
+          test1.runningState = this.STOPPED;
+          test1.togglePowerSwitch();
+          assert.equal(test1.STARTED, test1.runningState)
+        })
+      })
+    })
+
+    var test2 = this.$.test2
+    suite('rate', function() {
+      test('zzz', function() {
+        test2.loadMeta()
+        assert.equal(1, 1)
+      })
+    })
+  },
+  domReady: function() {
+    restoreAjax()
+  }
+})
+    </script>
+</polymer-element>    
+<my-test></my-test>

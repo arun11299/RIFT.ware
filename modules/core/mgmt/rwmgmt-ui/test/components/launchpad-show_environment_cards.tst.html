@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title>RIFT.ware</title>
+        <!-- META Data -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../build/vendor.js"></script>
+        <script src="../../lib/ng-websocket/ng-websocket.js"></script>
+        <script src="../../src/integration/_components/_services/dispatchesque.js"></script>
+        <script src='../../lib/react/JSXTransformer.js'></script>
+        <script src='../../lib/react/react.js'></script>
+        <script src="../../test/components/js/components.js"></script>
+        <script type='text/jsx' src='../../src/modules/rift/rw.launchpad/components/rw.launchpad-environment_card.comp.jsx'></script>
+        <script type='text/jsx' src="../../src/modules/rift/rw.helper/rw.helpers.mod.js"></script>
+        <script type='text/jsx' src="../../src/modules/rift/rw.launchpad/rw.launchpad.mod.js"></script>
+        <script type='text/jsx' src="../../src/modules/rift/rw.launchpad/directives/rw.launchpad-show_environment_cards.dir.js"></script>
+        <script type='text/jsx' src="../../src/modules/rift/rw.launchpad/service/rw.launchpad-show_environment_cards.svc.js"></script>
+        <script type='text/jsx'>
+          angular.bootstrap(angular.element('body'), ['launchPad'])
+        </script>
+    </head>
+    <body >
+        <show-environment-cards id='cards' data='data'></show-environment-cards>
+    </body>
+</html>

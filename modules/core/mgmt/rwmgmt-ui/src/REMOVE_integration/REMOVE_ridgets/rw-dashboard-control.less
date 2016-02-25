@@ -1,0 +1,157 @@
+@import "css/base/base";
+@import "css/elements/button";
+@import "css/elements/form";
+
+hr.horizontal {
+  display: none;
+}
+
+hr {
+  width: 100%;
+}
+
+.rw-traffic-stats__reset {
+  margin-left: auto;
+  display: inline-block;
+  text-decoration: underline;
+  color: @datagrid-blue;
+  cursor: pointer;
+}
+
+.rw-traffic-stats__control {
+  white-space: nowrap;
+}
+.dash-label {
+  padding-bottom: 6px;
+
+  color:#cccccc;
+  font-weight:200;
+  font-size: 14px;
+}
+.dash-slider-start {
+  width: 20px;
+  height:30px;
+
+  color:#cccccc;
+  font-size:14px;
+  text-align: right;
+  font-weight:200;
+  line-height: 30px;
+}
+
+.dash-slider-end {
+  width: 35px;
+  height:30px;
+
+  color:#cccccc;
+  font-size:14px;
+  text-align: left;
+  font-weight:200;
+  line-height: 30px;
+}
+.dash-slider-value {
+  color:#ffffff;
+  font-size: 22px;
+  font-weight:400;
+}
+
+.dash-slider rw-slider {
+  .flex(1 0 auto);
+  margin: 0px;
+}
+.dash-slider-value {
+  .justify-content(center);
+}
+
+.secondaryButtons span.button {
+  flex: 1;
+}
+/**/
+
+/**/
+// Vertical-only
+
+#controlPanel.form__v > .dash-slider {
+  .flex-display();
+  margin: 0 0 0px;
+}
+
+#controlPanel.form__v > div {
+  width: 100%;
+  .flex-display();
+  .flex-direction(row);
+}
+
+#controlPanel.form__v > .primaryButtons {
+  .etched-bottom();
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.dash-slider-value {
+  font-size: 22px;
+}
+#controlPanel{
+  display:block;
+}
+
+.primaryButtons.horizontal{
+  float:left;
+
+  line-height:50px;
+}
+/**/
+/**/
+.slider-component{
+  display:inline-block;
+  width:auto;
+  min-width:370px;
+  height:100%;
+  padding:0px;
+  margin:0px;
+  float:left;
+}
+.slider-component.horizontal{
+  height:52px;
+  margin-left:20px;
+}
+.slider-component.horizontal .dash-label{
+  display:block;
+  width:100%;
+}
+.slider-component.horizontal .dash-slider{
+  display:inline-block;
+  height:30px;
+  width:305px;
+  padding:0px;
+  margin:0px;
+  float:left;
+}
+.slider-component.horizontal .dash-slider .dash-slider-start{
+  float:left;
+}
+.slider-component.horizontal .dash-slider .dash-slider-end{
+  float:left;
+}
+.slider-component.horizontal .dash-slider rw-slider{
+  width:250px;
+  float:left;
+}
+.slider-component.horizontal .dash-slider-value{
+  display:inline-block;
+  height:30px;
+  width:auto;
+  padding-left:6px;
+  padding-top:0px;
+  padding-bottom:0px;
+  padding-right:0px;
+  margin-left:6px;
+  margin-right:0px;
+  margin-top:0px;
+  margin-bottom:0px;
+  float:left;
+
+  line-height:30px;
+
+  border-left:1px solid #cccccc;
+}

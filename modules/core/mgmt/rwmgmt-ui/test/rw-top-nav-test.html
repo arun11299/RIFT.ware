@@ -1,0 +1,26 @@
+<link rel="import" href="../integration/ridgets/rw-top-nav.html">
+<link rel="import" href="helper.html">
+<link rel="stylesheet" href="../css/page.css">
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <div class="viewport__body" style="background-color:blue;">
+    <rw-top-nav id="test0" active="configuration"></rw-top-nav>
+  </div>
+</template>
+<script>
+Polymer('my-test', {
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-top-nav', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+})
+</script>
+</polymer-element>    
+<div id="mocha"></div>
+<my-test></my-test>

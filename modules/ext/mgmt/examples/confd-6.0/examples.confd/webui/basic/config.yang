@@ -1,0 +1,75 @@
+module config {
+  namespace "http://tail-f.com/ns/example/config";
+  prefix config;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  container chassis {
+    list slot {
+      key "id";
+      leaf id {
+        type uint64;
+      }
+      list interface {
+        key "name";
+        leaf name {
+          type string;
+        }
+        leaf ip {
+          type inet:ipv4-address;
+          description "A normal IPv4 address";
+        }
+        leaf description {
+          type string;
+        }
+        leaf tx {
+          config false;
+          tailf:callpoint oper;
+          type uint64;
+        }
+        leaf rx {
+          config false;
+          tailf:cdb-oper;
+          type uint64;
+        }
+        tailf:action self-ping {
+          tailf:exec "./ping.pl";
+          output {
+            leaf header {
+              type string;
+            }
+            container response {
+              leaf data {
+                type string;
+              }
+            }
+            container statistics {
+              leaf packet {
+                type string;
+              }
+              leaf time {
+                type string;
+              }
+            }
+          }
+        }
+        choice logformat {
+          leaf syslog {
+            type empty;
+          }
+          container disk {
+            leaf filename {
+              type string;
+            }
+            leaf maxSize {
+              type uint64;
+            }
+          }
+        }
+      }
+    }
+  }
+}

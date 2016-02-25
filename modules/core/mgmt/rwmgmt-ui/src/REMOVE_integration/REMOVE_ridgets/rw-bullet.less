@@ -1,0 +1,31 @@
+@import "css/base/base";
+
+:host {
+  display: block;
+}
+
+.bullet {
+  transition: all 0.5s ease-in-out;
+  -webkit-transition:  all 0.5s ease-in-out;
+  transform-origin: left center;
+  -webkit-transform-origin: left center;
+  transform: scaleX(0);
+  -webkit-transform: scaleX(0);
+}
+
+.container {
+  stroke: @black;
+  stroke-width: 1;
+  fill: @gray5;
+}
+
+.marker {
+  stroke: rgba(69, 69, 69, 1);
+  stroke-width: 2;
+}
+
+.markerText {
+  font-size: 10px;
+  font-family: open-sans;
+  color: rgba(133, 133, 133, 1);
+}

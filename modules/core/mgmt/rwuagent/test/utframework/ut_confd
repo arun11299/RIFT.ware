@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# Create a confd workspace for test
+test_root=$RIFT_INSTALL/tmp/agent_ut/confd
+test_etc=${test_root}/etc
+confd_config=${test_etc}/confd.conf
+test_ssh=${test_etc}/ssh
+src_fxs_dir=$RIFT_ROOT/.build/modules/core/mgmt/src/core_mgmt-build/rwuagent/test/utframework/yang
+confd_exe=$RIFT_INSTALL/usr/local/confd/bin/confd
+config_file=$RIFT_ROOT/modules/core/mgmt/rwuagent/test/utframework/confd.conf.ut
+confd_install_root=$RIFT_INSTALL/usr/local/confd
+install_yang=$RIFT_INSTALL/usr/data/yang
+on_exit=0
+reuse_confd_ws=0
+
+while :; do
+  key="$1"
+  case $key in
+     --no-clean-exit)
+     on_exit=1
+     shift
+     ;;
+     --reuse-confd-ws)
+     reuse_confd_ws=1
+     shift
+     ;;
+     *)
+       break
+     ;;
+  esac
+  shift
+done
+
+cleanup_and_exit() {
+  #rm -rf ${test_root}
+  exit 1
+}
+
+if [ ${reuse_confd_ws} -eq 0 ]
+then
+  #remove if already exists
+  if [ -d ${test_root} ]; then
+    rm -rf ${test_root}
+  fi
+
+  #create the test directory
+  mkdir -p ${test_root} || { echo "Failed to create $test_root"; cleanup_and_exit; }
+
+  #create etc dir and populate links to fxs files present in sfxs_dir
+  mkdir -p ${test_etc} || { echo "Failed to create $test_etc"; cleanup_and_exit; }
+
+  #copy the confd config file
+  cp ${config_file} ${confd_config}
+
+  #create the symbolic links for the fxs files
+  files=$(ls ${src_fxs_dir}/*.fxs)
+  for f in $files; do
+    bn=$(basename $f)
+    df=${test_etc}/${bn}
+    ln -s ${f} ${df} || { echo "Failed to create symb link"; cleanup_and_exit; }
+  done
+
+  #rift standard yangs
+  for f in rw-yang-types.fxs rw-3gpp-types.fxs rw-cli-ext.fxs rw-pb-ext.fxs rw-c-types.fxs rw-netconf.fxs rw-mgmtagt.fxs; do
+    srcf=${install_yang}/${f}
+    destf=${test_etc}/${f}
+    ln -s ${srcf} ${destf} || { echo "Failed to create symb link"; cleanup_and_exit; }
+  done
+
+  #confd yangs
+  files=$(ls ${confd_install_root}/etc/confd/*.fxs)
+  for f in $files; do
+    bn=$(basename $f)
+    df=${test_etc}/${bn}
+    ln -s ${f} ${df} || { echo "Failed to create symb link"; cleanup_and_exit; }
+  done
+
+  #create other required directories for confd
+  for d in state log rollback candidate cdb; do
+    mkdir -p ${test_root}/var/${d} || { echo "Failed to create $d"; cleanup_and_exit; }
+  done
+
+  #ssh directory
+  mkdir -p ${test_ssh} || { echo "Failed to create $d"; cleanup_and_exit; }
+  for f in ssh_host_dsa_key ssh_host_dsa_key.pub; do
+    srcf=${confd_install_root}/etc/confd/ssh/${f}
+    destf=${test_ssh}/${f}
+    ln -s ${srcf} ${destf} || { echo "Failed to create symb link"; cleanup_and_exit; }
+  done
+
+  #ccl file
+  srcf=${confd_install_root}/etc/confd/confd.ccl
+  destf=${test_etc}/confd.ccl
+  ln -s ${srcf} ${destf} || { echo "Failed to create symb link"; cleanup_and_exit; }
+
+  #aaa_init.xml
+  srcf=${confd_install_root}/var/confd/cdb/aaa_init.xml
+  destf=${test_root}/var/cdb/aaa_init.xml
+  ln -s ${srcf} ${destf} || { echo "Failed to create symb link"; cleanup_and_exit; }
+
+fi
+
+# ATTN: state dir somehow vanishes
+if [ ! -d ${test_root}/var/state ]
+then
+   mkdir -p ${test_root}/var/state
+fi
+
+cd ${test_root}
+cmd="${confd_exe} --conf ${confd_config} --start-phase0 --foreground $@ "
+echo $cmd
+exec ${cmd}

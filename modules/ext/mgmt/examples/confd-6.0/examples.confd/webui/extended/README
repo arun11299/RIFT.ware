@@ -1,0 +1,15 @@
+Extended Web UI Example
+~~~~~~~~~~~~~~~~~~~~~~~
+
+This example extends the examples.confd/webui/basic/. Please read
+examples.confd/webui/basic/README before you proceed with this README
+file.
+
+The confd.conf file has been updated to:
+
+* Enable ssl
+* Enable audit logging
+* Enable Web server access log
+
+The confdc-cdb/aaa_init.xml has been updated to restrict access to
+certain areas of the configuration for the oper user. Take a look.

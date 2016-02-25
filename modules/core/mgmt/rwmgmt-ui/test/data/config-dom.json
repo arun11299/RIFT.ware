@@ -1,0 +1,476 @@
+{
+    "root": {
+        "rw-base:network-context": [
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "11.0.1.7/24",
+                        "rw-base:name": "N1TenGi-1"
+                    },
+                    {
+                        "rw-base:address": "11.0.2.7/24",
+                        "rw-base:name": "N1TenGi-2"
+                    }
+                ],
+                "rw-base:name": "trafgen"
+            },
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "11.0.1.3/24",
+                        "rw-base:name": "N2TenGigi-1"
+                    },
+                    {
+                        "rw-base:address": "12.0.1.3/24",
+                        "rw-base:name": "N2TenGigi-2"
+                    },
+                    {
+                        "rw-base:address": "12.0.3.3/24",
+                        "rw-base:name": "N2TenGigi-3"
+                    },
+                    {
+                        "rw-base:address": "12.0.5.3/24",
+                        "rw-base:name": "N2TenGigi-4"
+                    }
+                ],
+                "rw-base:name": "loadbalancer1",
+                "rw-fpath:lb-profile": {
+                    "rw-fpath:destination-nat": [
+                        {
+                            "rw-fpath:real-ip": "12.0.1.4",
+                            "rw-fpath:source-ip": "12.0.1.3",
+                            "rw-fpath:tcp-port": "5001"
+                        },
+                        {
+                            "rw-fpath:real-ip": "12.0.3.4",
+                            "rw-fpath:source-ip": "12.0.3.3",
+                            "rw-fpath:tcp-port": "5001"
+                        },
+                        {
+                            "rw-fpath:real-ip": "12.0.5.4",
+                            "rw-fpath:source-ip": "12.0.5.3",
+                            "rw-fpath:tcp-port": "5001"
+                        }
+                    ],
+                    "rw-fpath:name": "lb1"
+                },
+                "rw-fpath:load-balancer": {
+                    "rw-fpath:lb-profile": "lb1",
+                    "rw-fpath:name": "x1",
+                    "rw-fpath:tcp-port": "5678",
+                    "rw-fpath:virtual-ip": "11.0.1.3"
+                }
+            },
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "11.0.2.3/24",
+                        "rw-base:name": "N3TenGigi-1"
+                    },
+                    {
+                        "rw-base:address": "12.0.2.3/24",
+                        "rw-base:name": "N3TenGigi-2"
+                    },
+                    {
+                        "rw-base:address": "12.0.4.3/24",
+                        "rw-base:name": "N3TenGigi-3"
+                    },
+                    {
+                        "rw-base:address": "12.0.6.3/24",
+                        "rw-base:name": "N3TenGigi-4"
+                    }
+                ],
+                "rw-base:name": "loadbalancer2",
+                "rw-fpath:lb-profile": {
+                    "rw-fpath:destination-nat": [
+                        {
+                            "rw-fpath:real-ip": "12.0.2.4",
+                            "rw-fpath:source-ip": "12.0.2.3",
+                            "rw-fpath:tcp-port": "5001"
+                        },
+                        {
+                            "rw-fpath:real-ip": "12.0.4.4",
+                            "rw-fpath:source-ip": "12.0.4.3",
+                            "rw-fpath:tcp-port": "5001"
+                        },
+                        {
+                            "rw-fpath:real-ip": "12.0.6.4",
+                            "rw-fpath:source-ip": "12.0.6.3",
+                            "rw-fpath:tcp-port": "5001"
+                        }
+                    ],
+                    "rw-fpath:name": "lb2"
+                },
+                "rw-fpath:load-balancer": {
+                    "rw-fpath:lb-profile": "lb2",
+                    "rw-fpath:name": "x2",
+                    "rw-fpath:tcp-port": "5678",
+                    "rw-fpath:virtual-ip": "11.0.2.3"
+                }
+            },
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "12.0.1.4/24",
+                        "rw-base:name": "N4TenGigi-1"
+                    },
+                    {
+                        "rw-base:address": "12.0.2.4/24",
+                        "rw-base:name": "N4TenGigi-2"
+                    }
+                ],
+                "rw-base:name": "trafsink1"
+            },
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "12.0.3.4/24",
+                        "rw-base:name": "N5TenGigi-1"
+                    },
+                    {
+                        "rw-base:address": "12.0.4.4/24",
+                        "rw-base:name": "N5TenGigi-2"
+                    }
+                ],
+                "rw-base:name": "trafsink2"
+            },
+            {
+                "rw-base:interface": [
+                    {
+                        "rw-base:address": "12.0.5.4/24",
+                        "rw-base:name": "N6TenGigi-1"
+                    },
+                    {
+                        "rw-base:address": "12.0.6.4/24",
+                        "rw-base:name": "N6TenGigi-2"
+                    }
+                ],
+                "rw-base:name": "trafsink3"
+            }
+        ],
+        "rw-base:node": [
+            {
+                "rw-base:id": "2",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N1TenGi-1",
+                            "rw-fpath:network-context": "trafgen"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafgenport1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N1TenGi-2",
+                            "rw-fpath:network-context": "trafgen"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafgenport2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ],
+                "rw-fpath:trafgen": {
+                    "rw-fpath:transmit-params": {
+                        "rw-fpath:port": [
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafgenport1",
+                                "rw-fpath:tx-rate": "5"
+                            },
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafgenport2",
+                                "rw-fpath:tx-rate": "0"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "rw-base:id": "4",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N2TenGigi-1",
+                            "rw-fpath:network-context": "loadbalancer1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb1port1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N2TenGigi-2",
+                            "rw-fpath:network-context": "loadbalancer1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb1port2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N2TenGigi-3",
+                            "rw-fpath:network-context": "loadbalancer1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb1port3",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N2TenGigi-4",
+                            "rw-fpath:network-context": "loadbalancer1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb1port4",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ]
+            },
+            {
+                "rw-base:id": "5",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N3TenGigi-1",
+                            "rw-fpath:network-context": "loadbalancer2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb2port1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N3TenGigi-2",
+                            "rw-fpath:network-context": "loadbalancer2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb2port2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N3TenGigi-3",
+                            "rw-fpath:network-context": "loadbalancer2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb2port3",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N3TenGigi-4",
+                            "rw-fpath:network-context": "loadbalancer2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=lb2port4",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:ip-fastpath": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ]
+            },
+            {
+                "rw-base:id": "6",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N4TenGigi-1",
+                            "rw-fpath:network-context": "trafsink1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink1port1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N4TenGigi-2",
+                            "rw-fpath:network-context": "trafsink1"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink1port2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ],
+                "rw-fpath:trafgen": {
+                    "rw-fpath:receive-param": {
+                        "rw-fpath:port": [
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink1port1",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            },
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink1port2",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "rw-base:id": "7",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N5TenGigi-1",
+                            "rw-fpath:network-context": "trafsink2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink2port1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N5TenGigi-2",
+                            "rw-fpath:network-context": "trafsink2"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink2port2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ],
+                "rw-fpath:trafgen": {
+                    "rw-fpath:receive-param": {
+                        "rw-fpath:port": [
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink2port1",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            },
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink2port2",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "rw-base:id": "8",
+                "rw-fpath:port": [
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N6TenGigi-1",
+                            "rw-fpath:network-context": "trafsink3"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink3port1",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    },
+                    {
+                        "rw-fpath:bind": {
+                            "rw-fpath:interface": "N6TenGigi-2",
+                            "rw-fpath:network-context": "trafsink3"
+                        },
+                        "rw-fpath:name": "eth_sim:name=trafsink3port2",
+                        "rw-fpath:open": {
+                            "rw-fpath:application": {
+                                "rw-fpath:trafgen": {}
+                            }
+                        },
+                        "rw-fpath:receive-q-length": "2"
+                    }
+                ],
+                "rw-fpath:trafgen": {
+                    "rw-fpath:receive-param": {
+                        "rw-fpath:port": [
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink3port1",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            },
+                            {
+                                "rw-fpath:name": "eth_sim:name=trafsink3port2",
+                                "rw-fpath:receive-echo": {
+                                    "rw-fpath:on": {}
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "rw-fpath:start": {
+            "rw-fpath:node": {
+                "rw-fpath:id": "2",
+                "rw-fpath:traffic": {
+                    "rw-fpath:all": {}
+                }
+            }
+        },
+        "rw-fpath:stop": {
+            "rw-fpath:node": {
+                "rw-fpath:id": "2",
+                "rw-fpath:traffic": {
+                    "rw-fpath:all": {}
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,20 @@
+<div class="gauges">
+  <div class="gauge-group" ng-repeat="gauge in gaugeSet.gauges">
+    <h2>{{gauge.label}}</h2>
+    <rw-gauge
+            class="rw-gauge"
+            size="{{gaugeSet.dialSize}}"
+            color="{{gauge.color}}"
+            value="{{gauge.rate | nonNaN}}"
+            max="{{gauge.max}}"
+            ></rw-gauge>
+    <rw-scroll-graph
+            line-color="{{gauge.color}}"
+            stroke-color="{{gauge.colorLight}}"
+            value="{{gauge.rate | nonNaN}}"
+            width="{{gaugeSet.panelWidth}}"
+            max="{{gauge.max}}"
+            paused="{{gauge.paused}}"
+            ></rw-scroll-graph>
+  </div>
+</div>

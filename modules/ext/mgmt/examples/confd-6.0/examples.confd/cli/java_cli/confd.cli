@@ -1,0 +1,27 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0">
+  <operationalMode>
+    <modifications>
+    </modifications>
+
+   <cmd name="ctest" mount="show">
+     <info>hej</info>
+     <help></help>
+     <callback>
+       <capi>
+         <cmdpoint>cli-point</cmdpoint>
+       </capi>
+     </callback>
+     <params>
+       <param>
+         <type><file/></type>
+         <info>&lt;source file&gt;</info>
+         <help>source file</help>
+         <name>from</name>
+       </param>
+     </params>
+   </cmd>
+  </operationalMode>
+
+  <configureMode>
+  </configureMode>
+</clispec>

@@ -1,0 +1,25 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module vnfd-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/vnfd-annotation";
+  prefix "vnfd-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import vnfd {
+    prefix vnfd;
+  }
+}

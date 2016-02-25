@@ -1,0 +1,75 @@
+<!-- A test for the radio working with RW -->
+<!doctype html>
+<html lang="en" class="viewport" ng-app="test">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="/vendor.js"></script>
+
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.browserify.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+
+</head>
+<body class="viewport" ng-controller="radioTestPage">
+  <div>Look at console logs for output</div>
+
+  <script>
+    angular.module('test', ['radio'])
+      .controller('radioTestPage', function(radio) {
+        var testChannel = new radio.channel('testChannel');
+
+        var deferred = new $.Deferred();
+        var promise = deferred.promise();
+
+        // setup responders
+
+        testChannel.on('test:event', function(data) {
+          console.log('received test:event with data', data);
+        });
+
+        testChannel.comply('test:command', function(data) {
+          console.log('received test:command with data', data);
+        });
+
+        testChannel.reply('test:request', function() {
+
+          // Resolve promise later
+          setTimeout(function() {
+            deferred.resolve({
+              'response': 'data'
+            });
+          }, 2000);
+          console.log('received test:request...', '...returning promise');
+          return promise;
+        });
+
+        // triggers
+
+        testChannel.trigger('test:event', {
+          data: 'some test data'
+        });
+
+        testChannel.command('test:command', {
+          data: 'some test data'
+        });
+
+        var response = testChannel.request('test:request').done(function(data) {
+          console.log('response', data);
+        });
+      });
+  </script>
+
+</body>
+</html>

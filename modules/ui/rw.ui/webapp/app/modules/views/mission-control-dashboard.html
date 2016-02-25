@@ -1,0 +1,150 @@
+<!--   <div>
+  <h1>Mission Control</h1>
+  <h2>Pools</h2>
+  <h3>OpenStack <small><a href="javascript:;">Console</a></small></h3>
+  <ul>
+    <li><a href="javascript:;">Bearer Plane</a></li>
+    <li><a href="javascript:;">Security</a></li>
+  </ul>
+  <h2>Federations</h2>
+  <ul>
+    <li ng-repeat="federation in mc.federations">
+      <a ng-click="mc.open($index)">
+        {{ federation.name  }}
+      </a>
+      <span>
+        {{mc.refsDB.resources.openstackCloud.pools[federation.fleets[0].pool.ref].name}}
+      </span>
+    </li>
+  </ul>
+</div> -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Launchpad - Surface Demo CHANGEME!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="msapplication-tap-highlight" content="no" />
+    <link rel="stylesheet" href="assets/css/core.css" />
+    <!--     <script src="vendor/jquery-2.1.4/jquery-2.1.4.min.js"></script>
+    <script src="js/core.js"></script> -->
+  </head>
+  <body>
+    <header class="header-app">
+      <h1>Mission Control</h1>
+      <nav class="header-nav launchpad-nav">
+      </nav>
+    </header>
+    <div class="app-body flex-row  missioncontrol mainpanel" >
+      <div class="flex-column flex-left">
+        <h1> Pools </h1>
+        <div class="has-corner-accents pool-card">
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <h2><img src="assets/img/openstackCloud.png"/>
+          <span>Open Stack Pools (3) </span>
+          <img src="assets/img/launchpad-add-fleet-icon.png"></h2>
+          <a>Trafgen Pool</a>
+          <a>CAG Pool</a>
+          <a>WAG Pool</a>
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div>
+
+        <div class="has-corner-accents pool-card">
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <h2><img src="assets/img/awsCloud.png"/>
+          <span>
+          AWS Cloud (1) </span><img src="assets/img/launchpad-add-fleet-icon.png"></h2>
+          <a>Burst Pool</a>
+
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div>
+
+
+
+        <!-- EMPTY CARD -->
+        <div class="pool-card empty-card  has-corner-accents">
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <h2>Create New Cloud Account <img src="assets/img/launchpad-add-fleet-icon.png"></h2>
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div>
+      </div>
+      <div class="flex-right">
+        <h1> Federations </h1>
+
+<!--         <div class="viewport-card  has-corner-accents">
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <h2  ng-click="mc.open($index)">EPA FLEET</h2>
+          <div class="stats">
+            <span>Environments (2)</span>
+            <span>Pool: Traffic Pool</span>
+          </div>
+          <div class="environment">
+            <h4>NON-EPA</h4>
+            <dl>
+              <dt>Network Service</dt>
+              <dd>IP Traffic</dd>
+              <dt>Pool</dt>
+              <dd>Trafgen Pool</dd>
+            </dl>
+          </div>
+          <div class="environment">
+            <h4>EPA</h4>
+            <dl>
+              <dt>Network Service</dt>
+              <dd>IP Traffic</dd>
+              <dt>Pool</dt>
+              <dd>Trafgen Pool</dd>
+            </dl>
+          </div>
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div> -->
+
+        <div class="viewport-card  has-corner-accents" ng-repeat="federation in mc.federations">
+
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <h2 ng-click="mc.open($index)">{{ federation.name  }}</h2>
+          <div class="stats">
+            <span>Fleet{{( mc.returnActiveFleetCount(federation) >1)?'s':''}} ({{mc.returnActiveFleetCount(federation)}})</span>
+            <span>Pool: {{mc.refsDB.resources.openstackCloud.pools[federation.fleets[$index].pool.ref].name || federation.pool.name}}</span>
+          </div>
+          <div class="environment" ng-repeat="fleet in federation.fleets" ng-if="fleet.status == 'active'">
+            <h4>{{fleet.name}}</h4>
+            <dl>
+              <dt>Network Service</dt>
+              <dd>{{mc.refsDB.networkServices[fleet.networkService.ref].name}}</dd>
+              <dt>Pool</dt>
+              <dd>{{ mc.refsDB.resources.openstackCloud.pools[federation.fleets[$index].pool.ref].name || federation.pool.name}}</dd>
+            </dl>
+          </div>
+
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div>
+
+        <div class="viewport-card empty-card  has-corner-accents">
+          <i class="corner-accent top left"></i>
+          <i class="corner-accent top right"></i>
+          <a style="cursor:pointer">
+            <img src="assets/img/launchpad-add-fleet-icon.png" />
+            <p>Create New Federation</p>
+          </a>
+          <i class="corner-accent bottom left"></i>
+          <i class="corner-accent bottom right"></i>
+        </div>
+      </div>
+      <!--
+      END EMPTY / ADD FLEET CARD
+      -->
+    </div>
+    <footer>
+    </footer>
+  </body>
+</html>

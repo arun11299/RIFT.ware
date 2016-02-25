@@ -1,0 +1,320 @@
+submodule rip_confd_router {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef RIPVersionRangeType {
+    type int8 {
+      range "1 .. 2";
+    }
+  }
+  typedef PercentageRangeType {
+    type int8 {
+      range "1 .. 100";
+    }
+  }
+  typedef DefaultMetricRangeType {
+    type int8 {
+      range "1 .. 16";
+    }
+  }
+  typedef MetricRangeType {
+    type int8 {
+      range "0 .. 16";
+    }
+  }
+  typedef TimerRangeType {
+    type uint32 {
+      range "5 .. 2147483647";
+    }
+  }
+  typedef ReachabilityRangeType {
+    type int8 {
+      range "1 .. 45";
+    }
+  }
+  typedef ReusingRangeType {
+    type uint32 {
+      range "1 .. 20000";
+    }
+  }
+  typedef RipVersionSetType {
+    type enumeration {
+      enum 1;
+      enum 2;
+      enum 1,2;
+      enum 2,1;
+    }
+  }
+
+/*  =============== main RIP router configuration ====================  */
+
+  augment "/system/router" {
+
+    container rip {
+      presence "";
+      tailf:validate ripOnlineTest {
+      }
+      leaf version {
+        type RIPVersionRangeType;
+        description "
+        Set RIP version to accept for reads and send. Version can be either 1 or 2.
+        Disabling RIPv1 by specifying version 2 is STRONGLY encouraged.
+      ";
+      }
+      list network-ip {
+        key "address prefix-length";
+        description "
+        Set the RIP enable interface by network. The interfaces which have addresses matching with network are enabled.
+        This element either enables or disables RIP interfaces between certain numbers of a specified network address.
+        For example, if the network for 10.0.0.0/24 is RIP enabled, this would result in all the addresses from 10.0.0.0 to 10.0.0.255 being enabled for RIP.
+      ";
+        leaf address {
+          type inet:ipv4-address;
+        }
+        leaf prefix-length {
+          type PrefixLengthIPv4;
+        }
+      }
+      list network-ifname {
+        key ifname;
+        description "
+        Set a RIP enabled interface by ifname. Both the sending and receiving of RIP packets will be enabled on the port specified in the network ifname element.
+      ";
+        leaf ifname {
+          type leafref {
+            path "../../../../interface/name";
+          }
+        }
+      }
+      list neighbor {
+        key ip;
+        description "
+        Specify RIP neighbor. When a neighbor doesn't understand multicast, this element is used to specify neighbors.
+        In some cases, not all routers will be able to understand multicasting, where packets are sent to a network or a group of addresses.
+        In a situation where a neighbor cannot process multicast packets, it is necessary to establish a direct link between routers.
+        The neighbor element allows the network administrator to specify a router as a RIP neighbor.
+      ";
+        leaf ip {
+          type inet:ipv4-address;
+        }
+      }
+      container passive-interfaces {
+        description "
+        This elemt sets the specified interface to passive mode.
+        On passive mode interface, all receiving packets are processed as normal and ripd does not send either multicast or unicast RIP packets
+        except to RIP neighbors specified with neighbor element. The interface may be specified as default to make ripd default to passive on all interfaces.
+
+        The passive-by-default element is to be passive on all interfaces.
+      ";
+        leaf passive-by-default {
+          type boolean;
+          default false;
+        }
+        list except-interface {
+          key ifname;
+          leaf ifname {
+            type leafref {
+              path "../../../../../interface/name";
+            }
+          }
+        }
+      }
+      list redistribute {
+        key type;
+        description "
+        Element redistributes routing information from route entries specified by type into the RIP tables
+      ";
+        leaf type {
+          type RedistributeType;
+        }
+        leaf metric {
+          type MetricRangeType;
+        }
+        leaf route-map {
+          type leafref {
+            path "../../../../route-map/tag";
+          }
+        }
+      }
+      leaf default-information-originate {
+        type boolean;
+        default false;
+        description "
+        The route element makes a static route only inside RIP. This elemnt should be used only by advanced users who are particularly knowledgeable about the RIP protocol.
+        In most cases, we recommend creating a static route in Quagga and redistributing it in RIP using redistribute element with static type.
+      ";
+      }
+      list route {
+        key "address prefix-length";
+        description "
+        The route element makes a static route only inside RIP. This element should be used only by advanced users who are particularly knowledgeable about the RIP protocol.
+      ";
+        tailf:validate valKeyAddrPrefix {
+        }
+        /*  validate - address must be in correct form according to prefix - implemented in valKeyAddrPrefix  */
+        leaf address {
+          type inet:ipv4-address;
+        }
+        leaf prefix-length {
+          type PrefixLengthIPv4;
+        }
+      }
+      list distribute-list {
+        key "alist direction ifname";
+        description "
+        The distribute-list element can be used to filter the RIP path. The distribute-list can also apply access-lists to a chosen interface.
+      ";
+        tailf:validate valIfname {
+        }
+        /*  validate - ifname must exist or be empty  */
+        leaf alist {
+          type leafref {
+            path "../../../../ip/access-list/id";
+          }
+        }
+        leaf direction {
+          type DirectionType;
+        }
+        leaf ifname {
+          type string;
+        }
+      }
+      list distribute-list-prefix {
+        key "prefix direction ifname";
+        description "
+        The distribute-list-prefix element can be used to apply prefix list to the interface.
+      ";
+        tailf:validate valIfname {
+        }
+        /*  validate - ifname must exist or be empty  */
+        leaf prefix {
+          type leafref {
+            path "../../../../ip/prefix-list/name";
+          }
+        }
+        leaf direction {
+          type DirectionType;
+        }
+        leaf ifname {
+          type string;
+        }
+      }
+      container timers-basic {
+        presence "";
+        description "
+        RIP protocol has several timers. User can configure those timers' values by timers-basic element.
+        The default settings for the timers are as follows:
+
+        * The update timer is 30 seconds. Every update timer seconds, the RIP process is awakened to send an unsolicited Response message containing the complete routing table to all neighboring RIP routers.
+        * The timeout timer is 180 seconds. Upon expiration of the timeout, the route is no longer valid; however, it is retained in the routing table for a short time so that neighbors can be notified that the route has been dropped.
+        * The garbage collect timer is 120 seconds. Upon expiration of the garbage-collection timer, the route is finally removed from the routing table.
+      ";
+        leaf update {
+          type TimerRangeType;
+          default 30;
+        }
+        leaf timeout {
+          type TimerRangeType;
+          default 180;
+        }
+        leaf garbage {
+          type TimerRangeType;
+          default 120;
+        }
+      }
+      leaf default-metric {
+        type DefaultMetricRangeType;
+        default 1;
+        description "
+        This element modifies the default metric value for redistributed routes.
+        The value does not affect connected route even if it is redistributed by redistribute connected.
+        To modify connected route's metric value, please use redistribute connected metric or route-map. Element offset-list also affects connected routes.
+      ";
+      }
+      list offset-list {
+        key "alist direction ifname";
+        tailf:validate valAlistIfname {
+        }
+        /*  validate - alist must exist, ifname must exist or be empty - implemented in valAlistIfname  */
+        leaf alist {
+          type string;
+        }
+        leaf direction {
+          type DirectionType;
+        }
+        leaf ifname {
+          type string;
+        }
+        leaf metric {
+          type MetricRangeType;
+          mandatory true;
+        }
+      }
+      leaf distance-default {
+        type DistanceRangeType;
+        description "
+        Set default RIP distance to specified value.
+      ";
+      }
+      list distance {
+        key "source prefix-length";
+        description "
+        Set default RIP distance to specified value when the route's source IP address matches the specified prefix.
+      ";
+        tailf:validate valKeyAddrPrefix {
+        }
+        /*  validate - address must be in correct form according to prefix - implemented in valKeyAddrPrefix  */
+        leaf source {
+          type inet:ipv4-address;
+        }
+        leaf prefix-length {
+          type PrefixLengthIPv4;
+        }
+        leaf value {
+          type DistanceRangeType;
+          mandatory true;
+        }
+        container alist {
+          uses AccessListRefType5;
+        }
+      }
+      list route-map {
+        key "route-map direction ifname";
+        tailf:validate valRipRouteMap {
+        }
+        leaf route-map {
+          type leafref {
+            path "../../../../route-map/tag";
+          }
+        }
+        /*  validate - no two route-map elements can differ only in route-map name (it is key element to have it always available)  */
+        leaf direction {
+          type DirectionType;
+        }
+        leaf ifname {
+          type leafref {
+            path "../../../../interface/name";
+          }
+        }
+      }
+    }
+    container zebra {
+      presence "";
+      leaf redistribute-rip {
+        type boolean;
+        default true;
+      }
+    }
+  }
+}

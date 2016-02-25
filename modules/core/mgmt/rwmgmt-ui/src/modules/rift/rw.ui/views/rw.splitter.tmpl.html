@@ -1,0 +1,21 @@
+<div class="splitter">
+
+  <div class="flex"></div>
+  <div id="handle" ng-mousedown="dragSplitter($event)">
+    <div class="content"><ng-transclude></ng-transclude></div>
+    <div class="adjust">
+      <div style="margin-right: 10px;" class="splitterButtons" on-tap="{{ toggle }}" ng-click="collapse()">
+        <core-icon style="right: 5px;
+    bottom: 5px;" size="15px" icon="{{icon}}" aria-label="" role="img">
+          <svg viewBox="0 0 24 24" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" fit="" style="pointer-events: none; display: block;">
+            <g ng-if="!iconUp"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"></path></g>
+            <g ng-if="iconUp"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"></path></g>
+          </svg>
+        </core-icon>
+      </div>
+      <div style="margin-right:10px;padding-left:3px;
+line-height: 11px;" class="splitterButtons" on-tap="{{ expand }}" ng-click="expand()">+</div>
+    </div>
+  </div>
+
+</div>

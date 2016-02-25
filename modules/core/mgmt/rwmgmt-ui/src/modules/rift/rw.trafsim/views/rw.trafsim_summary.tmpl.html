@@ -1,0 +1,32 @@
+<div>
+  <div class="rate-stack">
+    <div class="rate-result">
+      {{trafsim.call_rate | k}}calls/s
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{maxCallRate}}"
+            bullet-color="{{theme.txBps}}"
+            value="{{trafsim.call_rate}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{maxCallRate | k}}calls/s</div>
+    </div>
+    <div class="rate-result">
+      {{trafsim.tx_msg_per_sec | k}}msgs/s
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{maxMsgRate}}"
+            bullet-color="{{theme.txPps}}"
+            value="{{trafsim.tx_msg_per_sec | nonNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{maxMsgRate | k}}msgs/s</div>
+    </div>
+  </div>
+</div>

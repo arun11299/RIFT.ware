@@ -1,0 +1,215 @@
+<link rel="import" href="rw-vcs-status-led.html">
+<link rel="import" href="rw-resources-utilization-stats.html">
+<link rel="import" href="rw-traffic-stats.html">
+<link rel="import" href="../../lib/core-menu/core-menu.html">
+<link rel="import" href="../../lib/core-item/core-item.html">
+<link rel="import" href="rw-scroll-graph.html">
+<link rel="import" href="rw-services-model.html">
+  <rw-services-model></rw-services-model>
+
+<!--
+  <img src="rw-resource-detail.png">
+
+  @class rw-resource-detail
+-->
+<!--
+  @attribute {Object} node colony, cluster or vm
+  -->
+<polymer-element name="rw-resource-detail" attributes="node fabricNode">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-resource-detail.css"/>
+
+        <core-menu class="tabs" id="tabNav" selected="0" on-core-select="{{flipTab}}">
+            <core-item class="tab" data-tab="tab-0" label="Utilization"></core-item>
+            <core-item class="tab" data-tab="tab-1" label="Ports"></core-item>
+            <core-item class="tab" data-tab="tab-2" label="Fabric"></core-item>
+            <core-item class="tab" data-tab="tab-3" label="Processes"></core-item>
+<!--
+            <core-item class="tab" data-tab="tab-4" label="Tasklets"></core-item>
+-->
+        </core-menu>
+        <!------------->
+        <!-- Details -->
+        <div id="tab-0" class="tab">
+            <div class="row details">
+                <div class="col no-pad">
+                    <rw-resources-utilization-stats node="{{node}}"></rw-resources-utilization-stats>
+                </div>
+            </div>
+        </div>
+        <!--------------->
+        <!-- Ports -->
+        <div id="tab-1" class="tab">
+            <div class="row details">
+                <div class="col no-pad">
+                    <rw-traffic-stats id="stats" vcsNode="{{node}}"></rw-traffic-stats>
+                </div>
+            </div>
+        </div>
+        <!--------------->
+        <!-- Fabric Ports -->
+        <div id="tab-2" class="tab">
+            <div class="row details">
+                <div class="col no-pad">
+                    <rw-traffic-stats id="fabricStats" vcsNode="{{fabricNode}}" showFabric></rw-traffic-stats>
+                </div>
+            </div>
+        </div>
+        <!----------->
+        <!-- Processes -->
+        <div id="tab-3" class="tab">
+            <div class="row details">
+                <div class="col no-pad">
+                    <table class="datagrid">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>PID</th>
+                                <th>State</th>
+                                <th>Tasklet Count</th>
+                                <th>File Descriptors</th>
+                                <th>CPU</th>
+                                <th>Memory</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr template repeat="{{process in processes}}">
+                                <td>{{process.instance_name}}</td>
+                                <td>{{process.proc_info.pid}}</td>
+                                <td><rw-vcs-status-led state="{{process.state}}"></rw-vcs-status-led></td>
+                                <td>{{process.tasklet.length | valueOrNotAvailable}}</td>
+                                <td>{{process['file-descriptors'] | valueOrNotAvailable }}</td>
+                                <td>{{process.cpuPercent | pctOrNotAvailable }}</td>
+                                <td>{{process.memoryPercent | pctOrNotAvailable}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-------------->
+        <!-- Tasklets -->
+        <div id="tab-4" class="tab">
+          <div class="row details">
+            <div class="col no-pad">
+              <table class="datagrid">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Process</th>
+                  <th>Thread Count</th>
+                  <th>File Descriptors</th>
+                  <th>Memory</th>
+                  <th>Schedule Queues</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr template repeat="{{tasklet in tasklets}}">
+                  <td>{{tasklet.instance_name}}</td>
+                  <td>{{tasklet.process.instance_name}}</td>
+                  <td>{{tasklet['thread-count']}}</td>
+                  <td>{{tasklet['file-descriptors']}}</td>
+                  <td>{{tasklet.memory}}%</td>
+                  <td>{{tasklet.scheduler_queues}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    </template>
+    <script>
+Polymer(Platform.mixin({
+
+  percent: function(metric) {
+    return Math.min(metric ? Math.round(100 * metric.utilization / metric.capacity) : 0, 99);
+  },
+
+  flipTab: function(e) {
+    if (!e.detail.isSelected) {
+      return;
+    }
+    var tabs = this.shadowRoot.querySelectorAll('div.tab');
+    var selected = e.detail.item.attributes['data-tab'].value;
+    _.each(tabs, function(tab) {
+      tab.classList.toggle('tab-on', tab.id == selected);
+    });
+  },
+
+  nodeChanged: function() {
+    this.processes = this.collectProcesses(this.node, []);
+    this.tasklets = this.collectTasklets(this.node, []);
+    this.interfaces = this.collectInterfaces(this.node, []);
+  },
+
+  collectProcesses: function(node, processes) {
+    if (node.component_type == 'RWPROC') {
+      processes.push(node);
+    } else {
+      var children = node.children;
+      if (node.component_type == 'RWPROC') {
+        children = node.tasklet;
+      } else if (node.component_type == 'RWVM') {
+        children = node.process;
+      }
+      if (children) {
+        for (var i = 0; i < children.length; i++) {
+          this.collectProcesses(children[i], processes);
+        }
+      }
+    }
+    return processes;
+  },
+
+  collectTasklets: function(node, tasklets) {
+    if (node.component_type == 'RWTASKLET') {
+      tasklets.push(node);
+    } else {
+      var children = node.children;
+      if (node.component_type == 'RWPROC') {
+        children = node.tasklet;
+      } else if (node.component_type == 'RWVM') {
+        children = node.process;
+      }
+      if (children) {
+        for (var i = 0; i < children.length; i++) {
+          this.collectTasklets(children[i], tasklets);
+        }
+      }
+    }
+    return tasklets;
+  },
+
+  collectInterfaces: function(node, ifaces) {
+    if (node.component_type == 'RWVM') {
+      if (node.connector) {
+        for (var i = 0; i < node.connector.length; i++) {
+          ifaces.push.apply(ifaces, node.connector[i].interface);
+        }
+      }
+    } else {
+      if (node.children) {
+        for (var i = 0; i < node.children.length; i++) {
+          if(node.children[i].connector){
+            for (var j = 0; j < node.children[i].connector.length; j++) {
+              ifaces.push.apply(ifaces, node.children[i].connector[j].interface);
+            }
+          } else {
+            this.collectInterfaces(node.children[i], ifaces)
+          }
+        }
+      }
+    }
+    return ifaces;
+  },
+
+  pctOrNotAvailable: function(n) {
+    return n ? n + '%' : 'N/A';
+  },
+
+  valueOrNotAvailable: function(n) {
+    return typeof(n) === 'undefined' ? 'N/A' : n;
+  }
+}, rw.ui));
+    </script>
+</polymer-element>

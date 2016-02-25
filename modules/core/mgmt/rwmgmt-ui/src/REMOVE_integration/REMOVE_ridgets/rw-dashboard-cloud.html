@@ -1,0 +1,172 @@
+<link rel="import" href="../../lib/core-selector/core-selector.html">
+<link rel="import" href="rw-donut.html">
+<link rel="import" href="rw-geo-model.html">
+<link rel="import" href="rw-geo-map.html">
+<link rel="import" href="rw-scatter.html">
+<link rel="import" href="rw-vcs-table.html">
+<link rel="import" href="rw-system-resources-model.html">
+
+<polymer-element name="rw-dashboard-cloud" attributes="vcs fpath">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-dashboard-cloud.css"/>
+        <rw-iconset></rw-iconset>
+        <rw-system-resources-model
+            sector="{{vcs.sector}}"
+            on-update="{{update}}"
+            ></rw-system-resources-model>
+        <div class="dashpanel" id="geo">
+            <rw-geo-model id="geoModel" node="{{vcs.sector}}"></rw-geo-model>
+            <rw-geo-map id="map" markers="{{$.geoModel.markers}}"></rw-geo-map>
+            <rw-vcs-table sector="{{vcs.sector}}" on-select-vcs="{{selectVcs}}"></rw-vcs-table>
+        </div>
+        <div class="dashpanel" id="graphs-dashpanel">
+            <h2 id="graphsHeader">{{node.instance_name}} <span class="gray">|</span> {{vmCount}}<sup>VMs</sup></h2>
+            <div id="graphs">
+                <div id="donutGrid">
+                    <div>
+                        <div>
+                            <h3>VCPU</h3>
+                            <rw-donut color="#46b94b"
+                                      dimension="140"
+                                      value="{{node.cpu.percent | fmt('0') }}" ></rw-donut>
+                        </div>
+                        <div>
+                            <h3>Memory</h3>
+                            <rw-donut label="{{node.memory['curr-usage'] | bytes(node.memory.total)}}/{{node.memory.total | bytes}}"
+                                      color="#fa8628"
+                                      dimension="140"
+                                      value="{{node.memory.percent | fmt('0')}}" ></rw-donut>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <h3>Storage</h3>
+                            <rw-donut label="{{node.storage['curr-usage'] | bytes(node.storage.total) }}/{{node.storage.total | bytes}}"
+                                      color="#38d5d4"
+                                      dimension="140"
+                                      value="{{node.storage.percent | fmt('0')}}" ></rw-donut>
+                        </div>
+                        <div>
+                            <h3>External I/O</h3>
+                            <rw-donut label="{{bps.utilization | bits(bps.capacity)}}/{{bps.capacity | bits}}"
+                                      color="#3c508c"
+                                      dimension="140"
+                                      value="{{bps.percent | noNaN}}" ></rw-donut>
+                        </div>
+                    </div>
+                </div>
+                <div id="scatter" layout vertical>
+                    <h3>VMs</h3>
+                    <rw-scatter flex id="scatterPlot"
+                                xAxisLabel="Utilization"
+                                yAxisLabel="% External I/O"
+                                values="{{scatterModel}}"
+                                style="margin-top:-30px;" ></rw-scatter>
+                    <div id="scatterButtons" class="button-group">
+                        <core-selector itemSelector="span.button"
+                                       selected="0"
+                                       id="buttonbar"
+                                       selectedClass="button-bar--is-selected"
+                                       on-core-select="{{selectMetric}}">
+                            <span class="button button-bar__first-button button__size--medium" data-metric="cpu">
+                                <span class="button__box">
+                                    <core-icon class="icon--small" icon="rw-iconset:icon-cpu"></core-icon>
+                                    <span class="button__label">VCPU</span>
+                                </span>
+                            </span>
+                            <span class="button button-bar__last-button button__size--medium" data-metric="memory">
+                                <span class="button__box">
+                                    <core-icon class="icon--small" icon="rw-iconset:icon-memory"></core-icon>
+                                    <span class="button__label">Memory</span>
+                                </span>
+                            </span>
+                        </core-selector>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+    Polymer(Platform.mixin({
+
+      scatterXAxis: 'cpu',
+
+      scatterColors: {
+        'cpu': '#46b94b',
+        'memory': '#fa8628'
+      },
+
+      created: function () {
+        this.node = {};
+        this.bps = {
+          utilization: 0,
+          capacity: 0,
+          percent: 0
+        };
+        this.scatterModel = [];
+      },
+
+      percent: function (metric) {
+        return Math.min(metric ? Math.round(100 * metric.utilization / metric.capacity) : 0, 99);
+      },
+
+      selectMetric: function (e, detail) {
+        this.scatterXAxis = detail.item.attributes['data-metric'].value;
+        this.$.scatterPlot.color = this.scatterColors[this.scatterXAxis];
+        this.resetData();
+      },
+
+      selectVcs: function (e) {
+        var detail = e.detail;
+        if (this.vcs.sector) {
+          this.node = detail.node;
+          this.vms = this.vcs.sector.vms(this.node);
+          this.resetData();
+        }
+      },
+
+      fpathChanged: function() {
+        this.fpath.addEventListener("update", this.update.bind(this));
+      },
+
+      resetData: function() {
+        if (typeof this.vms === "undefined") {
+          return;
+        }
+        this.scatterModel = new Array(this.vms.length);
+        this.update();
+        this.$.scatterPlot.values = this.scatterModel;
+      },
+
+      update: function() {
+        if (typeof this.vms === "undefined") {
+          return;
+        }
+        var self = this;
+        for(var i = 0; i < this.vms.length; i++) {
+          var vm = this.vms[i];
+
+          var bps_percent;
+          if ('speed' in vm) {
+            bps_percent = Math.round(100 * (vm.tx_rate_mbps/vm.speed));
+          } else {
+            // RIFT-5577 - vms that don't use fpath won't have metrics so set to 0
+            bps_percent = 0;
+          }
+
+          this.scatterModel[i] = this.scatterModel[i] || {};
+          this.scatterModel[i].label = vm.instance_name;
+          this.scatterModel[i].x = (self.scatterXAxis in vm ? vm[self.scatterXAxis].percent : 0);
+          this.scatterModel[i].y = bps_percent;
+          this.scatterModel[i].size = 6;
+        }
+        this.$.scatterPlot.update();
+
+        this.vmCount = this.vms.length;
+        this.bps.utilization = this.node.tx_rate_mbps;
+        this.bps.capacity = this.node.speed;
+        this.bps.percent = Math.round(100 * (this.bps.utilization / this.bps.capacity));
+      }
+    }, rw.ui));
+  </script>
+<polymer-element>

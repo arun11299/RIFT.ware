@@ -1,0 +1,66 @@
+<!-- A test for the button component -->
+<!doctype html>
+<html lang="en" class="viewport" ng-app="test">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <!-- link href="/core.css" rel="stylesheet" type="text/css"  / -->
+  <link rel="stylesheet" type="text/css" href="../../integration/ridgets/css/page.css"/>
+  <link rel="stylesheet" type="text/css" href="../../integration/_data/_css/style.css"/>
+  <link rel="stylesheet" type="text/css" href="../../lib/font-awesome/css/font-awesome.min.css"/>
+
+  <!-- -->
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../lib/d3/d3.min.js"></script>
+  <script src="../../vendor.js"></script>
+  <script src="../../lib/socket.io-client/dist/socket.io.js"></script>
+  <script src="../../lib/nouislider/jquery.nouislider.min.js"></script>
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.min.js"></script>
+  <script src="../../integration/_components/_services/dispatchesque.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../modules/rift/rw.ue.min.js"></script>
+  <script src="../../modules/rift/rw.cmdcntr.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ue.css"/>
+
+</head>
+<body class="viewport" ng-controller="testPage">
+
+<lte-summary service="mme"></lte-summary>
+<lte-summary service="gw"></lte-summary>
+<lte-details service="mme"></lte-details>
+<lte-details service="gw"></lte-details>
+<script>
+  angular.module('test', ['cmdcntr', 'ue'])
+    .controller('testPage', function($scope, vnfFactory) {
+       vnfFactory.attached().done(function() {
+        _.each(vnfFactory.services, function(service) {
+          if (service.type === 'ltemmesim') {
+            $scope.mme = service;
+          }
+          if (service.type === 'ltegwsim') {
+            $scope.gw = service;
+          }
+        });
+        $scope.$apply();
+      });
+    });
+</script>
+
+<div style="height: 0; width: 0; position: absolute; visibility: hidden">
+  <!-- inject:svg --><!-- endinject -->
+</div>
+
+</body>
+</html>
+

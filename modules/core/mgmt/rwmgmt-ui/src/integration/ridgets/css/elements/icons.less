@@ -1,0 +1,45 @@
+// Icons
+//-------------------------------------------------------------------------
+@import "../base/base";
+
+.icon {
+  /*width: 32px;
+  height: 32px;*/
+  fill: @gray5;
+}
+
+.icon--small {
+  width: 24px;
+  height: 24px;
+}
+
+.icon__expand-collapse {
+  width: 10px;
+  height: 10px;
+  cursor: default;
+}
+
+.icon__expand-collapse:hover {
+  fill: @blue-glow
+}
+
+.loading-icon {
+  .animation(loading, 1.5s, infinite, linear);
+}
+
+@-webkit-keyframes loading {
+  from {
+    .rotate(0deg);
+  }
+  to {
+    .rotate(360deg);
+  }
+}
+@keyframes loading {
+  from {
+    .rotate(0deg);
+  }
+  to {
+    .rotate(360deg);
+  }
+}

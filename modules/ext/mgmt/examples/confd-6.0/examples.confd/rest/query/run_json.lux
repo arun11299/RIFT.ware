@@ -1,0 +1,573 @@
+[config require=MAKE]
+[global fail_pattern=[Ee][Rr][Rr][Oo][Rr]]
+
+
+[macro first_query]
+    -$fail_pattern
+    [doc Start a query]
+    ~echo '
+    ~ {
+    ~  "start-query": {
+    ~    "foreach": "/x/host[enabled = '\''true'\'']",
+    ~    "sort-by": ["name","number"],
+    ~    "limit": 100,
+    ~    "offset": 1,
+    ~    "select": [
+    ~      {
+    ~        "label": "Host name",
+    ~        "expression": "name",
+    ~        "result-type": ["string"]
+    ~      }
+    ~    ]
+    ~  }
+    ~ }
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    ?.*"query-handle":[ ]*([0-9]+).*
+    [global queryhandle=${1}]
+
+    [doc Get the query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "value": "One"
+              }
+            ]
+          },
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "value": "Three"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Get the empty (no more data) query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "no-more-data": [null]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Stop the query]
+    ~echo '
+    ~ {"stop-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+[macro second_query]
+    [doc Start a second query]
+    ~echo '
+    ~ {
+    ~  "start-query": {
+    ~    "foreach": "/x/host[enabled = '\''false'\'']",
+    ~    "sort-by": ["number"],
+    ~    "limit": 2,
+    ~    "select": [
+    ~      {
+    ~        "expression": "number",
+    ~        "result-type": ["string"]
+    ~      },
+    ~      {
+    ~        "label": "Host name",
+    ~        "expression": "name",
+    ~        "result-type": ["path","string"]
+    ~      }
+    ~    ]
+    ~  }
+    ~ }
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    ?.*"query-handle":[ ]*([0-9]+).*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Five']/example:name",
+                "value": "Five"
+              },
+              {
+                "value": "5"
+              }
+            ]
+          },
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Four']/example:name",
+                "value": "Four"
+              },
+              {
+                "value": "4"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Get the query result, more...]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Two']/example:name",
+                "value": "Two"
+              },
+              {
+                "value": "2"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+    [doc Get the empty (no more data) query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "no-more-data": [null]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Stop the query]
+    ~echo '
+    ~ {"stop-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+#    ~     /x/host[enabled = 'false'][starts-with(name,'F')]
+#    ~   <sort-by>number</sort-by>
+#host[enabled = '\''false'\''][starts-with(name,'\''F'\'')]",
+[macro third_query]
+    [doc Start a third query]
+    ~echo '
+    ~ {
+    ~  "start-query": {
+    ~    "foreach": "/x"
+    ~    "sort-by": ["number"],
+    ~    "limit": 2,
+    ~    "select": [
+    ~      {
+    ~        "label": "First host values",
+    ~        "expression": "host",
+    ~        "result-type": ["string"]
+    ~      }
+    ~    ]
+    ~  }
+    ~ }
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    ?.*"query-handle":[ ]*([0-9]+).*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "First host values",
+                "value": "Five5false"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Stop the query]
+    ~echo '
+    ~ {"stop-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+
+[macro reset_query]
+    [doc Start a query to be reset]
+    ~echo '
+    ~ {
+    ~  "start-query": {
+    ~    "foreach": "/x/host[enabled = '\''false'\'']",
+    ~    "sort-by": ["number"],
+    ~    "limit": 2,
+    ~    "select": [
+    ~      {
+    ~        "label": "Host name",
+    ~        "expression": "name",
+    ~        "result-type": ["path"]
+    ~      }
+    ~    ]
+    ~  }
+    ~ }
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    ?.*"query-handle":[ ]*([0-9]+).*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Five']/example:name"
+              }
+            ]
+          },
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Four']/example:name"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Reset the query]
+    ~echo '
+    ~ {"reset-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+
+    [doc Get the query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Five']/example:name"
+              }
+            ]
+          },
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Four']/example:name"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Get the query result, more...]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "select": [
+              {
+                "label": "Host name",
+                "path": "/example:x/example:host[example:name='Two']/example:name"
+              }
+            ]
+          }
+        ]
+      }
+    }
+    """
+    [doc Get the empty (no more data) query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "no-more-data": [null]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Stop the query]
+    ~echo '
+    ~ {"stop-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+
+[macro nothing_found_query]
+    [doc Start a third query]
+    ~echo '
+    ~ {
+    ~  "start-query": {
+    ~    "foreach": "/x/host[starts-with(name,'\''X'\'')]",
+    ~    "sort-by": ["number"],
+    ~    "select": [
+    ~      {
+    ~        "label": "Host name",
+    ~        "expression": "name",
+    ~        "result-type": ["string"]
+    ~      }
+    ~    ]
+    ~  }
+    ~ }
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    ?.*"query-handle":[ ]*([0-9]+).*
+    [global queryhandle=${1}]
+
+    [doc Get the empty (no more data) query result]
+    ~echo '
+    ~ {"fetch-query-result": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 200 OK
+    """??
+    {
+      "query-result": {
+        "result": [
+          {
+            "no-more-data": [null]
+          }
+        ]
+      }
+    }
+    """
+
+    [doc Stop the query]
+    ~echo '
+    ~ {"stop-query": {
+    ~   "query-handle": ${queryhandle},
+    ~ }}
+    ~'
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+json"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+
+################################################################################
+
+[shell confd]
+    !confd --status
+    ?status: started
+
+
+[shell query]
+    [invoke first_query]
+    [invoke second_query]
+    [invoke third_query]
+    [invoke reset_query]
+    [invoke nothing_found_query]
+
+
+
+
+[cleanup]

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test-cont
+    xmlns="http://riftio.com/ns/core/util/rwcmdargs/tests/rwcmdargs-test"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://riftio.com/ns/core/util/rwcmdargs/tests/rwcmdargs-test ./rwcmdargs-test.xsd">
+  <str2>string 2</str2>
+  <test-list>
+    <str3>key1</str3>
+    <num3>11</num3>
+  </test-list>
+  <test-list>
+    <str3>key2</str3>
+    <num3>11</num3>
+  </test-list>
+  <cont-in-group>
+    <str1>string 1</str1>
+    <num1>1234</num1>
+    <ll>RWCAT_E_A</ll>
+    <ll>RWCAT_E_C</ll>
+    <ll>RWCAT_E_E</ll>
+  </cont-in-group>
+</test-cont>
+

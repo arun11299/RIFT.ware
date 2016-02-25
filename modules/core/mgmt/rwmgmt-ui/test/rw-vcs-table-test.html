@@ -1,0 +1,35 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-vcs-table.html">
+<link rel="stylesheet" href="../integration/ridgets/css/page.css">
+<script src="data/vcs-test-data.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <rw-vcs-table
+    colony="{{colony}}"
+    id="test0"
+    ></rw-vcs-table>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    this.colony = customColony(3,1,1,1);
+  },
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-vcs-table', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

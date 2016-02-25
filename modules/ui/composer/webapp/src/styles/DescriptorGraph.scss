@@ -1,0 +1,238 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+$container-fg: #231010;
+$container-bg: white;
+$nsd-color: #0688F5;
+$vnfd-color: #6800F3;
+$vdu-color: #1536A2;
+$pnfd-color: orange;
+$connection-color: #800000;
+
+@function dim-color($color) {
+	@return hsl(hue($color), 50%, 80%);
+}
+
+.DescriptorGraph {
+	background-color: transparent;
+	border: 1px solid transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	text:hover {
+		cursor: default;
+	}
+	text {
+		fill: $container-fg;
+		stroke: $container-fg;
+		font-size: 14px;
+	}
+	rect {
+		//stroke-width: 3px;
+	}
+	path {
+		//stroke-width: 3px;
+		stroke-linejoin: round;
+		&.relation {
+			display: none;
+		}
+	}
+	.grid {
+		line {
+			stroke: #CBD1D1;
+			stroke-width: 0.5px;
+			shape-rendering: geometricPrecision;
+		}
+	}
+	.descriptor {
+		.nsd {
+			stroke: $nsd-color;
+		}
+		.constituent-vnfd {
+			stroke: $vnfd-color;
+		}
+		.pnfd {
+			stroke: $pnfd-color;
+		}
+		.vdu {
+			stroke: $vdu-color;
+		}
+	}
+	.selection-indicator {
+		stroke-dasharray: 2, 2;
+	}
+	.connector {
+		&.-is-not-connected {
+			fill: white !important;
+		}
+		&.-is-connected {
+			fill: #9fc4f4 !important;
+		}
+	}
+	.connection,
+	.new-connection {
+		/* note colors are also defined in ColorGroups.js */
+		//stroke: #295725;
+		stroke-width: 5px;
+		&.-selected {
+			stroke-width: 7px;
+			stroke: red;
+		}
+	}
+	.connection-point {
+		&:hover {
+			cursor: pointer;
+		}
+		&.nsd {
+			stroke: $nsd-color;
+			fill: $nsd-color;
+		}
+		&.constituent-vnfd {
+			stroke: $vnfd-color;
+			fill: $vnfd-color;
+		}
+		&.-is-highlight {
+			stroke: red !important;
+		}
+	}
+	.connection-point-number {
+		text-shadow: 0 0 10px rgba(171, 161, 161, 0.89);
+		font-size: 18px;
+		fill: white;
+		stroke: white;
+		&.-is-highlight {
+			fill: red;
+			stroke: red;
+		}
+	}
+	.internal-connection-point {
+		stroke: $vdu-color;
+		fill: $vdu-color;
+	}
+
+	.relation-marker-end {
+		stroke: transparent;
+		fill: transparent;
+	}
+
+	&.-is-dragging-connection-point {
+		cursor: no-drop;
+		text {
+			fill: rgba($container-fg, 0.25);
+			stroke: rgba($container-fg, 0.25);
+		}
+		rect {
+			stroke: darken($container-bg, 2%);
+			fill: darken($container-bg, 2%);
+		}
+		.nsd {
+			stroke: dim-color($nsd-color);
+		}
+		.vnfd {
+			stroke: dim-color($vnfd-color);
+		}
+		.constituent-vnfd {
+			stroke: dim-color($vnfd-color);
+		}
+		.pnfd {
+			stroke: dim-color($pnfd-color);
+		}
+		.vdu {
+			stroke: dim-color($vdu-color);
+		}
+		.connection {
+			stroke: dim-color($connection-color);
+		}
+		.connection-point {
+			&.nsd {
+				stroke: dim-color($nsd-color);
+				fill: dim-color($nsd-color);
+			}
+			&.constituent-vnfd {
+				stroke: dim-color($vnfd-color);
+				fill: dim-color($vnfd-color);
+			}
+		}
+		.internal-connection-point {
+			stroke: dim-color($vdu-color);
+			fill: dim-color($vdu-color);
+		}
+	}
+
+	&.-is-dragging-connection-point {
+		.-is-valid-drop-target {
+			cursor: pointer;
+			text {
+				fill: $container-fg;
+				stroke: $container-fg;
+			}
+			rect {
+				stroke: $container-bg;
+				fill: $container-bg;
+			}
+			.nsd {
+				stroke: $nsd-color;
+			}
+			.constituent-vnfd {
+				stroke: $vnfd-color;
+			}
+			.pnfd {
+				stroke: $pnfd-color;
+			}
+			.vdu {
+				stroke: $vdu-color;
+			}
+			&.connection {
+				stroke: $connection-color;
+			}
+			&.connection-point {
+				&.nsd {
+					stroke: $nsd-color;
+					fill: $nsd-color;
+				}
+				&.constituent-vnfd {
+					stroke: $vnfd-color;
+					fill: $vnfd-color;
+				}
+				&.-is-drag-over {
+					stroke-width: 2px;
+				}
+			}
+			&.internal-connection-point {
+				stroke: $vdu-color;
+				fill: $vdu-color;
+			}
+			&.-is-drag-over {
+				rect {
+					stroke-width: 2px;
+				}
+			}
+		}
+	}
+
+	.forwarding-graph-paths {
+		pointer-events: none;
+	}
+
+	text {
+		pointer-events: none;
+	}
+
+	text.type {
+		text-transform: uppercase;
+		stroke: white;
+		fill: white;
+		//text-shadow: 2px 2px 4px #ABA2A2;
+	}
+
+	text.vld-type {
+		display: none;
+	}
+
+	text.internal-vld-type {
+		display: none;
+	}
+}

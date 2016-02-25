@@ -1,0 +1,54 @@
+@import "css/base/base";
+
+:host {
+  .flex-display();
+  width: 12px;
+  cursor: col-resize;
+  box-shadow: none;
+  background-image: none;
+  align-items: center;
+  padding: 4px;
+  border-top: 1px solid @gray2;
+  border-bottom: 1px solid @gray2;
+  background-color: @gray6;
+}
+
+:host(.horizontal) {
+  width: auto;
+  flex-direction: row;
+  height: 32px;
+  cursor: row-resize;
+  background-image: none;
+}
+
+:host(:hover, :active) {
+  background-color: @gray6;
+}
+
+#content {
+  .flex(1 0 auto);
+}
+
+#buttons {
+  border: 1px solid @white;
+  border-radius: 8px;
+  height: 15px;
+  width: 15px;
+  cursor: pointer;
+}
+
+.adjustments{
+  .flex(0 1 auto);
+}
+.adjustments>div{
+  float:left;
+  display:inline-block;
+}
+core-icon { 
+  margin-bottom: 5px;
+}
+
+
+.button__tbar{
+  background-color:rgb(192, 192, 192);
+}

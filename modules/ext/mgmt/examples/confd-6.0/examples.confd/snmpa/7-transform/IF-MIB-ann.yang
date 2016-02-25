@@ -1,0 +1,26 @@
+module IF-MIB-ann {
+  namespace "urn:dummy";
+  prefix dummy;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import IF-MIB {
+    prefix x;
+  }
+
+  description
+    "Annotation module for the generated IF-MIB YANG module";
+
+  tailf:annotate "/x:IF-MIB/x:ifTable" {
+    tailf:callpoint "if-snmp" {
+      tailf:transform true;
+    }
+  }
+  tailf:annotate "/x:IF-MIB/x:ifXTable" {
+    tailf:callpoint "if-snmp" {
+      tailf:transform true;
+    }
+  }
+
+}

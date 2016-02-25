@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../lib/web-component-tester/browser.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../integration/ridgets/rw-tabs.html">
+  <link rel="stylesheet" href="../integration/ridgets/css/page.css">
+</head>
+<body>
+<div class="viewport__body">
+  <rw-tabs id="fixture"></rw-tabs>
+</div>
+<script>
+  function createTab(num){
+    var tab = document.createElement('div');
+    tab.innerHTML = "hello world, I'm tab number " + num;
+    return tab;
+  }
+
+  suite('<rw-tabs>', function() {
+    test('loads', function(done) {
+      var fixture = document.getElementById('fixture');
+      fixture.addTab('One', createTab(1));
+      fixture.addTab('Two', createTab(2));
+      fixture.async(function() {
+        var b = fixture.$.tabContents.querySelectorAll('.tab');
+        assert.equal(2, b.length);
+        var t = fixture.$.tabNav.querySelectorAll('.tab');
+        assert.equal(2, t.length);
+        done();
+      });
+    });
+  });
+
+</script>
+</body>
+</html>

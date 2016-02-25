@@ -1,0 +1,75 @@
+<div class="cloud">
+  <div class="cloud-geo cloud-dashpanel">
+    <div class="cloud-geo-map">
+      <rw-geomap markers="systemCloud.markers"></rw-geomap>
+    </div>
+    <vcs-table class="cloud-vcs-table" on-select-vcs="systemCloud.selectVcs(node)"></vcs-table>
+  </div>
+  <div class="cloud-dashpanel cloud-graphs-dashpanel">
+    <h2 class="cloud-graphsHeader">{{systemCloud.node.instance_name}}
+      <span class="gray">|</span>
+      {{systemCloud.vmCount}}<sup>VMs</sup></h2>
+    <div class="cloud-graphs">
+      <div class="cloud-donutGrid">
+        <div>
+          <div>
+            <h3>VCPU</h3>
+            <rw-donut color="#46b94b"
+                      dimension="140"
+                      value="{{systemCloud.node.cpu.percent | fmt:'0' }}" ></rw-donut>
+          </div>
+          <div>
+            <h3>Memory</h3>
+            <rw-donut label="{{systemCloud.node.memory['curr-usage'] | bytes:node.memory.total}}/{{systemCloud.node.memory.total | bytes}}"
+                      color="#fa8628"
+                      dimension="140"
+                      value="{{systemCloud.node.memory.percent | fmt:'0'}}" ></rw-donut>
+          </div>
+        </div>
+        <div>
+          <div>
+            <h3>Storage</h3>
+            <rw-donut label="{{systemCloud.node.storage['curr-usage'] | bytes:node.storage.total }}/{{systemCloud.node.storage.total | bytes}}"
+                      color="#38d5d4"
+                      dimension="140"
+                      value="{{systemCloud.node.storage.percent | fmt:'0'}}" ></rw-donut>
+          </div>
+          <div>
+            <h3>External I/O</h3>
+              <rw-donut label="{{systemCloud.bps.utilization | bits:bps.capacity}}/{{systemCloud.bps.capacity | bits}}"
+                        color="#3c508c"
+                        dimension="140"
+                        value="{{systemCloud.bps.percent | nonNaN}}" ></rw-donut>
+          </div>
+        </div>
+      </div>
+      <div class="cloud-scatter">
+        <h3>VMs</h3>
+        <rw-scatter class="cloud-scatterPlot"
+                    exs-axis-label="Utilization"
+                    y-axis-label="% External I/O"
+                    values="systemCloud.scatterModel"
+                    bullet-color="{{systemCloud.scatterPlotColor}}"
+                    style="margin-top:-30px;" ></rw-scatter>
+        <div class="cloud-scatterButtons button-group">
+            <div ng-click="systemCloud.selectCpu()" ng-class="{'button-bar--is-selected' : systemCloud.showCpu}" class="button button-bar__first-button button__size--medium" data-metric="cpu">
+                <span class="button__box">
+                    <svg class="icon icon--small">
+                      <use xlink:href="#icon-cpu"></use>
+                    </svg>
+                    <span class="button__label">VCPU</span>
+                </span>
+            </div>
+            <div ng-click="systemCloud.selectMemory()" ng-class="{'button-bar--is-selected' : systemCloud.showMemory}" class="button button-bar__last-button button__size--medium" data-metric="memory">
+                <span class="button__box">
+                    <svg class="icon icon--small">
+                      <use xlink:href="#icon-memory"></use>
+                    </svg>
+                    <span class="button__label">Memory</span>
+                </span>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

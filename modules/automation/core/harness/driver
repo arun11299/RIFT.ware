@@ -1,0 +1,354 @@
+#!/usr/bin/env python
+
+"""
+# 
+# (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+#
+
+@file driver
+@author Jeremy Mordkoff (Jeremy.Mordkoff@riftio.com)
+@date 11/20/14
+@brief This script is normally invoked by the test harness
+
+The primary job of this script is to kill the test script if it hangs
+and make sure that it returns within a reasonable period
+
+
+Args
+    pathname of the config file for the test to be run [required]
+    pathname to a testbed file that defines the resources to be used for this test run [optional. If not
+    specified, then all resources reserved by the current user (or the user specified by --user) will be used
+    sutfile -- if specified, this overrides the testbed file and is passed directly to the test
+    logging directory [optional] defaults to CWD
+
+environment
+    This script must be run from inside a rift_shell
+
+runtime
+    when called from the harness, this script will be passed an sut_file that defines the resources that should be used
+    if called standalone, this script will attempt to select SUTs from the resourecs already reserved by this user
+
+return codes are documented in the wiki http://riftnet.eng.riftio.com/wiki/doku.php?id=test_harness
+
+"""
+
+import argparse
+import datetime
+import json
+import logging
+import os
+import paramiko
+import pwd
+import shlex
+import signal
+import subprocess
+import sys
+import time
+import tempfile
+try:
+    from junit_xml import TestSuite, TestCase
+except ImportError:
+    pass
+
+from rw_testconfig import TestConfiguration
+from ndl import Testbed
+from rw_testcase import TestCaseManager
+
+logger=logging.getLogger(__name__)
+logging.basicConfig(format='%(asctime)-15s %(module)s %(levelname)s %(message)s', level=logging.INFO)
+
+
+
+global QUIT_NOW
+QUIT_NOW = False
+
+def signal_handler(sig, fr):
+    global QUIT_NOW
+    print "Driver got a signal"
+    QUIT_NOW = True
+
+def preexec_function():
+    # Ignore the SIGINT signal by setting the handler to the standard
+    # signal handler SIG_IGN.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    os.setsid()
+
+def sys_exit(rc):
+
+    """
+    zero means the test completed and reported success
+    one means the test completed and reported failure
+    anything else could be caused by the test never completing, so 
+    create a failure XML file just in case the testcase hung and failed to do write one itself
+    hit a case where the test suite wrote a success junit.xml then aborted during test 2
+    so now we write these all the time
+    """
+    if rc > 0:
+        try:
+            message = 'TestSuite=%s rc=%d' % ( test_config.test_name, rc )
+            test_case = TestCase('driver', 
+                            test_config.test_name,
+                            elapsed_time.total_seconds(),
+                            message,
+                            '')
+            test_case.add_failure_info(message)
+            ts = TestSuite(test_config.test_name, [test_case])
+            with open(test_config.junit_pathname, "w") as f:
+                TestSuite.to_file(f,[ts], prettyprint=False)
+        except:
+            print("exception writing junit file")
+
+    sys.exit(rc)
+
+
+
+
+def run_on_all_vms(cmd, first_cmd=None, mark_doa_on_failure=False):
+
+    if first_cmd is None:
+        first_cmd = cmd
+
+    vms = test_config.suts['vms']
+    first = True
+    for vm_name in vms.itervalues():
+        if first:
+            this_cmd = first_cmd
+        else:
+            this_cmd = cmd
+
+        vm = tb.find_host(vm_name)
+        logging.info("running %s in %s %s" % (this_cmd, vm_name, vm.ipaddress) )
+        key = paramiko.RSAKey.from_private_key_file(os.path.join(os.environ['HOME'], ".ssh/id_grunt"))
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(vm.ipaddress, username='root', pkey=key)
+        stdin, stdout, stderr = ssh.exec_command(this_cmd)
+        first = False
+        logging.info(this_cmd)
+        for line in stdout.readlines():
+            try:
+                logging.info(line[:-1])
+            except UnicodeEncodeError:
+                logging.info("error printing output from VM")
+        if stdout.channel.recv_exit_status() != 0:
+            if mark_doa_on_failure:
+                logging.info("%s failed on %s (%s) --  marking DOA" % ( this_cmd, vm_name, vm.ipaddress) )
+                vm.mark_doa()
+            sys_exit(TestCaseManager.get_code('DEFERRED'))
+        else:
+            logging.info("%s on %s (%s) done sucessful" % ( this_cmd, vm_name, vm.ipaddress) )
+
+######################### MAIN ##############
+
+parser = argparse.ArgumentParser(description="RIFT.ware test driver")
+parser.add_argument('-l', '--log-dir',      dest='logdir',  type=str, help='Where to store log files', default=".")
+parser.add_argument('-t', '--testbed',      dest='testbed', type=str, help='testbed file name OPTIONAL', default=None)
+parser.add_argument('-c', '--configfile',   dest='cfgfile', type=str, help='config file name REQUIRED', default=None)
+parser.add_argument('-u', '--username',     dest='user',    type=str, help='username for pre-reserved resources', default=os.environ.get('USER', 'ruser'))
+parser.add_argument('-U', '--USER',     dest='run_as_user', type=str, help='User to execute test as', default=None )
+parser.add_argument('-s', '--sut-file',     dest='sutfile', type=str, help='SUT file to be passed to the test')
+parser.add_argument('-d', '--debug',        dest='debug',   action='store_true', help='enable debug output', default=False)
+parser.add_argument('-T', '--timeout-factor',      dest='timeout', type=int, default=1, help='multiplier for testcase timeouts')
+parser.add_argument(      '--chown',     dest='chown', default=False, action='store_true', help='run chown')
+cmdargs = parser.parse_args()
+if cmdargs.debug:
+    logger.setLevel(logging.DEBUG)
+
+if not 'RIFT_ROOT' in os.environ:
+    logger.critical("ERROR: RIFT_ROOT is not set")
+    sys_exit(1)
+RIFT_ROOT = os.environ['RIFT_ROOT']
+
+if not cmdargs.cfgfile:
+    logger.critical("--configfile not specified")
+    sys_exit(1)
+
+signal.signal(signal.SIGINT, signal.SIG_IGN )
+signal.signal(signal.SIGTERM, signal_handler)
+
+# load the configfile
+try:
+    test_config = TestConfiguration(cmdargs.cfgfile)
+except:
+    sys_exit(2)
+
+if not test_config.is_valid:
+    print("ERROR: test config is not valid: %s" % test_config.error)
+    sys_exit(1)
+# calculate and/or load the testbed definition
+# in most cases the resources are reserved and released externally
+if cmdargs.sutfile is not None:
+    sut_file_name = cmdargs.sutfile
+    with open(cmdargs.sutfile, "r") as f:
+        suts = json.loads(f.read() )
+
+else:
+    ''' this little block of logic was not originally called out in the spec, but
+        without it you cannot run a single test standalone unless we decide to duplicate this logic
+        in the tests
+    '''
+    if cmdargs.testbed is None:
+        # first try to see if the user has reserved any already
+        testbed = Testbed(url='auto', user=cmdargs.user)
+    else:
+        testbed = Testbed(json=testbedfile)
+    logging.debug("===== testbed: %s" % testbed)
+
+    # we could leave this to be up to the tests....
+    suts = testbed.select_by_config(test_config)
+    if suts is None:
+        logging.critical("unable to reserve the necessary resources to run test %s" % test_config.test_name)
+        sys_exit(1)
+
+    logging.debug("===== suts: %s" % suts)
+
+    with tempfile.NamedTemporaryFile(delete=False) as sut_file:
+        sut_file.write(json.dumps(suts, sort_keys=False, indent=4, separators=(',', ': ')))
+    sut_file_name = sut_file.name
+
+tb = Testbed(user=os.environ.get('USER', 'ruser'))
+test_config.set_sut_file(sut_file_name)
+os.chdir(os.path.dirname(os.path.abspath(cmdargs.cfgfile)))
+
+task_context = {    'logdir': cmdargs.logdir,
+                    'user': cmdargs.user,
+                    'debug': cmdargs.debug }
+cmdline = test_config.get_commandline( cmdln_options=task_context, testbed=tb )
+logging.debug("===== launching \"%s\"" % cmdline )
+user = pwd.getpwuid(os.getuid())[0]
+rift_shell = "%s/rift-shell" % os.environ['RIFT_ROOT']
+logger.info("user is %s run as is %s" % ( user, cmdargs.run_as_user ))
+
+
+if test_config.post_reset_vms:
+    reset_vm_command = "%s/scripts/cloud/reset_vm %s 2>&1" % ( RIFT_ROOT, RIFT_ROOT )
+    if cmdargs.chown:
+        username = os.environ.get('USER', 'jenkins')
+        first_reset_vm_command = "%s/scripts/cloud/reset_vm %s %s:%s 2>&1" % ( RIFT_ROOT, RIFT_ROOT, username, username )
+    else:
+        first_reset_vm_command = reset_vm_command
+    run_on_all_vms(reset_vm_command, first_reset_vm_command, True)
+
+
+cmds = []
+if test_config.target_vm:
+    logging.debug("got testbed")
+    vm_name = test_config.get_actual_vm(test_config.target_vm)
+    logging.debug("sut %s is VM %s" % (test_config.target_vm, vm_name ))
+    vm = tb.find_host(vm_name )
+    if not vm.ipaddress:
+        logging.critical("===== FATAL ERROR: vm %s has no IP address" % test_config.target_vm)
+        sys_exit(2)
+    # copy SUT files
+    if test_config.run_as_root:
+        keyfile = os.path.join(os.environ['HOME'], ".ssh/id_grunt")
+        user = 'root'
+        host = "root@" + vm.ipaddress
+    else:
+        keyfile = os.path.join(os.environ['HOME'], ".ssh/id_rsa")
+        user = os.environ['USER']
+        host = vm.ipaddress
+
+    key = paramiko.RSAKey.from_private_key_file(keyfile)
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    logging.info("connecting to %s as %s" % ( vm.ipaddress, user ))
+    ssh.connect(vm.ipaddress, username=user, pkey=key)
+    sftp = ssh.open_sftp()
+    sftp.put(sut_file_name, sut_file_name)
+    cmds = [ 'ssh', '-i', keyfile, '-o', 'StrictHostKeyChecking=no', host ]
+
+if ( user == 'jenkins' or user == 'root' ) and cmdargs.run_as_user is not None:
+    logger.info("running as user %s" % cmdargs.run_as_user )
+    cmds =  cmds + [ "sudo", "-u", cmdargs.run_as_user ]
+
+'''
+    FYI
+    -e -- use existing env
+    -r -- cd to rift_root
+    -w -- use testwrapper.sh
+'''
+
+cmds = cmds + [ rift_shell, '-e', '-r', '-w' ]
+for var in [ 'TESTCASE_URL', 'RESERVATION_SERVER' ]: 
+    if var in os.environ:
+        cmds = cmds + [ '-E', "\"%s=%s\"" % ( var, os.environ[var] ) ]
+cmds = cmds + [ '--' ] + shlex.split(cmdline)
+
+print("===== driver launching %s" % " ".join(cmds))
+
+print "=========================================="
+sys.stdout.flush()
+
+scr = subprocess.Popen(cmds, preexec_fn=preexec_function, stderr=subprocess.STDOUT )
+
+starttime = datetime.datetime.now()
+done = False
+res = None
+max_et = datetime.timedelta(seconds=test_config.timeout) * cmdargs.timeout
+status="running"
+rc=-1
+while not done:
+    time.sleep(1)
+    res = scr.poll()
+    if res is not None:
+        done = True
+        status="DONE"
+        rc=scr.returncode
+        print("=== DONE return code is %d" % rc )
+        # 0 = pass, 1=fail, other=exception
+        if rc > 2:
+            rc=TestCaseManager.get_code('EXCEPTION')
+        break
+    elapsed_time = datetime.datetime.now() - starttime
+    if elapsed_time > max_et:
+        status="TIMEOUT"
+        done = True
+        print "==== driver: test timed out"
+        rc=TestCaseManager.get_code('TIMEDOUT')
+        break
+    if QUIT_NOW:
+        done = True
+        print "==== driver: test was aborted"
+        rc=TestCaseManager.get_code('ABORTED')
+    #print("=====   %s, et is %s max et is %s" % ( status, elapsed_time, max_et ))
+
+sys.stdout.flush()
+print "=========================================="
+if res is None:
+    # ATTN: SIGQUIT did not give core dump.
+    # SIGXCPU did give core dump but it could not
+    # be read due to unknown reasons
+    print("===== driver: Sending signal 11")
+    scr.send_signal(11)
+    print("=====driver: waiting 120 seconds to finish writing core")
+    time.sleep(120)
+    res = scr.poll()
+    if res is None:
+        # try taking pstack
+        with open("pstack_{}".format(scr.pid), 'wb') as f:
+            print("===== driver: taking pstack of the process")
+            pstk = subprocess.check_output(shlex.split("popen {}".format(scr.pid)), timeout=120)
+            f.write(pstk)
+
+        # If still running, just kill it 
+        res = scr.poll()
+        if res is None:
+            print("===== driver: Sending signal 9")
+            scr.send_signal(9)
+
+elapsed_time = datetime.datetime.now() - starttime
+print("==== driver: %s is done. rc is %d, elapsed time was %s" % (test_config.test_name, rc, elapsed_time ))
+
+try:
+    # I believe this block of code is hopelessly broken. If it really wants to archive the 
+    # confd data, it needs to ssh into all of the VMs that were allocated.
+    archive_cmd = '{rift_shell} -e -r -- rwyangutil --archive-confd-persist-ws'.format(rift_shell=rift_shell)
+    run_on_all_vms(archive_cmd)
+    print("===== driver archived confd perist directories - %s" % (archive_cmd))
+except:
+    print("exception caught while archiving confd data")
+
+sys_exit(rc)
+
+

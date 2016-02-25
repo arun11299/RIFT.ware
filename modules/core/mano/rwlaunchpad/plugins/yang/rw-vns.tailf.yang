@@ -1,0 +1,51 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-vns-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-vns";
+  prefix "rw-vns-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import ietf-network {
+    prefix nd;
+  }
+
+  import ietf-network-topology {
+    prefix nt;
+  }
+
+  import ietf-l2-topology {
+    prefix lt;
+  }
+
+  tailf:annotate "/nd:network" {
+      tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/nd:network/nt:link" {
+      tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/nd:network/nd:node" {
+      tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/nd:network/nd:node/nt:termination-point" {
+      tailf:callpoint base_show;
+  }
+}
+
+

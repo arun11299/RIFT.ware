@@ -1,0 +1,21 @@
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+      <dropElem src="alias expansion"/>
+      <multiValue src="alias expansion"/>
+      <suppressMode src="alias "/>
+
+      <fullShowPath path="arp"/>
+
+      <showPathRewrite>
+        <callback>
+          <capi>show_path_rewrite</capi>
+        </callback>
+      </showPathRewrite>
+    </modifications>
+  </operationalMode>
+
+  <configureMode>
+  </configureMode>
+</clispec>

@@ -1,0 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+:host {
+  height: 20px;
+}
+.global-footer {
+  height: 50px;
+  border-top: 1px solid #c4c4c4;
+  background-color: #ededed;
+}

@@ -1,0 +1,30 @@
+@import "css/base/base";
+@import "css/elements/header";
+@import "css/elements/section-details";
+
+/*------------------*/
+/*----- LAYOUT -----*/
+.details{}
+.details.row{
+  .flex-display();
+  .flex-direction(row);
+  .align-items(stretch);
+}
+
+.details.row .col {
+  .flex(1);
+  padding:10px;
+  margin:0px;
+}
+
+.hide {
+  display: none;
+}
+
+#traffic-metrics {
+  min-width: 300px;
+}
+
+#barGraph {
+  min-height: 300px;
+}

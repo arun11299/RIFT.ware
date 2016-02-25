@@ -1,0 +1,37 @@
+
+<!--
+ 
+  Find services, interface and ports in your system
+
+  @class rw-services-model
+-->
+<polymer-element name="rw-services-model" attributes="services">
+<script>
+Polymer({
+
+  created: function() {
+    this.services = [];
+  },
+
+  attached: function() {
+    this.update();
+  },
+
+  update: function() {
+    var self = this;
+    rw.api.json('/vnf/').done(function(json) {
+      rw.inplaceUpdate(self.services, json.vnfs.vnf);
+      self.fire("update");
+      if (!rw.ui.currentServices) {
+        rw.ui.currentServices = [];
+      }
+      for (var i = 0;i<self.services.length; i++) {
+        if (rw.ui.currentServices.indexOf(self.services[i].type) == -1) {
+          rw.ui.currentServices.push(self.services[i].type);
+        }
+      }
+    });
+  }
+});
+</script>
+</polymer-element>

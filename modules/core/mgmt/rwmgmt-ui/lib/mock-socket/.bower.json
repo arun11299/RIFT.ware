@@ -1,0 +1,33 @@
+{
+  "name": "mock-socket",
+  "version": "0.3.2",
+  "homepage": "https://github.com/thoov/mock-socket",
+  "authors": [
+    "Travis Hoover <thoov7@gmail.com>"
+  ],
+  "description": "A mocking library for WebSockets",
+  "keywords": [
+    "websockets",
+    "mock",
+    "mocksocket",
+    "sockets"
+  ],
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests"
+  ],
+  "_release": "0.3.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.3.2",
+    "commit": "dcd6d9467e0c73091ce385972f2b932a36b8c1ce"
+  },
+  "_source": "git://github.com/thoov/mock-socket.git",
+  "_target": "~0.3.2",
+  "_originalSource": "mock-socket",
+  "_direct": true
+}

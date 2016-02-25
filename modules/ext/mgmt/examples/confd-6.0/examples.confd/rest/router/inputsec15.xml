@@ -1,0 +1,14 @@
+
+<route>
+  <name>10.30.3.0</name>
+  <prefix-length>24</prefix-length>
+  <next-hop>
+    <name>192.168.3.1</name>
+    <metric>100</metric>
+  </next-hop>
+  <next-hop>
+    <name>192.168.4.2</name>
+    <metric>200</metric>
+  </next-hop>
+</route>
+

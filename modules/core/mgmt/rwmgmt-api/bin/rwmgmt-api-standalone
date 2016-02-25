@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import argparse
+
+from werkzeug.contrib.profiler import ProfilerMiddleware
+
+ROOT_DIR = os.path.join(os.path.dirname(__file__), '../')
+sys.path.append(ROOT_DIR)
+DEFAULT_UI_DIR = os.path.join(ROOT_DIR, '../rwmgmt-ui/build')
+
+def is_dir(dirname):
+    """Checks if a path is an actual directory"""
+    if not os.path.isdir(dirname):
+        msg = "{0} is not a directory".format(dirname)
+        raise argparse.ArgumentTypeError(msg)
+    else:
+        return os.path.abspath(dirname)
+
+# Parse arguments
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    description='Riftware UI'
+    )
+
+parser.formatter_class = argparse.ArgumentDefaultsHelpFormatter
+parser.add_argument('--bind', metavar="address", default='0.0.0.0',
+            help='local interface ip address to bind UI server to')
+parser.add_argument('--port', type=int, default=5050,
+            help='port to bind UI server to')
+parser.add_argument('--server', metavar="address:port", default='localhost:2112',
+            help='NETCONF server')
+parser.add_argument('--confd', metavar="user:password@address:port",
+            help='ConfD REST server')
+parser.add_argument('--live-reload', dest='live_reload', action='store_true',
+            help='will reload changed code on the fly')
+parser.add_argument('--no-env', dest='no_env', action='store_true',
+            help='running outside RiftWare environment. Developer aid.')
+parser.add_argument('--profile', dest='profile', action='store_true',
+            help='log in-depth method profile for each request to stdout. Very slow!')
+parser.add_argument('--ui_dir', dest='ui_dir', default=DEFAULT_UI_DIR, type=is_dir,
+            help='Directory which contains the UI components')
+parser.add_argument('--proxy', default=None,
+            help='Directory which contains the UI components')
+parser.add_argument('--log-level', dest='log_level', default='INFO',
+            help='Allowed values : CRITICAL, ERROR, WARNING, INFO, DEBUG')
+
+args = vars(parser.parse_args())
+from rwmgmtapi.app import create_app, create_websocket
+from rwmgmtapi.app.cors import CORSMiddleware
+from rwmgmtapi.confd import ConfDDriver, ConfDPassThru
+import flask.ext.compress
+
+import logging
+levels = {
+    'CRITICAL' : logging.CRITICAL,
+    'ERROR' : logging.ERROR,
+    'WARNING' : logging.WARNING,
+    'INFO': logging.INFO,
+    'DEBUG' : logging.DEBUG
+}
+if args['log_level'] not in levels:
+    raise Exception("Unknown log level '%s'" % args['log_level'])
+level = levels[args['log_level']]
+logging.basicConfig(format='%(asctime)-15s %(message)s', level=level)
+
+logging.info('Initializing Flask request handler')
+app = create_app(args['ui_dir'])
+app.config['netconf_server'] = args['server']
+app.logger.setLevel(level)
+
+app.config['COMPRESS_MIMETYPES'] = [
+    'application/json',
+    'application/vnd.yang.collection+json',
+    'application/xml'
+    'application/vnd.yang.collection+xml',
+    'text/html'
+]
+
+logging.info('Enabling gzip compression')
+flask.ext.compress.Compress().init_app(app)
+
+if args['profile']:
+    logging.info('Installing profiler')
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, sys.stdout)
+
+if args['confd']:
+    creds, address = args['confd'].split('@')
+    username, password = creds.split(':')
+    logging.info('Installing ConfD passthru')
+    ConfDDriver.Initialize(address, username, password, args['proxy'])
+    ConfDPassThru(app)
+
+logging.info('CORs support')
+app.wsgi_app = CORSMiddleware(app.wsgi_app)
+
+logging.info('Initializing Flask SocketIO handler')
+websocket = create_websocket()
+
+# this loads all handlers in respective package only.  will need
+# to load vendor packages dynamically at some point
+from rwmgmtapi import route
+if args['no_env'] is False:
+    import rwmgmtapi.model.route
+
+app.debug = args['live_reload']
+app.config.update(
+ SEND_FILE_MAX_AGE_DEFAULT=300
+)
+
+websocket.run(app, host=args['bind'], port=args['port'])
+

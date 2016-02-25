@@ -1,0 +1,40 @@
+module data {
+  namespace "http://tail-f.com/ns/example/data";
+  prefix data;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef secondsType {
+    type uint64 {
+    }
+  }
+  container data {
+    config false;
+    tailf:callpoint clock;
+    container utc {
+      leaf seconds {
+        type secondsType;
+        mandatory true;
+      }
+      leaf microseconds {
+        type uint64;
+        mandatory true;
+      }
+    }
+  }
+
+  list mysubmode {
+      key name;
+      tailf:cli-mode-name-actionpoint "mode_name";
+
+      leaf name {
+          type string;
+      }
+
+      leaf description {
+          type string;
+      }
+  }
+}

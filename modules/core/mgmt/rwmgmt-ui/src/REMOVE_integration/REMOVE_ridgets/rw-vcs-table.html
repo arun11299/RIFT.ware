@@ -1,0 +1,77 @@
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-vcs-status-led.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<polymer-element name="rw-vcs-table" attributes="sector">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-vcs-table.css"/>
+  <rw-iconset></rw-iconset>
+  <core-selector
+    id="selectedVcs"
+    target="{{$.vcsItems}}"
+    itemsSelector="tr"
+    selectedClass="datagrid--is-selected"
+    on-core-select="{{selectVcs}}"
+    ></core-selector>
+  <table class="datagrid">
+    <thead>
+      <th>
+        Virtual Component System
+      </th>
+      <th>
+        Status
+      </th>
+    </thead>
+    <tbody id="vcsItems">
+      <tr template repeat="{{row in rows}}">
+        <td>
+          <core-icon class="icon--small {{row.depthClass}}" icon="rw-iconset:icon-colony"></core-icon>
+          {{row.node.instance_name}}
+        </td>
+        <td><rw-vcs-status-led state="{{row.node.state}}"></rw-vcs-status-led></td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+<script>
+Polymer(Platform.mixin({
+
+  created: function() {
+    this.rows = [];
+  },
+
+  sectorChanged: function() {
+    if (!('collection' in this.sector)) {
+      return;
+    }
+    this.rows.length = 0;
+    this.addRows(this.rows, this.sector, 0);
+    this.$.selectedVcs.selected = 0;
+  },
+
+  addRows: function(rows, node, depth) {
+    if (depth > 0) {
+      rows.push({node : node, depthClass: 'depth-' + depth});
+    }
+    var self = this;
+    var recurse = function(child) {
+      self.addRows(rows, child, depth + 1);
+    };
+    if (Array.isArray(node.collection)) {
+      _.each(node.collection, recurse);
+    }
+  },
+
+  selectVcs: function(e, detail, container) {
+    e.stopPropagation();
+    if (detail.isSelected) {
+      var row = this.rows[container.selected];
+      console.log("selected row", row);
+      this.fire('select-vcs', {
+        node: row.node
+      });
+    }
+  }
+}, rw.ui));
+</script>
+</polymer-element>

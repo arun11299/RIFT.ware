@@ -1,0 +1,19 @@
+module SIMPLE-MIB-ann {
+  namespace "urn:dummy";
+  prefix dummy;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import SIMPLE-MIB {
+    prefix x;
+  }
+
+  description
+    "Annotation module for the generated SIMPLE-MIB YANG module";
+
+  tailf:annotate "/x:SIMPLE-MIB/x:variables" {
+    tailf:callpoint "simplecp";
+  }
+
+}

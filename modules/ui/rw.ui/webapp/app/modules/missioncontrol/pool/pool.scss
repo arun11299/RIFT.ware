@@ -1,0 +1,80 @@
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+.mc-pool-app {
+    .create-fleet-header input {
+        border: none;
+        font-size: 120%;
+        color: black;
+        text-align: center;
+    }
+    .create-fleet-services {
+        min-width: 50%;
+        max-width: 50%;
+    }
+    .create-fleet-services label, .create-fleet-pool label {
+        position: relative;
+        float: left;
+        width: 100%;
+        text-align: left;
+    }
+    .pool-type {
+        margin-left: 23px;
+        margin-bottom: 10px;
+    }
+    .create-fleet-header div {
+        text-align: left;
+        color: black;
+    }
+    .create-fleet-services {
+        margin-left: 0px !important;
+    }
+    .create-fleet-services hr {
+        border-bottom: 0px solid #bbb;
+        width: 100%;
+    }
+    .create-fleet-selectors {
+        width: 100%;/*      padding-left:15px;
+              background-color: #ffffff;
+        */
+        height: 67px;
+        border-bottom: 1px solid #aaa;
+    }
+    .create-fleet-dynamic {
+        margin: 0px 3px 0px 0px;
+        background-color: #e5e5e5;
+    }
+    .create-fleet-selectors div {
+        color: #000000;
+        display: inline-block;
+        margin-right: 1px;
+        margin-top: 18px;
+        padding: 8px 64px;
+        font-size: 12px;
+        text-decoration: none;
+        text-transform: uppercase;
+        box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+        font-family: roboto-regular, Helvetica, Arial, sans-serif;
+        background-color: rgb(241, 241, 241);
+    }
+    .create-fleet-selectors div:first-child {
+        margin-left: 15px;
+    }
+    .create-pool-container {
+        margin: 10px 18px;
+    }
+    .create-pool-dynamic-radio {
+        text-align: center;
+        flex-wrap: wrap;
+        margin: 24px 9px;
+        justify-content: flex-start;
+    }
+    .create-pool-dynamic-input {
+        margin: 0px 5px;
+    }
+    .create > .create-pool-container> li.create-fleet-pool {
+        margin-left: .5rem;
+    }
+}

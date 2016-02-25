@@ -1,0 +1,167 @@
+<div>
+  <div class="row details">
+    <div class="col">
+      <h2>Current Calls</h2>
+      <table class="datagrid">
+        <tbody>
+        <tr>
+          <th>
+            Active Forward Sessions
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['active-fwd-session']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Active Reverse Sessions
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['active-rev-session']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Forward Packet Received
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-fwd-pkt-rcvd']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Forward Packet Sent
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-fwd-pkt-sent']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Reverse Packet Sent
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-rev-pkt-rcvd']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Reverse Packet Received
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-rev-pkt-sent']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Forward Packet Dropped
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['fwd-pkt-drop']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Forward Packet Dropped/No Session
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['fwd-pkt-drop-no-session']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Forward Packet Dropped/Max Session
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['fwd-pkt-drop-max-session']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Reverse Packet Dropped
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['rev-pkt-drop']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Reverse Packet Dropped/No Session
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['rev-pkt-drop-no-session']}}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Forward Packets/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-fwd-rate-pps'] | fmt:'0a'}}pps
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Forward Packets/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-fwd-rate-pps'] | fmt:'0a'}}pps
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Reverse Packets/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-rev-rate-pps'] | fmt:'0a'}}pps
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Reverse Packets/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-rev-rate-pps'] | fmt:'0a'}}pps
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Forward Bits/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-fwd-rate-mbps'] | bits }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Forward Bits/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-fwd-rate-mbps'] | bits }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Server Reverse Bits/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['srvr-rev-rate-mbps'] | bits }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Client Reverse Bits/sec
+          </th>
+          <td>
+            {{slbalancerDetails.slb.metrics['clnt-rev-rate-mbps'] | bits }}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col {{ {hide : !slbalancerDetails.showProtoStats} | tokenList}}">
+      <h2>Message Response Time</h2>
+      <rw-bargraph class="trafsim-barGraph" values="slbalancerDetails.values"></rw-bargraph>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,204 @@
+<!--
+
+<rw-sparkline> is used to display a sparkline, and optionally a reference line, for a series of data.
+
+<img src="sparkline.png"/>
+
+Example:
+--------
+    <rw-sparkline x="{{xInput}}" y="{{yInput}}" yref="{{yrefInput}}"></rw-sparkline>
+
+Note:
+-----
+  - This element does not do much validation, so please make sure you provide
+    it with sensible values.
+  - width, height, xmax, and ymax should be constant, and not changed.
+  - The only values that should change are x and y attributes, which specify
+    the values to be splotted.
+  - If you are happy with the default of an attribute, you don't need to specify it.
+
+
+Improvement:
+------------
+  - Accept negative values. Right now, it only deals with positive numbers.
+
+  @class rw-sparkline
+-->
+
+<polymer-element name="rw-sparkline" attributes="width height x y yref xmax ymax color">
+<template>
+  <style>
+.line {
+  /* using moustaches in styles is not recommended in polymer */
+  stroke: {{color}};
+}
+  </style>
+  <link rel="stylesheet" type="text/css" href="rw-sparkline.css"/>
+  <span class="inline-sparkline">
+    <svg id="sparkline" width="{{width}}" height="{{height}}">
+    </svg>
+  </span>
+</template>
+<script>  
+Polymer({
+
+ /**
+  * x coordinate of the sparkline; actually, it can be any value as long as
+  * it changes every time when you want to add a data point to the sparkline.
+  * In other words, x is used to give xChanged() a kick to process the input.
+  *
+  * @attribute x
+  * @type integer
+  */
+
+ /**
+  * y coordinate of the sparkline, y will be clipped to ymax if it's greater than ymax.
+  *
+  * @attribute y
+  * @type integer
+  */
+
+ /**
+  * y reference value of the sparkline, y will be clipped to ymax if it's greater than ymax.
+  * yref is used to plot the second line in the sparkline chart as a reference line for y.
+  * The reference lin is plotted in dashes. It is not plotted if the yref attribute is not provided.
+  *
+  * @attribute yref
+  * @type integer
+  */
+
+  PADDING: 3,
+
+ /**
+  * width of the sparkline in pixels (default: 100 px)
+  *
+  * @attribute width
+  * @type integer
+  */
+
+ /**
+  * height of the sparkline in pixels (default: 40 px)
+  *
+  * @attribute height
+  * @type integer
+  */
+
+ /**
+  * the number of data points, The range (0, xmax) determines the x-scale
+  * (default: 30)
+  *
+  * @attribute xmax
+  * @type integer
+  */
+
+ /**
+  * the max y value, The range (0, ymax) determines the y-scale
+  * (default: 120)
+  *
+  * @attribute ymax
+  * @type integer
+  */
+
+  /**
+   * the color of the sparkline, using the css format (e.g. blue, rgba(0, 125, 154, 1), etc.)
+   * (default: black)
+   *
+   * @attribute color
+   * @type string
+   */
+
+
+  created: function() {
+    this.x = 0;
+    this.y = 0;
+    this.yref = undefined;
+    this.width = 100;
+    this.height = 40;
+    this.xmax = 30;
+    this.ymax = 120;
+    this.color = 'black';
+  },
+
+  ready: function() {
+    var self = this;
+    this.displayMgr = function(el) { 
+      var data = [],
+          refData = [],
+          linePath = null,
+          refLinePath = null,
+          updateStarted = false,
+          contentWidth = self.width - self.PADDING,
+          contentHeight = self.height - self.PADDING,
+          xScale = d3.scale.linear()
+                          .domain([0, self.xmax])
+                          .range([0, contentWidth]),
+          yScale = d3.scale.linear()
+                          .domain([0, self.ymax])
+                          .range([contentHeight, 0]),
+          SVGPathGenerator = d3.svg.line()
+                               .x(function(d, i) {return xScale(i);})
+                               .y(function(d) {return yScale(d);}),
+          svg = d3.select(el);
+      function update() {
+        var i;
+        linePath.attr('d', SVGPathGenerator)
+                .attr('transform', null)
+              .transition()
+                .duration(2000)
+                .ease('cubic-in-out')
+                .attr('transform', 'translate(' + xScale(-1) + ',0)')
+                .each('end', update);
+        if (self.yref != null) {
+          refLinePath.attr('d', SVGPathGenerator)
+                  .attr('transform', null)
+                .transition()
+                  .duration(2000)
+                  .ease('cubic-in-out')
+                  .attr('transform', 'translate(' + xScale(-1) + ',0)')
+                  .each('end', update);
+        }
+        for (i = data.length; i > self.xmax; i--) {
+          data.shift();
+        }
+        for (i = refData.length; i > self.xmax; i--) {
+          refData.shift();
+        }
+      };
+      function addData(y, yRef) {
+        data.push(y);
+        if (self.yref != null) {
+          refData.push(yRef);
+        }
+        if (!updateStarted) {
+          linePath = svg.append('path')
+                        .datum(data)
+                        .attr('class', 'line')
+                        .attr('d', SVGPathGenerator);
+          if (self.yref != null) {
+            refLinePath = svg.append('path')
+                          .datum(refData)
+                          .attr('class', 'refline')
+                          .style('stroke-dasharray', ('3, 3')) 
+                          .attr('d', SVGPathGenerator);
+          }
+          update();
+          updateStarted = true;
+        }
+      };
+      return {
+        addData: addData
+      };
+    }(this.$.sparkline);
+  },
+  xChanged: function() {
+    this.y = parseInt(this.y);
+    this.y = this.y > this.ymax ? this.ymax : this.y;
+    if (this.yref != null) {
+      this.yref = parseInt(this.yref);
+      this.yref = this.yref > this.ymax ? this.ymax : this.yref;
+    }
+    this.displayMgr.addData(this.y, this.yref);
+  }
+});
+</script>
+</polymer-element>

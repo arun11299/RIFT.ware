@@ -1,0 +1,88 @@
+module system {
+  namespace "http://tail-f.com/ns/example/system";
+  prefix system;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import SNMP-COMMUNITY-MIB {
+    prefix SNMP-COMMUNITY-MIB;
+  }
+
+  import confd_dyncfg {
+    prefix dyncfg;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-xsd-types {
+    prefix xs;
+  }
+
+  container system {
+    description "
+      System setup.
+    ";
+    container cli {
+      description "
+        CLI settings.
+      ";
+      leaf prompt {
+        type string;
+        tailf:link "/dyncfg:confdConfig/cli/prompt1";
+      }
+      leaf editPrompt {
+        type string;
+        tailf:link "/dyncfg:confdConfig/cli/prompt2";
+      }
+      leaf idleTimeout {
+        type xs:duration;
+        tailf:link "/dyncfg:confdConfig/cli/idleTimeout";
+      }
+    }
+    container snmp {
+      description "
+        SNMP agent settings.
+      ";
+      leaf enabled {
+        type boolean;
+        tailf:link "/dyncfg:confdConfig/snmpAgent/enabled";
+      }
+      leaf sysDescr {
+        type string;
+        tailf:link "/dyncfg:confdConfig/snmpAgent/system/sysDescr";
+      }
+      leaf sysOID {
+        type yang:object-identifier;
+        tailf:link "/dyncfg:confdConfig/snmpAgent/system/sysObjectID";
+      }
+      leaf EngineID {
+        type tailf:hex-list;
+        tailf:link "/dyncfg:confdConfig/snmpAgent/snmpEngine/snmpEngineID";
+      }
+      leaf communityString {
+        type string;
+        tailf:link "/SNMP-COMMUNITY-MIB:SNMP-COMMUNITY-MIB/"
+                 + "snmpCommunityTable/snmpCommunityEntry"
+                 + "[snmpCommunityIndex='public']/snmpCommunityName";
+      }
+      container address {
+        description "
+          SNMP agent listen address.
+        ";
+        leaf ip {
+          type inet:ip-address;
+          tailf:link "/dyncfg:confdConfig/snmpAgent/ip";
+        }
+        leaf port {
+          type inet:port-number;
+          tailf:link "/dyncfg:confdConfig/snmpAgent/port";
+        }
+      }
+    }
+  }
+}

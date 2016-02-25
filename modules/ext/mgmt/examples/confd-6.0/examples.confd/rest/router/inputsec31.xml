@@ -1,0 +1,6 @@
+
+<authentication>
+  <method>pap</method>
+  <list-name>foobar</list-name>
+</authentication>
+

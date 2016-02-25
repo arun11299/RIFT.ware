@@ -1,0 +1,27 @@
+<header class="header-app">
+    <h1>
+    Launchpad: {{ lp.managementDomainName }}</h1>
+    <nav class="header-nav launchpad-nav">
+        <a ng-click="lp.openAbout()" style="border:none;">About</a>
+        <a ng-click="lp.openLog()">Logs</a>
+        <a ng-click="lp.openDebug()">Debug</a>
+    </nav>
+
+</header>
+    <div style="display:flex;margin:0 0 0.5rem 1.25rem;font-weight:bold;">
+        DASHBOARD
+        <span style="margin-left:0.5rem" ng-if="lp.isStandAlone">|</span>
+        <a href ng-click="lp.loadCloudAccounts()"  ng-if="lp.isStandAlone" style="cursor:pointer;margin-left:0.5rem;font-weight: normal;color: black;">
+            CLOUD ACCOUNTS
+        </a>
+        <span style="margin-left:0.5rem">|</span>
+        <a href ng-click="lp.loadComposer()" style="cursor:pointer;margin-left:0.5rem;font-weight: normal;color: black;">
+            CATALOG ({{lp.descriptorCount}})
+        </a>
+    </div>
+<div class="app-body launchpad flex-row">
+    <!-- <fleet-card ng-repeat="ns in lp.networkServices" data="ns" style="flex:0 1 47%;"></fleet-card> -->
+    <lp-react-dashboard style="width:100%"></lp-react-dashboard>
+</div>
+<footer>
+</footer>

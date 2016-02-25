@@ -1,0 +1,35 @@
+{
+  "name": "splitter",
+  "homepage": "https://github.com/chaosim/splitter",
+  "authors": [
+    "caoxingming(simeon.chaos@gmail.com)"
+  ],
+  "description": "splitter for angular.js",
+  "main": "splitter.js",
+  "keywords": [
+    "splitter",
+    "angularjs",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.2"
+  },
+  "_release": "f5c2195050",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "f5c2195050932a51976346880257812dbface06b"
+  },
+  "_source": "git://github.com/chaosim/splitter.git",
+  "_target": "*",
+  "_originalSource": "splitter",
+  "_direct": true
+}

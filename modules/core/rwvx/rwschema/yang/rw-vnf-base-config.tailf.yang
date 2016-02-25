@@ -1,0 +1,20 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-vnf-base-config.tailf
+{
+    namespace "http://riftio.com/ns/riftware-1.0/rw-vnf-base-config-annotation";
+    prefix "rw-vnf-base-config-ann";
+    
+    import rw-vnf-base-config {
+        prefix rwvnfbaseconfig;
+    }
+    import tailf-common {
+        prefix tailf;
+    }
+}

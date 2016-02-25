@@ -1,0 +1,56 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="j">
+
+  <operationalMode>
+    <modifications>
+    </modifications>
+
+    <cmd name="reset">
+      <info/>
+      <help/>
+      <options>
+        <displayWhen expr="(/has_crypto_card = 'true') or (count(/dns) > 0)"
+                     ctx="/has_crypto_card"/>
+      </options>
+      <cmd name="crypto-card">
+        <info/>
+        <help/>
+        <callback>
+          <exec>
+            <osCommand>/bin/echo</osCommand>
+            <args>resetting crypto card</args>
+          </exec>
+        </callback>
+        <options>
+          <displayWhen expr="/has_crypto_card = 'true'"
+                       ctx="/has_crypto_card"/>
+        </options>
+      </cmd>
+      <cmd name="dns">
+        <info/>
+        <help/>
+        <callback>
+          <exec>
+            <osCommand>/bin/echo</osCommand>
+            <args>resetting dns</args>
+          </exec>
+        </callback>
+        <options>
+          <displayWhen expr="count(/dns) > 0" ctx="/dns"/>
+        </options>
+      </cmd>
+    </cmd>
+
+  </operationalMode>
+
+
+  <configureMode>
+    <modifications>
+    </modifications>
+  </configureMode>
+
+  <pipeCmds>
+    <modifications>
+    </modifications>
+  </pipeCmds>
+
+</clispec>

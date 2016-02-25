@@ -1,0 +1,81 @@
+module jdemo {
+    namespace "http://tail-f.com/ns/example/jdemo";
+    prefix jdemo;
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+    import tailf-common {
+        prefix tailf;
+    }
+
+    container arp {
+        config false;
+        tailf:callpoint jarp_data;
+        tailf:cli-show-template
+            "$(/default/ip?$(/default/ifname?Default host - "
+            +"$(../default/ip)/$(../default/ifname)\\\:\n"
+            +"$(arpe{$(/default/ip) $(/default/ifname)}|show)):$(arpe|show))";
+        list arpe {
+            key "ip ifname";
+            max-elements 1024;
+            tailf:cli-suppress-table;
+            tailf:cli-show-template-enter "";
+            tailf:cli-show-template-legend
+                "Address         Interface   "
+                +"$(.selected~=hwaddr?HW Address         )"
+                +"$(.selected~=permanent?Permant  )"
+                +"$(.selected~=published?Published)"
+                +"$(.selected~=bignum?$(.show_bignum? Bignum ))\n"
+                +"============================"
+                +"$(.selected~=hwaddr?===================)"
+                +"$(.selected~=permanent?=========)"
+                +"$(.selected~=published?=========)"
+                +"$(.selected~=bignum?$(.show_bignum?========))\n";
+            tailf:cli-show-template
+                "$(ip|ljust:15) $(ifname|ljust:9) - "
+                +"$(.selected~=hwaddr?$(hwaddr|ljust:17)  )"
+                +"$(.selected~=permanent?$(permanent|ljust:8) )"
+                +"$(.selected~=published?$(published|ljust:7)  )"
+                +"$(.selected~=bignum?$(.show_bignum?$(.humanreadable? "
+                +"$(bignum|humanreadable): $(bignum))))\n" {
+                tailf:cli-auto-legend;
+            }
+
+            tailf:cli-show-template-footer
+                "$(.?% $(.licounter) entries in the table.\n:"
+                +"% No entries in the table.\n)";
+            leaf ip {
+                type inet:ip-address;
+            }
+            leaf ifname {
+                type string;
+            }
+            leaf hwaddr {
+                type string;
+                mandatory true;
+            }
+            leaf permanent {
+                type boolean;
+                mandatory true;
+            }
+            leaf published {
+                type boolean;
+                mandatory true;
+            }
+            leaf bignum {
+                type uint32;
+                default 2345678;
+            }
+        }
+    }
+
+    container default {
+        leaf ip {
+            type inet:ip-address;
+        }
+        leaf ifname {
+                type string;
+        }
+    }
+}

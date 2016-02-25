@@ -1,0 +1,14 @@
+<SIMPLE-MIB xmlns="http://tail-f.com/ns/mibs/SIMPLE-MIB/200702080000Z">
+  <variables>
+    <numberOfHosts>1</numberOfHosts>
+    <extraVariable1>456</extraVariable1>
+    <extraVariable2>678</extraVariable2>
+  </variables>
+  <hostTable>
+    <hostEntry>
+      <hostName>saturn</hostName>
+      <hostEnabled>true</hostEnabled>
+      <hostNumberOfServers>66</hostNumberOfServers>
+    </hostEntry>
+  </hostTable>
+</SIMPLE-MIB>

@@ -1,0 +1,40 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// dropdowns.less
+//
+// Styles for dropdowns
+//
+.dropdown-set {
+  .flex-center;
+}
+.dropdown {
+  position: relative;
+  > a {
+    background-color: @brand-blue;
+    color: @white;
+    display: block;
+    margin: 0 0.875rem;
+    padding: 0.625rem;
+    position: relative;
+    width: 16rem;
+    .has-drop-shadow;
+    i {
+      font-size: 1.375rem;
+      position: absolute;
+        right: 0.5rem;
+        top: 0.5rem;
+    }
+  }
+  > ul {
+    display: none;
+    position: absolute;
+      left: 0;
+      top: 0;
+  }
+}

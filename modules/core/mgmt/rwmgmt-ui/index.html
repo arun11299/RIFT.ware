@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <!-- TITLE Data -->
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Is this needed? -->
+  <link rel="stylesheet" type="text/css" href="/integration/ridgets/css/page.css"/>
+  <link rel="stylesheet" type="text/css" href="/integration/ridgets/css/style.css"/>
+
+  <link rel="stylesheet" type="text/css" href="../../lib/font-awesome/css/font-awesome.min.css"/>
+  <link rel="stylesheet" type="text/css" href="../../lib/nouislider/jquery.nouislider.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+  <link href="../../lib/circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
+
+
+  <!-- <link rel="stylesheet" type="text/css" href="core.css" /> -->
+  <!-- CSS Data -->
+  <!-- JS Data -->
+  <script src="vendor.js"></script>
+  <script src="main.js"></script>
+  <script src="/lib/nouislider/jquery.nouislider.min.js"></script>
+<!-- -->
+
+  <!-- JS Data -->
+
+  <script type="text/javascript" src="integration/ridgets/js/rw.js"></script>
+  <!-- not polymer:platform, but platform the independent js lib -->
+  <script type="text/javascript" src="lib/platform/platform.js"></script>
+
+  <script>
+    //----- Mouse Intent Plug In
+    !function(e){ e.fn.mouseIntent=function(t,n,o){var u={interval:100,sensitivity:6,timeout:0};u="object"==typeof t?e.extend(u,t):e.isFunction(n)?e.extend(u,{over:t,out:n,selector:o}):e.extend(u,{over:t,out:t,selector:n});var s,m,i,r,I=function(e){s=e.pageX,m=e.pageY},a=function(t,n){return n.mouseIntent_t=clearTimeout(n.mouseIntent_t),Math.sqrt((i-s)*(i-s)+(r-m)*(r-m))<u.sensitivity?(e(n).off("mousemove.mouseIntent",I),n.mouseIntent_s=!0,u.over.apply(n,[t])):(i=s,r=m,n.mouseIntent_t=setTimeout(function(){a(t,n)},u.interval),void 0)},c=function(e,t){return t.mouseIntent_t=clearTimeout(t.mouseIntent_t),t.mouseIntent_s=!1,u.out.apply(t,[e])},v=function(t){var n=e.extend({},t),o=this;o.mouseIntent_t&&(o.mouseIntent_t=clearTimeout(o.mouseIntent_t)),"mouseenter"===t.type?(i=n.pageX,r=n.pageY,e(o).on("mousemove.mouseIntent",I),o.mouseIntent_s||(o.mouseIntent_t=setTimeout(function(){a(n,o)},u.interval))):(e(o).off("mousemove.mouseIntent",I),o.mouseIntent_s&&(o.mouseIntent_t=setTimeout(function(){c(n,o)},u.timeout)))};return this.on({"mouseenter.mouseIntent":v,"mouseleave.mouseIntent":v},u.selector)}}(window.jQuery);
+  </script>
+
+
+
+  <script src="lib/codemirror/lib/codemirror.js"></script>
+  <script src="lib/angular-ui-codemirror/ui-codemirror.min.js"></script>
+  <script src="lib/codemirror/mode/python/python.js"></script>
+
+  <script type="text/javascript" src="integration/_components/ue-sim/offline-scripts.js"></script>
+
+
+
+
+
+</head>
+<!-- -->
+<body class="viewport">
+<div class="viewport__body">
+  <cmdcntr-header></cmdcntr-header>
+  <!-- <div id="content" class="global-main" ui-view></div> -->
+  <div class="global-main ng-scope"  ui-view></div>
+  <div style="height: 0; width: 0; position: absolute; visibility: hidden;display:none;">
+    <!-- inject:svg --><!-- endinject -->
+  </div>
+</div>
+</body>
+</html>

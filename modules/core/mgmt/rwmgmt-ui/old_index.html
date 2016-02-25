@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" class="viewport" ng-app="app">
+<head>
+    <!-- TITLE Data -->
+    <title>RIFT.ware</title>
+    <!-- META Data -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS Data -->
+    <link rel="stylesheet" type="text/css" href="integration/ridgets/css/page.css"/>
+    <link rel="stylesheet" type="text/css" href="integration/_data/_css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" type="text/css" href="lib/codemirror/theme/mbo.css" />
+    <!-- JS Data -->
+    <script type="text/javascript" src="lib/webcomponentsjs/webcomponents.min.js"></script>
+    <script type="text/javascript" src="integration/ridgets/js/rw.js"></script>
+    <!-- not polymer:platform, but platform the independent js lib -->
+    <script type="text/javascript" src="lib/platform/platform.js"></script>
+    <!-- ANGULAR.JS Data -->
+    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-bootstrap-bower/ui-bootstrap.min.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-bootstrap-bower/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="lib/angular-bind-polymer/angular_bind_polymer.js"></script>
+    <script type="text/javascript" src="lib/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="lib/freewall/freewall.js"></script>
+    <script>
+        //----- Mouse Intent Plug In
+        !function(e){ e.fn.mouseIntent=function(t,n,o){var u={interval:100,sensitivity:6,timeout:0};u="object"==typeof t?e.extend(u,t):e.isFunction(n)?e.extend(u,{over:t,out:n,selector:o}):e.extend(u,{over:t,out:t,selector:n});var s,m,i,r,I=function(e){s=e.pageX,m=e.pageY},a=function(t,n){return n.mouseIntent_t=clearTimeout(n.mouseIntent_t),Math.sqrt((i-s)*(i-s)+(r-m)*(r-m))<u.sensitivity?(e(n).off("mousemove.mouseIntent",I),n.mouseIntent_s=!0,u.over.apply(n,[t])):(i=s,r=m,n.mouseIntent_t=setTimeout(function(){a(t,n)},u.interval),void 0)},c=function(e,t){return t.mouseIntent_t=clearTimeout(t.mouseIntent_t),t.mouseIntent_s=!1,u.out.apply(t,[e])},v=function(t){var n=e.extend({},t),o=this;o.mouseIntent_t&&(o.mouseIntent_t=clearTimeout(o.mouseIntent_t)),"mouseenter"===t.type?(i=n.pageX,r=n.pageY,e(o).on("mousemove.mouseIntent",I),o.mouseIntent_s||(o.mouseIntent_t=setTimeout(function(){a(n,o)},u.interval))):(e(o).off("mousemove.mouseIntent",I),o.mouseIntent_s&&(o.mouseIntent_t=setTimeout(function(){c(n,o)},u.timeout)))};return this.on({"mouseenter.mouseIntent":v,"mouseleave.mouseIntent":v},u.selector)}}(window.jQuery);
+    </script>
+
+    <script type="text/javascript" src="lib/underscore/underscore.js"></script>
+    <script type="text/javascript" src="lib/socket.io-client/dist/socket.io.js"></script>
+    <script type="text/javascript" src="lib/angular-resource/angular-resource.min.js"></script>
+    <script type="text/javascript" src="integration/_components/_global/_data/_js/global.js"></script>
+    <script type="text/javascript" src="lib/react/react.min.js"></script>
+    <script type="text/javascript" src="integration/_data/_js/app.js"></script>
+
+    <script type="text/javascript" src="integration/_components/_services/vnf_service.js"></script>
+    <script type="text/javascript" src="integration/_components/ue-sim/index.js"></script>
+    <script type="text/javascript" src="integration/_components/ue-sim/ue-sim-service.js"></script>
+    <script type="text/javascript" src="integration/_components/ue-sim/ue-sim-directive.js"></script>
+    <script type="text/javascript" src="integration/_components/react-log/index.js"></script>
+    <script type="text/javascript" src="integration/_control/uptime.js"></script>
+
+    <script type="text/javascript" src="integration/_components/ue-sim/offline-scripts.js"></script>
+
+    <script src="integration/_page/_vnf/_data/_js/vnf.js"></script>
+    <script src="integration/_page/_config/_data/_js/config.js"></script>
+    <script src="integration/_page/_dashboard/_data/_js/dashboard.js"></script>
+    <script src="integration/_page/_network/_data/_js/network.js"></script>
+    <script src="integration/_page/_resources/_data/_js/resources.js"></script>
+    <script src="integration/_page/_traffic/_data/_js/traffic.js"></script>
+    <script src="integration/_page/_topology/_data/_js/topology.js"></script>
+    <script src="integration/_components/_header/_data/_js/header.js"></script>
+    <script src="integration/_components/_services/header.js"></script>
+    <script src="integration/_components/_services/react_log_service.js"></script>
+    <script src="integration/_components/FileSaver/FileSaver.js"></script>
+  <script src="integration/_components/FileSaver/Blob.js"></script>
+
+  <script src="integration/_components/scriptBox/scriptbox-directive.js"></script>
+<script src="lib/codemirror/lib/codemirror.js"></script>
+  <script src="lib/angular-ui-codemirror/ui-codemirror.min.js"></script>
+  <script src="lib/codemirror/mode/python/python.js"></script>
+    <script src="integration/ridgets/js/gauge.js"></script>
+    <script src="integration/_components/_gauge/_data/_js/gauge.js"></script>
+
+    <link rel="import" href="lib/polymer/polymer.html">
+    <link rel="import" href="integration/components.html" async>
+
+
+
+</head>
+<!-- -->
+<body class="viewport" ng-controller="globalCtrl">
+    <div ng-if="dropCurtain" class="working-curtain page" style="width:100%; height:100%; padding:0px; margin:0px; position:fixed; background-color:rgba(69,69,69,1); z-index:24999">
+        <div class="working"><div class="dot-1"></div><div class="dot-2"></div><div class="dot-3"></div></div>
+    </div>
+    <div class="viewport__body">
+        <webui-header></webui-header>
+    <div id="content" class="global-main" ui-view></div>
+        <div style="height: 0; width: 0; position: absolute; visibility: hidden">
+            <!-- inject:svg --><!-- endinject -->
+        </div>
+</div>
+</body>
+</html>

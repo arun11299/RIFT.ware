@@ -1,0 +1,25 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module nsd-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/nsd-annotation";
+  prefix "nsd-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import nsd {
+    prefix nsd;
+  }
+}

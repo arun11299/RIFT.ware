@@ -1,0 +1,9 @@
+The gobject-introspection-1.40.0 repo is imported/tracked directly from the 
+upstream repository. The following commands are used to create this from 
+the upstream repo
+
+git branch gnome-3-12
+git subtree add --prefix=gi/gobject-introspection-1.40.0 -m 'Add the gobject-introspection-1.40.0 branch' --squash git://git.gnome.org/gobject-introspection gnome-3-12
+
+git fetch git://git.gnome.org/gobject-introspection 1.42.0
+git subtree add --prefix=gi/gobject-introspection-1.42.0 -m 'Add the gobject-introspection-1.42.0' --squash FETCH_HEAD

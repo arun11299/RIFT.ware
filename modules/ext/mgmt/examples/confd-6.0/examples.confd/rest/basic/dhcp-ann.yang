@@ -1,0 +1,19 @@
+module dhcp-ann {
+  namespace "urn:dummy";
+  prefix dummy;
+
+  import tailf-common {
+    prefix tailf;
+  }
+  import dhcp {
+    prefix x;
+  }
+
+  description
+    "Annotation module for the generated dhcp YANG module";
+
+  tailf:annotate "/x:dhcp" {
+    tailf:cdb-oper;
+  }
+
+}

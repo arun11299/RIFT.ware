@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+.title-background {
+  fill: none;
+  cursor: pointer;
+}
+.title {
+  fill: #ffffff;
+  font: 16px/1.2 open-sans, sans-serif;
+}
+.handle-label {
+  font: 16px/1.2 open-sans, sans-serif;
+}
+.connector {
+  fill: none;
+  stroke: #49bdee;
+  stroke-width: 4;
+}
+.label {
+  fill: black;
+  stroke: none;
+  font: 16px/1.2 open-sans, sans-serif;
+}
+path.hr {
+  stroke: #121212;
+  stroke-width: 0.5;
+}
+.handle path {
+  stroke: #49bdee;
+  stroke-width: 4;
+}
+.handle rect {
+  stroke: #49bdee;
+  stroke-width: 4;
+  fill: #454545;
+}
+.icon rect {
+  fill: #49bdee;
+}
+.icon path {
+  fill: white;
+}
+.title,
+.handle-label {
+  fill: #ffffff;
+}
+.connector {
+  stroke: #49bdee;
+  stroke-width: 3;
+  fill: none;
+}

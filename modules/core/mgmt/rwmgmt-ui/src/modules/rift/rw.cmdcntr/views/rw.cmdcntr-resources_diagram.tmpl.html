@@ -1,0 +1,149 @@
+<div>
+    <div id="radialDiagramButtons" class="button-group">
+        <span id="buttonbarchartselector" class="buttonbarchartselector">
+            <span class="button button-bar__first-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showType['linear']}" ng-click="resourcesDiagram.selectChart('linear')">
+                <span class="button__box">
+                    <span class="button__label">Linear</span>
+                </span>
+            </span>
+            <span class="button button-bar__last-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showType['radial']}" ng-click="resourcesDiagram.selectChart('radial')">
+                <span class="button__box">
+                    <span class="button__label">Radial</span>
+                </span>
+            </span>
+        </span>
+        <span class="separator"> <!--indentation--></span>
+        <span id="buttonbar" class="buttonbar">
+            <span class="button button-bar__first-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showMetric['cpu']}" ng-click="resourcesDiagram.selectMetric('cpu')">
+                <span class="button__box">
+                    <span>
+                        <svg class="icon icon--small icon-vertical-align">
+                            <use xlink:href="#icon-cpu" >
+                        </svg>
+                    </span>
+                    <span class="button__label">CPU</span>
+                </span>
+            </span>
+            <span class="button button-bar__inner-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showMetric['memory']}" ng-click="resourcesDiagram.selectMetric('memory')">
+                <span class="button__box">
+                    <span>
+                        <svg class="icon icon--small icon-vertical-align">
+                            <use xlink:href="#icon-memory" >
+                        </svg>
+                    </span>
+                    <span class="button__label">Memory</span>
+                </span>
+            </span>
+            <span class="button button-bar__inner-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showMetric['storage']}" ng-click="resourcesDiagram.selectMetric('storage')">
+                <span class="button__box">
+                    <span>
+                        <svg class="icon icon--small icon-vertical-align">
+                            <use xlink:href="#icon-storage-2" >
+                        </svg>
+                    </span>
+                    <span class="button__label">Storage</span>
+                </span>
+            </span>
+            <span class="button button-bar__inner-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showMetric['bps']}" ng-click="resourcesDiagram.selectMetric('bps')">
+                <span class="button__box">
+                    <span>
+                        <svg class="icon icon--small icon-vertical-align">
+                            <use xlink:href="#icon-port" >
+                        </svg>
+                    </span>
+                    <span class="button__label">I/O</span>
+                </span>
+            </span>
+            <span class="button button-bar__last-button button__size--auto" ng-class="{'button-bar--is-selected' : resourcesDiagram.showMetric['fabric']}" ng-click="resourcesDiagram.selectMetric('fabric')">
+                <span class="button__box">
+                    <span>
+                        <svg class="icon icon--small icon-vertical-align">
+                            <use xlink:href="#icon-fabric" >
+                        </svg>
+                    </span>
+                    <span class="button__label">Fabric</span>
+                </span>
+            </span>
+        </span>
+    </div>
+    <!-- -->
+    <div id="sidebar" class="panel" style="margin-right:20px">
+        <div class="panel__panel-header">
+            <div class="panel__panel-header__panel-title">Legend</div>
+        </div>
+        <div class="panel__panel-body">
+            <section class="fieldset">
+                <section class="form__v">
+                    <div class="form__item">
+                        <label>
+                            <span class="form__item__label">Virtual Component System</span>
+                        </label>
+                        <ul class="enum">
+                            <li>
+                                <span class="nofill">
+                                    <svg class="icon icon--small icon-legend">
+                                        <use xlink:href="#icon-square"/>
+                                    </svg>
+                                </span>Colony</li>
+                            <li>
+                                <span class="nofill">
+                                    <svg class="icon icon--small icon-legend">
+                                        <use xlink:href="#icon-triangle"/>
+                                    </svg>
+                                </span>Cluster</li>
+                            <li>
+                                <span class="nofill">
+                                    <svg class="icon icon--small icon-legend">
+                                        <use xlink:href="#icon-circle"/>
+                                    </svg>
+                                </span>VM</li>
+                        </ul>
+                    </div>
+                    <div class="form__item">
+                        <label>
+                            <span class="form__item__label">{{resourcesDiagram.legendCapacity[resourcesDiagram.metric]}}</span>
+                        </label>
+                        <ul class="enum">
+                            <li>
+                                <span class="nofill">
+                                    <svg class="icon icon--small icon-legend">
+                                        <use xlink:href="#icon-circle" />
+                                    </svg>
+                                </span>  &ndash; <span class="nofill-large">
+                                    <svg class="icon icon-legend">
+                                        <use xlink:href="#icon-circle" />
+                                    </svg>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="form__item">
+                        <label>
+                            <span class="form__item__label">{{resourcesDiagram.legendUtilization[resourcesDiagram.metric]}}</span>
+                        </label>
+                        <ul class="enum">
+                            <li><span id="legendUtil0"><svg class="icon--small icon-legend"><use xlink:href="#icon-circle" /></svg></span> 75% - 100%</li>
+                            <li><span id="legendUtil1"><svg class="icon--small icon-legend"><use xlink:href="#icon-circle" /></svg></span> 50% - 74%</li>
+                            <li><span id="legendUtil2"><svg class="icon--small icon-legend"><use xlink:href="#icon-circle" /></svg></span> 25% - 49%</li>
+                            <li><span id="legendUtil3"><svg class="icon--small icon-legend"><use xlink:href="#icon-circle" /></svg></span> 0% - 24%</li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+    <!-- -->
+    <div id="content">
+        <svg id="diagram" viewBox="0 0 100% 100%" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <filter id="blueglow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/>
+                    <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
+    </div>
+</div>

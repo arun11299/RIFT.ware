@@ -1,0 +1,20 @@
+<html>
+<head>
+
+</head>
+<body>
+<button id="stop">stop</button>
+<script>
+  var worker = new Worker('/rwmgmt-ui/_components/_services/log_worker.js');
+  worker.postMessage([{state:'start'}])
+  worker.onmessage = function(event){
+    if(event.data)
+    console.log(event.data[0])
+  };
+
+  document.getElementById("stop").addEventListener('click',function(){
+    worker.postMessage([{state:'stop'}])
+  })
+</script>
+</body>
+</html>

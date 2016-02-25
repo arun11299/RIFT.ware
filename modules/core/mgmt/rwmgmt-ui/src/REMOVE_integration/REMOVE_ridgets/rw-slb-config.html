@@ -1,0 +1,74 @@
+<link rel="import" href="rw-bargraph.html">
+
+<polymer-element name="rw-slb-config" attributes="slb slbModel">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-slb-config.css"/>
+    <div class="row details">
+      <div class="col">
+        <div><span class="label">Name :</span> {{slb.name}}</div>
+        <div><span class="label">Script :</span> {{slb['plugin-script']['script-name'] | none}}</div>
+      </div>
+    </div>
+    <div class="row details">
+        <template repeat="{{func, funcIndex  in funcs}}">
+          <div class="col">
+            <h2>{{funcIndex + 1}}. {{func.name}}</h2>
+            <ul class="propList">
+              <template repeat="{{func.children}}" id="prop">
+                <li><span class="label">{{name}} :</span> <span class="value">{{value}}</span>
+                  <ul class="propList">
+                    <template ref="prop" repeat="{{children}}"></template>
+                  </ul>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer(Platform.mixin({
+
+      attached: function() {
+        if (typeof(this.slb) != 'undefined') {
+          this.slbChanged();
+        }
+      },
+
+      slbModelChanged: function() {
+        var self = this;
+        this.slbModel.addEventListener("update-config", function() {
+          self.slb = this.slbModel.slb;
+        });
+      },
+
+      none: function(v) {
+        return v || 'none';
+      },
+
+      slbChanged: function() {
+        var isFunction = /^.*-function$/;
+        this.funcs = [];
+        for (prop in this.slb) {
+          if (prop.match(isFunction)) {
+            this.funcs.push({name : prop, children : this.getChildren(this.slb[prop])});
+          }
+        }
+      },
+
+      getChildren: function(obj) {
+        var children = [];
+        for (var prop in obj) {
+          if (typeof(obj[prop]) == 'object') {
+            var grandChildren = this.getChildren(obj[prop]);
+            children.push({name : prop, children : grandChildren});
+          } else {
+            children.push({name : prop, value : obj[prop]});
+          }
+        }
+        return children;
+      }
+    }, rw.ui));
+  </script>
+</polymer-element>

@@ -1,0 +1,30 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+
+/**
+ * @file rw-utcli-base.yang
+ * @author Tome Seidenberg
+ * @date 2014/06/04
+ * @brief Base module for unit test CLI.
+ */
+
+module rw-utcli-base
+{
+  namespace "http://riftio.com/ns/core/util/rwutcli/yang/rw-utcli-base.yang";
+  prefix "ucb";
+
+  description "Base module for unit test CLI.  Always loaded into schema.";
+  revision 2014-06-04 { description "Initial version"; }
+
+  container quit {
+    config false;
+    description "Quit the CLI";
+  }
+}
+

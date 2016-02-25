@@ -1,0 +1,58 @@
+<style>
+  .create-fleet-header input{
+    border: none;
+    font-size: 120%;
+    color: black;
+    text-align: center;
+  }
+  .create-fleet-pool input {
+    float:left;
+    width: 350px;
+    height: 35px;
+    margin: 0px 20px 10px 15px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #ffffff, 0 1px 0 #ffffff;
+    font-size: 20px;
+  }
+</style>
+<react-crouton-wrapper store="create.SdnAccountStore"></react-crouton-wrapper>
+<header class="header-app">
+    <h1 ng-if="!create.edit">Add SDN Account</h1>
+    <h1 ng-if="create.edit">Edit SDN Account</h1>
+    <nav class="header-nav launchpad-nav">
+      <a ui-sref="about">About</a>
+      <a ng-click="create.openLog()">Logs</a>
+      <a ui-sref="crash">Debug</a>
+    </nav>
+</header>
+<div class="app-body create">
+<screen-loader store="create.store"></screen-loader>
+    <h2 class="create-fleet-header name-input">
+        <label ng-if="!create.edit">Name <input type="text" ng-model="create.sdn.name" style="text-align:left;"></label>
+         <label ng-if="create.edit">{{create.cloud.name}}  </label>
+    </h2> 
+    <div class="select-type" ng-if="!create.edit" style="margin-left:27px">
+        Select Account Type:
+        <label ng-repeat="type in create.accountType">
+            <input type="radio" ng-model="create.sdn['account-type']" value="{{type['account-type']}}"> {{type.name}}
+        </label>
+    </div>
+    <ol class="flex-row">
+        <li class="create-fleet-pool" ng-if="create.params[create.sdn['account-type']]">
+            <h3> Enter Account Details</h3>
+            <label ng-repeat="param in create.params[create.sdn['account-type']]" style="margin:0px 0px 55px 0px">
+                <label class="create-fleet-pool-params">{{param.label}}</label>
+                <input type="text" ng-model="create.sdn[create.sdn['account-type']][param.ref]" placeholder="{{param.label}}">
+            </label>
+        </li>
+        <li class="create-fleet-pool" ng-if="!create.params[create.sdn['account-type']]">
+            <h3> Enter Account Details</h3>
+            <label style="margin-left:17px; color:#888">No Details Required</label>
+        </li>
+    </ol>
+    <div class="form-actions">
+        <a role="button" ng-if="create.edit" ng-click="create.delete(create.sdn)" class="delete">Delete Account</a>
+        <a role="button" ng-click="create.cancel()" class="cancel">Cancel</a>
+        <a role="button" ng-if="!create.edit" ng-click="create.create(create.sdn)" class="save">Save</a>
+        <a role="button" ng-if="create.edit" ng-click="create.update(create.sdn)" class="save">Update</a>
+    </div>
+</div>

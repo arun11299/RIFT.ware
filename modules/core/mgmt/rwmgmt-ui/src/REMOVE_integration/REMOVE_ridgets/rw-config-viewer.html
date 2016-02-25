@@ -1,0 +1,109 @@
+<!--
+  Show NETCONF config data in expandable tree view.
+  Developer note, this element recurses by using rw-config-viewer elements
+  to drill into each child element
+
+  <img src="config-viewer.png"/>
+
+  @class rw-config-viewer
+-->
+<polymer-element name="rw-config-viewer" attributes="label config expanded">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-config-viewer.css"/>
+  <template if="{{(isObject || isArray) && ! isEmpty}}">
+    <span class="config-parent" on-click="{{_toggleExpanded}}">
+      <core-icon class="icon--small icon__expand-collapse" icon="rw-iconset:icon-{{expandIconClass}}"></core-icon>
+      <span class="config-label config-node">{{label}}</span>
+    </span>
+    <ul class="config-list" style="display:{{expandStyle}}">
+      <template if="{{isObject}}" repeat="{{key in keys}}">
+        <li>
+          <rw-config-viewer label="{{key}}" config="{{config[key]}}"></rw-config-viewer>
+        </li>
+      </template>
+      <template if="{{isArray}}" repeat="{{value, i in config}}">
+        <li>
+          <rw-config-viewer label="[{{i}}]" config="{{value}}"></rw-config-viewer>
+        </li>
+      </template>
+    </ul>
+  </template>
+  <template if="{{isPrimative}}">
+    <span class="config-label">{{label}} =</span>
+    <span class="config-value">{{config}}</span>
+  </template>
+</template>
+<script>
+Polymer({
+
+  /**
+   * Either top level label or when recursing, the config key as label 
+   *
+   * @attribute label
+   * @type string
+   */
+
+  /**
+   * NETCONF data loaded into object. Normally loaded from rw-config-model 
+   *
+   * @attribute config
+   * @type Object collection
+   */
+
+  /**
+   * State of collapsed view of children
+   *
+   * @attribute expanded
+   * @type boolean
+   */
+
+  created: function() {
+    this.expanded = false;
+    this.expandedChanged();
+  },
+
+  /**
+   * @method expandAll(boolean)
+   * Deeply expand or collapse this node and ALL children.
+   *
+   * known issue: doesn't do deep expand if expandAll is called
+   * in attach life cycle presumably because children's 
+   * rw-config-viewer cannot be found in shadowroot
+   */
+  expandAll: function(expand) {
+    this.expanded = expand;
+    var childViewers = this.shadowRoot.querySelectorAll('rw-config-viewer');
+    [].forEach.call(childViewers, function(el, i) {
+      el.expandAll(expand);
+    });
+  },
+
+  _toggleExpanded: function(e) {
+    e.stopPropagation();
+    this.expanded = ! this.expanded;
+  },
+
+  expandedChanged: function() {
+    this.expandStyle = this.expanded ? 'block' : 'none';
+    this.expandIconClass = this.expanded ? 'node-open' : 'node-closed';
+  },
+
+  refresh: function() {
+    this.configChanged();
+    var children = this.shadowRoot.querySelectorAll('rw-config-viewer');
+    for (var i = 0; i < children.length; i++) {
+      children[i].refresh();
+    }
+  },
+
+  configChanged: function() {
+    this.isArray = Array.isArray(this.config);
+    this.isObject = this.config instanceof Object && !this.isArray;    
+    this.keys = this.isObject ? _.keys(this.config) : null;
+    this.isPrimative = !(this.config instanceof Object);
+    this.isEmpty = (this.isArray ? this.config.length == 0 :
+      (this.isObject ? _.isEmpty(this.config) : false));
+  }
+})
+</script>
+</polymer-element>

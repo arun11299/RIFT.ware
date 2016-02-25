@@ -1,0 +1,40 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-services-model.html">
+<link rel="import" href="../integration/ridgets/rw-traffic-diagram.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+<script src="data/network-seed.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <style>
+  rw-traffic-diagram {
+    width: 100%;
+    height: 900px;
+  }
+  </style>
+    <rw-services-model id="model"></rw-services-model>
+    <rw-traffic-diagram 
+      id="test0"
+      services="{{$.model.services}}"
+      ></rw-traffic-diagram>
+</template>
+<script>
+Polymer('my-test', {
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-traffic-diagram', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+})
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

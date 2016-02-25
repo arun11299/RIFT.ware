@@ -1,0 +1,167 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module ntp {
+
+  namespace "http://riftio.com/ns/core/mgmt/rwuagent/test/ntp";
+  prefix ntp;
+
+  import ietf-inet-types { prefix inet; }
+  import rw-pb-ext { prefix rwpb; }
+
+  description "System NTP configuration ";
+
+  revision "2015-10-31" {
+    description "Initial revision";
+  }
+
+  typedef ntpState {
+    type enumeration {
+      enum "reject";
+      enum "falsetick";
+      enum "excess";
+      enum "outlyer";
+      enum "candidate";
+      enum "selected";
+      enum "syspeer";
+      enum "ppspeer";
+      enum "unknown";
+    }
+  }
+    
+  typedef ntpStratum {
+    type uint8 {
+      range "0..15";
+    }
+  }
+
+  typedef ntpInvalidStratum {
+    type uint8 {
+      range "16";
+    }
+  }
+
+  typedef ntpStatusStratum {
+    type union {
+      type ntpStratum;
+      type ntpInvalidStratum;
+    }
+  }
+
+  typedef ntpDecimal {
+    type int32;
+    units "milliseconds";
+  }
+
+  typedef ntpRestrictName {
+    type union {
+      type enumeration {
+        enum "default";
+      }
+      type inet:host;
+    }
+  }
+
+  typedef ntpRestrictMask {
+    type union {
+      type enumeration {
+        enum "default";
+      }
+      type inet:ip-address;
+    }
+  }
+
+  typedef ntpRestrictFlag {
+    type enumeration {
+      enum "ignore";
+      enum "kod";
+      enum "limited";
+      enum "lowpriotrap";
+      enum "nomodify";
+      enum "nopeer";
+      enum "noquery";
+      enum "noserve";
+      enum "notrap";
+      enum "notrust";
+      enum "ntpport";
+      enum "version";
+    }
+  }            
+
+  typedef ntpKeyValue {
+    type string {
+      pattern "[!-~]{1,32}";
+    }
+  }
+
+  grouping ntpStatus {
+    leaf state   { type ntpState; }
+    leaf stratum { type ntpStratum; }
+    leaf reach   { type string; }
+    leaf delay   { type ntpDecimal; }
+    leaf offset  { type ntpDecimal; }
+    leaf jitter  { type ntpDecimal; }
+  }
+
+  container ntp {
+
+    rwpb:msg-new "Ntp";
+
+    list server {
+      rwpb:msg-new "Server";
+
+      key name;
+      max-elements 16;
+      leaf name     { type inet:host; }
+      leaf enabled  { type boolean; default true; }
+      leaf peer     { type boolean; default false; }
+      leaf iburst   { type empty; }
+      leaf version  { type int8 { range "1..4"; } default 4; }
+      leaf key      { type leafref { path "../../key/name"; } }
+      container status {
+        config false;
+        uses ntpStatus;
+      }
+    }
+    container local-clock {
+      leaf enabled { type boolean; default true; }
+      leaf stratum { type ntpStratum; default 10; }
+      container status { uses ntpStatus; }
+    }
+    list restrict-list { 
+      key "name mask";
+      max-elements 64;
+      leaf name      { type ntpRestrictName; }
+      leaf mask      { type ntpRestrictMask; }
+      leaf-list flag { type ntpRestrictFlag; }
+    }
+    list key {
+      key name;
+      max-elements 64;
+      leaf name     { type uint8 { range "1..max"; } }
+      leaf value    { type ntpKeyValue; }
+      leaf trusted  { type boolean; default true; }
+    }
+    leaf requestkey { type leafref { path "../key/name"; } }
+    leaf controlkey { type leafref { path "../key/name"; } }
+  }
+
+  rpc configure-rpc {
+    input {
+      leaf receive {
+        type empty;
+      }
+    }
+
+    output {
+      leaf status {
+        type string;
+      }
+    }
+  }
+}

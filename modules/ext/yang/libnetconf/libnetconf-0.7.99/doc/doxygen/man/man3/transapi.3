@@ -1,0 +1,90 @@
+.TH "transapi" 3 "Thu Feb 6 2014" "Version 0.7.0" "libnetconf" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+transapi \- 
+.PP
+Structure to describe transAPI module and connect it statically with libnetconf using \fBncds_new_transapi_static()\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <transapi\&.h>\fP
+.SS "Data Fields"
+
+.in +1c
+.ti -1c
+.RI "void(* \fBclose\fP )(void)"
+.br
+.RI "\fIFree module resources and prepare for closing\&. \fP"
+.ti -1c
+.RI "int * \fBconfig_modified\fP"
+.br
+.RI "\fIFlag if configuration data passed to callbacks were modified\&. \fP"
+.ti -1c
+.RI "struct \fBtransapi_data_callbacks\fP * \fBdata_clbks\fP"
+.br
+.RI "\fITransapi callback mapping structure\&. \fP"
+.ti -1c
+.RI "\fBNC_EDIT_ERROPT_TYPE\fP * \fBerropt\fP"
+.br
+.RI "\fIedit-config's error-option for the current transaction \fP"
+.ti -1c
+.RI "xmlDocPtr(* \fBget_state\fP )(const xmlDocPtr, const xmlDocPtr, struct nc_err **)"
+.br
+.RI "\fIFunction returning the module status information\&. \fP"
+.ti -1c
+.RI "int(* \fBinit\fP )(xmlDocPtr *)"
+.br
+.RI "\fIModule initialization\&. \fP"
+.ti -1c
+.RI "const char ** \fBns_mapping\fP"
+.br
+.RI "\fIMapping prefixes with URIs\&. \fP"
+.ti -1c
+.RI "struct \fBtransapi_rpc_callbacks\fP * \fBrpc_clbks\fP"
+.br
+.RI "\fITransapi rpc callbacks mapping structure\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure to describe transAPI module and connect it statically with libnetconf using \fBncds_new_transapi_static()\fP\&. 
+.SH "Field Documentation"
+.PP 
+.SS "void(* close)(void)"
+
+.PP
+Free module resources and prepare for closing\&. 
+.SS "int* config_modified"
+
+.PP
+Flag if configuration data passed to callbacks were modified\&. 
+.SS "struct \fBtransapi_data_callbacks\fP* data_clbks"
+
+.PP
+Transapi callback mapping structure\&. 
+.SS "\fBNC_EDIT_ERROPT_TYPE\fP* erropt"
+
+.PP
+edit-config's error-option for the current transaction 
+.SS "xmlDocPtr(* get_state)(const xmlDocPtr, const xmlDocPtr, struct nc_err **)"
+
+.PP
+Function returning the module status information\&. 
+.SS "int(* init)(xmlDocPtr *)"
+
+.PP
+Module initialization\&. 
+.SS "const char** ns_mapping"
+
+.PP
+Mapping prefixes with URIs\&. 
+.SS "struct \fBtransapi_rpc_callbacks\fP* rpc_clbks"
+
+.PP
+Transapi rpc callbacks mapping structure\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for libnetconf from the source code\&.

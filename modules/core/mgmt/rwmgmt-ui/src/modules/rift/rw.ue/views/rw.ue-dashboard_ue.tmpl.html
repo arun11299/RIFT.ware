@@ -1,0 +1,28 @@
+<div>
+<div flex class="dashpanel">
+    <div class="gauge-group">
+        <h2>Calls Transmitted</h2>
+        <rw-gauge
+        size="dashboardUe.dialSize"
+        color="hsla(212, 57%, 50%, 1)"
+        value="dashboardUe.ltesim.acceptedTxCalls | nonNaN"
+        max="dashboardUe.maxCalls"
+        >
+        </rw-gauge>
+        <rw-scroll-graph lineColor="#377cc8" strokeColor="rgba(55,124,200,0.7)" value="{{dashboardUe.ltesim.acceptedTxCalls | nonNaN}}" paused="{{false}}" max="{{dashboardUe.maxCalls}}"></rw-scroll-graph>
+    </div>
+</div>
+<div flex class="dashpanel">
+    <div class="gauge-group">
+        <h2>Calls Received</h2>
+        <rw-gauge
+        size="dashboardUe.dialSize"
+        color="hsla(212, 57%, 50%, 1)"
+        value="dashboardUe.ltesim.acceptedRxCalls | nonNaN"
+        max="dashboardUe.maxCalls"
+        ></rw-gauge>
+        <rw-scroll-graph lineColor="#377cc8" strokeColor="rgba(55,124,200,0.7)" value="{{dashboardUe.ltesim.acceptedRxCalls | nonNaN}}" max="{{dashboardUe.maxCalls}}"></rw-scroll-graph>
+    </div>
+</div>
+</div>
+

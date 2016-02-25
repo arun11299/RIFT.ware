@@ -1,0 +1,74 @@
+<!--
+
+<rw-login> Rift login form
+
+<img src="login.png"/>
+
+Example:
+--------
+
+    <rw-login url="/trafgen-dashboard.html"></rw-login>
+
+  @class rw-login
+-->
+
+<polymer-element name="rw-login" attributes="url">
+<template>
+  <link rel="stylesheet" href="css/page.css">
+
+  <section class="global-header">
+    <div class="logo"></div>
+  </section>
+
+  <section class="login-section-main">
+
+    <div class="login-panel panel">
+
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">Login</div>
+      </div>
+
+      <div class="panel__panel-body">
+        <section class="fieldset">
+          <section class="form__v--full">
+            <div class="form__item">
+              <label>
+                <span class="form__item__label">Username</span>
+                <input type="text" class="text-input text-input--full" value="" autofocus>
+              </label>
+            </div>
+            <div class="form__item">
+              <label>
+                <span class="form__item__label">Password</span>
+                <input type="password" class="text-input text-input--full" value="">
+              </label>
+            </div>       
+              <div class="form__item" on-click="{{login}}">
+                <span class="button__primary button__size--full">
+                  <span class="button__box">
+                    <span class="button__label">Login</span>
+                  </span>
+                </span>
+              </div>
+            </section>
+          </section>
+        </div>
+
+    </div>
+    
+  </section>
+</template>
+<script>
+Polymer({
+  /**
+   * The url to go to when the login button is clicked, e.g. "/trafgen-dashboard.html"
+   *
+   * @attribute url
+   * @type string
+   */
+  login: function() {
+    window.location = this.url;
+  }
+});
+</script>
+</polymer-element>

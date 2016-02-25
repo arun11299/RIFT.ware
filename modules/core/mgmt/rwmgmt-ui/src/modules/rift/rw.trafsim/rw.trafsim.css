@@ -1,0 +1,10 @@
+.chart {
+  position: relative;
+}
+svg#chart {
+  position: absolute;
+  z-index: 1;
+}
+#barGraph {
+  min-height: 500px;
+}

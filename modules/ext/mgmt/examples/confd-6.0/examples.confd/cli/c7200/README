@@ -1,0 +1,286 @@
+Example router config
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how parts of the CLI
+of the Cisco 7200 router can be modelled in YANG and annotated
+with Tail-f CLI extensions to get a CLI similar to the CLI on the
+7200 box.
+
+Note: confd.conf has been configured to start the next generation Web
+      UI on http://127.0.0.1:8008 and https://127.0.0.1:8888. If you
+      want to know more about the new Web UI please read the "Next
+      Generation Web UI" chapter in the User Guide and inspect the
+      examples.confd/webui/basic/ and examples.confd/webui/extended/
+      examples. 
+
+Some constructs used are:
+
+tailf:cli-prefix-key
+
+  This construct is used to indicate that a leaf should be entered
+  before giving the actual instance key. Normally you enter all leaf
+  values after indicating in which instance the leaf value should be
+  set. However, there are commands in the 7200 which works a bit 
+  backwards, for example
+
+  class-map [match-all|match-any] WORD
+
+  where the data model is
+
+    list class-map {
+        tailf:info "Configure QoS Class Map";
+        tailf:cli-mode-name "config-cmap";
+        key "name";
+        leaf name {
+            type string {
+                tailf:info "WORD;;class-map name";
+            }
+        }
+        leaf prematch {
+            tailf:cli-prefix-key;
+            tailf:cli-drop-node-name;
+            type enumeration {
+                enum match-all {
+                    tailf:info "Logical-AND all matching statements under "+
+                        "this classmap";
+                }
+                enum match-any {
+                    tailf:info "Logical-OR all matching statements under this "+
+                        "classmap";
+                }
+            }
+            default match-all;
+        }
+        leaf description {
+            tailf:info "Class-Map description";
+            tailf:cli-multi-value;
+            type string {
+                tailf:info "LINE;;Description of this class-map (up to 200 "+
+                    "characters)";
+            }
+        }
+        container match {
+            tailf:info "classification criteria";
+            uses match-grouping;
+            container not {
+                tailf:info "Negate this match result";
+                uses match-grouping;
+            }
+        }
+    }
+
+  The 'prematch' value is optional. If none is given then the match-all
+  value is assumed. The resulting CLI looks like:
+
+      io(config)# class-map ?
+      Description: Configure QoS Class Map
+      Possible completions:
+        WORD        class-map name
+        match-all   Logical-AND all matching statements under this classmap
+        match-any   Logical-OR all matching statements under this classmap
+      io(config)# class-map  
+
+tailf:cli-reset-siblings
+  This is a sub-statement to tailf:cli-sequence-commands and indicates
+  that all siblings in the sequence should be reset when the first element
+  is configured. Elements outside the sequence will not be reset, ie if
+  a tailf:cli-break-sequence-commands is used, then that leaf, and the 
+  following, will not be reset. 
+
+tailf:cli-hide-in-submode
+  This statement will hide a leaf in a submode. A typical use case it 
+  when a leaf is used as a "key" for entering the submode.
+
+  For example the 
+
+  policy-map WORD 
+    class WORD
+      police <CIR> <BC> <BE>
+
+  In this case police is a container and <CIR> <BC> <BE> are leaves
+  that must be set when entering the submode.
+
+  The command is modelled as:
+
+    list policy-map {
+        tailf:info "Configure QoS Policy Map";
+        tailf:cli-mode-name "config-pmap";
+        key "name";
+        leaf name {
+            type string;
+            tailf:info "WORD;;policy-map name";
+        }
+
+        list class {
+            tailf:info "policy criteria";
+            tailf:cli-mode-name "config-pmap-c";
+            key "name";
+            leaf name {
+                type class-name-type;
+            }
+            
+	    ...
+
+            container police {
+                tailf:info "Police";
+                tailf:cli-add-mode;
+                tailf:cli-mode-name "config-pmap-c-police";
+                tailf:cli-incomplete-command;
+                tailf:cli-sequence-commands {
+                    tailf:cli-reset-siblings;
+                }
+                
+                leaf cir {
+                    tailf:info "Committed information rate";
+                    tailf:cli-hide-in-submode;
+                    type uint32 {
+                        range "8000..2000000000";
+                        tailf:info "<8000-2000000000>;;Bits per second";
+                    }
+                }
+                leaf bc {
+                    tailf:info "Conform burst";
+                    tailf:cli-hide-in-submode;
+                    type uint32 {
+                        range "1000..512000000";
+                        tailf:info "<1000-512000000>;;Burst bytes";
+                    }
+                }
+                leaf be {
+                    tailf:info "Excess burst";
+                    tailf:cli-hide-in-submode;
+                    type uint32 {
+                        range "1000..512000000";
+                        tailf:info "<1000-512000000>;;Burst bytes";
+                    }
+                }
+                leaf conform-action {
+                    tailf:cli-break-sequence-commands;
+                    tailf:info "action when rate is less than conform burst";
+                    type police-action-type;
+                }
+                leaf exceed-action {
+                    tailf:info "action when rate is within conform and "+
+                        "conform + exceed burst";
+                    type police-action-type;
+                }
+                leaf violate-action {
+                    tailf:info "action when rate is greater than conform + "+
+                        "exceed burst";
+                    type police-action-type;
+                }
+            }
+
+	    ...
+
+        }
+    }
+
+
+tailf:cli-reset-all-siblings
+  This is a sub statement to tailf:cli-sequence-commands and indicates
+  that all siblings should be reset when the first element is configured.
+  For example: 
+
+tailf:cli-reset-container
+  Reset the entire container whenever any leaf is set in the container. 
+  It is not related to cli-sequence-commands like the other reset extensions.
+
+  For example the password command can be modelled as:
+
+            container password {
+                // FIXME: better text pattern and reset siblings 
+                // also when configuration the text
+                tailf:info "Set a password";
+                tailf:cli-compact-syntax;
+                leaf enctype {
+                    tailf:cli-drop-node-name;
+                    tailf:cli-incomplete-command;
+                    tailf:cli-reset-container;
+                    type uint8 {
+                        range "0..7";
+                        tailf:info "<0-7>;;Encryption type (0 to disable "
+                            +"encryption, 7 for proprietary)";
+                    }
+                    default "0";
+                }
+                leaf text {
+                    tailf:cli-drop-node-name;
+                    tailf:cli-full-command;
+                    tailf:cli-multi-value;
+                    tailf:cli-reset-container;
+                    type string {
+                        pattern '[a-zA-Z].*';
+                        tailf:info "LINE;;The password";
+                    }
+                }
+            }
+
+  If the password text is set without setting the enctype then 
+  the enctype will be reset to its default (plaintext).
+
+tailf:cli-exit-command 
+  This extension tells the CLI that an explicit exit command should be
+  rendered for a submode. The command will be available in the submode
+  and also rendered by 'show running-config' when displaying the submode.
+  For example:
+
+            container template {
+                tailf:info "Enter template command mode";
+                list peer-policy {
+                    tailf:info "Template configuration for policy parameters";
+                    tailf:cli-exit-command "exit-peer-policy" {
+                        tailf:info "Exit from template configuration mode";
+                    }
+                    key name;
+                    leaf name {
+                        type string {
+                            tailf:info "WORD;;Name of peer-policy template";
+                        }
+                    }
+		    ...
+                }
+                list peer-session {
+                    tailf:info "Template configuration for session parameters";
+                    tailf:cli-exit-command "exit-peer-session" {
+                        tailf:info "Exit from template configuration mode";
+                    }
+                    key name;
+                    leaf name {
+                        type string {
+                            tailf:info "WORD;;Name of peer-session template";
+                        }
+                    }
+		    ...
+                }
+            }
+
+tailf:cli-boolean-no
+  This extension is used to indicate that a boolean leaf should be displayed
+  as <leaf>/no <leaf> instead of <leaf> true/false. For example the
+  enable command
+
+            container nexthop {
+                tailf:info "Nexthop tracking commands";
+                container trigger {
+                    tailf:info "Nexthop triggering";
+                    leaf delay {
+                        tailf:cli-full-command;
+                        tailf:info "Set the delay to trigger nexthop tracking";
+                        type uint8 {
+                            range "0..100";
+                            tailf:info "<0-100>;;Delay value (seconds)";
+                        }
+                    }
+                    leaf enable {
+                        tailf:info "Enable nexthop tracking";
+                        tailf:cli-full-command;
+                        tailf:cli-boolean-no;
+                        type boolean;
+                        default "true";
+                    }
+                }
+            }
+
+  
+  

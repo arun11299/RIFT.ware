@@ -1,0 +1,24 @@
+{
+  "environments": {
+    "data": {
+      "1": {
+        "status": "inactive",
+        "uptime": null,
+        "console": null,
+        "cli": null
+      },
+      "2": {
+        "status": "inactive",
+        "uptime": null,
+        "console": null,
+        "cli": null
+      },
+      "3": {
+        "status": "inactive",
+        "uptime": null,
+        "console": null,
+        "cli": null
+      }
+    }
+  }
+}

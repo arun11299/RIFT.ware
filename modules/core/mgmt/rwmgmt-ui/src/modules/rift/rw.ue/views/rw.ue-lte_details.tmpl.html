@@ -1,0 +1,14 @@
+<div class="ltesimdetails row details">
+  <div ng-repeat="counter in lteDetails.counters" class="col">
+    <h2>{{counter.name}}</h2>
+    <ul class="propList">
+      <lte-details-property prop="counter"></lte-details-property>
+    </ul>
+  </div>
+  <div class="col">
+    <h2>REST</h2>
+    <ul class="propList">
+      <lte-details-property prop="lteDetails.restMetrics"></lte-details-property>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-vcs-selector.html">
+<link rel="stylesheet" href="../integration/ridgets/css/page.css">
+<script src="data/vcs-test-data.js"></script>
+
+
+<polymer-element name="my-test">
+<template>
+  <rw-vcs-selector id="test0"
+    services="{{services}}"
+    service="{{services[0]}}"
+    ></rw-vcs-selector>
+</template>
+<script>
+Polymer('selector-test', {
+  ready: function() {
+    services = [
+      {"instance_name" : "apple", "instance_id" : 1},
+      {"instance_name" : "banana", "instance_id" : 2},
+      {"instance_name" : "cherry", "instance_id" : 3}
+    ];
+  },
+  attached: function() {
+    suite('selector', function() {
+      test('renders', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+})
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

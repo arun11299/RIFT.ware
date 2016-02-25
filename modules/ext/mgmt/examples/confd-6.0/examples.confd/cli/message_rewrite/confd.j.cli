@@ -1,0 +1,19 @@
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="j">
+  <operationalMode>
+    <modifications>
+      <dropElem src="alias expansion"/>
+      <multiValue src="alias expansion"/>
+      <suppressMode src="alias "/>
+
+      <errorMessageRewrite>
+        <callback>
+          <capi>error_message_rewrite</capi>
+        </callback>
+      </errorMessageRewrite>
+    </modifications>
+  </operationalMode>
+
+  <configureMode>
+  </configureMode>
+</clispec>

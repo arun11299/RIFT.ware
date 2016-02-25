@@ -1,0 +1,1125 @@
+@import "../../../integration/ridgets/css/base/base";
+
+.VerticalAlign() {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.panel > div {
+  display:flex;
+}
+
+.rw-traffic-stats__panel {
+  clear: both;
+}
+
+.rw-traffic-stats__name {
+  float: left;
+  clear: both;
+  display: inline-block;
+}
+
+.rw-traffic_page-container{
+
+ .flex(1);
+.flex-display();
+.flex-direction(column);
+}
+
+.rw-traffic-stats__reset {
+  margin-left: auto;
+  display: inline-block;
+  text-decoration: underline;
+  color: @blue-2;
+  cursor: pointer;
+}
+
+.rw-traffic-stats__control {
+  white-space: nowrap;
+}
+
+.rw-traffic-page {
+  .flex(1);
+
+  .flex-display();
+  .flex-direction(column);
+}
+
+.title-background {
+  fill: @white;
+  cursor: pointer;
+}
+
+.title {
+  fill: @gray5;
+  font: 16px/1.2 roboto, sans-serif;
+}
+
+.handle-label {
+  font: 16px/1.2 roboto, sans-serif;
+}
+
+
+.connector {
+  fill : none;
+  stroke: @blue-glow;
+  stroke-width: 4;
+}
+
+
+.label {
+  fill: white;
+  stroke: none;
+  font: 16px/1.2 roboto, sans-serif;
+}
+
+path.hr {
+  stroke: @gray5;
+  stroke-width: 0.5;
+}
+
+.handle path {
+  stroke: @blue-glow;
+  stroke-width: 4;
+}
+
+.handle rect {
+  stroke: @blue-glow;
+  stroke-width: 4;
+  fill: @gray18;
+}
+
+.icon rect {
+  fill: @blue-glow;
+}
+
+.icon path {
+  fill: white;
+}
+
+.title {
+  fill: @white;
+}
+
+.handle-label {
+  fill: @gray5;
+}
+
+.connector {
+  stroke: @blue-glow;
+  stroke-width: 3;
+  fill: none;
+}
+
+.diagram {
+  width: 100%;
+  /* temp until splitter */
+  height: 625px;
+}
+
+#dashDiagram {
+  overflow: auto;
+  .flex(1);
+}
+
+.rw-traffic-details {
+  overflow: auto;
+  height: 300px;
+
+  background-color:#454545;
+}
+
+#traffic-details-container {
+  height: 300px;
+}
+
+.rw-button__reset {
+  margin-right: 10px;
+  float: right;
+}
+
+.rw-traffic-tbar {
+  .flex(1);
+  .flex-display();
+  .flex-direction(row);
+
+  .rw-traffic-tbar-label {
+    .flex(1);
+  }
+
+  .rw-traffic-tbar-buttons {
+
+  }
+}
+
+.rw-button__tbar {
+  background-color:rgb(192, 192, 192);
+  color: @gray6;
+  border: 1px solid @gray6;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+rw-bullet {
+  height: 24px;
+}
+
+.tgHasError {
+  color: red;
+}
+
+#statsTable {
+  /*border: 1px solid @gray10;*/
+}
+
+.rate {
+  .flex-display();
+}
+
+// smaller than rate-max because it almost always 0 and does
+// not show units
+.rate-min {
+  width: 15px;
+  font-size: 12px;
+  @media (max-width : 1300px){
+    font-size:11px;
+  }
+}
+
+.rate-value {
+  white-space: nowrap;
+  width: 110px;
+  font-size: 14px;
+  @media (max-width : 1300px){
+    font-size:11px;
+    width:110px;
+  }
+}
+
+.rate-max {
+  font-size: 12px;
+  width: 40px;
+  @media (max-width : 1300px){
+    font-size:11px;
+  }
+}
+
+.rate > rw-bullet {
+  .flex(1 1 auto);
+}
+
+/**
+ * can be .details but assuming that class will be applied all over
+ */
+#iface-details {
+  display: block;
+  .flex-display();
+  overflow: auto;
+  height: 350px;
+  margin: 0px;
+}
+
+#resources-detail {
+  display: block;
+  //padding: 10px;
+  position: relative;
+
+  .details {
+    margin: 10px 0 0 0;
+
+    table {
+      tbody {
+        tr {
+          td {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.traffic-component {
+  position: relative;
+}
+
+.traffic-component-layer {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 10000px;
+  //hacky fix for safari ios
+  min-width:1400px;
+}
+
+#traffic-metrics {
+  pointer-events: none;
+}
+
+.metric {
+  position: absolute;
+  pointer-events: auto;
+  margin: 8px;
+}
+
+
+.selection {
+  fill: none;
+  stroke: @blue-glow;
+}
+
+
+.service {
+  fill: @gray18;
+}
+
+circle.context {
+  fill : @gray6;
+  stroke: @blue-glow;
+  stroke-width: 4;
+}
+
+text.context {
+  fill : @white;
+}
+
+
+text.title{
+  fill: @gray5;
+  stroke:none;
+
+  font-size: 18px;
+  font-family:roboto sans-serif;
+  font-weight: 700;
+  cursor:pointer;
+}
+
+
+/**/
+
+text.label {
+  fill:#ffffff;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}
+
+text.handle-label{
+  fill: @gray5;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}
+
+#diagram {
+  height: 3000px;
+  width: 100%;
+  min-width: 2100px;
+  overflow: auto;
+ // .flex(1);
+   display: block;
+  position: absolute;
+}
+
+#network-page {
+  .flex(1);
+
+  .flex-display();
+  .flex-direction(column);
+}
+
+//////////
+rect.service {
+  fill: @gray18;
+  stroke : @gray5;
+  stroke-width: 1;
+}
+
+path.fabricPattern {
+  stroke: @gray5;
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+text.as {
+  fill: @white;
+//  baseline-shift: -50%;
+//  dominant-baseline: central;
+}
+
+rect.as, rect.iface{
+  stroke: @white;
+  fill: @gray8;
+  stroke: @gray2;
+}
+
+rect.fabric {
+  stroke : @gray5;
+  stroke-width: 1;
+}
+
+text.fabric {
+  fill : @gray6;
+}
+
+rect.vmicon {
+  stroke: @gray6;
+  stroke-width: 12; // large because in a 512 viewbox
+  fill: @gray8;
+}
+
+#content {
+  -webkit-flex: 1 0 auto;
+  -moz-flex: 1 0 auto;
+  -ms-flex: 1 0 auto;
+  flex: 1 0 auto;
+}
+
+.adjustments {
+  -webkit-flex: 0 1 auto;
+  -moz-flex: 0 1 auto;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+}
+.adjustments > div {
+  float: left;
+  display: inline-block;
+}
+
+.rate-bullet {
+  height: 24px;
+}
+
+.rate-stack {
+  margin-left: 5px;
+  margin-bottom: 2px;
+}
+
+.rate-label {
+  font-size: 14px;
+  color: @gray5;
+}
+
+.rate-result {
+  font-size: 16px;
+  color: @gray5;
+}
+
+.rate-scale {
+  .flex-display();
+  font-size: 10px;
+  color: @gray5;
+}
+
+.rate-scale > div:first-child {
+  .flex(1 0 auto);
+}
+
+.spacer {
+  display: inline-block;
+}
+
+.indent-1 {
+  padding-left: 0px;
+}
+
+.indent-2 {
+  padding-left: 10px;
+}
+
+.indent-3 {
+  padding-left: 20px;
+}
+
+.indent-4 {
+  padding-left: 30px;
+}
+
+.indent-5 {
+  padding-left: 40px;
+}
+
+.indent-6 {
+  padding-left: 50px;
+}
+
+/* styles from resource-diagram */
+
+#resources-diagram {
+  overflow:hidden;
+  width: 100%;
+  height: 100%;
+  .flex-display();
+  .flex-direction(column);
+position:relative;
+  padding:0px;
+  margin:0px;
+
+  .separator {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+}
+
+.icon-legend {
+  .VerticalAlign();
+  background-repeat: no-repeat;
+  position: relative;
+  height: 24px;
+  width: 24px;
+}
+
+.icon-vertical-align {
+  .VerticalAlign();
+}
+
+#radialDiagramButtons {
+display:flex;
+  width: 100%;
+  padding: 4px;
+  margin:0px;
+
+  //position:absolute;
+  z-index:2;
+
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+}
+#radialDiagramButtons .buttonbarchartselector{
+  display:flex;
+  >.button {
+    width:auto;
+  }
+  height: 32px;
+}
+#radialDiagramButtons .buttonbar{
+  display:flex;
+   >.button {
+    width:auto;
+  }
+  height: 32px;
+}
+.button{
+  margin:0px 0px;
+}
+
+#content {
+  display:inline-block;
+  width:100%;
+  padding-bottom:100%;
+  overflow:hidden;
+
+  position:relative;
+
+  vertical-align:middle;
+}
+
+#resource-diagram {
+  /*min-height: 800px;
+  min-width:1024px;
+  width:100%;*/
+
+  display:inline-block;
+
+  position:absolute;
+  top:0px;
+  left:0px;
+  z-index:1;
+}
+
+#sidebar {
+  width: 200px;
+  padding:0px;
+  margin:0px;
+  overflow-y: auto;
+  position: absolute;
+  right: 0px; //----- For some reason this was set to -10 and causing a weird alignment issue to appear.
+  margin: 0px;
+  top: 42px;
+  z-index:3;
+
+  border-radius:0px;
+  background-color: @gray18;
+  border-left: none;
+  border-top:none;
+}
+/**/
+/**/
+core-selector{
+  padding:0px;
+  margin-left:0px;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-right:20px;
+}
+.button__size--auto{
+  width:auto;
+}
+.button__box{
+  padding-left:10px;
+  padding-right:10px;
+}
+
+
+.led {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  padding:0px;
+  margin:0px;
+  //float:left;
+
+
+  border: 1px solid fade(@gray1, 25%);
+  border-radius: 5px;
+}
+
+.tgStatusIsUp {
+  background: @blue-glow;
+  box-shadow: 0 0 8px 0 @blue-glow;
+}
+
+.tgStatusIsDown {
+  background: red;
+  box-shadow: 0 0 8px 0 red;
+}
+
+.node text {
+}
+
+.node-label {
+}
+
+.node-description {
+  font-size: small;
+}
+
+.node {
+  font: 16px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: @gray11;
+  stroke-width: 1.5px;
+}
+
+.enum {
+  list-style-type: none;
+  padding-left: 2px;
+}
+
+.enum > li {
+  margin: 2px 0 2px;
+}
+
+.nofill > svg {
+  fill: none;
+  stroke: @gray5;
+  stroke-width: 40;
+}
+
+.nofill {
+  height: 20px;
+  width: 20px;
+}
+
+.nofill-large {
+  height: 40px;
+  width: 40px;
+}
+
+.nofill-large > svg {
+  fill: none;
+  stroke: @gray5;
+  stroke-width: 20;
+  height: inherit;
+  width: inherit;
+}
+
+.pointer {
+  fill: @blue-glow;
+}
+
+.vmNode, .colonyNode, .clusterNode {
+  stroke-width: 2;
+}
+
+text.title{
+  fill: @gray5;
+  stroke:none;
+
+  font-size: 18px;
+  font-family:roboto, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+text.node-label{
+  fill: @gray5;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}
+/* end styles from resource-diagram */
+
+//div[splitter]{
+//  width:100% !important;
+//  height: 100%;
+////  border: 2px solid black;
+//  background-color: #454545;
+//}
+//.vpane{
+//  min-height: 10px;
+//}
+//.vpane-top{
+//  height:100%;
+//  width: 100%;
+//  color: #212121;
+//}
+// .vpane-bottom{
+//   display:block;
+//   padding: 0px;
+//   height:300px;
+//   width: 100%;
+//   color:#212121;
+//   overflow-y: scroll;
+// }
+//.vertical.split-handler{
+//  bottom:300px;
+//  padding: 0 0 0 4px;
+//  height: 30px;
+//  min-height: 10px;
+//  width: 100%;
+//  cursor: ns-resize;
+//  background-color: #454545;
+//  border-bottom: 1px solid black;
+//  z-index:999;
+//}
+
+
+
+hr.horizontal {
+  display: none;
+}
+
+hr {
+  width: 100%;
+}
+
+.rw-traffic-stats__reset {
+  margin-left: auto;
+  display: inline-block;
+  text-decoration: underline;
+  color: @datagrid-blue;
+  cursor: pointer;
+}
+
+.rw-traffic-stats__control {
+  white-space: nowrap;
+}
+
+.dashboard-body {
+  .flex-display();
+  .flex-direction(row);
+  .align-items(stretch);
+}
+
+.dashboard-controlPanel {
+  width: 300px;
+  min-width: 300px;
+  .etched-right();
+  padding-right: 10px;
+  margin-bottom: 10px;
+  max-width: 400px;
+  .flex-display();
+  .flex-direction(column);
+  .align-items(stretch);
+}
+
+.dashboard-controlButtons {
+  padding-bottom: 10px;
+  .etched-bottom();
+}
+
+.dashboard-controlPanel > .dash-slider-value {
+  .flex-display();
+  .flex-direction(row);
+  align-items: stretch;
+}
+
+.dashboard-gaugeset {
+  .flex(1);
+}
+
+.dash-label {
+  padding-bottom: 6px;
+
+  color:#cccccc;
+  font-weight:200;
+  font-size: 14px;
+}
+
+.dash-slider {
+  .flex-display();
+  .flex-direction(row);
+}
+
+.dash-slider-slider {
+  .flex(1);
+}
+
+.horizontal-dash-slider {
+  width : 250px;
+  float: left;
+}
+
+.dash-slider-start {
+  width: 20px;
+  height:30px;
+
+  color:#cccccc;
+  font-size:14px;
+  text-align: right;
+  font-weight:200;
+  line-height: 30px;
+}
+
+.dash-slider-end {
+  width: 35px;
+  height:30px;
+
+  color:#cccccc;
+  font-size:14px;
+  text-align: left;
+  font-weight:200;
+  line-height: 30px;
+}
+
+.dash-slider-value {
+  color:#ffffff;
+  font-size: 22px;
+  font-weight:400;
+  width: 100%;
+  .justify-content(center);
+}
+
+.vertical.trafControlPanel {
+  .flex-display();
+  .flex-direction(column);
+  .align-items(stretch);
+}
+
+.horizontal.trafControlPanel {
+  .flex-display();
+  .flex-direction(row);
+  .align-items(stretch);
+}
+
+.cloud {
+  .flex-display();
+  .flex-direction(col);
+}
+
+.cloud-panel {
+  .flex(1 1 auto);
+  .flex-display();
+}
+
+.cloud-dashpanel {
+  margin: 3px;
+  // overflow: auto;
+}
+
+.cloud-scatterButtons {
+  text-align: center;
+  display: inline;
+  .flex-display();
+}
+
+.cloud-scatterButtons > div {
+  .flex(1);
+}
+
+.cloud-geo {
+  min-width: 300px;
+  min-height: 420px;
+}
+
+.cloud-geo-map {
+  margin: 0 0 10px 0;
+  border: 1px solid @gray2;
+  height: 150px;
+}
+
+.DELME-cloud-donut {
+  border: 1px solid cyan;
+  height: 100px;
+}
+
+.cloud-vcs-table {
+  border: 1px solid @gray2;
+  overflow: auto;
+}
+
+.cloud-graphs-dashpanel {
+  .flex(1 1 auto);
+  min-height: 420px;
+}
+
+.cloud-graphs {
+  .flex-display();
+  .flex-direction(row);
+}
+
+.cloud-donutGrid {
+  .flex-display(column);
+  .align-items(flex-start);
+  margin: 0 20px 0;
+}
+
+.cloud-donutGrid > div {
+  .flex(1 1 auto);
+  .flex-display();
+  .flex-direction(row);
+}
+
+.cloud-donutGrid > div > div {
+  width:140px;
+  padding:0px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.cloud-scatterPlot {
+  .flex(1);
+  .align-self(stretch);
+  margin: 10px;
+}
+
+.cloud-scatter {
+  .flex(7 1 auto);
+  .flex-display();
+  .flex-direction(column);
+  .align-items(center);
+  max-height: 300px;
+}
+
+.cloud-scatter > h2 {
+  margin: 0 0 -20px 0;
+}
+
+.cloud-rw-scatter {
+  width: 100%;
+  height: 100%;
+  .flex(1 1 auto);
+}
+
+.cloud-dashpanel h2{
+  color:#ffffff;
+  font-weight:400;
+}
+.cloud-dashpanel h2 span.gray{
+  color:#cccccc;
+}
+.cloud-dashpanel h3{
+  color:#cccccc;
+  font-weight:200;
+  text-align:center;
+}
+.cloud-dashpanel sup{
+  margin-left:5px;
+
+  color:#cccccc;
+  font-size:12px;
+  font-weight:200;
+}
+.cloud-dashpanel span{}
+
+.resources {
+  width: 100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.resources-detail {
+  display: block;
+  background-color: @gray19;
+  padding: 10px;
+  position: relative;
+  overflow: scroll;
+  height: 300px;
+}
+
+.resources-bullet {
+  height: 24px;
+}
+
+
+/*TOP NAV HEADER*/
+.global-header {
+  min-height: 71px;
+  border-bottom: none;
+  color: @gray5;
+  background: @gray19;
+
+  .flex-display();
+  .align-items(center);
+}
+.global-header .logo{
+  display:inline-block;
+  width: 108px;
+  height: 28px;
+  padding:0px;
+  margin: 0 20px 0 10px;
+  float:left;
+
+  background: url('../img/header-logo.png') no-repeat;
+  background-size: 108px 28px;
+}
+.global-header .global-nav {
+  .flex(1 0 0);
+  margin-right: 20px;
+}
+.global-header .global-nav > ul{
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  .flex-display();
+}
+.global-header .global-nav > ul.left{
+  float:left;
+}
+.global-header .global-nav > ul.left > li{
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-right:20px;
+  margin-bottom:0px;
+  padding:0px;
+
+  cursor: pointer;
+
+  line-height: 40px;
+  vertical-align: middle;
+
+  .flex-display();
+  .align-items(center);
+}
+.global-header .global-nav > ul.left > li core-icon{
+  display:inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 3px 0 0;
+
+  fill: @gray5;
+  .flex-shrink(0);
+  .standard-transition();
+}
+.global-header .global-nav > ul.left > li .label{
+  font-size: 22px;
+  font-weight: 400;
+  text-transform: uppercase;
+
+  .no-select();
+  //        display:inline-block;
+  .standard-transition();
+}
+.global-header .global-nav > ul.left > li.selected core-icon{
+
+  fill: @blue-2;
+}
+
+.global-header .global-nav > ul.left > li.selected .label {
+  color: @blue-2;
+}
+/**/
+.global-header .global-nav > ul.right{
+  float:right;
+}
+
+/**/
+/**/
+@media all and (max-width: 1200px){
+  .global-header .global-nav > ul.left > li core-icon{
+    display: none !important;
+    width:0px;
+    height:0px;
+  }
+  .global-header .global-nav > ul.left > li .label {
+    font-size: 16px;
+  }
+}
+
+.perf {
+  background: white;
+  color: black;
+  font-size: smaller;
+  position: absolute;
+  right:0;
+  bottom:0;
+  z-index: 1000;
+}
+
+.perf-list {
+  list-style-type: none;
+}
+
+.global-nav__list__item__icon {
+  fill: @gray5;
+  }
+
+@media all and (max-width: 1200px){
+  .global-header .global-nav > ul.left > li .icon{
+    display: none !important;
+    width:0px;
+    height:0px;
+  }
+  .global-header .global-nav > ul.left > li .label {
+    font-size: 16px;
+  }
+}
+
+.perf {
+  background: white;
+  color: black;
+  font-size: smaller;
+  position: absolute;
+  right:0;
+  bottom:0;
+  z-index: 1000;
+}
+
+.perf-list {
+  list-style-type: none;
+}
+
+.global-nav__list__item__icon {
+  fill: white;
+}
+.global-header {
+  .global-nav > ul.left > li.selected svg {
+  fill: @blue-2;
+}
+.logo {
+  display: inline-block;
+  width: 77px;
+  height: 51px;
+  padding: 0px;
+  margin: 0 20px 0 10px;
+  float: left;
+  background: url('/integration/img/header-logo.png') no-repeat;
+}
+.label {
+  font-family:roboto-condensed, open-sans, sans-serif;
+}
+
+}
+

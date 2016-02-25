@@ -1,0 +1,73 @@
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+/*
+ * Webpack distribution configuration
+ *
+ * This file is set up for serving the distribution version. It will be compiled to dist/ by default
+ */
+
+'use strict';
+
+var webpack = require('webpack');
+
+module.exports = {
+
+	output: {
+		publicPath: 'assets/',
+		path: 'dist/assets/',
+		filename: 'main.js'
+	},
+
+	debug: false,
+	devtool: false,
+	entry: './src/components/ComposerApp.js',
+
+	stats: {
+		colors: true,
+		reasons: false
+	},
+
+	plugins: [
+		new webpack.optimize.DedupePlugin(),
+		new webpack.optimize.UglifyJsPlugin(),
+		new webpack.optimize.OccurenceOrderPlugin(),
+		new webpack.optimize.AggressiveMergingPlugin(),
+		new webpack.NoErrorsPlugin()
+	],
+
+	module: {
+		noParse: [/autoit.js/],
+		preLoaders: [
+			{
+				test: /\.(js|jsx)$/,
+				exclude: /node_modules/,
+				loader: 'eslint-loader'
+			}
+		],
+		loaders: [
+			{
+				test: /\.(js|jsx)$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader',
+				query: {
+					presets: ['react', 'es2015']
+				}
+			}, {
+				test: /\.css$/,
+				loader: 'style-loader!css-loader'
+			}, {
+				test: /\.scss/,
+				loader: 'style-loader!css-loader!sass-loader?outputStyle=expanded'
+			}, {
+				test: /\.(jpg|woff|woff2|png)$/,
+				loader: 'url-loader?limit=8192'
+			}, {
+				test: /\.(svg)(\?[a-z0-9]+)?$/i,
+				loader: "file-loader"
+			}
+		]
+	}
+};

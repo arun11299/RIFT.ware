@@ -1,0 +1,32 @@
+<chassis xmlns="http://tail-f.com/ns/example/config">
+  <!-- <server-info>
+      <system-name>Blade 1</system-name>
+      <ftos-version>6.2.2</ftos-version>
+  </server-info> -->
+  <slot>
+    <id>1</id>
+    <interface>
+      <name>eth0</name>
+      <ip>192.168.128.66</ip>
+      <description>Added Ons 9 Dec 2009 22:35:24 CET</description>
+    </interface>
+    <interface>
+      <name>eth1</name>
+      <ip>10.0.0.1</ip>
+      <description>Remove this interface as soon as Thor is back!</description>
+    </interface>
+  </slot>
+  <slot>
+    <id>2</id>
+    <interface>
+      <name>vsid1</name>
+      <ip>192.168.1.6</ip>
+      <description>Keep this until the end of 2009.</description>
+    </interface>
+    <interface>
+      <name>vsid2</name>
+      <ip>10.11.2.234</ip>
+      <description>Added Ons 9 Dec 2008 09:01:32 CET</description>
+    </interface>
+  </slot>
+</chassis>

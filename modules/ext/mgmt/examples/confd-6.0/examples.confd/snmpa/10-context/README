@@ -1,0 +1,32 @@
+ConfD SNMP Agent Example - Using SNMP Contexts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  This example shows how the SNMP agent can be used with multiple SNMP
+  contexts.
+
+  In order to exemplify, there is one read-only object defined in
+  SIMPLE-MIB, and it returns the string 'test-<context name>'.  The
+  callback function for get_elem() gets the SNMP context from the
+  struct confd_user_info.  See simple_dp.c.
+
+  We define two community names in community_init.xml, 'public-1' and
+  'public-2'.  They map to contexts 'foo-1' and 'foo-2', respectively.
+
+  In vacm_init.xml, we give access to all 'foo-*' contexts.
+
+  $ snmpget -m ./SIMPLE-MIB.mib -c public-1 -v2c localhost:4000 testStr.0
+  SIMPLE-MIB::testStr.0 = STRING: test-foo-ctx1
+
+  $ snmpget -m ./SIMPLE-MIB.mib -c public-2 -v2c localhost:4000 testStr.0
+  SIMPLE-MIB::testStr.0 = STRING: test-foo-ctx2
+
+  $ snmpget -m ./SIMPLE-MIB.mib -v3 -u bob -n foo-1 localhost:4000 testStr.0
+  SIMPLE-MIB::testStr.0 = STRING: test-foo-1
+
+  $ snmpget -m ./SIMPLE-MIB.mib -v3 -u bob -n foo-3 localhost:4000 testStr.0
+  SIMPLE-MIB::testStr.0 = STRING: test-foo-3
+
+  $ snmpget -m ./SIMPLE-MIB.mib -v3 -u bob -n bar-3 localhost:4000 testStr.0
+  Error in packet
+  Reason: authorizationError (access denied to that object)
+  Failed object: SIMPLE-MIB::testStr.0

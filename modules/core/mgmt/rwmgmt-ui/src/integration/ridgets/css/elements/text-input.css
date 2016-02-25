@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+}
+input[type=text].text-input,
+input[type=password].text-input {
+  border: 1px solid #ababab;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px 1px #d4d4d4;
+  padding: 4px 8px 2px;
+  color: inherit;
+  font: inherit;
+}
+.text-input--small {
+  width: 56px;
+}
+.text-input--medium {
+  width: 200px;
+}
+.text-input--large {
+  width: 400px;
+}
+.text-input--full {
+  width: 100%;
+}

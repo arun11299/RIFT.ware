@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RW.CONFD</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="top.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+</head>
+<body class="viewport">
+<template is="auto-binding" id="confd">
+  <div layout horizontal>
+    <div>
+      <h1>Request</h1>
+        Base URL: <input type="text" size="40" value="{{getUrl}}"><br>
+        <button on-click="{{getRequest}}">GET</button><br>
+      <h1>Query</h1>
+        Base URL: <input type="text" size="40" value="{{queryUrl}}"><br>
+      <textarea id="payload" rows="15" cols="50">
+&lt;start-query xmlns="http://tail-f.com/ns/tailf-rest-query"&gt;
+  &lt;foreach&gt;
+    /colony
+  &lt;/foreach&gt;
+  &lt;select&gt;
+    &lt;expression&gt;network-context&lt;/expression&gt;
+    &lt;result-type&gt;string&lt;/result-type&gt;
+  &lt;/select&gt;
+&lt;/start-query&gt;
+      </textarea><br>
+      <button on-click="{{queryRequest}}">POST</button><br>
+    </div>
+    <div flex>
+      <pre>{{result}}</pre>
+      <hr>
+      <pre>{{fetch}}</pre>
+      <hr>
+      <pre>{{result2}}</pre>
+    </div>
+  </div>
+</template>
+<script>
+  function post(url, fmt, payload, success) {
+    return send(url, {
+      type: 'POST',
+      success : success,
+      data: payload,
+      headers: {
+        'Content-Type' : 'application/vnd.yang.data+xml',
+        Accept: 'application/vnd.yang.data+' + fmt
+      }});
+  };
+  function get(url, fmt, success) {
+    return send(url, {
+      type: 'GET',
+      success : success,
+      headers: {
+        Accept: 'application/vnd.yang.data+' + fmt
+      }});
+  };
+  function send(url, params) {
+    _.extend(params, {
+      error: function (response) {
+        var t = document.getElementById('confd');
+        t.result = response.status + '\n' + response.responseText;
+        t.fetch = '';
+        t.result2 = '';
+      },
+      dataType: 'text'
+    });
+    return jQuery.ajax(rw.api.server + url, params);
+  };
+  document.addEventListener('DOMContentLoaded', function() {
+    var t = document.getElementById('confd');
+    t.queryUrl = '/api/query/operational';
+    t.getUrl = '/api/operational/colony';
+    t.result = '';
+    t.result2 = '';
+    t.fetch = '';
+    t.queryRequest = function() {
+      var payload = document.getElementById("payload").value;
+      post(t.queryUrl, 'xml', payload, function (response) {
+        t.result = response.toString();
+        var handle = $(response).find('query-handle').text();
+        t.fetch = '<fetch-query-result xmlns="http://tail-f.com/ns/tailf-rest-query">\n' +
+          '<query-handle>' + handle + '</query-handle>\n' +
+          '</fetch-query-result>';
+        post('/api/query', 'xml', t.fetch, function (response) {
+          t.result2 = response.toString();
+        });
+      });
+    };
+    t.getRequest = function() {
+      get(t.getUrl, 'xml', function(response) {
+        t.result = response.toString();
+        t.fetch = '';
+        t.result2 = '';
+      });
+    };
+  });
+</script>
+</body>
+</html>
+

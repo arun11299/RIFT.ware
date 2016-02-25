@@ -1,0 +1,70 @@
+@import "css/base/base";
+@import "css/elements/datagrid";
+
+.rw-traffic-stats__panel {
+  clear: both;
+}
+.rw-traffic-stats__name {
+  float: left;
+  clear: both;
+  display: inline-block;
+}
+.rw-traffic-stats__reset {
+  margin-left: auto;
+  display: inline-block;
+  text-decoration: underline;
+  color: @datagrid-blue;
+  cursor: pointer;
+}
+
+.rw-traffic-stats__control {
+  white-space: nowrap;
+}
+
+rw-bullet {
+  height: 24px;
+}
+
+.tgHasError {
+  color: red;
+}
+
+#statsTable {
+  /*border: 1px solid @gray10;*/
+}
+
+.rate {
+  .flex-display();
+}
+
+// smaller than rate-max because it almost always 0 and does
+// not show units
+.rate-min {
+  width: 15px;
+  font-size: 12px;
+@media (max-width : 1300px){
+  font-size:11px;
+}
+}
+
+.rate-value {
+  white-space: nowrap;
+  width: 80px;
+  font-size: 14px;
+  @media (max-width : 1300px){
+    font-size:11px;
+    width:110px;
+  }
+}
+
+.rate-max {
+  font-size: 12px;
+  width: 40px;
+  @media (max-width : 1300px){
+    font-size:11px;
+  }
+}
+
+.rate > rw-bullet {
+  .flex(1 1 auto);
+}

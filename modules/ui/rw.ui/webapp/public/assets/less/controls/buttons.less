@@ -1,0 +1,57 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// buttons.less
+//
+// Styles for button controls
+// TODO expand/clean up once design is finalized
+//
+a[role="button"] {
+  cursor: pointer;
+}
+.button {
+  &-action {
+    &-toggle {
+      background-color: @gray-darkest;
+      box-shadow: 4px 4px @gray-lighter;
+      color: white;
+      cursor: pointer;
+      display: block;
+      padding: 12px 0;
+      text-align: center;
+      text-transform: uppercase;
+      i {
+        margin-right: 6px;
+      }
+    }
+  }
+  &-half-border {
+    border: 2px solid @black;
+    border-top: 0;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.35);
+    padding: 4px 24px;
+    position: relative;
+    .small-caps;
+    &:before,
+    &:after {
+      background: @gray;
+      content: '';
+      display: block;
+      height: 10px;
+      position: absolute;
+        top: 0;
+      width: 4px;
+    }
+    &:before {
+      left: -4px;
+    }
+    &:after {
+      right: -4px;
+    }
+  }
+}

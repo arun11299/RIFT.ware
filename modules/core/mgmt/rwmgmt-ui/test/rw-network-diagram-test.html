@@ -1,0 +1,40 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-network-diagram.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+<script src="data/network-seed.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <rw-network-diagram 
+    services="{{services}}" 
+    id="test0"
+    on-select-iface="{{selectIface}}"
+    ></rw-network-diagram>
+</template>
+<script>
+Polymer('my-test', {
+  ready: function() {
+    this.services = seedVeryBasic();
+  },
+  selectIface: function(e, detail) {
+    this.iface = detail.iface;
+    this.ifaceGroup = detail.ifaceGroup;
+  },
+  attached: function() {
+    var test0 = this.$.test0;
+    suite('rw-network-diagram', function() {
+      test('render', function() {
+        assert.isTrue(true);
+      });
+    });
+  }
+});
+</script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

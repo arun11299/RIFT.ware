@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="512px" height="512px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+    <title>TitleHere</title>
+    <desc>DescriptionHere</desc>
+
+  <g id="icon-service">
+    <title>service</title>
+    <path id="layer-20-icon" d="M118.667,344.616L84.333,359V136.312l206-86.312v43.042L118.667,164.97V344.616z M393.333,204.609
+  v148.239L256,410.399V262.152L393.333,204.609z M427.667,153l-206.001,86.311V462l206.001-86.303V153z M187.333,216.47L359,144.542
+  V101.5l-206,86.311V410.5l34.333-14.384V216.47z"/>
+  </g>
+
+</svg>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RW.PORTS</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="top.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../lib/jquery/dist/jquery.js"></script>
+  <script src="../lib/underscore/underscore.js"></script>
+  <script src="../lib/socket.io-client/dist/socket.io.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+  <link rel="import" href="../integration/ridgets/rw-fpath-model.html">
+  <link rel="import" href="sort.html">
+</head>
+<body class="viewport">
+
+<template is="auto-binding" id="top">
+  <rw-fpath-model
+          id="fpath"
+          on-update="{{metricsUpdated}}"
+          ></rw-fpath-model>
+  <sort-controller itemSelector=".datagrid sort-item" on-sort="{{sort}}"></sort-controller>
+  <table class="datagrid">
+    <thead>
+    <tr>
+      <th><sort-item token="name" ordered="true" ascending="true">Port</sort-item></th>
+      <th><sort-item token="tx_rate_mbps">Tx Mbps</sort-item></th>
+      <th><sort-item token="rx_rate_mbps">Rx Mbps</sort-item></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr template repeat="{{metrics}}">
+      <td>
+        {{name}}
+      </td>
+      <td>
+        {{tx_rate_mbps}}
+      </td>
+      <td>
+        {{rx_rate_mbps}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</template>
+<script>
+  var t = document.querySelector('#top');
+  var comparator = sortBy('id', true);
+  t.metricsUpdated = function() {
+    var fpath = document.querySelector('#fpath');
+    t.metrics = _.values(fpath.ports).sort(comparator);
+  };
+  t.sort = function(e) {
+    comparator = sortBy(e.detail.token, e.detail.ascending);
+    t.metricsUpdated();
+  };
+  function sortBy(path, ascending) {
+    var propTree = path.split('.');
+    return function(a, b) {
+      var aProp = getProperty(a, propTree);
+      var bProp = getProperty(b, propTree);
+      var x;
+      if (isNaN(aProp) || isNaN(bProp)) {
+        x = aProp.localeCompare(bProp);
+      } else {
+        x = parseInt(aProp) - parseInt(bProp);
+      }
+      return ascending ? x : -x;
+    };
+  }
+  function getProperty(o, path) {
+    var x = o;
+    for (var i = 0; i < path.length; i++) {
+      x = x[path[i]];
+    }
+    return isNaN(x) ? x : parseInt(x);
+  }
+</script>
+</body>
+</html>

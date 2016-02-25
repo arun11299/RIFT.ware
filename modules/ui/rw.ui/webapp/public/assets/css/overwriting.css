@@ -1,0 +1,465 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+
+
+[ng-click] {
+  cursor: pointer;
+}
+
+/** LAUNCH **/
+
+.fleet-card-pwr-status {
+  display: flex !important;
+}
+.fleet-card-pwr-status .title {
+  flex: 1;
+}.fleet-card-pwr-status .title.disabled {
+  cursor:default !important;
+}
+.fleet-card-pwr-status .delete {
+  margin-right: 12px !important;
+}
+
+.fleet-card-env-status .console {
+    margin-right: 12px !important;
+}
+.fleet-card-env-status{
+  justify-content: space-between !important;
+}
+
+.fleet-card-env-status .status {
+  flex:1;
+}
+
+.fleet-card-params-detail.trafgen-panel .slider-vert {
+  margin-left: 0px !important;
+}
+
+
+.fleet-card-params-detail {
+  width: 100% !important;
+}
+
+.fleet-card-header.off .fleet-card-pwr-btn{
+  color:white;
+}
+
+.fleet-card-params.is-wag {
+  display: flex !important;
+  flex-direction: column !important;
+}
+.fleet-card-params.is-wag .fleet-card-toggle-set{
+  flex:1 !important;
+  }
+/*.fleet-card-header.off .fleet-card-env-status{
+  display:none;
+}*/
+
+/** CREATE **/
+
+.create-fleet-services a:hover{
+    background-color: #00acee !important;
+  border-color: #00acee !important;
+  color: #ffffff !important;
+}
+
+.fleet-card-params-detail.trafgen-panel .fleet-card-actions {
+  bottom: 29px !important;
+}
+.viewport-vim .dash-link {
+  top: 54px !important;
+}
+.fleet-card-params-detail.sla-panel, .fleet-card-params-detail.nfvi-panel {
+  overflow: auto;
+}
+.sla-stats-container {
+  flex: 0 1 70%;
+/*  overflow-y: scroll;
+  overflow-x: auto;*/
+}
+.stats > tbody {
+  height: 268px;
+  overflow-y: scroll;
+  overflow-x: auto;
+  display: block;
+}
+.viewport-dash .sla table.stats {
+  border-left: 2px solid #f1f1f1;
+  flex: 1 1 auto !important;
+  text-align: left;
+  width: 100% !important;
+}
+.viewport-dash .sla table.stats th, .viewport-dash .sla table.stats td {
+  border-bottom: 1px solid #f1f1f1;
+  border-right: 1px solid #f1f1f1;
+  padding: 0.375rem;
+  vertical-align: middle;
+  width: 30% !important;
+}
+.viewport-dash .sla-table-wrapper {
+  flex: 0 0 70%;
+}
+.viewport-dash .sla-table-wrapper>table {
+  width: 100%;
+}
+
+
+
+/*.create-fleet .parameter-controls {
+height: 300px;
+overflow: scroll;
+}*/
+
+/*.fleet-card-actions{
+display:flex;
+}
+.fleet-card-actions a {
+flex: auto;
+margin: 0px 5px;
+}*/
+a[role="button"].on {
+  background-color: #7cc118 !important;
+}
+.viewport-vnf .mainpanel>.flex-row {
+  align-items: stretch !important;
+}
+.vnf-card:not(:last-child):after {
+  content: ' ';
+  width: 80px;
+  height: 40px;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  position: absolute;
+  bottom: -50px;
+  right: 0px;
+}
+.vnf-card .circle-link{
+  position: absolute;
+  bottom: 0px;
+  padding: 0px !important;
+}
+.vnf-card:not(:first-child) .circle-link:before, .vnf-card:not(:last-child) .circle-link:after {
+    content: '10 GBPS';
+    line-height: 18px;
+  font-size: 0.75rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
+  border-radius: 50%;
+  position: absolute;
+  z-index:3;
+  background-color: #dadada;
+  top: -0.875rem;
+}
+.vnf-card .circle-link:before{
+    left: 3.75rem;
+    font-weight:bold;
+   /*top: 1.275rem;*/
+}
+.vnf-card .circle-link:after {
+  right: 3.75rem;
+font-weight:bold;
+
+}
+
+.vnf-card:not(:first-child) .circle-link:after, .vnf-card:not(:last-child) .circle-link:before {
+   content: '10 GBPS';
+  line-height: 18px;
+      top: -1rem;
+
+}
+
+.vnf-card:first-child .circle-link:before, .vnf-card:last-child .circle-link:after {
+   content: '';
+  line-height: 18px;
+    top: 1rem;
+}
+
+
+/*.vnf-card:not(:first-child) .circle-link:after, .vnf-card:not(:last-child) .circle-link:before,
+ {
+  content: '100 GBPS';
+  line-height: 18px;
+    top: 1rem;
+}*/
+.vnf-card:not(:first-child):before {
+  content: ' ';
+  width: 80px;
+  height: 40px;
+  position: absolute;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  bottom: -50px;
+  left: 0px;
+}
+.vnf-card {
+  position:relative;
+}
+
+.vnf-card>table>tbody>tr{
+    display: flex;
+}
+.vnf-card>table>tbody{
+  display: flex;
+  flex-direction: column;
+}
+.vnf-card .connector {
+  position: absolute;
+  width: 5.75rem !important;
+  height: 25px;
+  border: 1px solid black;
+  bottom: -60px;
+  right: -3.35rem;
+  z-index: 3;
+    font-size: 0.75rem;
+  padding: 4px !important;
+  font-weight: bold;
+}
+.vnf-card .light {
+  background-color: rgb(229,229,229) !important;
+}
+
+.vnf-card .dark {
+  background-color:#dadada !important;
+}
+
+.vnf-card:last-child .connector{
+  display:none;
+}
+
+.viewport-dash .navpanel .service-orch li {
+  padding: .025rem .5rem !important;
+  height: 3.313rem !important;
+}
+
+.viewport-dash .navpanel .service-orch p {
+  margin-bottom: 1rem;
+}
+.viewport-vnf .vnf-card > ul li {
+  flex: 1 1 40% !important;
+}
+
+.viewport-vnf .vnf-card > ul li:first-child {
+    flex: 0 1 10% !important;
+}
+.viewport-vnf .vnf-card > ul li:first-child.split {
+    flex: 0 1 45% !important;
+}
+
+.button-half-border:after {
+    right: -6px !important;
+}
+
+.button-half-border:before {
+    left: -6px !important;
+}
+.button-half-border:before, .button-half-border:after {
+    background: #cccccc;
+    content: '';
+    display: block;
+    height: 10px !important;
+    position: absolute;
+    top: -1px;
+    width: 16px !important;
+    box-sizing: border-box;
+}
+
+
+/** SERVICE ORCHESTRATION **/
+.viewport-so .panel-card {
+  background-color: rgba(203, 209, 209, 0.5);
+  flex: 0 1 98%;
+  /*height: 403px;*/
+  margin: 12px 0 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+
+.viewport-so .panel-card H2 {
+  background-color: #fff;
+  margin-bottom: .125rem;
+  font-size: 0.85rem;
+  padding: .5rem 1.125rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+}
+
+
+/** MISSION CONTROL **/
+.missioncontrol h1 {
+  text-transform: uppercase;
+  padding: 2rem;
+}
+.missioncontrol .flex-column {
+  display: flex;
+  flex-direction: column;
+}
+/*.missioncontrol .viewport-card {
+  background-color: rgba(203, 209, 209, 0.5);
+  flex: 0 1 46%;
+  height: 403px;
+  margin: 12px 0 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+    align-content: flex-start;
+}*/
+.missioncontrol .empty-card a {
+  color: #000;
+  display: flex;
+  font-weight: bold;
+  height: 100%;
+  text-decoration: none;
+  width: 100%;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.missioncontrol .empty-pool a {
+  color: #000;
+  display: flex;
+  font-weight: bold;
+  height: 100%;
+  text-decoration: none;
+  width: 100%;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(203, 209, 209, 1);
+}
+/*
+.missioncontrol .viewport-card.empty-card {
+    justify-content: center;
+  align-items: center;
+    display: flex;
+  min-height: 300px;
+}*/
+
+.missioncontrol .viewport-card.empty-card img{
+  margin-top:0px;
+  width:75px;
+}
+
+.missioncontrol .empty-card a img {
+  margin-top: 130px;
+}
+
+.missioncontrol.flex-row .flex-left {
+  flex: 0 1 33%;
+}
+.missioncontrol.flex-row .flex-right {
+  flex: 0 1 66%;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+    align-content: flex-start;
+}
+.missioncontrol.flex-row .flex-right h1 {
+  flex: 1 1 100%;
+}
+.missioncontrol .empty-card {
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.missioncontro.mainpanel {
+  font-size: 0.75rem;
+}
+.missioncontrol.mainpanel  h2 {
+  background-color: #fff;
+  margin-bottom: .125rem;
+  font-size: 0.85rem;
+  padding: 1.5rem .75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.missioncontrol.mainpanel h2.user-made {
+  text-transform: none;
+}
+
+.missioncontrol.mainpanel .empty-card h2 {
+  background-color: rgba(203, 209, 209, 0.5);
+}
+.missioncontrol.mainpanel .empty-pool h2 {
+  padding: 0px;
+  background-color:#e5e5e5;
+}
+.missioncontrol.mainpanel .empty-pool {
+  margin-top:10px;
+  background-color:#e5e5e5;
+}
+
+.missioncontrol.mainpanel .pool-card h2 img {
+    height: 1rem;
+}
+.missioncontrol .pool-card {
+  /*margin: 12px 0 12px 20px;*/
+  display: flex;
+  flex-direction: column;
+}
+.missioncontrol .pool-card span {
+  flex: 1;
+  padding-left:5px;
+}
+.missioncontrol .pool-card a {
+  display: flex;
+  font-size: 1rem;
+  background-color: rgba(203, 209, 209, 0.5);
+  justify-content: flex-start;
+  align-items: center;
+  padding: .025rem 1.125rem;
+}
+.missioncontrol .pool-card a:nth-child(even){
+  background-color:#e5e5e5;
+}
+.missioncontrol .stats {
+  display: flex;
+  align-items: center;
+  padding: .75rem;
+  justify-content: space-between;
+  text-transform: uppercase;
+  flex: 1 1 100%;
+    font-size: 0.75rem;
+  font-weight: bold;
+}
+.missioncontrol .environment {
+  /*padding: .05rem 0.75rem;*/
+  flex: 1 1 44%;
+  font-size: .75rem;
+    text-align: center;
+      border: 2px solid #f1f1f1;
+}
+
+.missioncontrol .environment h4 {
+    background-color: #7cc118;
+    color: white;
+  padding: 0.5rem;
+}
+.missioncontrol dl dt {
+  /*background-color: #cccccc;*/
+    padding: 25px 0 5px;
+  text-transform: uppercase;
+}
+.missioncontrol dl dd {
+  /*background-color: #cccccc;*/
+  border-bottom: 2px solid #f1f1f1;
+    padding: 5px 0 25px;
+}
+
+

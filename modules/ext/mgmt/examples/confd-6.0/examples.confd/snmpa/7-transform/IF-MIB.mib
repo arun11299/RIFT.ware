@@ -1,0 +1,212 @@
+IF-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, Integer32, 
+    mib-2                                    FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString,
+    RowStatus                                FROM SNMPv2-TC;
+
+-- This is a proper subset of the real IF-MIB.
+
+ifMIB MODULE-IDENTITY
+    LAST-UPDATED "200006140000Z"
+    ORGANIZATION "IETF Interfaces MIB Working Group"
+    CONTACT-INFO
+            "   Keith McCloghrie
+                Cisco Systems, Inc.
+                170 West Tasman Drive
+                San Jose, CA  95134-1706
+                US
+
+                408-526-5260
+                kzm@cisco.com"
+    DESCRIPTION
+            "The MIB module to describe generic objects for network
+            interface sub-layers.  This MIB is an updated version of
+            MIB-II's ifTable, and incorporates the extensions defined in
+            RFC 1229."
+
+
+    REVISION      "200006140000Z"
+    DESCRIPTION
+            "Clarifications agreed upon by the Interfaces MIB WG, and
+            published as RFC 2863."
+    REVISION      "199602282155Z"
+    DESCRIPTION
+            "Revisions made by the Interfaces MIB WG, and published in
+            RFC 2233."
+    REVISION      "199311082155Z"
+    DESCRIPTION
+            "Initial revision, published as part of RFC 1573."
+    ::= { mib-2 31 }
+
+
+ifMIBObjects OBJECT IDENTIFIER ::= { ifMIB 1 }
+
+interfaces   OBJECT IDENTIFIER ::= { mib-2 2 }
+
+--
+-- Textual Conventions
+--
+
+
+-- OwnerString has the same semantics as used in RFC 1271
+
+OwnerString ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "255a"
+    STATUS       deprecated
+    DESCRIPTION
+            "This data type is used to model an administratively
+            assigned name of the owner of a resource.  This information
+            is taken from the NVT ASCII character set.  It is suggested
+            that this name contain one or more of the following: ASCII
+            form of the manager station's transport address, management
+            station name (e.g., domain name), network management
+            personnel's name, location, or phone number.  In some cases
+            the agent itself will be the owner of an entry.  In these
+            cases, this string shall be set to a string starting with
+            'agent'."
+    SYNTAX       OCTET STRING (SIZE(0..255))
+
+-- InterfaceIndex contains the semantics of ifIndex and should be used
+-- for any objects defined in other MIB modules that need these semantics.
+
+InterfaceIndex ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS       current
+    DESCRIPTION
+
+
+            "A unique value, greater than zero, for each interface or
+            interface sub-layer in the managed system.  It is
+            recommended that values are assigned contiguously starting
+            from 1.  The value for each interface sub-layer must remain
+            constant at least from one re-initialization of the entity's
+            network management system to the next re-initialization."
+    SYNTAX       Integer32 (1..2147483647)
+
+InterfaceIndexOrZero ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d"
+    STATUS       current
+    DESCRIPTION
+            "This textual convention is an extension of the
+            InterfaceIndex convention.  The latter defines a greater
+            than zero value used to identify an interface or interface
+            sub-layer in the managed system.  This extension permits the
+            additional value of zero.  the value zero is object-specific
+            and must therefore be defined as part of the description of
+            any object which uses this syntax.  Examples of the usage of
+            zero might include situations where interface was unknown,
+            or when none or all interfaces need to be referenced."
+    SYNTAX       Integer32 (0..2147483647)
+
+
+-- the Interfaces table
+
+-- The Interfaces table contains information on the entity's
+-- interfaces.  Each sub-layer below the internetwork-layer
+-- of a network interface is considered to be an interface.
+
+ifTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of interface entries.  The number of entries is
+            given by the value of ifNumber."
+    ::= { interfaces 2 }
+
+ifEntry OBJECT-TYPE
+    SYNTAX      IfEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry containing management information applicable to a
+            particular interface."
+    INDEX   { ifIndex }
+    ::= { ifTable 1 }
+
+IfEntry ::=
+    SEQUENCE {
+        ifIndex                 InterfaceIndex,
+        ifDescr                 DisplayString
+    }
+
+ifIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A unique value, greater than zero, for each interface.  It
+            is recommended that values are assigned contiguously
+            starting from 1.  The value for each interface sub-layer
+            must remain constant at least from one re-initialization of
+            the entity's network management system to the next re-
+            initialization."
+    ::= { ifEntry 1 }
+
+ifDescr OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "A textual string containing information about the
+            interface.  This string should include the name of the
+            manufacturer, the product name and the version of the
+            interface hardware/software."
+    ::= { ifEntry 2 }
+
+--
+--   Extension to the interface table
+--
+-- This table replaces the ifExtnsTable table.
+--
+
+ifXTable        OBJECT-TYPE
+    SYNTAX      SEQUENCE OF IfXEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A list of interface entries.  The number of entries is
+            given by the value of ifNumber.  This table contains
+            additional objects for the interface table."
+    ::= { ifMIBObjects 1 }
+
+ifXEntry        OBJECT-TYPE
+    SYNTAX      IfXEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "An entry containing additional management information
+            applicable to a particular interface."
+    AUGMENTS    { ifEntry }
+    ::= { ifXTable 1 }
+
+IfXEntry ::=
+    SEQUENCE {
+        ifName                  DisplayString
+    }
+
+ifName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The textual name of the interface.  The value of this
+            object should be the name of the interface as assigned by
+            the local device and should be suitable for use in commands
+            entered at the device's `console'.  This might be a text
+            name, such as `le0' or a simple port number, such as `1',
+            depending on the interface naming syntax of the device.  If
+            several entries in the ifTable together represent a single
+            interface as named by the device, then each will have the
+            same value of ifName.  Note that for an agent which responds
+            to SNMP queries concerning an interface on some other
+            (proxied) device, then the value of ifName for such an
+            interface is the proxied device's local name for it.
+
+            If there is no local name, or this object is otherwise not
+            applicable, then this object contains a zero-length string."
+    ::= { ifXEntry 1 }
+
+END

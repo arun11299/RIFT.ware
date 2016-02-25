@@ -1,0 +1,164 @@
+@import "css/base/base";
+@import "css/elements/button";
+@import "css/elements/icons";
+@import "css/elements/form";
+@import "css/elements/panel";
+
+:host {
+  overflow:hidden;
+  width: 100%;
+  height: 100%;
+  .flex-display();
+  .flex-direction(row);
+
+  padding:0px;
+  margin:0px;
+}
+
+#radialDiagramButtons {
+  width: 100%;
+  padding: 4px;
+  margin:0px;
+
+  position:absolute;
+  z-index:2;
+
+  background-color: #454545;
+  border-bottom: 1px solid #121212;
+}
+
+.button{
+  margin:0px;
+}
+
+#content {
+  display:inline-block;
+  width:100%;
+  padding-bottom:100%;
+  overflow:hidden;
+
+  position:relative;
+
+  vertical-align:middle;
+}
+
+#diagram {
+  /*min-height: 800px;
+  min-width:1024px;
+  width:100%;*/
+
+  display:inline-block;
+
+  position:absolute;
+  top:0px;
+  left:0px;
+  z-index:1;
+}
+
+#sidebar {
+  width: 200px;
+  padding:0px;
+  margin:0px;
+  overflow-y: auto;
+
+  position: absolute;
+  right: 0px; //----- For some reason this was set to -10 and causing a weird alignment issue to appear.
+  top: 42px;
+  z-index:3;
+
+  border-radius:0px;
+  background-color: @gray6;
+  border-left: 1px solid #121212;
+  border-top:none;
+}
+/**/
+/**/
+core-selector{
+  padding:0px;
+  margin-left:0px;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-right:20px;
+}
+.button__size--auto{
+  width:auto;
+}
+.button__box{
+  padding-left:10px;
+  padding-right:10px;
+}
+/**/
+/**/
+
+.node text {
+}
+
+.node-label {
+  fill: @white;
+}
+
+.node {
+  font: 16px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: @gray11;
+  stroke-width: 1.5px;
+}
+
+.enum {
+  list-style-type: none;
+  padding-left: 2px;
+}
+
+.enum > li {
+  margin: 2px 0 2px;
+}
+
+.nofill > svg {
+  fill: none;
+  stroke: @white;
+  stroke-width: 40;
+}
+
+.nofill {
+  height: 20px;
+  width: 20px;
+}
+
+.nofill-large {
+  height: 40px;
+  width: 40px;
+}
+
+.nofill-large > svg {
+  fill: none;
+  stroke: @white;
+  stroke-width: 20;
+}
+
+.pointer {
+  fill: @blue-glow;
+}
+
+.vmNode, .colonyNode, .clusterNode {
+  stroke-width: 2;
+}
+
+text.title{
+  fill:#cccccc;
+  stroke:none;
+
+  font-size: 16px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:200;
+}
+text.node-label{
+  fill:#ffffff;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}

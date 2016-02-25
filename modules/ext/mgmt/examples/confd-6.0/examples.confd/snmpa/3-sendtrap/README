@@ -1,0 +1,154 @@
+ConfD SNMP Agent Examples
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Sending SNMP notifications
+
+In this example we will send traps from a simple C program.  The trap
+sender will first do a registration using this C function:
+
+int confd_register_snmp_notification(
+    struct confd_daemon_ctx *dx, int fd,
+    const char *notify_name, const char *ctx_name,
+    struct confd_notification_ctx **nctx);
+
+- and then actually send the traps using one of:
+
+int confd_notification_send_snmp(
+    struct confd_notification_ctx *nctx, const char *notification,
+    struct confd_snmp_varbind *varbinds, int num_vars);
+
+int confd_notification_send_snmp_inform(
+    struct confd_notification_ctx *nctx, const char *notification,
+    struct confd_snmp_varbind *varbinds, int num_vars,
+    const char *cb_id, int ref);
+
+The "notification" parameter is the symbolic name of the notification in
+the MIB.  (the MIB must be loaded in ConfD).  
+
+The "notify_name" parameter matches the NotifyName in the
+snmpNotifyTable in the SNMP-NOTIFICATION-MIB.   
+The trap will be sent to targets pointed out by NotifyName.
+If NotifyName is ""; the normal procedure defined in 
+SNMP-NOTIFICATION-MIB is used, i.e. the trap is sent to all managers.
+Otherwise, the NotifyName is used to find an entry in the
+SnmpNotifyTable which defines how to send the notification
+(as an Inform or a Trap), and to select targets from
+SnmpTargetAddrTable (using the Tag).
+
+The "ctx_name" is the name of the context.
+Currently only "" is valid.  "varbinds" contain variable bindings for
+parameters that should be sent along in the notification. The include
+file "confd.h" defines data structures for the varbinds.
+
+
+2. Running the example
+
+Building the example.
+
+   $ make all
+
+Starting ConfD
+
+   $ make start
+ 
+The example is coded in a C program "sendtrap.c".  "sendtrap" takes an
+optional argument "-n TestNumber".  There are 9 different tests in
+the program, which shows sending of SNMP traps in different ways.
+It also takes an optional argument "-N NotifyName" to specify the
+"notify_name" parameter as discussed above - by default it uses "".
+
+So running the first test is done like this:
+
+   $ ./sendtrap -n 1
+
+This will send a "coldStart" trap to NotifyName "", i.e. it will select
+all the entries in snmpNotifyTable. See the initial configuration
+notify_init.xml and target_init.xml. Given this configuration, it will
+actually send all of: v1, v2, and v3 trap, v2 and v3 inform-request.
+
+We can give a specific NotifyName on the command line:
+
+   $ ./sendtrap -n 1 -N std_v1_trap
+
+This will send a "coldStart" trap to NotifyName "std_v1_trap" which is
+inserted in the snmpNotifyTable.  Again, see the initial configuration
+notify_init.xml and target_init.xml.
+
+
+3. Sending inform-requests
+
+As we could see in the first example above, the
+confd_notification_send_snmp() function may cause the sending of traps
+and/or informs - this is determined by the MIB configuration. The
+confd_notification_send_snmp_inform() can likewise cause the sending of
+traps and/or informs, but in addition it allows for tracking the
+delivery of the informs via a pair of callbacks. "Test 9" in sendtrap.c
+will use this function. Note that in order to use the callback
+functionality, it is necessary for the program to poll the control
+socket and call confd_fd_ready().
+
+To send a v2 inform-request with delivery tracking, we can do
+
+   $ ./sendtrap -n 9 -N std_v2_inform
+
+The callbacks here just print the results - the targets() callback lists
+the inform targets and records the number of them (only one in this
+case), while the result() callback prints the result for each target,
+making the program exit when all target results have been reported.
+
+If no delivery confirmation is received, informs are retransmitted
+according to snmpTargetAddrTimeout and snmpTargetAddrRetryCount - this
+happens regardless of whether the application used
+confd_notification_send_snmp() or confd_notification_send_snmp_inform()
+(with or without specifying a cb_id). With the configuration in
+target_init.xml, this results in the above command taking just over 20
+seconds to complete if no delivery confirmation is received.
+
+To send a v3 inform-request with delivery tracking, we can do
+
+   $ ./sendtrap -n 9 -N std_v3_inform
+
+Other possibilities with Test 9:
+
+   $ ./sendtrap -n 9
+
+This sends all the traps and informs per above, resulting in two inform
+targets to track.
+
+   $ ./sendtrap -n 9 -N std_v2_trap
+
+This just sends a trap, i.e. there are zero inform targets, and using
+confd_notification_send_snmp_inform() isn't really needed - but the
+callback logic handles this too, and in the general case the application
+may not know the actual set of traps/informs generated for a given
+NotifyName.
+
+
+4. Tracing the traffic
+
+Start the SNMP trap daemon from the NET-SNMP tool set:
+
+$ snmptrapd -m ./SIMPLE-MIB.mib -Lo -c snmptrapd.conf \
+ localhost:5000 localhost:6000 localhost:7000
+NET-SNMP version 5.4.2.1
+
+localhost [UDP: [0.0.0.0]->[127.0.0.1]:4000]:
+ Trap , SNMPv2-SMI::mib-2.1.3.0 = Timeticks: (40150) 0:06:41.50,
+ SNMPv2-SMI::snmpModules.1.1.4.1.0 = OID: SNMPv2-SMI::snmpModules.1.1.5.1
+
+
+If 'snmptrapd' is not available, the application "wireshark" can be
+used to capture the SNMP packet:
+
+Simple Network Management Protocol
+    version: version-1 (0)
+    community: public
+    data: trap (4)
+        trap
+            enterprise: 1.3.6.1.4.1.24961
+            agent-addr: internet (0)
+                internet: 0.0.0.0 (0.0.0.0)
+            generic-trap: coldStart (0)
+            specific-trap: 0
+            time-stamp: 18063
+            variable-bindings: 0 items

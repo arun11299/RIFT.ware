@@ -1,0 +1,179 @@
+SIMPLE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    Integer32, enterprises FROM SNMPv2-SMI
+    DisplayString, RowStatus, TruthValue
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF;
+
+
+simpleMIB MODULE-IDENTITY
+    LAST-UPDATED "200702080000Z" -- Feb 07, 2007
+    ORGANIZATION "Tail-f Systems AB
+                  http://www.tail-f.com"
+    CONTACT-INFO
+            "Tail-f support
+             E-mail: support@tail-f.com"
+    DESCRIPTION
+            "Basic test objects for CONFD-SNMP integration."
+    REVISION      "200702080000Z"
+    DESCRIPTION
+            "First version."
+    ::= { tailf 3 }
+
+tailf OBJECT IDENTIFIER ::= { enterprises 24961 }
+
+-- Administrative assignments ++++---------------------------------
+
+simpleMIBObjects	OBJECT IDENTIFIER ::= { simpleMIB 1 }
+simpleMIBConformance    OBJECT IDENTIFIER ::= { simpleMIB 2 }
+
+-- ----------------------------------------------------------------
+
+variables     OBJECT IDENTIFIER ::= { simpleMIBObjects 1 }
+tables        OBJECT IDENTIFIER ::= { simpleMIBObjects 2 }
+notifications OBJECT IDENTIFIER ::= { simpleMIBObjects 3 }
+
+
+numberOfHosts OBJECT-TYPE
+    SYNTAX     Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION    "test"
+    DEFVAL { 40 }
+    ::= { variables 1 }
+
+-- ------------------------------------------------------
+
+hostTable  OBJECT-TYPE
+    SYNTAX       SEQUENCE OF HostEntry
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION    "test"
+    ::= { tables 1 }
+
+hostEntry OBJECT-TYPE
+    SYNTAX       HostEntry
+    MAX-ACCESS   not-accessible
+    STATUS       current
+    DESCRIPTION
+        "test"
+    INDEX       { hostName }
+    ::= { hostTable 1 }
+
+HostEntry ::= SEQUENCE {
+    hostName            DisplayString,
+    hostEnabled	        TruthValue,
+    hostNumberOfServers Integer32,
+    hostRowStatus       RowStatus
+}
+
+hostName OBJECT-TYPE
+    SYNTAX      DisplayString (SIZE (0..64))
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "test"
+    ::= { hostEntry 1 }
+
+hostEnabled OBJECT-TYPE
+    SYNTAX       TruthValue
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION
+        "test"
+    ::= { hostEntry 2 }
+
+hostNumberOfServers OBJECT-TYPE
+    SYNTAX       Integer32
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION
+        "test"
+    ::= { hostEntry 3 }
+
+hostRowStatus OBJECT-TYPE
+    SYNTAX       RowStatus
+    MAX-ACCESS   read-create
+    STATUS       current
+    DESCRIPTION
+        "test"
+    ::= { hostEntry 4 }
+
+
+
+-- Notifications ----------------------------------------------------
+
+traps	OBJECT IDENTIFIER ::= { notifications 0 }
+
+notif1 NOTIFICATION-TYPE
+    OBJECTS { numberOfHosts }
+    STATUS  current
+    DESCRIPTION
+            "test notification"
+    ::= { traps 1 }
+
+notif2 NOTIFICATION-TYPE
+    OBJECTS { hostNumberOfServers }
+    STATUS  current
+    DESCRIPTION
+            "test notification"
+    ::= { traps 2 }
+
+
+
+-- Conformance ----------------------------------------------------
+simpleMIBCompliances OBJECT IDENTIFIER ::= { simpleMIBConformance 1 }
+simpleMIBGroups      OBJECT IDENTIFIER ::= { simpleMIBConformance 2 }
+
+
+-- compliance statements
+
+simpleMIBCompliance MODULE-COMPLIANCE
+    STATUS  current
+    DESCRIPTION
+            "The compliance statement for SNMPv2 entities which
+            implement the SNMPv2 MIB."
+    MODULE  -- this module
+        MANDATORY-GROUPS { thisGroup, notificationsGroup }
+
+        GROUP   thisGroup
+        DESCRIPTION
+            "This group is mandatory for SNMPv2 entities which
+            support community-based authentication."
+
+    ::= { simpleMIBCompliances 2 }
+
+
+-- units of conformance
+
+thisGroup OBJECT-GROUP
+    OBJECTS { 
+    numberOfHosts,
+    -- hostTable
+    hostEnabled,
+    hostNumberOfServers,
+    hostRowStatus
+	     }
+    STATUS  current
+    DESCRIPTION
+            "A collection of objects providing basic instrumentation and
+            control of Servers."
+    ::= { simpleMIBGroups 1 }
+
+
+notificationsGroup  NOTIFICATION-GROUP
+    NOTIFICATIONS { 
+    notif1,
+    notif2
+    }
+    STATUS  current
+    DESCRIPTION
+            "The notifications"
+    ::= { simpleMIBGroups 2 }
+
+
+
+END

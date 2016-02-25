@@ -1,0 +1,142 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+
+  <confdConfig xmlns="http://tail-f.com/ns/confd_dyncfg/1.0">
+    <!-- Note: since the cli container is minOccurs="0" we need to
+         make sure that the container is created, otherwise we won't
+         be able to use the cli entries under /system -->
+    <cli>
+    </cli>
+  </confdConfig>
+
+  <confdConfig xmlns="http://tail-f.com/ns/confd_dyncfg/1.0">
+    <!-- SNMP settings -->
+    <snmpAgent>
+      <enabled>true</enabled>
+      <ip>0.0.0.0</ip>
+      <port>4000</port>
+      <mibs>
+        <file>TAIL-F-TEST-MIB.bin</file>
+      </mibs>
+    </snmpAgent>
+  </confdConfig>
+  <confdConfig xmlns="http://tail-f.com/ns/confd_dyncfg/1.0">
+    <snmpAgent>
+      <snmpEngine>
+        <snmpEngineID>80:00:61:81:05:01</snmpEngineID>
+      </snmpEngine>
+      <system>
+        <sysDescr>Tail-f ConfD agent</sysDescr>
+        <sysObjectID>1.3.6.1.4.1.24961</sysObjectID>
+      </system>
+    </snmpAgent>
+  </confdConfig>
+
+  <confdConfig xmlns="http://tail-f.com/ns/confd_dyncfg/1.0">
+    <netconf>
+      <transport>
+        <!-- NETCONF over TCP is not standardized, but it can be useful
+             during development in order to use e.g. netcat for scripting.
+        -->
+        <tcp>
+          <enabled>true</enabled>
+          <ip>127.0.0.1</ip>
+          <port>2023</port>
+        </tcp>
+      </transport>
+    </netconf>
+  </confdConfig>
+
+  <confdConfig xmlns="http://tail-f.com/ns/confd_dyncfg/1.0">
+    <logs>
+      <!-- Shared settings for how to log to syslog.
+           Each log can be configured to log to file and/or syslog.  If a
+           log is configured to log to syslog, the settings below are used.
+      -->
+      <syslogConfig>
+        <!-- facility can be 'daemon', 'local0' ... 'local7' or an integer -->
+        <facility>daemon</facility>
+        <!-- if udp is not enabled, messages will be sent to local syslog -->
+        <udp>
+          <enabled>false</enabled>
+          <host>syslogsrv.example.com</host>
+          <port>514</port>
+        </udp>
+      </syslogConfig>
+
+      <!-- 'confdlog' is a normal daemon log.  Check this log for
+           startup problems of confd itself.
+           By default, it logs directly to a local file, but it can be
+           configured to send to a local or remote syslog as well.
+      -->
+      <confdLog>
+        <enabled>true</enabled>
+        <file>
+          <enabled>true</enabled>
+          <name>./confd.log</name>
+        </file>
+        <syslog>
+          <enabled>true</enabled>
+        </syslog>
+      </confdLog>
+
+      <!-- The developer logs are supposed to be used as debug logs
+           for troubleshooting user-written javascript and c code.  Enable
+           and check these logs for problems with validation code etc.
+      -->
+      <developerLog>
+        <enabled>true</enabled>
+        <file>
+          <enabled>true</enabled>
+          <name>./devel.log</name>
+        </file>
+        <syslog>
+          <enabled>false</enabled>
+        </syslog>
+      </developerLog>
+
+      <auditLog>
+        <enabled>true</enabled>
+        <file>
+          <enabled>true</enabled>
+          <name>./audit.log</name>
+        </file>
+        <syslog>
+          <enabled>true</enabled>
+        </syslog>
+      </auditLog>
+
+      <!-- The netconf log can be used to troubleshoot NETCONF operations,
+           such as checking why e.g. a filter operation didn't return the
+           data requested.
+      -->
+      <netconfLog>
+        <enabled>true</enabled>
+        <file>
+          <enabled>true</enabled>
+          <name>./netconf.log</name>
+        </file>
+        <syslog>
+          <enabled>false</enabled>
+        </syslog>
+      </netconfLog>
+
+      <webuiBrowserLog>
+        <enabled>true</enabled>
+        <filename>./browser.log</filename>
+      </webuiBrowserLog>
+
+      <webuiAccessLog>
+        <enabled>true</enabled>
+        <dir>./</dir>
+      </webuiAccessLog>
+
+      <netconfTraceLog>
+        <enabled>false</enabled>
+        <filename>./netconf.trace</filename>
+        <format>pretty</format>
+      </netconfTraceLog>
+
+    </logs>
+  </confdConfig>
+
+</config>

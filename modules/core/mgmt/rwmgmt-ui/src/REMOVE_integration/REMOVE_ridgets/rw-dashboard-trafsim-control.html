@@ -1,0 +1,122 @@
+<link rel="import" href="rw-iconset.html">
+<link rel="import" href="rw-slider.html">
+<link rel="import" href="rw-slider.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  <img src="dashboard-control.png">
+
+  @class rw-dashboard-control
+-->
+
+<!--
+  @attribute {bool} paused 
+  @attribute {bool} started
+  @attribute {num} rate 0-100
+-->
+<polymer-element name="rw-dashboard-trafsim-control">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-dashboard-trafsim-control.css" />
+        <rw-iconset></rw-iconset>
+
+        <template if="{{orientation == 'vertical'}}">
+            <div id="controlPanel" class="form__v">
+                <div id="primaryButtons">
+                    <span class="{{ {'button--is-on' : g.startedPerceived} | tokenList}} button button__size--full" on-click="{{toggleStarted}}">
+                        <span class="button__box">
+                            <core-icon class="icon {{ {'loading-icon' : loading} | tokenList}}" icon="rw-iconset:{{buttonIcon}}"></core-icon>
+                            <span class="button__label">{{g.startedPerceived ? 'Active' : 'Off'}}</span>
+                        </span>
+                    </span>
+                </div>
+                <hr/>
+                <div class="dash-label">
+                    <label for="rateRange" class="form__item__label">Calls Per Second</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">0</div>
+                    <rw-slider name="rateRange" min="0" max="{{g.maxRate}}" step="25000" value="{{g.ratePerceived}}"></rw-slider>
+                    <div class="dash-slider-end">200k</div>
+                </div>
+                <div class="dash-slider-value">
+                    <span>{{g.ratePerceived}}</span>
+                </div>
+            </div>
+        </template>
+        <template if="{{orientation == 'horizontal'}}">
+            <div id="controlPanel">
+                <div class="primaryButtons horizontal">
+                    <div class="{{ {'button--is-on' : g.startedPerceived} | tokenList}} button button__size--short button__size--medium" on-click="{{toggleStarted}}">
+                        <div class="button__box">
+                            <core-icon class="icon {{ {'loading-icon' : loading} | tokenList}}" icon="rw-iconset:{{buttonIcon}}"></core-icon>
+                            <span class="button__label">{{g.startedPerceived ? 'Active' : 'Off'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-component horizontal">
+                    <div class="dash-label">
+                        <label for="rateRange" class="form__item__label">Calls Per Second</label>
+                    </div>
+                    <div class="dash-slider">
+                        <div class="dash-slider-start">0</div>
+                        <rw-slider name="rateRange" min="0" max="{{g.maxRate}}" step="25000" value="{{g.ratePerceived}}"></rw-slider>
+                        <div class="dash-slider-end">200k</div>
+                    </div>
+                    <div class="dash-slider-value">
+                        <span>{{g.ratePerceived}}</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </template>
+<script>
+Polymer({
+
+  observe:{
+    'g.rateActual' : 'globalRateChanged',
+    'g.startedActual' : 'globalStartedChanged'
+  },
+
+  created: function() {
+    this.g = rw.trafsim;
+    this.updateButtonIcon();
+  },
+
+  attached: function() {
+    this.orientation = this.classList.contains('horizontal') ? 'horizontal' : 'vertical';
+  },
+
+  globalStartedChanged: function() {
+    this.g.startedPerceived = this.g.startedActual;
+    this.updateButtonIcon();
+  },
+
+  globalRateChanged: function() {
+    this.g.ratePerceived = this.g.rateActual;
+  },
+
+  toggleStarted: function() {
+    // this should come back around and trigger globalStartedChanged
+    this.g.startedPerceived = ! this.g.startedPerceived;
+    this.updateButtonIcon();
+  },
+
+  updateButtonIcon: function() {
+    if (this.g.startedPerceived != this.g.startedActual) {
+      this.buttonIcon = 'icon-loading';
+      this.loading = true;
+    } else if (this.g.startedPerceived) {
+      this.buttonIcon = 'icon-power-on';
+      this.loading = false;
+    } else {
+      this.buttonIcon = 'icon-power-off';
+      this.loading = false;
+    }
+  },
+
+  detached:function() {
+    this._propertyObserver.disconnect_();
+  }
+});
+</script>
+<polymer-element>

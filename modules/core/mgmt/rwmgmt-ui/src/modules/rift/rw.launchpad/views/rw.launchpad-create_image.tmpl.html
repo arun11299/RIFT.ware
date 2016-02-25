@@ -1,0 +1,24 @@
+<!-- ------------- -->
+<!-- IMAGE SECTION -->
+<div class="section hide">
+  <h3>Image</h3>
+  <form class="horizontal" role="form">
+    <div class="form-group">
+      <label class="control-label">Application List</label>
+      <div class="radio-group">
+        <div class="radio" ng-repeat="img in app.images">
+          <label>
+            <input type="radio" value="{{img}}" ng-model="app.environment.app_image" name="application">
+            {{img.name}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+
+    <ul class="list-inline controls">
+      <li><a ng-click="create.cancel()" class="btn link">Cancel Environment</a></li>
+      <li><a ng-click="app.next()" href class="btn primary">Continue</a></li>
+    </ul>
+  </form>
+</div>

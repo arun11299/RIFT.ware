@@ -1,0 +1,193 @@
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+@import "../../styles/_colors.scss";
+@import '../../../../node_modules/open-iconic/font/css/open-iconic.css';
+.app-body {
+  >header {
+    padding: 20px 0px;
+
+    h1 {
+      background: url('../../../assets/img/header-logo.png') no-repeat;
+      height: 51px;
+      line-height: 51px;
+      margin-left: 80px;
+      padding-left: 118px;
+      left: 0;
+      text-transform: uppercase;
+      font-size: 1.625rem;
+      font-weight: 400;
+    }
+  }
+  .header-nav {
+    margin: 0rem 1.25rem 1.25rem;
+
+    a {
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-weight: normal;
+      color: black;
+    }
+    .spacer {
+      padding: 0 0.5rem;
+    }
+    .current {
+      font-weight: bold;
+    }
+  }
+  .recordViewer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; /* align items in Main Axis */
+    align-items: stretch; /* align items in Cross Axis */
+    align-content: stretch;
+    flex: 1;
+    position: relative;
+    margin: 0.5rem;
+    min-width: 1340px;
+
+    .recordPanels {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-wrap: nowrap;
+      align-content: stretch;
+      padding: 0;
+      margin-top: 0.0725rem;
+    }
+    >div {
+      flex: 1 1 auto;
+    }
+    pre.json {
+      white-space: pre-wrap;
+    }
+    header {
+      background-color: white;
+    }
+    .monitoringParams {
+      display: flex;
+      flex-wrap: wrap;
+      flex:1 0 auto;
+      span {
+        text-align: center;
+        flex: 1 1 100%;
+        padding: 1rem;
+        font-size: 2rem;
+      }
+    }
+    .recordNavigator {
+      flex: 1;
+      max-width: 400px;
+      .nsr:before {
+        content: 'NSR: '
+      }
+      .vnfr:before {
+        content: 'VNFR: '
+      }
+      li {
+        cursor: pointer;
+        flex: 1 1 100%;
+      }
+      li:hover {
+        color: $brand-blue;
+      }
+    }
+    .recordCard.dashboardCard {
+      flex: 1 1 auto;
+      min-width: 700px;
+
+      .recordCard_content {
+        padding: 0rem 0;
+      }
+    }
+    .dashboardCard {
+      margin: 0;
+      height: auto;
+      width: auto;
+      flex: 1;
+
+      .corner-accent {
+        display: none;
+      }
+      &_content {
+        border-right: $gray-dark 1px solid;
+        padding: 1rem 0.5rem;
+        overflow: auto;
+
+        &-body {
+        }
+        .empty {
+          min-height: 50px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      &:last-child {
+        .dashboardCard_content {
+          border-right: none;
+        }
+      }
+      .recordViewToggle {
+        position:absolute;
+        top:1.5rem;
+        right:0.5rem;
+        cursor:pointer;
+        display:flex;
+
+        &:before {
+        }
+        &.on:before{
+        }
+      }
+    }
+    .loading_content {
+      justify-content: center;
+      align-items: center;
+    }
+    .recordDetails {
+      flex: 1 1 20%;
+      &-body{
+          background:#f5f2f0;
+      }
+      &_content {
+        padding: 0;
+
+        pre {
+          margin: 0;
+        }
+      }
+    }
+    .launchpadCard_data-list.EPA-PARAMS {
+      height: auto;
+      width: auto;
+      overflow: visible;
+
+      h1 {
+        margin: 0 0 0 0.5rem;
+      }
+    }
+    .nfvi-metrics {
+      flex:1 0 auto;
+    }
+    .nfvi-metrics-tray {
+      height: auto;
+      min-height: 150px;
+    }
+    .line-scale-pulse-out-rapid {
+      align-self: center;
+    }
+    .configPrimitives {
+      display:flex;
+      flex-direction:column;
+      flex: 1 0 auto;
+    }
+    .cardSectionFooter {
+      flex: 1 1 100%;
+    }
+  }
+}

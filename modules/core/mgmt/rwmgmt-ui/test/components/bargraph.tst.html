@@ -1,0 +1,52 @@
+<html class="viewport" ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../vendor.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../lib/d3/d3.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+  <style>
+    .graph-container {
+      width: 50%;
+      height: 50%;
+      border: 1px solid chartreuse;
+    }
+  </style>
+
+</head>
+<body class="viewport" ng-controller="test">
+
+<div class="graph-container">
+  <rw-bargraph values="values" x-min="5" x-max="30"></rw-bargraph>
+</div>
+
+<script>
+  angular.module('test', ['uiModule'])
+      .controller('test', function($scope, $timeout) {
+        $scope.values = [
+                          {x: 10, label: 'Alpha'},
+                          {x: 15, label: 'Beta'},
+                          {x: 5, label: 'Charlie'},
+                          {x: 7, label: 'Delta'}
+                        ];
+
+                    $timeout(function() {
+                      $scope.values = [
+                          {x: 10, label: 'Frank'},
+                          {x: 15, label: 'Ursula'},
+                          {x: 5, label: 'Charlie'},
+                          {x: 7, label: 'King'}
+                        ];
+                    }, 2000)
+
+      });
+</script>
+
+</body>
+</html>

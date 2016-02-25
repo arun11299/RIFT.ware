@@ -1,0 +1,113 @@
+#!/bin/sh
+
+confd_workspace=
+INIT_FILE=".init_complete"
+
+show_help() {
+cat << EOF
+Usage: ${0##*/} [-h] [--unique CONFD_WORKSPACE_DIR]
+EOF
+}
+
+while :; do
+  case $1 in
+    -h|-\?|--help)
+      show_help
+      exit
+      ;;
+    -u|--unique)
+      if [ -n "$2" ]; then
+        confd_workspace=$2
+        shift 2
+        continue
+      else
+        printf 'ERROR: "--unique" requires a non-empty option argument.\n' >&2
+        exit 1
+      fi
+      ;;
+    *)
+      break
+  esac
+  shift
+done
+
+cd ${RIFT_INSTALL}
+schema_dir=./var/rift/schema
+file_proto_yutil=./usr/bin/rwyangutil
+
+#make sure that the file protocol util exists
+if [ ! -f ${file_proto_yutil} ]; then
+  echo "File protocol utility ${file_proto_yutil} does not exists"
+  exit 1
+fi
+
+confd_orig=${PWD}
+echo "Current rw_confd directory " ${confd_orig}
+#killall confd 2>/dev/null
+
+if [ -z ${confd_workspace} ]; then
+  epoch_time=`date +%s`
+  confd_dir=confd.$(hostname -s).$$.${epoch_time}
+else
+  confd_dir=${confd_workspace}
+fi
+
+confd_local=${confd_orig}/${confd_dir}
+
+if [ -d ./${confd_dir} ]; then
+  # If unique workspace not flagged
+  if [ -z ${confd_workspace} ]; then
+    echo "Confd workspace ${confd_local} already exists"
+    exit 1
+  else 
+    # If Confd workspace is already present, look for 
+    # the ".init_complete" file:
+    # 1. If present, good to continue.
+    # 2. If _not_ present, it means uagent could not
+    #    complete confds initialization upto phase-2.
+    #    In that case, clean the workspace.
+    if [ ! -f ./${confd_dir}/${INIT_FILE} ]; then
+      echo "Cleaning up workspace since confd was partially initialized in its last run."
+      rm -rf ./${confd_dir}
+    fi
+  fi
+fi
+
+rw_confd_cleanup() {
+  echo "Confd cleanup ${confd_local}"
+  # no, bad for debug: rm -rf ${confd_local}
+}
+trap rw_confd_cleanup EXIT
+
+if [[ ! -L ./var/rift/schema/version/confd_yang ]]; then
+  echo "Creating confd_yang link farm"
+  ln -s ../../../../usr/data/yang ./var/rift/schema/version/confd_yang
+fi
+
+
+if [ -d ./${confd_dir} ]; then
+  echo "Confd workspace directory ${confd_dir} exists."
+else
+  if mkdir -p ./${confd_dir} \
+    && find ./usr/local/confd -not -type d -not -path '*/var/confd/webui/*' -exec cp --parents -al '{}' "./${confd_dir}" \; \
+    && mkdir -p ./${confd_dir}/usr/data \
+    && ln -s ../../../var/rift/schema/version/confd_yang ./${confd_dir}/usr/data/confd_yang; then
+
+    echo "Confd local: ${confd_local}"
+    for d in state log rollback candidate; do
+      rm -rf ./${confd_dir}/usr/local/confd/var/confd/${d}
+      mkdir -p ./${confd_dir}/usr/local/confd/var/confd/${d}
+    done
+    rm -rf ./${confd_dir}/usr/local/confd/var/confd/cdb/*.cdb
+
+  else
+    echo "Could not create confd link farm ${confd_local}"
+    exit 1
+  fi
+fi
+
+cd ./${confd_dir}
+
+cmd="./usr/local/confd/bin/confd --conf ${confd_orig}/etc/rw_confd.conf --smp 4 --start-phase0 --foreground $@"
+echo $cmd
+${cmd} < /dev/null

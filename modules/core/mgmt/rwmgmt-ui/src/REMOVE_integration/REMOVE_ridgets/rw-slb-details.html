@@ -1,0 +1,207 @@
+<link rel="import" href="rw-bargraph.html">
+
+<polymer-element name="rw-slb-details" attributes="slb slbModel">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-slb-details.css"/>
+    <div class="row details">
+      <div class="col">
+        <h2>Current Calls</h2>
+        <table class="datagrid">
+          <tbody>
+            <tr>
+              <th>
+                Active Forward Sessions
+              </th>
+              <td>
+                {{slb.metrics['active-fwd-session']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Active Reverse Sessions
+              </th>
+              <td>
+                {{slb.metrics['active-rev-session']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Forward Packet Received
+              </th>
+              <td>
+                {{slb.metrics['clnt-fwd-pkt-rcvd']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Forward Packet Sent
+              </th>
+              <td>
+                {{slb.metrics['srvr-fwd-pkt-sent']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Reverse Packet Sent
+              </th>
+              <td>
+                {{slb.metrics['srvr-rev-pkt-rcvd']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Reverse Packet Received
+              </th>
+              <td>
+                {{slb.metrics['clnt-rev-pkt-sent']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Forward Packet Dropped
+              </th>
+              <td>
+                {{slb.metrics['fwd-pkt-drop']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Forward Packet Dropped/No Session
+              </th>
+              <td>
+                {{slb.metrics['fwd-pkt-drop-no-session']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Forward Packet Dropped/Max Session
+              </th>
+              <td>
+                {{slb.metrics['fwd-pkt-drop-max-session']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Reverse Packet Dropped
+              </th>
+              <td>
+                {{slb.metrics['rev-pkt-drop']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Reverse Packet Dropped/No Session
+              </th>
+              <td>
+                {{slb.metrics['rev-pkt-drop-no-session']}}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Forward Packets/sec
+              </th>
+              <td>
+                {{slb.metrics['clnt-fwd-rate-pps'] | fmt('0a')}}pps
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Forward Packets/sec
+              </th>
+              <td>
+                {{slb.metrics['srvr-fwd-rate-pps'] | fmt('0a')}}pps
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Reverse Packets/sec
+              </th>
+              <td>
+                {{slb.metrics['srvr-rev-rate-pps'] | fmt('0a')}}pps
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Reverse Packets/sec
+              </th>
+              <td>
+                {{slb.metrics['clnt-rev-rate-pps'] | fmt('0a')}}pps
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Forward Bits/sec
+              </th>
+              <td>
+                {{slb.metrics['clnt-fwd-rate-mbps'] | bits }}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Forward Bits/sec
+              </th>
+              <td>
+                {{slb.metrics['srvr-fwd-rate-mbps'] | bits }}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Server Reverse Bits/sec
+              </th>
+              <td>
+                {{slb.metrics['srvr-rev-rate-mbps'] | bits }}
+              </td>
+            </tr>
+            <tr>
+              <th>
+                Client Reverse Bits/sec
+              </th>
+              <td>
+                {{slb.metrics['clnt-rev-rate-mbps'] | bits }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col {{ {hide : !showProtoStats} | tokenList}}">
+        <h2>Message Response Time</h2>
+        <rw-bargraph id="barGraph" flex values="{{values}}"></rw-bargraph>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer(Platform.mixin({
+      created: function() {
+        this.showProtoStats = false;
+      },
+
+      slbModelChanged: function() {
+        var self = this;
+        this.slbModel.addEventListener("update", this.updatedMetrics.bind(this));
+        this.slbModel.addEventListener("update-config", function() {
+          self.slb = this.slbModel.slb;
+        });
+      },
+
+      updatedMetrics: function() {
+        this.values = this.gatherValues(this.slb.dnsMetrics || this.slb.radiusMetrics);
+      },
+
+      domReady: function() {
+        this.$.barGraph.margin.left = 155;
+      },
+
+      gatherValues: function(metrics) {
+        var self = this;
+        var values = [];
+        if (typeof(metrics) != 'undefined') {
+          _.map(metrics, function (occurances, domain) {
+            self.showProtoStats = true;
+            values.push({label: domain, x: occurances});
+          });
+        }
+        return values;
+      }
+    }, rw.ui));
+  </script>
+</polymer-element>

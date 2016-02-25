@@ -1,0 +1,14 @@
+<polymer-element name="rw-vcs-status-led" attributes="state stateString up">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-vcs-status-led.css"/>  
+  <div class="led {{ {tgStatusIsUp : state == 'up' || state == 'OK' || state == 'STARTING' || state == 'STARTED'} | tokenList }}"></div>
+            {{ {state: state, stateString: stateString} | showState }}
+</template>
+<script>
+  Polymer(Platform.mixin({
+    showState : function(s) {
+      return rw.ui.capitalize(s.stateString ? s.stateString : s.state);
+    }
+  }, rw.ui));
+</script>
+</polymer-element>

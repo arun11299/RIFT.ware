@@ -1,0 +1,283 @@
+* {
+  box-sizing: border-box;
+}
+.button__box {
+  width: 100%;
+  height: 100%;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+.icon + .button__label {
+  margin: 0 0 0 5px;
+}
+.button__size--small {
+  width: 75px !important;
+}
+.button__size--medium {
+  width: 150px !important;
+}
+.button__size--large {
+  width: 400px !important;
+}
+.button__size--icon {
+  width: 42px !important;
+}
+.button__size--full {
+  width: 100% !important;
+}
+.button__size--short {
+  height: 32px !important;
+}
+.button {
+  display: inline-block;
+  width: 200px;
+  height: 42px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  vertical-align: bottom;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  border-color: #212121;
+  color: #ffffff;
+  background: linear-gradient(#878787, #454545);
+}
+.button:hover {
+  background: linear-gradient(#919191, #545454);
+}
+.button:focus {
+  outline-color: #e59700;
+}
+.button:active {
+  background: linear-gradient(#545454, #919191);
+}
+.button__primary {
+  display: inline-block;
+  width: 200px;
+  height: 42px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  vertical-align: bottom;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  border-color: #158abc;
+  color: #ffffff;
+  background: linear-gradient(#67c6ef, #1dabe7);
+}
+.button__primary:hover {
+  background: linear-gradient(#8cd4f2, #41b9ec);
+}
+.button__primary:focus {
+  outline-color: #e59700;
+}
+.button__primary:active {
+  background: linear-gradient(#41b9ec, #8cd4f2);
+}
+.button--is-on {
+  box-shadow: 0 0 8px 0 #1dabe7;
+  border-color: #158abc;
+  background: linear-gradient(#67c6ef, #1dabe7);
+}
+.button--is-on:hover {
+  background: linear-gradient(#8cd4f2, #41b9ec);
+}
+.button--is-on:focus {
+  outline-color: #e59700;
+}
+.button--is-on:active {
+  background: linear-gradient(#41b9ec, #8cd4f2);
+}
+.button__power--is-off {
+  display: inline-block;
+  width: 200px;
+  height: 42px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  vertical-align: bottom;
+  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  border-color: #212121;
+  font-size: 22px;
+  color: #ffffff;
+  background: linear-gradient(#878787, #454545);
+}
+.button__power--is-off:hover {
+  background: linear-gradient(#919191, #545454);
+}
+.button__power--is-off:focus {
+  outline-color: #e59700;
+}
+.button__power--is-off:active {
+  background: linear-gradient(#545454, #919191);
+}
+.button__power--is-on {
+  display: inline-block;
+  width: 200px;
+  height: 42px;
+  margin: 2px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+  vertical-align: bottom;
+  cursor: pointer;
+  transition: all 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  box-shadow: 0 0 8px 0 #1dabe7;
+  border-color: #158abc;
+  font-size: 22px;
+  color: #ffffff;
+  background: linear-gradient(#67c6ef, #1dabe7);
+}
+.button__power--is-on:hover {
+  background: linear-gradient(#8cd4f2, #41b9ec);
+}
+.button__power--is-on:focus {
+  outline-color: #e59700;
+}
+.button__power--is-on:active {
+  background: linear-gradient(#41b9ec, #8cd4f2);
+}
+.button__power--is-on .button__icon,
+.button__power--is-on .button__icon {
+  width: 28px;
+  height: 28px;
+  fill: #ffffff;
+}
+.button__depressed {
+  color: #ffffff;
+  background: linear-gradient(#454545, #878787);
+}
+.button__depressed:hover {
+  background: linear-gradient(#545454, #919191);
+}
+.button__depressed:focus {
+  outline-color: #e59700;
+}
+.button__depressed:active {
+  background: linear-gradient(#919191, #545454);
+}
+.button-group {
+  white-space: nowrap;
+}
+.button-group .button {
+  height: 32px;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 16px;
+}
+.button-bar__first-button {
+  border-radius: 3px 0px 0px 3px;
+}
+.button-bar__inner-button {
+  border-radius: 0;
+  border-left: 0;
+}
+.button-bar__last-button {
+  border-radius: 0px 3px 3px 0px;
+  border-left: 0;
+}
+.button-bar--is-selected {
+  color: #ffffff;
+  background: linear-gradient(#67c6ef, #1dabe7);
+}
+.button-bar--is-selected:hover {
+  background: linear-gradient(#8cd4f2, #41b9ec);
+}
+.button-bar--is-selected:focus {
+  outline-color: #e59700;
+}
+.button-bar--is-selected:active {
+  background: linear-gradient(#41b9ec, #8cd4f2);
+}
+.icon {
+  /*width: 32px;
+  height: 32px;*/
+  fill: white;
+}
+.icon--small {
+  width: 20px;
+  height: 20px;
+}
+.icon__expand-collapse {
+  width: 10px;
+  height: 10px;
+  cursor: default;
+}
+.icon__expand-collapse:hover {
+  fill: #49bdee;
+}
+.loading-icon {
+  -moz-animation: loading 1.5s infinite linear;
+  -ms-animation: loading 1.5s infinite linear;
+  -webkit-animation: loading 1.5s infinite linear;
+}
+@-webkit-keyframes loading {
+  from {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes loading {
+  from {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+.config-nav-label {
+  display: inline-block;
+  min-width: 160px;
+}
+.config-nav-toolbar {
+  display: inline-block;
+}
+#navButtons > .button {
+  float: left;
+}
+.config-content {
+  margin: 10px 10px 10px 20px;
+}

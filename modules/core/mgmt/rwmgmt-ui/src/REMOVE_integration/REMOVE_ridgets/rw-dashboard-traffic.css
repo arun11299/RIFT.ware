@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+}
+h1 {
+  min-height: 36px;
+  margin: 0 0 5px 0;
+  padding: 0px;
+  font-size: 32px;
+  font-weight: 100;
+  color: #d4d4d4;
+  text-transform: uppercase;
+}
+h2 {
+  min-height: 28px;
+  margin: 0px 0px 10px 0;
+  padding: 0px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 400;
+  color: #d4d4d4;
+}
+.dashpanel {
+  height: 300px;
+}
+.dashpanel:last-child {
+  margin: 0;
+}
+#gauges {
+  -webkit-flex: 1 1 auto;
+  -moz-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-justify-content: space-around;
+  -moz-justify-content: space-around;
+  -ms-justify-content: space-around;
+  justify-content: space-around;
+  height: 420px;
+}
+.gauge-group {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-content: center;
+  -moz-align-content: center;
+  -ms-align-content: center;
+  align-content: center;
+}
+.gauge-group > h2 {
+  margin-bottom: 0px;
+  color: #cccccc;
+  font-weight: 200;
+}
+rw-gauge {
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+:host {
+  display: block;
+  -webkit-flex: 1 1 auto;
+  -moz-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: -ms-flex;
+  display: flex;
+}
+#traffic-control-dashpanel {
+  width: 250px;
+  min-width: 250px;
+  border-right: 1px solid #121212;
+  -webkit-box-shadow: 1px 0px 0px 0px #5e5e5e;
+  -moz-box-shadow: 1px 0px 0px 0px #5e5e5e;
+  box-shadow: 1px 0px 0px 0px #5e5e5e;
+  padding-right: 10px;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  max-width: 400px;
+}
+#traffic-control-dashpanel-vnf {
+  width: 400px;
+  min-width: 250px;
+  height: 280px;
+  border-right: 1px solid #121212;
+  padding: 35px;
+}

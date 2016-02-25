@@ -1,0 +1,496 @@
+[config require=MAKE]
+[global fail_pattern=[Ee][Rr][Rr][Oo][Rr]]
+
+
+[macro first_query]
+    [doc Start a query]
+    ~echo "
+    ~ <start-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <foreach>
+    ~     /x/host[enabled = 'true']
+    ~   </foreach>
+    ~   <sort-by>name</sort-by>
+    ~   <sort-by>number</sort-by>
+    ~   <limit>100</limit>
+    ~   <offset>1</offset>
+    ~   <select>
+    ~     <label>Host name</label>
+    ~     <expression>name</expression>
+    ~     <result-type>string</result-type>
+    ~   </select>
+    ~ </start-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    ?.*<query-handle>([0-9]+)</query-handle>.*
+    [global queryhandle=${1}]
+
+    [doc Get the query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <value>One</value>
+        </select>
+      </result>
+      <result>
+        <select>
+          <label>Host name</label>
+          <value>Three</value>
+        </select>
+      </result>
+    </query-result>
+    """
+
+    [doc Get the empty (no more data) query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <no-more-data/>
+      </result>
+    </query-result>
+    """
+
+    [doc Stop the query]
+    ~echo "
+    ~ <stop-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </stop-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+[macro second_query]
+    [doc Start a second query]
+    ~echo "
+    ~ <start-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <foreach>
+    ~     /x/host[enabled = 'false']
+    ~   </foreach>
+    ~   <sort-by>number</sort-by>
+    ~   <limit>2</limit>
+    ~   <select>
+    ~     <expression>number</expression>
+    ~     <result-type>string</result-type>
+    ~   </select>
+    ~   <select>
+    ~     <label>Host name</label>
+    ~     <expression>name</expression>
+    ~     <result-type>path</result-type>
+    ~     <result-type>string</result-type>
+    ~   </select>
+    ~ </start-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    ?.*<query-handle>([0-9]+)</query-handle>.*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Five']/example:name</path>
+          <value>Five</value>
+        </select>
+        <select>
+          <value>5</value>
+        </select>
+      </result>
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Four']/example:name</path>
+          <value>Four</value>
+        </select>
+        <select>
+          <value>4</value>
+        </select>
+      </result>
+    </query-result>
+    """
+
+    [doc Get the query result, more...]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Two']/example:name</path>
+          <value>Two</value>
+        </select>
+        <select>
+          <value>2</value>
+        </select>
+      </result>
+    </query-result>
+    """
+    [doc Get the empty (no more data) query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <no-more-data/>
+      </result>
+    </query-result>
+    """
+
+    [doc Stop the query]
+    ~echo "
+    ~ <stop-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </stop-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+#    ~     /x/host[enabled = 'false'][starts-with(name,'F')]
+#    ~   <sort-by>number</sort-by>
+[macro third_query]
+    [doc Start a third query]
+    ~echo "
+    ~ <start-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <foreach>
+    ~     /x
+    ~   </foreach>
+    ~   <sort-by>number</sort-by>
+    ~   <limit>2</limit>
+    ~   <select>
+    ~     <label>First host values</label>
+    ~     <expression>host</expression>
+    ~     <result-type>string</result-type>
+    ~   </select>
+    ~ </start-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    ?.*<query-handle>([0-9]+)</query-handle>.*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>First host values</label>
+          <value>Five5false</value>
+        </select>
+      </result>
+    </query-result>
+    """
+
+    [doc Stop the query]
+    ~echo "
+    ~ <stop-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </stop-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+[macro reset_query]
+    [doc Start a query to be reset]
+    ~echo "
+    ~ <start-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <foreach>
+    ~     /x/host[enabled = 'false']
+    ~   </foreach>
+    ~   <sort-by>number</sort-by>
+    ~   <limit>2</limit>
+    ~   <select>
+    ~     <label>Host name</label>
+    ~     <expression>name</expression>
+    ~     <result-type>path</result-type>
+    ~   </select>
+    ~ </start-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    ?.*<query-handle>([0-9]+)</query-handle>.*
+    [global queryhandle=${1}]
+
+
+    [doc Get the query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Five']/example:name</path>
+        </select>
+      </result>
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Four']/example:name</path>
+        </select>
+      </result>
+    </query-result>
+    """
+
+    [doc Reset the query]
+    ~echo "
+    ~ <reset-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </reset-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+
+    [doc Get the query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Five']/example:name</path>
+        </select>
+      </result>
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Four']/example:name</path>
+        </select>
+      </result>
+    </query-result>
+    """
+
+    [doc Get the query result, more...]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <select>
+          <label>Host name</label>
+          <path xmlns:example="http://example.com/example">/example:x/example:host[example:name='Two']/example:name</path>
+        </select>
+      </result>
+    </query-result>
+    """
+    [doc Get the empty (no more data) query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <no-more-data/>
+      </result>
+    </query-result>
+    """
+
+    [doc Stop the query]
+    ~echo "
+    ~ <stop-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </stop-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+
+[macro nothing_found_query]
+    [doc Start a nothing found query]
+    ~echo "
+    ~ <start-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <foreach>
+    ~     /x/host[starts-with(name,'X')]
+    ~   </foreach>
+    ~   <sort-by>number</sort-by>
+    ~   <select>
+    ~     <label>Host name</label>
+    ~     <expression>name</expression>
+    ~     <result-type>string</result-type>
+    ~   </select>
+    ~ </start-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    ?.*<query-handle>([0-9]+)</query-handle>.*
+    [global queryhandle=${1}]
+
+
+    [doc Get the empty (no more data) query result]
+    ~echo "
+    ~ <fetch-query-result xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </fetch-query-result>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 200 OK
+    """??
+    <query-result xmlns="http://tail-f.com/ns/tailf-rest-query">
+      <result>
+        <no-more-data/>
+      </result>
+    </query-result>
+    """
+
+    [doc Stop the query]
+    ~echo "
+    ~ <stop-query xmlns=\"http://tail-f.com/ns/tailf-rest-query\">
+    ~   <query-handle>${queryhandle}</query-handle>
+    ~ </stop-query>
+    ~"
+    ~ |
+    ~ curl -i 'http://admin:admin@localhost:8008/api/query'
+    ~ -X POST -T -
+    ! -H "Content-Type: application/vnd.yang.data+xml"
+    ?HTTP/1.1 204 No Content
+[endmacro]
+
+################################################################################
+
+[shell confd]
+    !confd --status
+    ?status: started
+
+
+[shell query]
+    [invoke first_query]
+    [invoke second_query]
+    [invoke third_query]
+    [invoke reset_query]
+    [invoke nothing_found_query]
+
+
+
+
+[cleanup]

@@ -1,0 +1,37 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-vcs-model.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+<template>
+  <rw-vcs-model id="test0"
+    on-update="{{testUpdate}}"
+    rate="20"
+    ></rw-vcs-model>
+  sector = {{$.test0.sector}}
+</template>
+<script>
+
+  rw.api.setOffline('foo');
+
+  Polymer('my-test', {
+    testUpdate: function() {
+      var test0 = this.$.test0;
+      suite('model', function() {
+        test('attached', function() {
+          console.log('asserting');
+          assert.isNotNull(test0.sector);
+        });
+      });
+      htmlTestRunner(mocha.run());
+    }
+  });
+</script>
+</polymer-element>
+
+<div class="viewport__body"> 
+  <div id="mocha"></div>
+  <my-test></my-test>
+</div>

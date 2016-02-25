@@ -1,0 +1,75 @@
+<div>
+    <div ng-if="trafgenControl.orientation == 'vertical'">
+        <div class="vertical trafControlPanel">
+            <div class="primaryButtons">
+                <span ng-class="{'button--is-on' : trafgenControl.g.startedPerceived}" class="button button__size--full"  ng-click="trafgenControl.toggleStarted()">
+                    <span class="button__box">
+                        <svg class="icon icon--small" ng-class="{'loading-icon' : trafgenControl.loading}">
+                            <use ng-attr-xlink:href="{{'#' + trafgenControl.buttonIcon}}" xlink:href=""/>
+                        </svg>
+                        <span class="button__label">{{trafgenControl.g.startedPerceived ? 'Active' : 'Off'}}</span>
+                    </span>
+                </span>
+            </div>
+            <div class="dash-label">
+                <label for="rate" class="form__item__label">Gbps</label>
+            </div>
+            <div class="dash-slider">
+                <div class="dash-slider-start">0</div>
+                <rw-slider id="rate" class="dash-slider-slider" name="rate" min="0" max="100" step="1" value="trafgenControl.g.ratePerceived"></rw-slider>
+                <div class="dash-slider-end">100</div>
+            </div>
+            <div class="dash-slider-value">{{trafgenControl.g.ratePerceived | fmt:'0'}}</div>
+            <div class="dash-label">
+                <label for="packetSizeRange" class="form__item__label">Packet Size</label>
+            </div>
+            <div class="dash-slider">
+                <div class="dash-slider-start">64</div>
+                <rw-slider id="packetSizeRange" class="dash-slider-slider" name="rate" min="64" max="1400" step="64" value="trafgenControl.g.packetSizePerceived"></rw-slider>
+                <div class="dash-slider-end">1400</div>
+            </div>
+            <div class="dash-slider-value">
+                <span>{{trafgenControl.g.packetSizePerceived | fmt:'0'}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="trafgenControl.orientation == 'horizontal'">
+        <div class="horizontal trafControlPanel">
+            <div class="horizontal primaryButtons">
+                <div ng-class="{'button--is-on' : trafgenControl.g.startedPerceived}" class="button button__size--short button__size--medium" ng-click="trafgenControl.toggleStarted()">
+                    <div class="button__box">
+                        <svg class="icon icon--small" ng-class="{'loading-icon' : trafgenControl.loading}">
+                            <use ng-attr-xlink:href="{{'#' + trafgenControl.buttonIcon}}" xlink:href=""/>
+                        </svg>
+                        <span class="button__label">{{trafgenControl.g.startedPerceived ? 'Active' : 'Off'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slider-component horizontal">  <!-- Had to add this markup in to create a grouping of the component for this view-->
+                <div class="dash-label">
+                    <label for="rate" class="form__item__label">Rate</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">0</div>
+                    <rw-slider id="rateRange" class="horizontal-dash-slider" name="rate" min="0" max="100" step="1" value="trafgenControl.g.ratePerceived"></rw-slider>
+                    <div class="dash-slider-end">100</div>
+                </div>
+                <div class="dash-slider-value">{{trafgenControl.g.ratePerceived | fmt:'0'}}</div>
+            </div>
+            <div class="slider-component horizontal">
+                <div class="dash-label">
+                    <label for="packetSize" class="form__item__label">Packet Size</label>
+                </div>
+                <div class="dash-slider">
+                    <div class="dash-slider-start">64</div>
+                    <rw-slider id="packetSizeRange" class="horizontal-dash-slider" name="rate" min="64" max="1400" step="64" value="trafgenControl.g.packetSizePerceived"></rw-slider>
+                    <div class="dash-slider-end">1400</div>
+                </div>
+                <div class="dash-slider-value">
+                    <span>{{trafgenControl.g.packetSizePerceived | fmt:'0'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

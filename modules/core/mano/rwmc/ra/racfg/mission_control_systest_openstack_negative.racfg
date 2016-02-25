@@ -1,0 +1,18 @@
+{
+  "test_name":"TC_MISSION_CONTROL_OPENSTACK_NEGATIVE",
+  "commandline":"./mission_control_negative_systest --cloud-type 'openstack' --cloud-host '10.66.4.115'",
+  "test_description":"System test for mission control(Openstack) negative cases",
+  "run_as_root": false,
+  "status":"broken",
+  "keywords":["nightly","smoke"],
+  "timelimit": 1600,
+  "networks":[],
+  "vms":[
+    {
+      "name": "VM",
+      "memory": 8192,
+      "cpus": 4
+    }
+  ]
+}
+

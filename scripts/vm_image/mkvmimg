@@ -1,0 +1,655 @@
+#!/bin/bash
+
+# 
+# (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+#
+
+#
+# 12-24-2014 -- JLM
+# removing the naming system. We will be only be using one set of flags from here on out
+# deprecating the -d switch -- there is a script inside the VM that can enable developer mode
+# 1-7-2015 -- JLM -- parameterize the kernel rev
+#
+# WARNING TO ANYONE MERGING THIS FILE TO/FROM ATG
+# THIS FILE WAS MANUALLY MERGED WITH ATG AND COPIED TO MASTER 
+#
+
+
+set -o pipefail
+
+trap "_on_exit" EXIT INT
+trap "exit 1" 2
+
+_on_exit() {
+	local m i
+
+	for m in $(echo ${_MOUNTS} | sort); do
+		echo "Unmounting ${m}..."
+		umount -f ${m}
+	done
+
+	_MOUNTS=""
+
+	for m in ${_NBD_NODES}; do
+		echo "Unexporting ${m}..."
+		kpartx -d ${m}
+		qemu-nbd -d ${m}
+	done
+
+	_NBD_NODES=""
+}
+
+die() {
+	echo
+	echo "ERROR2: $*"
+	echo
+	exit 1
+}
+
+announce() {
+	echo -e "=============================\n$*\n===========================" >&2
+}
+
+fetch_seed() {
+	announce $FUNCNAME
+	if [ -f ${SEED_PATH} ]; then
+		return
+	fi
+
+	if [[ ${SEED_URL} =~ ^http:// ]]; then
+		echo "curl ${SEED_URL}/${SEED} "
+		curl --location \
+			--output ${SEED_PATH} \
+			${SEED_URL}/${SEED} \
+			|| die "Failed to download ${SEED_URL}/${SEED}"
+	elif [[ ${SEED_URL} =~ ^file:// ]]; then
+		cp ${SEED_URL#file:/}/${SEED} ${SEED_PATH} \
+			|| die "Failed to copy ${SEED_URL}/${SEED}"
+	else
+		die "Unknown resource type for seed url ${SEED_URL}"
+	fi
+}
+
+_find_free_nbd_node() {
+	local node
+
+	for node in /dev/nbd[0-9]*; do
+		nbd-client -c $node  >/dev/null 2>&1 
+		if [ $? -ne 1 ]; then 
+			continue
+		fi
+		if [ ! -f /sys/block/${node##*/}/pid ]; then
+			echo ${node}
+			break
+		fi
+	done
+}
+
+setup() {
+	local nbd_dev
+	local mp
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	if ! lsmod | grep -q nbd; then
+		modprobe nbd max_devices=256 || die "Failed to modprobe nbd"
+	fi
+
+	mkdir -p ${STAGING} 2>&1
+
+	nbd_dev=$(_find_free_nbd_node)
+
+	if [ -z "${nbd_dev}" ]; then
+		die "Failed to find free nbd node"
+	fi
+
+	qemu-nbd -c ${nbd_dev} ${SEED_PATH}\
+		|| die "Failed to qemu-nbd ${SEED_PATH} on ${nbd_dev}"
+	_NBD_NODES="${_NBD_NODES} ${nbd_dev}"
+	kpartx -s -a ${nbd_dev} || die "kpartx ${nbd_dev} failed"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	mp=/dev/mapper/${nbd_dev##*/}p1
+	if ! mount ${mp} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Failed to mount ${SEED_PATH} (${mp}) on ${tmp_mp})"
+	fi
+	if [ -n "REBUILD" ]; then
+		rsync -a ${tmp_mp}/ ${STAGING}/
+		rc=$?
+	else
+		rsync -a --delete-after ${tmp_mp}/ ${STAGING}/
+		rc=$?
+	fi
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync to ${STAGING}"
+	fi
+
+	for mp in sys proc dev; do
+		mount -o bind /${mp} ${STAGING}/${mp} || die "Failed to bind mount ${mp}"
+		_MOUNTS="${STAGING}/${mp} ${_MOUNTS}"
+	done
+
+	cp -L /etc/resolv.conf ${STAGING}/etc/
+}
+
+pack_qcow2() {
+	local bind_mp
+	local img_size
+	local sha
+	local dest
+	local nbd_dev
+	local p_dev
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	img_size=$(du --exclude='proc/*' --exclude='sys/*' -sk ${STAGING} | cut -f1)
+	img_size=$((img_size + ${_EXTRA_DISK_SPACE_K} + 500 * 1024))
+
+	dest=${IMG_PREFIX}.qcow2
+	echo ${sha} >${STAGING}/etc/rift.hash
+
+	qemu-img create -f qcow2 ${dest} ${img_size}k
+	nbd_dev=$(_find_free_nbd_node)
+
+	if [ -z "${nbd_dev}" ]; then
+		die "Failed to find free nbd node"
+	fi
+
+	qemu-nbd -c ${nbd_dev} ${dest} || die "Failed to qemu-nbd ${dest} on ${nbd_dev}"
+	_NBD_NODES="${_NBD_NODES} ${nbd_dev}"
+
+	echo ",," | sfdisk ${nbd_dev} || die "Failed to partition ${nbd_dev}"
+	kpartx -s -a ${nbd_dev} || die "kpartx ${nbd_dev} failed"
+	p_dev=/dev/mapper/${nbd_dev##*/}p1
+	mkfs.ext4 -q ${p_dev} || die "Failed to mkfs ${p_dev}"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	if ! mount ${p_dev} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Filed to mount ${dest} on ${tmp_mp}"
+	fi
+
+	rsync -a --exclude='/sys/*' --exclude='/proc/*' ${STAGING}/ ${tmp_mp}/
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		umount -f ${tmp_mp}
+		die "Failed to sync from ${STAGING}"
+	fi
+
+	for bind_mp in dev proc sys; do
+		mount -o bind /${bind_mp} ${tmp_mp}/${bind_mp} || die "Failed to bind mount ${tmp_mp}/${bind_mp}"
+		_MOUNTS="${_MOUNTS} ${tmp_mp}/${bind_mp}"
+	done
+
+	# grub2 install isonly really needed for qcow2/kvm -- AWS uses grub
+
+	set -x
+	chroot ${tmp_mp} yum install -y grub2 || die "Failed to yum install grub2"
+	chroot ${tmp_mp} grub2-mkconfig -o /boot/grub2/grub.cfg || die "Failed to create grub2 config"
+	chroot ${tmp_mp} grub2-set-default "Fedora, with Linux ${KERNEL_REV}"
+
+	cat > ${tmp_mp}/boot/grub2/device.map <<-EOF
+		(hd0) ${nbd_dev}
+	EOF
+
+	chroot ${tmp_mp} grub2-install -f ${nbd_dev} || "Failed to grub2-install"
+
+	cat > ${tmp_mp}/etc/fstab <<-EOF
+		/dev/vda1 / ext4    defaults,noatime 0 0
+	EOF
+
+	cat > ${tmp_mp}/etc/rc.d/rc.local <<-EOF
+#!/bin/bash
+
+
+############################################
+# Below code only run once at the first boot
+[ -f /root/.firstboot ] && exit 1
+
+touch /root/.firstboot
+
+if lspci | grep -q "Co-processor: Intel Corporation Device 0443" ; then
+   echo "Leave qat-service running"
+   chkconfig qat_service on
+   service qat_service start
+else 
+   echo "Disable qat-service running"
+   chkconfig qat_service off
+   service qat_service stop
+fi
+
+exit 1
+	EOF
+	chmod +x ${tmp_mp}/etc/rc.d/rc.local
+
+	for bind_mp in dev proc sys; do
+		umount -f ${tmp_mp}/${bind_mp}
+		_MOUNTS=$(echo ${_MOUNTS} | sed "s,${tmp_mp}/${bind_mp},,")
+	done
+
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+	[ -n "${SUDO_UID}" ] && chown ${SUDO_UID} ${dest}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync from ${STAGING}"
+	fi
+}
+
+pack_image() {
+	local img_size
+	local sha
+	local dest
+	local nbd_dev
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	img_size=$(du --exclude='proc/*' --exclude='sys/*' -sk ${STAGING} | cut -f1)
+	img_size=$((img_size + ${_EXTRA_DISK_SPACE_K} + 500 * 1024))
+
+	dest=${IMG_PREFIX}.img
+
+	dd if=/dev/zero of=${dest} bs=1024 count=${img_size} || die "Failed to create disk image"
+	mkfs.ext4 -F -q ${dest} || die "Failed to format ${dest}"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	if ! mount -o loop ${dest} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Filed to mount ${dest} on ${tmp_mp}"
+	fi
+
+	rsync -a --exclude='/sys/*' --exclude='/proc/*' ${STAGING}/ ${tmp_mp}/
+	rc=$?
+
+	# NOTE this menu is for grub which is used for AWS
+	# kvm uses grub2 
+	cat > ${tmp_mp}/boot/grub/menu.lst <<-EOF
+		default=0
+		timeout=0
+
+		title Fedora ($KERNEL_REV})
+			root (hd0)
+			kernel /boot/vmlinuz-${KERNEL_REV} ro root=/dev/xvda1 console=hvc0 console=ttyS0,115200n8 LANG=en_US.UTF-8 
+			initrd /boot/initramfs-${KERNEL_REV}.img
+	EOF
+
+	cat > ${tmp_mp}/etc/fstab <<-EOF
+		/dev/xvda1 / ext4    defaults,noatime 0 0
+	EOF
+
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+	[ -n "${SUDO_UID}" ] && chown ${SUDO_UID} ${dest}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync from ${STAGING}"
+	fi
+}
+
+cmd() {
+	echo "${@:0:40} ..." >&2
+	if [ "${STAGING}" == "" ]; then
+			/bin/bash -c "$*" || die "Failed to run $@"
+	else
+			chroot ${STAGING} /bin/bash -c "$*" || die "Failed to run $@"
+	fi
+
+	echo "...done" >&2
+}
+
+yum_install() {
+	cmd /bin/yum --assumeyes --nogpgcheck install "$@" || die "yum '$@' failed"
+}
+
+pip_install() {
+	cmd /bin/pip2 install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/wheelhouse "$@" || die "pip install '$@' failed"
+}
+
+pip3_install() {
+	cmd /bin/python3-pip install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/python3_wheelhouse "$@" \
+		|| die "pip3 install '$@' failed"
+}
+
+pip3_install_kilo_modules() {
+	cmd /bin/python3-pip install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/python3_kilo_wheelhouse "$@" \
+		|| die "pip3 install '$@' failed"
+}
+
+setup_fedora_repos() {
+	announce $FUNCNAME
+	cmd yum clean all
+	rm -f $STAGING/etc/yum.repos.d/*
+	cmd  rpm --rebuilddb
+	cmd yum localinstall --assumeyes http://repo.riftio.com/releases/riftware-release-latest.rpm
+
+	cmd yum clean all
+	cmd yum makecache
+
+	yum_install python3 python3-pip
+	cat  $STAGING/bin/python3-pip
+	ls -ld $STAGING/bin/*pip*
+	cmd python3-pip install --upgrade --use-wheel --no-index --find-links=http://wheel.eng.riftio.com/mirrors/python3_wheelhouse pip==7.1.2 || die 'pip3 upgrade failed'
+	perl -i -p -e 's/1\.4\.[0-9]/7.1.2/g;' $STAGING/bin/python3-pip
+
+	yum_install yum-utils
+	cmd yum-config-manager --quiet --enable updates3
+}
+
+# this needs to be after the .rpms installs so that yum-utils is installed
+config_rw_repos() {
+	announce $FUNCNAME
+
+	# release(stable) is the default in the riftware.repo
+	if [[ "$RW_REPO" = "nightly" ]]; then
+		cmd yum-config-manager --enable RIFT.ware-nightly
+	elif [[ "$RW_REPO" = "testing" ]]; then
+		cmd yum-config-manager --enable RIFT.ware-testing
+	fi
+
+	cmd yum clean all
+	cmd yum makecache
+
+}
+
+install_kernel() {
+
+	yum_install kernel-${KERNEL_REV} kernel-devel-${KERNEL_REV} kernel-modules-extra-${KERNEL_REV}
+
+}
+
+
+
+setup_usr_rift() {
+	announce $FUNCNAME
+	yum_install rift_scripts
+	cmd adduser -m -s /bin/bash -U rift 
+	echo "rift:rift" | cmd chpasswd
+
+	rm -rf $STAGING/home/rift/scripts
+	ln -s /usr/rift/scripts $STAGING/home/rift/scripts
+	yum_install riftware-base
+
+
+}
+
+setup_access() {
+	announce $FUNCNAME
+	cmd systemctl enable sshd
+    echo root:toor | cmd chpasswd
+    echo "ALL ALL=NOPASSWD: ALL" >> ${STAGING}/etc/sudoers
+    sed -i '/requiretty/s/^/#/' ${STAGING}/etc/sudoers || die "sed failed"
+
+	install --group=root --owner=root --mode=700 -d $STAGING/root/.ssh/
+	cp $RIFTROOT/scripts/vm/root/.ssh/* $STAGING/root/.ssh/
+	chmod 600 $STAGING/root/.ssh/*
+
+    perl -i -p -e  's/#PasswordAuthentication yes/PasswordAuthentication yes/;
+    				s/#PermitEmptyPasswords no/PermitEmptyPasswords no/;
+    				s/PasswordAuthentication no/#PasswordAuthentication no/;' ${STAGING}/etc/ssh/sshd_config
+        cat <<EOF >>${STAGING}/etc/ssh/sshd_config
+Match User root
+        PasswordAuthentication no
+EOF
+	if [ -e ${STAGING}/etc/selinux/config ]; then
+			sed -i 's,^\(SELINUX=\).*,\1permissive,' ${STAGING}/etc/selinux/config || die "sed failed"
+	fi
+
+}
+
+
+output_images() {
+	local output_type
+
+	announce $FUNCNAME
+	for output_type in ${OUTPUTS}; do
+		case ${output_type} in
+			qcow2)
+				pack_qcow2
+				;;
+			disk-image)
+				pack_image
+				;;
+			*)
+				echo
+				echo "WARNING:  Unknown output type '${output_type}'"
+				echo
+				;;
+		esac
+	done
+}
+
+RIFTROOT=$(dirname $(dirname $(dirname $(realpath $0))))
+BUILDDIR="${RIFTROOT}/.build/vm"
+
+#SEED_URL=http://download.fedoraproject.org/pub/fedora/linux/releases/20/Images/x86_64/
+SEED_URL=http://sharedfiles/common/vm
+SEED=Fedora-x86_64-20-20131211.1-sda.qcow2
+SEED_PATH=""
+FEDORA_REL=20
+OUTPUTS="qcow2 disk-image"
+IMG_PREFIX="rift"
+INSTALL_ONLY=false
+INSTALL_EXTRA=true
+ENABLE_LAB=fals3
+RW_REPO="release"
+
+# Are we building a local RIFT.io dev image.  If so
+# additional configuration will be included that assumes
+# a local connection to eng.riftio.com
+RIFT_DEV=false
+
+STAGING=${BUILDDIR}/image-staging
+INCLUDE_SW=false
+CLEAN_FIRST=false
+
+_YUM_CONFIG=${STAGING}/build-yum.conf
+_MOUNTS=""
+_NBD_NODES=""
+
+# This is roughly the amount of space required to hold the .install tree when
+# built with NOT_DEVELOPER_BUILD=TRUE, also known as 1.5G
+_EXTRA_DISK_SPACE_K=1572864
+KERNEL_REV="3.12.9-301.fc20.x86_64"
+
+usage() {
+	MODES=$(ls $(dirname $0).rpm)
+	cat <<-EOF
+		$(basename $0) [ARGUMENTS]
+
+		This script is used to create base VM images capable of running the RW.OS.  In addition
+		it can also add a full RIFT.io developer environment which adds internal tools like
+		ldap and nfs.
+
+		ARGUMENTS:
+			-h, --help               This screen
+			-c, --clean		 clean the build area
+
+			-b, --builddir [PATH]    Directory to use for building the build [${BUILDDIR}]
+			-p, --prefix             Prefix for the image filename [${IMG_PREFIX}]
+			-s, --seed [URL]         Image seed [${SEED_URL}/${SEED}]
+			-r, --rwrepo [REPO] 	 RW Repo to enable: release/testing/nightly [${RW_REPO}]
+			-o, --outputs [OUTPUTS]  Comma seperated list of images to generate [${OUTPUTS}]
+			--install-only           Only install packages, do not produce images
+			-m, --modes [MODES]      Include packages for specified modes
+			-e, --extra              extra space to reserve in GB
+
+		OUTPUTS:
+			qcow2:         Openstack/kvm suitable image
+			disk-image:    Raw disk image, suitable for EC2
+
+		EXAMPLES:
+			build an image to be used in our environment, run in $RIFT_ROOT:
+			mkdir tmp
+			sudo ./scripts/cloud/mkvmimage -d -b tmp -o qcow2
+
+		MODES:
+			one or more of $MODES
+			
+	EOF
+}
+
+
+while [ $# -gt 0 ]; do
+
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-b|--builddir)
+			shift
+			BUILDDIR=${1}
+			;;
+		-p|--prefix)
+			shift
+			IMG_PREFIX=${1}
+			;;
+		-r|--rwrepo)
+			shift
+			RW_REPO=${1}
+			;;
+		-s|--seed)
+			shift
+			SEED_URL=${1%/*}
+			SEED=${1##*/}
+			;;
+		-e|--extra)
+			shift
+			_EXTRA_DISK_SPACE_K=$(expr $1 \* 1024 \* 1024)
+			;;
+		-o|--outputs)
+			shift
+			OUTPUTS=$(echo ${1} | tr ',' ' ')
+			;;
+		--install-only)
+			INSTALL_ONLY=true
+			;;
+		--modes|-m)
+			shift
+			modes_in="$modes_in ${1}"
+			;;
+		--clean|-c)
+			CLEAN_FIRST=true
+			;;
+		*)
+			set -x
+			echo "args= $# "
+			#die "Unknown argument $1"
+			;;
+	esac
+	shift
+done
+
+if [ ${UID} != 0 ]; then
+	die "$(basename $0) must be run as root"
+fi
+
+VM_DIR=$(dirname $0)
+if $CLEAN_FIRST; then
+	rm -rf $BUILDDIR
+fi
+mkdir -p $BUILDDIR
+# process MODES
+
+MODES=" "
+
+add_mode2() {
+	if [[ "$MODES" =~ " $1 " ]]; then
+		return
+	fi
+	if [ -f $VM_DIR/${1}.depends ]; then
+		for dep in $(cat $VM_DIR/${1}.depends); do
+			add_mode2 $dep
+		done
+	fi
+	MODES=" $MODES $1 "
+}
+
+add_mode() {
+	IMG_PREFIX="${IMG_PREFIX}-${1}"
+	add_mode2 $1
+}
+
+for mode in $modes_in; do
+	add_mode $mode
+done
+
+sha=$(git rev-parse --short HEAD)
+if [ -z "${sha}" ]; then
+	die "Failed to find a git sha"
+fi
+IMG_PREFIX="${IMG_PREFIX}-${sha}"
+
+
+announce "BUILIDING $IMG_PREFIX "
+
+
+#check_build_area  -- we cannot be under $RIFT_ROOT unless we are also in .build
+# JLM -- IS THIS STILL TRUE????
+x=$(realpath $BUILDDIR)
+if [[ $x =~ $RIFTROOT && ! $x =~ $RIFTROOT/.build ]]; then
+	echo "ERROR $x is not an approriate BUILDDIR. It must not be inside RIFTROOT unless it is under .build"
+	exit 1
+fi
+
+
+STAGING=${BUILDDIR}/image-staging
+if ${INSTALL_ONLY}; then
+	STAGING=""
+fi
+
+SEED_PATH=${BUILDDIR}/${SEED}
+
+if ! ${INSTALL_ONLY}; then
+	fetch_seed
+	setup
+fi
+
+setup_fedora_repos
+install_kernel
+
+for mode in $MODES; do
+	announce "installing $mode"
+	basename="$VM_DIR/$mode"
+	if [ -s $basename.setup.sh ]; then
+		source $basename.setup.sh
+	fi
+	if [ -s $basename.rpms ]; then
+		yum_install $(cat $basename.rpms)
+	fi
+	if [ -s $basename.pip3 ]; then
+		pip3_install $(cat $basename.pip3)
+	fi
+	if [ -s $basename.kilo ]; then
+		pip3_install_kilo_modules $(cat $basename.kilo)
+	fi
+	if [ -s $basename.config.sh ]; then
+		source $basename.config.sh
+	fi
+done
+
+# needs to happen after .rpm installs to yum-utils is installed
+config_rw_repos
+setup_usr_rift
+
+setup_access
+
+if ${INSTALL_ONLY}; then
+	exit 0
+fi
+
+output_images
+
+_on_exit
+
+# vim: noet

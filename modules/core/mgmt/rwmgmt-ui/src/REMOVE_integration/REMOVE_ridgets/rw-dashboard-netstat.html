@@ -1,0 +1,32 @@
+<link rel="import" href="rw-dashboard-iface-netstat.html">
+
+<polymer-element name="rw-dashboard-netstat" attributes="service rate">
+<template>
+  <style>
+  :host {
+    display: block;
+  }
+  hr {
+    width: 100%;
+  }
+  </style>
+  <template repeat="{{connector, i in service.connector}}">
+    <template if="{{i > 0}}">
+      <hr/>
+    </template>
+    <rw-dashboard-iface-netstat
+      connector="{{connector}}"
+      rate="{{rate}}"
+      ></rw-dashboard-iface-netstat>
+  </template>
+</template>
+<script>
+Polymer({
+  rateChanged: function() {
+    if (this.service) {
+      this.service.rate = this.rate;          
+    }
+  }
+});
+</script>
+</polymer-element>

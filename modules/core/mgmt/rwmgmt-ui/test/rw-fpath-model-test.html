@@ -1,0 +1,48 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-vcs-model.html">
+<link rel="import" href="../integration/ridgets/rw-fpath-model.html">
+<link rel="import" href="../integration/ridgets/rw-services-model.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<polymer-element name="my-test">
+  <template>
+    <rw-vcs-model id="vcs"
+      on-update="{{vcsUpdate}}"
+      ></rw-vcs-model>
+    <rw-services-model id="vnf"
+      on-update="{{vnfUpdate}}"
+      ></rw-services-model>
+    <rw-fpath-model
+      id="test0"
+      on-update="{{test}}"
+      ></rw-fpath-model>
+    sector BPS: {{$.test0.sector.tx_rate_mbps}}<br>
+    vnf BPS: {{$.test0.tx_rate_mbps}}<br>
+  </template>
+  <script>
+    rw.api.setOffline('test');
+    Polymer({
+      test: function() {
+        var test0 = this.$.test0;
+        suite('rw-gauge', function() {
+          test('render', function() {
+            assert.isTrue(true);
+          });
+        });
+      },
+      vcsUpdate: function() {
+        this.$.test0.sector = this.$.vcs.sector;
+      },
+      vnfUpdate: function() {
+        this.$.test0.vnfServices = this.$.vnf.services;
+      }
+    });
+  </script>
+</polymer-element>
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

@@ -1,0 +1,100 @@
+Example ranges: exemplify how ranges can be used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how ranges can be
+used in the CLI.
+
+Note that integer keys are automatically recognized as having
+range capabilities. Other types need an explicit declaration
+in the clispec file. In this case there is a directive for
+"interface name" in the clispec files.
+
+  <operationalMode>
+    <modifications>
+      <hasRange path="interface name"/>
+    </modifications>
+  </operationalMode>
+
+Note that confd.conf needs to enable range expressions
+using the directive
+
+  <cli>
+    <allowRangeExpression>true</allowRangeExpression>
+  </cli>
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make clean all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try some commands
+
+        # show running-config server 1-3,5
+
+ 4. Enter configuration mode and change the MTU for all FastEthernet-1/1/1-3
+    interfaces
+
+        # config terminal
+	(config)# interface range FastEthernet-1/1/1-3 mtu 1400
+
+    Commit the changes and exit to exec mode
+
+        (config-interface-FastEthernet-1/1/1-3)# commit
+        (config-interface-FastEthernet-1/1/1-3)# exit
+	(config)# exit
+	
+    View the new configuration of the FastEthernet interfaces
+
+        # show running-config interface FastEthernet-*/*/*
+
+    View the interfaces with MTU 1400 as a table
+      
+        # show running-config interface mtu 1400
+
+    View some subsets of the FastEthernet interfaces
+	
+        # show running-config interface FastEthernet-1/1/1,2
+        # show running-config interface FastEthernet-1/*/1
+        # show running-config interface FastEthernet-1,2/*/1
+
+    View the configuration as a table
+
+        # show running-config interface FastEthernet-1/1/1,2 | tab
+        # show running-config interface FastEthernet-*/*/1,2 | tab
+
+ 5. Start the J-style CLI using 'make cli-j' and try some commands
+
+        > show configuration server 1-3,5
+        > show configuration interface FastEthernet-1/1/1,2
+        > configure private
+
+    Edit a range of interfaces at the same time
+
+        % edit interface FastEthernet-1/1/1-3
+        % set mtu 1400
+        % commit
+        % exit
+        % exit
+        > show configuration interface FastEthernet-1/1/1-3
+
+    Display the new configuration as a table
+
+        > show configuration interface FastEthernet-1/1/1-3 | tab
+
+
+6. Execute an action on a range of interfaces
+
+        # interface GigaEthernet-1/1/* reset debug mode strict
+
+    and in the J-style CLI
+
+        > request interface GigaEthernet-1/1/* reset debug mode strict

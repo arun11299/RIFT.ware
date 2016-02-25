@@ -1,0 +1,51 @@
+This example shows how secondary-index can be used for generating a mib
+where tables are indexed with objects mapped to the secondary index.
+
+The secondary index must have the name "snmp".
+
+Build the example:
+
+make all
+
+Have a look at the generated MIB SERVER-MIB.mib, and compare the table
+srvServerTable with the server list in servers.yang.
+
+Run the example:
+
+make start
+
+
+Create instances of /servers/server in the CLI. Note that the key is
+the name leaf:
+
+make cli-c
+config
+servers server www1
+commit
+
+
+Look at the resulting table over SNMP:
+
+snmpwalk -m ./SERVERS-MIB.mib -v 2c -c public localhost:4000\
+ SERVERS-MIB::srvServerTable
+
+Add an instance to the server list via SNMP:
+
+snmpset -m ./SERVERS-MIB.mib -v 2c -c public localhost:4000\
+ SERVERS-MIB::srvServerName.17 = www17\
+ SERVERS-MIB::srvServerRowstatus.17 = 4
+
+Delete an instance of the server list via SNMP:
+
+snmpset -m ./SERVERS-MIB.mib -v 2c -c public localhost:4000\
+ SERVERS-MIB::srvServerRowstatus.1 = 6
+
+
+
+The use of "tailf:secondary-index snmp ..." requires a hook which assigns
+(a) unique value(s) to the snmp index leaf(s) when a list instance is
+created over a non-snmp interface, such as the CLI.
+
+In this example, the hook will keep a bitmap over used index values, and
+use the first (lowest numbered) free index value when a new instance is
+created.

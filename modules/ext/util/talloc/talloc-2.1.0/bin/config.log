@@ -1,0 +1,594 @@
+# project talloc (2.1.0) configured on Mon Mar 10 11:15:06 2014 by
+# waf 1.5.19 (abi 7, python 20705f0 on linux2)
+# using ./buildtools/bin/waf configure
+#
+
+----------------------------------------
+Checking for program gcc or cc
+  find program=['gcc', 'cc'] paths=[] var='CC'
+  -> '/usr/lib64/ccache/gcc'
+
+----------------------------------------
+Checking for program cpp
+  find program=['cpp'] paths=[] var='CPP'
+  -> '/usr/bin/cpp'
+
+----------------------------------------
+Checking for program ar
+  find program=['ar'] paths=[] var='AR'
+  -> '/usr/bin/ar'
+
+----------------------------------------
+Checking for program ranlib
+  find program=['ranlib'] paths=[] var='RANLIB'
+  -> '/usr/bin/ranlib'
+
+----------------------------------------
+Checking for gcc 
+ok 
+
+----------------------------------------
+Checking for program git
+  find program=['git'] paths=[] var='GIT'
+  -> '/usr/bin/git'
+
+----------------------------------------
+Check for -MD
+==>
+int main() {return 0;}
+
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '../test.c', '-c', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/test_1.o']
+yes
+
+----------------------------------------
+Checking for program gdb
+  find program=['gdb'] paths=[] var=None
+  -> '/usr/bin/gdb'
+
+----------------------------------------
+Checking build system
+Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+
+----------------------------------------
+Checking for header sys/utsname.h
+==>
+#include <sys/utsname.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+----------------------------------------
+Checking uname sysname type
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#include <sys/utsname.h>
+
+ int main(void) { 
+                               struct utsname n;
+                               if (uname(&n) == -1) return -1;
+                               printf("%s", n.sysname);
+                               ; return 0; }
+
+<==
+[1/2] Compiling [32mtest.c[0m
+../test.c: In function 'main':
+../test.c:8:32: warning: incompatible implicit declaration of built-in function 'printf' [enabled by default]
+                                printf("%s", n.sysname);
+                                ^
+['/usr/lib64/ccache/gcc', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+[2/2] Linking [33mdefault/testprog[0m
+['/usr/lib64/ccache/gcc', 'default/test_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/testprog']
+Linux
+
+returncode 0
+Linux
+
+----------------------------------------
+Checking uname machine type
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#define SYSTEM_UNAME_SYSNAME "Linux"
+#include <sys/utsname.h>
+
+ int main(void) { 
+                               struct utsname n;
+                               if (uname(&n) == -1) return -1;
+                               printf("%s", n.machine);
+                               ; return 0; }
+
+<==
+[1/2] Compiling [32mtest.c[0m
+../test.c: In function 'main':
+../test.c:9:32: warning: incompatible implicit declaration of built-in function 'printf' [enabled by default]
+                                printf("%s", n.machine);
+                                ^
+['/usr/lib64/ccache/gcc', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+[2/2] Linking [33mdefault/testprog[0m
+['/usr/lib64/ccache/gcc', 'default/test_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/testprog']
+x86_64
+
+returncode 0
+x86_64
+
+----------------------------------------
+Checking uname release type
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#define SYSTEM_UNAME_SYSNAME "Linux"
+#define SYSTEM_UNAME_MACHINE "x86_64"
+#include <sys/utsname.h>
+
+ int main(void) { 
+                               struct utsname n;
+                               if (uname(&n) == -1) return -1;
+                               printf("%s", n.release);
+                               ; return 0; }
+
+<==
+[1/2] Compiling [32mtest.c[0m
+../test.c: In function 'main':
+../test.c:10:32: warning: incompatible implicit declaration of built-in function 'printf' [enabled by default]
+                                printf("%s", n.release);
+                                ^
+['/usr/lib64/ccache/gcc', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+[2/2] Linking [33mdefault/testprog[0m
+['/usr/lib64/ccache/gcc', 'default/test_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/testprog']
+3.12.9-301.fc20.x86_64
+
+returncode 0
+3.12.9-301.fc20.x86_64
+
+----------------------------------------
+Checking uname version type
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#define SYSTEM_UNAME_SYSNAME "Linux"
+#define SYSTEM_UNAME_MACHINE "x86_64"
+#define SYSTEM_UNAME_RELEASE "3.12.9-301.fc20.x86_64"
+#include <sys/utsname.h>
+
+ int main(void) { 
+                               struct utsname n;
+                               if (uname(&n) == -1) return -1;
+                               printf("%s", n.version);
+                               ; return 0; }
+
+<==
+[1/2] Compiling [32mtest.c[0m
+../test.c: In function 'main':
+../test.c:11:32: warning: incompatible implicit declaration of built-in function 'printf' [enabled by default]
+                                printf("%s", n.version);
+                                ^
+['/usr/lib64/ccache/gcc', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+[2/2] Linking [33mdefault/testprog[0m
+['/usr/lib64/ccache/gcc', 'default/test_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/testprog']
+#1 SMP Wed Jan 29 15:56:22 UTC 2014
+
+returncode 0
+#1 SMP Wed Jan 29 15:56:22 UTC 2014
+
+----------------------------------------
+Checking for header stdio.h
+==>
+#include <stdio.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+----------------------------------------
+Checking simple C program
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#define SYSTEM_UNAME_SYSNAME "Linux"
+#define SYSTEM_UNAME_MACHINE "x86_64"
+#define SYSTEM_UNAME_RELEASE "3.12.9-301.fc20.x86_64"
+#define SYSTEM_UNAME_VERSION "#1 SMP Wed Jan 29 15:56:22 UTC 2014"
+#define HAVE_STDIO_H 1
+#include <stdio.h>
+
+ int main(void) { printf("hello world"); return 0; }
+
+<==
+[1/2] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-I/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/lib/replace/../../buildtools/wafsamba', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+[2/2] Linking [33mdefault/testprog[0m
+['/usr/lib64/ccache/gcc', 'default/test_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/testprog']
+hello world
+
+returncode 0
+ok
+[1/4] Compiling [32mlibdir/lib1.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-fPIC', '-DPIC', '../libdir/lib1.c', '-c', '-o', 'default/libdir/lib1_1.o']
+[2/4] Compiling [32mmain.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '../main.c', '-c', '-o', 'default/main_2.o']
+[3/4] Linking [33mdefault/libdir/liblib1.so[0m
+['/usr/lib64/ccache/gcc', 'default/libdir/lib1_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/libdir/liblib1.so', '-shared']
+[4/4] Linking [33mdefault/prog1[0m
+['/usr/lib64/ccache/gcc', 'default/main_2.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/prog1', '-Wl,-rpath,/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/libdir', '-Ldefault/libdir', '-Wl,-Bdynamic', '-llib1']
+
+
+returncode 0
+
+----------------------------------------
+Checking for rpath library support 
+ok 
+[1/4] Compiling [32mlibdir/lib1.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-fPIC', '-DPIC', '../libdir/lib1.c', '-c', '-o', 'default/libdir/lib1_1.o']
+[2/4] Compiling [32mmain.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '../main.c', '-c', '-o', 'default/main_2.o']
+[3/4] Linking [33mdefault/libdir/liblib1.so[0m
+['/usr/lib64/ccache/gcc', 'default/libdir/lib1_1.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/libdir/liblib1.so', '-Wl,--version-script=/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/vscript', '-shared']
+[4/4] Linking [33mdefault/prog1[0m
+['/usr/lib64/ccache/gcc', 'default/main_2.o', '-o', '/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/prog1', '-Wl,-rpath,/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/bin/.conf_check_0/testbuild/default/libdir', '-Ldefault/libdir', '-Wl,-Bdynamic', '-llib1']
+
+
+returncode 0
+
+------------------------------------------
+Checking for -Wl,--version-script support 
+ok 
+
+------------------------------------------
+Checking compiler accepts -fPIC
+==>
+int main(void) { return 0; }
+
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-fPIC', '-MD', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for inline
+==>
+#define BUILD_SYSTEM "Linux charm.eng.riftio.com 3.12.9-301.fc20.x86_64 #1 SMP Wed Jan 29 15:56:22 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux"
+#define HAVE_SYS_UTSNAME_H 1
+#define SYSTEM_UNAME_SYSNAME "Linux"
+#define SYSTEM_UNAME_MACHINE "x86_64"
+#define SYSTEM_UNAME_RELEASE "3.12.9-301.fc20.x86_64"
+#define SYSTEM_UNAME_VERSION "#1 SMP Wed Jan 29 15:56:22 UTC 2014"
+#define HAVE_STDIO_H 1
+#define HAVE_SIMPLE_C_PROG 1
+
+
+        typedef int foo_t;
+        static inline foo_t static_foo () {return 0; }
+        inline foo_t foo () {return 0; }
+
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-I/net/charm/localdisk/rramanku/SandBox/rift/modules/ext/util/talloc/talloc-2.1.0/lib/replace/../../buildtools/wafsamba', '-MD', '-Idefault', '-I..', '-Idefault', '-I..', '../test.c', '-c', '-o', 'default/test_1.o']
+inline
+
+------------------------------------------
+Checking for pkg-config version >= 0.0.0
+pkg-config --errors-to-stdout --print-errors --atleast-pkgconfig-version=0.0.0
+yes
+
+------------------------------------------
+Checking for header sys/types.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header sys/stat.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header stdlib.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header stddef.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header memory.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header string.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header strings.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header inttypes.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header stdint.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header unistd.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header minix/config.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <minix/config.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+../test.c:12:26: fatal error: minix/config.h: No such file or directory
+ #include <minix/config.h>
+                          ^
+compilation terminated.
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+command returned 'Build failed:  -> task failed (err #1): \n\t{task: cc test.c -> test_1.o}'no
+
+------------------------------------------
+Checking for header ctype.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <ctype.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header standards.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <standards.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+../test.c:13:23: fatal error: standards.h: No such file or directory
+ #include <standards.h>
+                       ^
+compilation terminated.
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+command returned 'Build failed:  -> task failed (err #1): \n\t{task: cc test.c -> test_1.o}'no
+
+------------------------------------------
+Checking for header stdbool.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header stdarg.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdarg.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']
+yes
+
+------------------------------------------
+Checking for header vararg.h
+==>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <memory.h>
+#include <string.h>
+#include <strings.h>
+#include <inttypes.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdarg.h>
+#include <vararg.h>
+
+int main(void) { return 0; }
+<==
+[1/1] Compiling [32mtest.c[0m
+../test.c:15:20: fatal error: vararg.h: No such file or directory
+ #include <vararg.h>
+                    ^
+compilation terminated.
+['/usr/lib64/ccache/gcc', '-MD', '-D_GNU_SOURCE=1', '-D_XOPEN_SOURCE_EXTENDED=1', '../test.c', '-c', '-o', 'default/test_1.o']

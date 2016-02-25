@@ -1,0 +1,41 @@
+<link rel="import" href="rw-bullet.html">
+
+<polymer-element name="rw-ltesim-summary" attributes="service ltesim">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-ltesim-summary.css"/>
+    <div class="rate-stack">
+      <div class="rate-result">
+        {{ltesim.acceptedTxCalls | noNaN}} transmitted, accepted calls
+      </div>
+      <rw-bullet
+              min="0"
+              max="{{maxTxCallCount}}"
+              bulletColor="{{theme.txBps}}"
+              value="{{ltesim.acceptedTxCalls | noNaN}}"
+              ></rw-bullet>
+      <div class="rate-scale">
+        <div>0</div>
+        <div>{{maxTxCallCount}}calls</div>
+      </div>
+      <div class="rate-result">
+        {{ltesim.acceptedRxCalls | noNaN}} received, accepted calls
+      </div>
+      <rw-bullet
+              min="0"
+              max="{{maxRxCallCount}}"
+              bulletColor="{{theme.rxPps}}"
+              value="{{ltesim.acceptedRxCalls | noNaN}}"
+              ></rw-bullet>
+      <div class="rate-scale">
+        <div>0</div>
+        <div>{{maxRxCallCount}}calls</div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer(Platform.mixin({
+      maxTxCallCount : 5000,
+      maxRxCallCount: 5000
+    }, rw, rw.ui));
+  </script>
+</polymer-element>

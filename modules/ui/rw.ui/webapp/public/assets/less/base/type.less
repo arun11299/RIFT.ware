@@ -1,0 +1,73 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// Source brand fonts
+//
+@font-path: '../fonts';
+@font-face {
+  font-family: 'roboto-regular';
+  src: url('@{font-path}/Roboto-Regular-webfont.eot');
+  src: url('@{font-path}/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('@{font-path}/Roboto-Regular-webfont.woff') format('woff'),
+       url('@{font-path}/Roboto-Regular-webfont.ttf') format('truetype'),
+       url('@{font-path}/Roboto-Regular-webfont.svg#robotoregular') format('svg');
+}
+@font-face {
+  font-family: 'roboto-condensed-bold';
+  src: url('@{font-path}/RobotoCondensed-Bold-webfont.eot');
+  src: url('@{font-path}/RobotoCondensed-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('@{font-path}/RobotoCondensed-Bold-webfont.woff') format('woff'),
+       url('@{font-path}/RobotoCondensed-Bold-webfont.ttf') format('truetype'),
+       url('@{font-path}/RobotoCondensed-Bold-webfont.svg#roboto_condensedbold') format('svg');
+}
+@font-face {
+  font-family: 'roboto-light';
+  src: url('@{font-path}/Roboto-Light-webfont.ttf');
+}
+@font-family-serif: Georgia, Times, 'Times New Roman', serif;
+@font-family-sans-serif: 'roboto-regular', Helvetica, Arial, sans-serif;
+@font-family-display: @font-family-sans-serif;
+@font-family-icons: 'FontAwesome';
+@font-family-default: @font-family-sans-serif;
+//
+// Specify app-wide font default
+//
+body {
+  font-family: @font-family-sans-serif;
+  line-height: 1.2;
+}
+//
+// Specify headers
+// TODO finalize relative sizing through h6
+//
+h1 {
+  font-size: 1.625rem;
+  font-weight: normal;
+}
+h2 {
+  font-size: 1.375rem;
+}
+em.large {
+  font-size: 1.75rem;
+}
+.all-caps {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.small-caps {
+  font-size: 0.6875rem;
+  .all-caps;
+}
+.unit {
+  font-size: 0.5625rem;
+  .all-caps;
+}
+.label {
+  font-size: 0.625rem;
+  .all-caps;
+}

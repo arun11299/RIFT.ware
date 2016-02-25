@@ -1,0 +1,27 @@
+/**/
+/**/
+html{
+    min-width: 1024;
+    min-height: 748px;
+}
+body{
+    min-width: 1024px;
+    min-height: 748px;
+}
+/**/
+/**/
+.viewport__body{}
+.viewport__body .global-main{
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: -ms-flex;
+    display: flex;
+    -webkit-flex: 1 1 0%;
+    -moz-flex: 1 1 0%;
+    -ms-flex: 1 1 0%;
+    flex: 1 1 0%;
+    padding: 0px;
+    margin: 0px;
+    overflow: auto;
+}

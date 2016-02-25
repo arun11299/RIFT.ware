@@ -1,0 +1,31 @@
+
+<fieldset>
+<label class="col-sm-2 control-label"  ng-if="input.field['field_type'] != 'group'" for="{{input.field['field_name'] + $index}}">{{input.field['field_name']}}</label>
+  <input
+    ng-if="input.field['field_type'] == 'text'"
+    id="{{input.field['field_name'] + $index}}"
+    type="{{input.field['field_type']}}"
+    class="form-control"
+    placeholder="{{input.field['field_value']}}"
+    ng-model="input.field.field_value"
+    ng-readonly="!input.field.editable"
+    />
+  <textarea ng-if="input.field['field_type'] == 'textarea'"
+            rows="6" maxlength="240"
+            id="{{input.field['field_name'] + $index}}"
+            type="{{input.field['field_type']}}"
+            class="form-control"
+            placeholder="{{input.field['field_value']}}"
+            ng-model="input.field.field_value"
+            ng-readonly="!input.field.editable">
+  </textarea>
+  <legend ng-if="input.field['field_type'] === 'group'"> {{ input.field.field_name }} </legend>
+  <build-inputs  ng-if="input.field['field_type'] === 'group'"  ng-repeat="subField in input.field['field_value'] track by $index" field="subField"></build-inputs>
+
+</fieldset>
+
+
+
+
+
+

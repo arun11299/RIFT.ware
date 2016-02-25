@@ -1,0 +1,47 @@
+<!-- ----------------- -->
+<!-- RESOURCES SECTION -->
+<div id="resources" class="section hide">
+  <h3>Resources</h3>
+  <form class="form-horizontal" role="form">
+    <table class="table">
+      <thead>
+      <tr>
+        <th title><button ng-click="create.selectAll()">Select All</button></th>
+        <th title>Make Lead</th>
+        <th title>Name</th>
+        <th title>Reservation</th>
+        <th title>Controller</th>
+        <th title>IP Address</th>
+        <th title>CPUs</th>
+        <th title>Ram <em>(mb)</em></th>
+        <th title=””>Type</th>
+        <th title=””>OS Image</th>
+        <th title=””>Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="vm in pick.resources | filter: {}" row-id="{{vm.name}}">
+        <td style="text-align:center;">
+          <input type="checkbox" ng-model="pick.selectedResources[vm.name]"></td>
+        <td style="text-align:center;"><input type="radio" ng-if="pick.selectedResources[vm.name]"  ng-model="pick.lead" ng-value="vm.name"></td>
+        <td>{{vm.name}}</td>
+        <td>{{vm.reservation}}</td>
+        <td>{{vm.controller}}</td>
+        <td>{{vm.ip_address}}</td>
+        <td>{{vm.cpu}}</td>
+        <td>{{vm.ram}}</td>
+        <td>{{vm.type}}</td>
+        <td>{{vm.os_image}}</td>
+        <td>{{vm.comments}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- -->
+    <ul class="list-inline controls">
+      <li><a ng-click="create.cancel()" class="btn link">Cancel Environment</a></li>
+      <li><a ng-click="pick.next()" href class="btn primary">Continue</a></li>
+    </ul>
+    <!-- -->
+  </form>
+</div>

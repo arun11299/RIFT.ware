@@ -1,0 +1,83 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-config-agent
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-config-agent";
+  prefix "rw-config-agent";
+
+  import rw-pb-ext {
+    prefix "rwpb";
+  }
+
+  import ietf-inet-types {
+    prefix "inet";
+  }
+
+  revision 2016-02-04 {
+    description
+      "Initial revision.";
+  }
+
+  typedef config-agent-account-type {
+    description "config agent account type";
+    type enumeration {
+      enum juju;
+    }
+  }
+
+  container config-agent {
+    rwpb:msg-new ConfigAgent;
+
+    list account {
+      rwpb:msg-new ConfigAgentAccount;
+      key "name";
+
+      description "List of configuration agent accounts";
+
+      leaf name {
+        description "Name of this config agent account";
+        type string;
+      }
+
+      leaf account-type {
+        type config-agent-account-type;
+      }
+
+      choice config-agent-account-type {
+        case juju {
+          description
+            "Configure the VNF through Juju.";
+          container juju {
+            leaf ip-address {
+                description "Juju host IP address.";
+                type inet:ip-address;
+            }
+            leaf port {
+                description 
+                    "Juju host port number. Default 17070.";
+                type inet:port-number;
+                default 17070;
+            }
+            leaf user {
+                description 
+                    "User name to connect to Juju host. Default user-admin.";
+                type string;
+                default "user-admin" ;
+            }
+            leaf secret {
+                description 
+                    "Admin secret or password for Juju host.";
+                type string;
+            }
+          }
+        }
+      }
+    }
+  }
+}

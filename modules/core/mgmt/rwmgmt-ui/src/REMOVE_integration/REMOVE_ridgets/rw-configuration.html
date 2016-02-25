@@ -1,0 +1,69 @@
+<link rel="import" href="rw-config-viewer.html">
+
+<!--
+  @class rw-configuration
+-->
+<polymer-element name="rw-configuration">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-configuration.css"/>
+  <div class="config-content">
+    <div class="config-nav-header">
+      <div id="navButtons" class="button-group">
+        <div class="button button-bar__first-button button__size--medium" on-click="{{refresh}}">
+            <span class="button__box">
+              <span class="button__label">Refresh</span>
+            </span>
+        </div>
+        <div class="button button-bar__inner-button button__size--medium" on-click="{{expandAll}}">
+            <span class="button__box">
+              <span class="button__label">Expand All</span>
+            </span>
+        </div>
+        <div class="button button-bar__last-button button__size--medium" on-click="{{collapseAll}}">
+            <span class="button__box">
+              <span class="button__label">Collapse All</span>
+            </span>
+        </div>
+      </div>
+    </div>
+    <rw-config-viewer
+      id="configViewer"
+      label="root"
+      config="{{config}}"
+    ></rw-config-viewer>
+  </div>
+</template>
+<script>
+Polymer({
+
+  created: function() {
+    this.config = {};
+  },
+
+  attached: function() {
+    this.refresh();
+  },
+
+  expandAll: function() {
+    this.$.configViewer.expandAll(true);
+  },
+
+  collapseAll: function() {
+    this.$.configViewer.expandAll(false);
+  },
+
+  refresh: function() {
+    var self = this;
+    var url = '/api/running/colony';
+    var acceptType = 'application/vnd.yang.collection+json';
+    rw.api.get(url, acceptType).done(function(config) {
+      self.config = config;
+      rw.api.get(url + '?deep', acceptType).done(function(deepConfig) {
+        rw.merge(self.config, deepConfig);
+        self.$.configViewer.refresh();
+      });
+    });
+  }
+});
+</script>
+</polymer-element>

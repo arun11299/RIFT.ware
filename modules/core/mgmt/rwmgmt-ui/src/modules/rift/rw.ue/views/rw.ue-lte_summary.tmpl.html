@@ -1,0 +1,32 @@
+<div>
+  <div class="rate-stack">
+    <div class="rate-result">
+      {{lteSummary.ltesim.acceptedTxCalls | nonNaN}} transmitted, accepted calls
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{lteSummary.maxTxCallCount}}"
+            bullet-color="{{theme.txBps}}"
+            value="{{lteSummary.ltesim.acceptedTxCalls | nonNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{lteSummary.maxTxCallCount}}calls</div>
+    </div>
+    <div class="rate-result">
+      {{ltesim.acceptedRxCalls | nonNaN}} received, accepted calls
+    </div>
+    <rw-bullet
+            class="rate-bullet"
+            min="0"
+            max="{{lteSummary.maxRxCallCount}}"
+            bullet-color="{{theme.rxPps}}"
+            value="{{lteSummary.ltesim.acceptedRxCalls | nonNaN}}"
+            ></rw-bullet>
+    <div class="rate-scale">
+      <div>0</div>
+      <div>{{lteSummary.maxRxCallCount}}calls</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// step-control.less
+//
+// Styles for step controls
+//
+.step-control {
+  position: relative;
+  text-align: center;
+  .step {
+    cursor: pointer;
+    display: block;
+    position: absolute;
+      top: 0;
+    &.decrease {
+      left: 0;
+    }
+    &.increase {
+      right: 0;
+    }
+  }
+}

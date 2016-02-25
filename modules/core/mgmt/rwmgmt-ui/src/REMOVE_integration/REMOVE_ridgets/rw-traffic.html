@@ -1,0 +1,233 @@
+<link rel="import" href="rw-services-model.html">
+<link rel="import" href="rw-traffic-diagram.html">
+<link rel="import" href="rw-splitter.html">
+<link rel="import" href="rw-traffic-stats.html">
+<link rel="import" href="rw-dashboard-control.html">
+<link rel="import" href="rw-trafgen-details.html">
+<link rel="import" href="rw-trafgen-controller.html">
+<link rel="import" href="rw-trafsim-details.html">
+<link rel="import" href="rw-trafsim-model.html">
+<link rel="import" href="rw-trafgen-model.html">
+<link rel="import" href="rw-fpath-model.html">
+<link rel="import" href="rw-slb-model.html">
+<link rel="import" href="rw-slb-summary.html">
+<link rel="import" href="rw-slb-details.html">
+<link rel="import" href="rw-slb-config.html">
+<link rel="import" href="rw-ltesim-details.html">
+<link rel="import" href="rw-ue-model.html">
+<link rel="import" href="rw-tabs.html">
+
+<polymer-element name="rw-traffic">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-traffic.css"/>
+  <rw-services-model
+      id="services"
+      on-update="{{vnfUpdate}}"
+      ></rw-services-model>
+  <rw-fpath-model
+      id="fpath"
+      ></rw-fpath-model>
+  <rw-trafsim-model
+      id="trafsims"
+      active="true"
+      ></rw-trafsim-model>
+  <rw-trafgen-model
+      id="trafgens"
+      colonies="{{$.fpath.colonies}}"
+      ></rw-trafgen-model>
+  <rw-ue-model
+      id="ltesims"
+      active="true"></rw-ue-model>
+  <rw-slb-model
+      id="slbs"
+      active="true"
+      colonies="{{$.fpath.colonies}}"></rw-slb-model>
+  <rw-traffic-diagram
+    id="dashDiagram"
+    services="{{$.services.services}}"
+    trafsimModel="{{$.trafsims}}"
+    ltesimModel="{{$.ltesims}}"
+    slbModel="{{$.slbs}}"
+    on-select-service="{{selectService}}"
+    ></rw-traffic-diagram>
+  <rw-splitter
+    id="splitter"
+    class="horizontal"
+    allowOverflow direction="down">
+    <div>
+      <span>
+        <span class="details-label">{{l10n.vnf[selectedService.type]}}</span>
+        <span class="details-description">{{selectedService.description | safePrefix(' - ')}}</span>
+      </span>
+      <button class="button__tbar" on-click="{{resetTotals}}">Reset Totals</button>
+    </div>
+  </rw-splitter>
+  <div id="details">
+  </div>
+</template>
+  <script>
+Polymer(Platform.mixin({
+  selectService: function(e, detail) {
+    this.selectedService = detail.service;
+    this.buildDetailsComponent(detail.trafsim || detail.ltesim || detail.slb || detail.service);
+  },
+
+  // NOTE: Ideally knowledge of the type of VNF is abstracted out. This would have to use
+  // plugin module loader to create proper widget(s).
+  buildDetailsComponent: function(service) {
+    var detailsContent;
+    var insertContent;
+    var configContent;
+    var portContent = document.createElement("rw-traffic-stats");
+    switch (this.selectedService.type) {
+      case 'trafsimclient':
+      case 'trafsimserver':
+        detailsContent = document.createElement("rw-trafsim-details");
+        insertContent = this.tabs('Stats', detailsContent, portContent);
+        break;
+      case 'ltemmesim':
+      case 'ltegwsim':
+        detailsContent = document.createElement("rw-ltesim-details");
+        insertContent = this.tabs('Stats', detailsContent, portContent);
+        break;
+      case 'trafgen':
+      case 'trafsink':
+        detailsContent = document.createElement("rw-trafgen-details");
+        insertContent = this.tabs('Stats', detailsContent, portContent);
+        break;
+      case 'slbalancer':
+        var detailsContent = document.createElement("rw-slb-details");
+        insertContent = this.tabs('Stats', detailsContent, portContent);
+        var configContent = document.createElement("rw-slb-config");
+        insertContent.addTab('Config', configContent);
+        break;
+      default:
+        detailsContent = insertContent = portContent;
+        break;
+    }
+
+    // triggers "attached" callback in widget lifecycle which is
+    // useful before attaching data.
+    $(this.$.details).empty();
+    this.$.details.appendChild(insertContent);
+    portContent.service = this.selectedService;
+
+    switch (this.selectedService.type) {
+      case 'trafgen':
+      case 'trafsink':
+        detailsContent.service = this.selectedService;
+        detailsContent.trafgenModel = this.$.trafgens;
+        break;
+      case 'trafsimclient':
+      case 'trafsimserver':
+        detailsContent.trafsim = service;
+        detailsContent.trafsimModel = this.$.trafsims;
+        break;
+      case 'ltemmesim':
+      case 'ltegwsim':
+        detailsContent.service = this.selectedService;
+        detailsContent.lteModel = this.$.ltesims;
+        break;
+      case 'slbalancer':
+        detailsContent.slb = service;
+        detailsContent.slbModel = this.$.slbs;
+        configContent.slb = service;
+        configContent.slbModel = this.$.slbs;
+    }
+  },
+
+  tabs: function(label, element, portsElem) {
+    var tabs = document.createElement('rw-tabs');
+    tabs.addTab(label, element);
+    tabs.addTab('Ports', portsElem);
+    return tabs;
+  },
+
+  vnfUpdate: function() {
+    new rw.FpathVnf(this.$.fpath, this.$.services.services);
+  },
+
+  safePrefix: function(val, prefix) {
+    if (val === undefined || val === null || val.length == 0) {
+      return '';
+    }
+    return prefix + val;
+  },
+
+  resetTotals: function() {
+    if (this.selectedService && this.selectedService.connector) {
+      this.resetFpathTotals(this.selectedService);
+      switch (this.selectedService.type) {
+        case 'trafsimclient':
+        case 'trafsimserver':
+          this.resetTrafsimTotals();
+          break;
+        case 'ltemmesim':
+        case 'ltegwsim':
+          this.resetLteTotals(this.selectedService);
+          break;
+        case 'trafgen':
+        case 'trafsink':
+          this.resetTrafgenTotals(this.selectedService);
+          break;
+      }
+    }
+  },
+
+  resetTrafgenTotals: function(service) {
+    for (var i = 0; i < service.connector.length; i++) {
+      var data = {
+        input : {
+          colony : {
+            name : service.connector[i].interface[0].colonyId,
+            'trafgen-counters' : { 'all' : ""}
+          }
+        }
+      };
+      rw.api.rpc('/api/operations/fpath-clear', data).done(function() {
+        console.log('cleared trafgen stats for ', service.name);
+      });
+    }
+  },
+
+  resetLteTotals: function(service) {
+    var data = {
+      input : {
+        colony : {
+          name : service.ltesim.colonyId,
+          'trafsim-service' : {
+            name : service.ltesim.name
+          }
+        }
+      }
+    };
+    rw.api.rpc('/api/operations/trafsim-clear', data).done(function() {
+      console.log('cleared lte stats for ', service.name);
+    });
+  },
+
+  resetTrafsimTotals: function(service) {
+    // backend doesn't support yet 4/2/15
+    console.log('Trafsim stats reset not implemented');
+  },
+
+  resetFpathTotals: function(service) {
+    for (var i = 0; i < service.connector.length; i++) {
+      console.log(service.connector[i]);
+      var iface = service.connector[i].interface[0];
+      var data = {
+        input : {
+          colony : {
+            name : iface.colonyId,
+            counters: { "all" : ""}
+          }
+        }
+      };
+      rw.api.rpc('/api/operations/fpath-clear', data).done(function() {
+        console.log('cleared fpath stats for ', iface.name);
+      });
+    }
+  }
+}, rw.ui));
+  </script>
+</polymer-element>

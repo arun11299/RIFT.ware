@@ -1,0 +1,28 @@
+<!-- -*- nxml -*- -->
+<webspec xmlns="http://tail-f.com/ns/webspec/1.0"
+         targetNamespace="http://tail-f.com/ns/confd/1.0">
+  <typeSettings name="inetPortNumber" label="Port number">
+    <size>4</size>
+  </typeSettings>
+
+  <typeSettings name="MD5DigestString" label="A MD5 Digest String">
+    <size>50</size>
+    <desc>
+      Please enter a clear text string. This string will be saved as a
+      MD5 digest, i.e. after a commit you will see an MD5 digest here
+      with "$1" prepended.
+    </desc>
+  </typeSettings>
+
+  <typeSettings name="DES3CBCEncryptedString" label="An DES3 Encrypted String">
+    <rows>10</rows>
+    <cols>40</cols>
+    <htmlChunk>
+      <![CDATA[
+<em>Note:</em> Please enter a clear text string. This string will be
+saved as an encrypted string, i.e. after a commit you will see an
+encrypted string here with "$3" prepended.
+]]>
+    </htmlChunk>
+  </typeSettings>
+</webspec>

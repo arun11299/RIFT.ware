@@ -1,0 +1,98 @@
+<div>
+    <rw-tabs>
+        <pane title="Utilization">
+            <div id="tab-0" class="tab">
+                <div class="row details">
+                    <div class="col no-pad">
+                        <resources-utilization-stats vcs-node="resourcesDetail.vcsNode"></resources-utilization-stats>
+                    </div>
+                </div>
+            </div>
+        </pane>
+
+        <pane title="Ports">
+            <div id="tab-1" class="tab">
+                <div class="row details">
+                    <div class="col no-pad">
+                        <traffic-stats id="stats" vcs-node="resourcesDetail.vcsNode"></traffic-stats>
+                    </div>
+                </div>
+            </div>
+        </pane>
+
+        <pane title="Fabric">
+            <div id="tab-2" class="tab">
+                <div class="row details">
+                    <div class="col no-pad">
+                        <traffic-stats id="fabricStats" vcs-node="resourcesDetail.fabricNode" show-fabric=true></traffic-stats>
+                    </div>
+                </div>
+            </div>
+        </pane>
+
+        <pane title="Processes">
+            <div id="tab-3" class="tab">
+                <div class="row details">
+                    <div class="col no-pad">
+                        <table class="datagrid">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>PID</th>
+                                    <th>State</th>
+                                    <th>Tasklet Count</th>
+                                    <th>File Descriptors</th>
+                                    <th>CPU</th>
+                                    <th>Memory</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr template ng-repeat="process in resourcesDetail.processes">
+                                    <td>{{process.instance_name}}</td>
+                                    <td>{{process.proc_info.pid}}</td>
+                                    <td><status-led state="{{process.state}}"></status-led></td>
+                                    <td>{{process.tasklet.length | valueOrNotAvailable}}</td>
+                                    <td>{{process['file-descriptors'] | valueOrNotAvailable }}</td>
+                                    <td>{{process.cpuPercent | pctOrNotAvailable}}</td>
+                                    <td>{{process.memoryPercent | pctOrNotAvailable}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </pane>
+
+        <!-- TODO: was commented out in old code. Why? -->
+        <!-- <pane title="Tasklets">
+            <div id="tab-4" class="tab">
+                <div class="row details">
+                    <div class="col no-pad">
+                        <table class="datagrid">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Process</th>
+                                    <th>Thread Count</th>
+                                    <th>File Descriptors</th>
+                                    <th>Memory</th>
+                                    <th>Schedule Queues</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr template ng-repeat="tasklet in resourcesDetail.tasklets">
+                                    <td>{{tasklet.instance_name}}</td>
+                                    <td>{{tasklet.process.instance_name}}</td>
+                                    <td>{{tasklet['thread-count']}}</td>
+                                    <td>{{tasklet['file-descriptors']}}</td>
+                                    <td>{{tasklet.memory}}%</td>
+                                    <td>{{tasklet.scheduler_queues}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </pane> -->
+    </rw-tabs>
+</div>

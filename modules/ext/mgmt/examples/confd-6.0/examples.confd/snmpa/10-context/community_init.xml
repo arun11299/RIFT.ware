@@ -1,0 +1,28 @@
+<SNMP-COMMUNITY-MIB xmlns="http://tail-f.com/ns/mibs/SNMP-COMMUNITY-MIB/200308060000Z">
+  <snmpCommunityTable>
+
+    <!--
+        Define two communities 'public-1' and 'public-2'.  They are
+        both mapped to the security name 'public', but in different
+        contexts.  See vacm_init.xml for how the security name
+        'public' gets full access.
+    -->
+
+    <snmpCommunityEntry>
+      <snmpCommunityIndex>public-1</snmpCommunityIndex>
+      <snmpCommunityName>public-1</snmpCommunityName>
+      <snmpCommunitySecurityName>public</snmpCommunitySecurityName>
+      <snmpCommunityContextEngineID>4D:79:45:6E:67:69:6E:65</snmpCommunityContextEngineID>
+      <snmpCommunityContextName>foo-ctx1</snmpCommunityContextName>
+    </snmpCommunityEntry>
+
+    <snmpCommunityEntry>
+      <snmpCommunityIndex>public-2</snmpCommunityIndex>
+      <snmpCommunityName>public-2</snmpCommunityName>
+      <snmpCommunitySecurityName>public</snmpCommunitySecurityName>
+      <snmpCommunityContextEngineID>4D:79:45:6E:67:69:6E:65</snmpCommunityContextEngineID>
+      <snmpCommunityContextName>foo-ctx2</snmpCommunityContextName>
+    </snmpCommunityEntry>
+
+  </snmpCommunityTable>
+</SNMP-COMMUNITY-MIB>

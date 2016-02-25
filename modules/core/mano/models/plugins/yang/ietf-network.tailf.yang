@@ -1,0 +1,31 @@
+
+/*
+ * NO RW COPYRIGHT
+ *
+ */
+
+module ietf-network-annotation
+{
+  namespace "urn:ietf:params:xml:ns:yang:ietf-network";
+  prefix "ietf-network-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import ietf-network {
+    prefix nd;
+  }
+
+  tailf:annotate "/nd:network" {
+      tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/nd:network/nd:server-provided" {
+      tailf:callpoint base_show;
+  }
+}

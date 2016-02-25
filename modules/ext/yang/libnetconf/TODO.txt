@@ -1,0 +1,13 @@
+# RIFT_IO_STANDARD_COPYRIGHT_HEADER(BEGIN)
+# Author(s): Tom Seidenberg
+# Creation Date: 2014/02/27
+# RIFT_IO_STANDARD_COPYRIGHT_HEADER(END)
+
+modules/ext/yang/libnetconf/TODO.txt
+
+- Determine the full, transitive list of libraries needed by libnetconf
+  and add them to the build
+- Export the documentation to RIFT documentation area.  Needs to split
+  make install into make install-devel and make install-doc, at least.
+- Develop local test suite to verify library upgrades?
+

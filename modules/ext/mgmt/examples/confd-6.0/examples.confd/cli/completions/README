@@ -1,0 +1,110 @@
+Example: CLI command completion callback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example demonstrates how you can define a CAPI completionpoint in
+the clispec file, how the command is implemented in C, and how to
+trigger the completion from the CLI.
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+    $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+    $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try the following:
+    
+    # make cli
+    admin connected from 127.0.0.1 using console on d199
+    d199# history ?
+    Possible completions:
+      The history must be a non-negative value (preferably 500 or 750)  
+      500                                                               
+      750                                                               
+
+    ====
+    The built-in 'history' command takes a parameter of type
+    xs:nonNegativeInteger. confd.cli specifies that all values of type 
+    xs:nonNegativeInteger should be handled by a completion callback
+    named 'generic_complete' in callbacks.c.
+    ====
+    
+    d199# idle-timeout ?
+    Possible completions:
+      Enter a non-negative integer value
+    
+    ====
+    The built-in 'idle-timeout' command also takes a parameter of type
+    xs:nonNegativeInteger. The 'generic_complete' callback uses another
+    completion strategy for the 'idle-timeout' command though.
+    ====    
+
+    d199# config       
+    Entering configuration mode terminal
+    d199(config)# fsckAfterReboot ?
+    Possible completions:
+      Enter a non-negative integer value
+    
+    ====
+    Above we entered configure mode and triggered a completion action
+    for the fscAfterReboot element as defined in config.yang. The
+    fsckAfterReboot element is also of type 'uint64' and
+    the 'generic_complete' callback uses the same completion strategy as
+    done for the built-in 'idle-timeout' command.
+    ====    
+
+    d199(config)# setClock ?      
+    Possible completions:
+      Enter the number of seconds
+    d199(config)# setClock 10 ?
+    Possible completions:
+      Enter the number of micro seconds
+    d199(config)# setClock 10 9876 ?
+    Description: A reboot is required to activate this change
+    Possible completions:
+      local   Local time
+      utc     Greenwich
+    d199(config)# setClock 10 9876 utc<ENTER>
+    The clock has been set
+    
+    ====
+    Above we ran the custom 'setClock' command as defined in
+    confd.cli. 'setClock' takes three a parameters and all of them has a
+    unique completion strategy also as implemented by the 'generic_complete'
+    callback.
+    ====
+    
+    d199(config)# interface ?         
+    Possible completions:
+      FastEthernet0/1  GigaEthernet0/1  GigaEthernet0/2
+    d199(config)# interface GigaEthernet0/<TAB>
+    Possible completions:
+      1  2
+    d199(config)# interface GigaEthernet0/2<TAB>
+    Possible completions:
+      ip     Set the IP address of an interface
+      mask   Set the subnet mask
+      <cr>
+    d199(config)# interface GigaEthernet0/2<ENTER>
+    Value for 'ip' (<IP address>): 1.2.3.4
+    Value for 'mask' (<IP address>): 2.3.4.5
+    
+    ====
+    Above we created a custom interface, i.e. a dynamic element
+    'interface' is defined in config.cs. The completion callback
+    'ifs-complete' in callbacks.c takes care of the completion
+    strategy.
+    ====
+
+Further Reading
+~~~~~~~~~~~~~~~
+
++ ConfD Manual: The CLI agent
++ man 3 confd_lib
++ man 3 confd_lib_maapi

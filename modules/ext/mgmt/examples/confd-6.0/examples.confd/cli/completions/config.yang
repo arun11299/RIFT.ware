@@ -1,0 +1,45 @@
+module config {
+  namespace "http://tail-f.com/ns/example/config";
+  prefix config;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef interfaceNameType {
+    tailf:info "GigaEthernetX/Y";
+    type string;
+  }
+  list interface {
+    key name;
+    max-elements 64;
+    tailf:info "Configure interface parameters";
+    leaf name {
+      type interfaceNameType;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+      tailf:info "Set the IP address of an interface";
+    }
+    leaf mask {
+      type inet:ip-address;
+      mandatory true;
+      tailf:info "Set the subnet mask";
+    }
+  }
+  leaf fsckAfterReboot {
+    type uint64;
+    default 4711;
+  }
+  typedef secondsType {
+    type uint64;
+  }
+  typedef microSecondsType {
+    type uint64;
+  }
+}

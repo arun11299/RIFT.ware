@@ -1,0 +1,78 @@
+<html lang="en" class="viewport" ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../vendor.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../lib/d3/d3.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../integration/ridgets/css/page.css"/>
+  <link rel="stylesheet" type="text/css" href="../../integration/_data/_css/style.css"/>
+  <link rel="stylesheet" type="text/css" href="../../lib/font-awesome/css/font-awesome.min.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+</head>
+<body class="viewport" ng-controller="test">
+<rw-scatter values="values1" min="5" max="30" exs-axis-label="Exs" y-axis-label="Why"></rw-scatter>
+<rw-scatter values="values2" min="5" max="30" exs-axis-label="Exs" y-axis-label="Why"></rw-scatter>
+
+<script>
+
+  function rand(existing) {
+    var r = Math.round(10 - (Math.random() * 20));
+    return Math.min(100, Math.max(0, existing + r));
+  }
+
+  angular.module('test', ['uiModule'])
+          .controller('test', function($scope, $interval) {
+            $scope.values1 = [
+              {x: 10, y: 20, size: 5, label: 'A'},
+              {x: 6, y: 15, size: 5, label: 'B'},
+              {x: 5, y: 15, size: 5, label: 'C'},
+              {x: 6, y: 15, size: 5, label: 'C1'},
+              {x: 7, y: 15, size: 5, label: 'C2'},
+              {x: 8, y: 15, size: 5, label: 'C3'},
+              {x: 10, y: 1, size: 5, label: 'D1'},
+              {x: 7, y: 15, size: 5, label: 'D'},
+              {x: 10, y: 1, size: 5, label: 'D1'},
+              {x: 11, y: 1, size: 5, label: 'D2'},
+              {x: 12, y: 1, size: 5, label: 'D3'},
+              {x: 13, y: 1, size: 5, label: 'D4'},
+              {x: 14, y: 1, size: 5, label: 'D5'},
+              {x: 98, y: 1, size: 5, label: 'E'}
+            ];
+            var values2A = [
+              {x: 20, y: 20, size: 5, label: 'A'},
+              {x: 35, y: 25, size: 5, label: 'B'},
+              {x: 25, y: 35, size: 5, label: 'C'},
+              {x: 27, y: 52, size: 5, label: 'D'}
+            ];
+            var values2B = [
+              {x: 23, y: 65, size: 5, label: 'W'},
+              {x: 22, y: 72, size: 5, label: 'X'},
+              {x: 74, y: 16, size: 5, label: 'Y'},
+              {x: 59, y: 24, size: 5, label: 'Z'}
+            ];
+            $scope.values2 = values2A;
+
+            $interval(function() {
+              $scope.values1[3].x = rand($scope.values1[3].x);
+              $scope.values1[3].y = rand($scope.values1[3].y);
+
+              if ($scope.values2 === values2A) {
+                $scope.values2 = values2B;
+              } else {
+                $scope.values2 = values2A;
+              }
+
+              $scope.$broadcast('scatter-values-update');
+            }, 2000);
+          });
+</script>
+
+</body>
+</html>

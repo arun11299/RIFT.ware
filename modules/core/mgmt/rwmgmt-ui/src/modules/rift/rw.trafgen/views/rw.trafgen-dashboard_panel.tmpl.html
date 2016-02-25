@@ -1,0 +1,21 @@
+<div >
+    <div class="panel">
+        <div class="panel__panel-header">
+            <div class="panel__panel-header__panel-title">{{::rwDashboardTrafgenPanel.l10n.vnf['trafgen']}}</div>
+        </div>
+
+        <rw-dashboard-traffic-generator panel-width="140" dial-size="140" class="panel__panel-body"></rw-dashboard-traffic-generator>
+
+    </div>
+    <div class="panel">
+        <div class="panel__panel-header">
+            <div class="panel__panel-header__panel-title">{{::rwDashboardTrafgenPanel.l10n.vnf['trafsink']}}</div>
+        </div>
+        <rw-dashboard-ip-traffic-sink id="trafsink"
+            dial-size="140"
+            panel-width="140"
+            class="panel__panel-body"
+          ></rw-dashboard-ip-traffic-sink>
+    </div>
+</div>
+

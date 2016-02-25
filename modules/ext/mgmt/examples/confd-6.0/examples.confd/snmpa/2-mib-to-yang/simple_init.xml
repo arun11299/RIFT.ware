@@ -1,0 +1,17 @@
+<SIMPLE-MIB xmlns="http://tail-f.com/ns/mibs/SIMPLE-MIB/200702080000Z">
+  <variables>
+    <numberOfHosts>2</numberOfHosts>
+  </variables>
+  <hostTable>
+    <hostEntry>
+      <hostName>Balnazzar</hostName>
+      <hostEnabled>true</hostEnabled>
+      <hostNumberOfServers>1</hostNumberOfServers>
+    </hostEntry>
+    <hostEntry>
+      <hostName>Kruul</hostName>
+      <hostEnabled>false</hostEnabled>
+      <hostNumberOfServers>0</hostNumberOfServers>
+    </hostEntry>
+  </hostTable>
+</SIMPLE-MIB>

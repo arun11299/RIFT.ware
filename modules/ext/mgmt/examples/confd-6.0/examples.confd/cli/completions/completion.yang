@@ -1,0 +1,8 @@
+module completion {
+  namespace "http://tail-f.com/ns/example/completion";
+  prefix comp;
+
+  leaf test {
+      type string;
+  }
+}

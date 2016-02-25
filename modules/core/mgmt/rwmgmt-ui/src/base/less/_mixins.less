@@ -1,0 +1,10 @@
+//-----
+.mix__get-text-contrast(@color) when (iscolor(@color)) {
+  .return_contrast_color(@yiq) when (@yiq >= 128) { color: #000; }
+  .return_contrast_color(@yiq) when (@yiq < 128)  { color: #fff; }
+  @r: red(@color);
+  @g: green(@color);
+  @b: blue(@color);
+  @yiq: ((@r*299)+(@g*587)+(@b*114))/1000;
+  .return_contrast_color(@yiq);
+}

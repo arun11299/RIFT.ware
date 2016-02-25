@@ -1,0 +1,27 @@
+Basic Web UI Example
+~~~~~~~~~~~~~~~~~~~~
+
+This example contains a small data model as seen in config.yang. It is
+fairly small but it sports a number of YANG constructs, i.e. it models
+chassis and interfaces realized as nested list entries, choice
+constructs, live operational data stored in both cdb and and served by
+an external data provider. It also realizes and action.
+
+To build and start the Web UI:
+
+# make clean all start
+
+If you want to stop the ConfD daemon:
+
+# make stop
+
+Browse and Configure
+~~~~~~~~~~~~~~~~~~~~
+
+Open up your favorite web browser to the ConfD machine, either http on
+port 8008. This is the default http port in the confd.conf file, you
+can change them if you want.
+
+# firefox http://localhost:8008
+
+Log in with user name 'admin' and password 'admin'.

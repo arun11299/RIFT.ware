@@ -1,0 +1,37 @@
+
+
+klacke@buzz> show configuration ospf 
+area 6.7.8.9 {
+    interface eth0;
+}
+area 10.3.4.5 {
+    interface eth1;
+}
+
+
+
+klacke@buzz> show configuration interface 
+interface eth0 {
+    address              1.2.3.4;
+    ifIndex              1;
+    ipAddressCreated     3483;
+    ipAddressLastChanged 3483;
+}
+interface eth1 {
+    address              2.3.4.5;
+    ifIndex              2;
+    ipAddressCreated     3483;
+    ipAddressLastChanged 3483;
+}
+
+
+
+klacke@buzz> show configuration snmp-map  
+ospf-if 1.2.3.4 0 {
+    area-id 6.7.8.9;
+    if-name eth0;
+}
+ospf-if 2.3.4.5 0 {
+    area-id 10.3.4.5;
+    if-name eth1;
+}

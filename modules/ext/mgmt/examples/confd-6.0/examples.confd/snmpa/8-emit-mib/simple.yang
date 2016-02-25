@@ -1,0 +1,195 @@
+module simple {
+  namespace "http://tail-f.com/ns/simple";
+  prefix simple;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  revision 2009-12-02 {
+    description
+      "initial revision";
+  }
+
+  typedef name-type {
+    type string {
+      length "min .. 64";
+    }
+  }
+
+  tailf:snmp-mib-module-name TAIL-F-SIMPLE-MIB;
+  tailf:snmp-oid "enterprises.24961.2";
+
+  container simple-objects {
+    tailf:snmp-oid ".1";
+    tailf:cdb-oper;
+
+    leaf number-of-servers {
+      type uint16;
+      config false;
+      tailf:snmp-name numberOfServers;
+      tailf:snmp-oid ".1";
+    }
+
+    leaf number-of-hosts {
+      type uint16;
+      config false;
+      tailf:snmp-name numberOfHosts;
+      tailf:snmp-oid ".2";
+    }
+
+    leaf max-number-of-servers {
+      type uint16 {
+        range "0..1024";
+      }
+      mandatory true;
+      tailf:snmp-name maxNumberOfServers;
+      tailf:snmp-oid ".3";
+    }
+
+    leaf max-number-of-hosts {
+      type uint16;
+      mandatory true;
+      tailf:snmp-name maxNumberOfHosts;
+      tailf:snmp-oid ".4";
+    }
+
+    container hosts {
+      // this container is not mapped to the MIB, since we
+      // don't specify a tailf:snmp-oid statement
+      list host {
+        key name;
+        max-elements 64;
+        tailf:sort-order snmp;
+        tailf:snmp-name hostTable;
+        tailf:snmp-oid ".5";
+        tailf:snmp-row-status-column 4;
+
+        leaf name {
+          type name-type;
+          tailf:snmp-oid ".1";
+        }
+
+        leaf enabled {
+          type boolean;
+          mandatory true;
+          tailf:snmp-oid ".2";
+        }
+
+        leaf number-of-servers {
+          type uint16;
+          config false;
+          tailf:snmp-oid ".3";
+        }
+
+        container servers {
+          // This container must not have a tailf:snmp-oid, since
+          // it is part of a table.
+          list server {
+            key name;
+            unique "address/ip address/port";
+            max-elements 64;
+            tailf:sort-order snmp;
+            tailf:snmp-name serverTable;
+            tailf:snmp-oid ".6";
+            tailf:snmp-row-status-column 4;
+
+            leaf name {
+              type name-type;
+              tailf:snmp-oid ".1";
+            }
+
+            container address {
+              // This container must not have a tailf:snmp-oid, since
+              // it is part of a table.  The contents of the container
+              // will be direct children of the MIB table.
+              leaf ip {
+                type inet:ipv4-address;
+                mandatory true;
+                tailf:snmp-oid .2;
+              }
+
+              leaf port {
+                type inet:port-number {
+                  range "1..max";
+                }
+                mandatory true;
+                tailf:snmp-oid .3;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    container services {
+      list service {
+        key "address port-number";
+        max-elements 64;
+        tailf:snmp-name serviceTable;
+        tailf:snmp-oid .6;
+
+        leaf address {
+          type inet:ipv4-address;
+          tailf:snmp-oid .1;
+        }
+
+        leaf port-number {
+          type inet:port-number {
+            range "1..max";
+          }
+          tailf:snmp-oid .2;
+        }
+
+        leaf host-name {
+          type leafref {
+            path "/simple-objects/hosts/host/name";
+          }
+          mandatory true;
+          tailf:snmp-oid .3;
+        }
+
+        leaf server-name {
+          type leafref {
+            path "/simple-objects/hosts/host[name = current()/../host-name]"
+              +  "/servers/server/name";
+          }
+          mandatory true;
+          tailf:snmp-oid .4;
+        }
+
+        choice auth {
+          // the choice is not visible in the MIB; all objects in
+          // the cases are flattened out in the MIB.
+          case plain {
+            leaf username {
+              type string;
+              tailf:snmp-oid .5;
+            }
+            leaf password {
+              type string;
+              tailf:snmp-oid .6;
+            }
+          }
+          case radius {
+            leaf radius-ip {
+              type inet:ip-address;
+              tailf:snmp-oid .7;
+            }
+          }
+        }
+      }
+    }
+
+    // this object is not mapped to the MIB, since we don't specify
+    // a tailf:snmp-oid statement
+    leaf descr {
+      type name-type;
+      default "test description";
+    }
+  }
+
+}

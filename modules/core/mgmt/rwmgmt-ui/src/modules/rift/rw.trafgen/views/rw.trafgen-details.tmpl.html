@@ -1,0 +1,56 @@
+<div>
+  <div class="details" ng-class="{hide : !trafgenDetails.isGenerator, row : trafgenDetails.isGenerator}">
+    <div id="controls" class="col">
+      <h2 class="etched-bottom">Controls</h2>
+      <div>
+        <trafgen-control id="controlView" orientation="horizontal"></trafgen-control>
+      </div>
+      <trafgen-controller id="controller" service="trafgenDetails.service">
+      </trafgen-controller>
+    </div>
+  </div>
+  <div class="row details">
+    <div class="col">
+      <h2 class="etched-bottom">Traffic</h2>
+      <table id="traffic-metrics" class="datagrid">
+        <thead>
+        <tr>
+          <th>Current Traffic</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Hide start for RIFT-7903 -->
+        <!-- <tr>
+          <th>Packet Count</th>
+          <td>{{trafgenDetails.info['packet-count']}}</td>
+        </tr>
+        <tr>
+          <th>TX Burst</th>
+          <td>{{trafgenDetails.info.tx_burst}}</td>
+        </tr> -->
+        <!-- Hide end for RIFT-7903 -->
+        <tr>
+          <th>TX Cycles</th>
+          <td>{{trafgenDetails.info['tx-cycles']}}</td>
+        </tr>
+        <tr ng-class="{hide : !trafgenDetails.showAdditionalMetrics }">
+          <th>Average Latency</th>
+          <td>{{trafgenDetails.info['average-latency']}}&micro;s</td>
+        </tr>
+        <tr ng-class="{hide : true || !trafgenDetails.showAdditionalMetrics}">
+          <th>Maximum Latency</th>
+          <td>{{trafgenDetails.info['maximum-latency']}}&micro;s</td>
+        </tr>
+        <tr ng-class="{hide : !showAdditionalMetrics}">
+          <th>Mean Deviation</th>
+          <td>{{trafgenDetails.info['mean-deviation']}}&micro;s</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col" ng-class="{hide : !trafgenDetails.showAdditionalMetrics}">
+      <h2>Message Response Time</h2>
+      <rw-bargraph id="tgen-barGraph" flex values="trafgenDetails.values" left-margin="95" height="300"></rw-bargraph>
+    </div>
+  </div>
+</div>

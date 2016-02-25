@@ -1,0 +1,42 @@
+{
+  "6097257848410996": {
+    "status": "success",
+    "code": 200,
+    "template": {
+      "use_sudo_cmd": true,
+      "config_file": "",
+      "description": "",
+      "plugin_name": "ue_sim",
+      "command": "ltesim_mme",
+      "id": 6097257848410996,
+      "name": "LTE MME & eNB"
+    }
+  },
+  "6097257850321555": {
+    "status": "success",
+    "code": 200,
+    "template": {
+      "use_sudo_cmd": true,
+      "config_file": "",
+      "description": "",
+      "plugin_name": "ue_sim",
+      "command": "ltesim_saegw",
+      "id": 6097257850321555,
+      "name": "LTE SAE Gateway"
+    }
+  },
+  "6097257850410212": {
+    "status": "success",
+    "code": 200,
+    "template": {
+      "use_sudo_cmd": true,
+      "config_file": "",
+      "description": "",
+      "plugin_name": "ue_sim",
+      "command": "ltesim_dist",
+      "id": 6097257850410212,
+      "name": "LTE Distributed"
+    }
+  }
+}
+

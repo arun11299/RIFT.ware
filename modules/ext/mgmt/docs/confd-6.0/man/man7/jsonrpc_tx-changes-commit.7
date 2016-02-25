@@ -1,0 +1,149 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "JSONRPC_TX\-CHANGES\-COMMIT" "" "June 2015" "" ""
+.
+.SH "NAME"
+\fBjsonrpc_tx\-changes\-commit\fR
+.
+.SH "METHOD validate_commit"
+Validates a transaction before calling \fBcommit\fR\. If this method succeeds (with or without warnings) then the next operation \fImust\fR be all call to either \fBcommit\fR or \fBclear_validate_lock\fR\. The configuration will be locked for access by other users until one of these methods are called\.
+.
+.SS "PARAMS"
+.
+.nf
+
+{"th": <number>}
+.
+.fi
+.
+.SS "RESULT"
+.
+.nf
+
+{}
+.
+.fi
+.
+.P
+or
+.
+.IP "" 4
+.
+.nf
+
+{"warnings": <array of warning>}
+
+warning = {"paths": <array of string>, "message": <string>}
+.
+.fi
+.
+.IP "" 0
+.
+.SS "ERRORS (SPECIFIC)"
+Same as for the \fBvalidate_trans\fR method\.
+.
+.SH "METHOD clear_validate_lock"
+Releases validate lock taken by \fBvalidate_commit\fR
+.
+.SS "PARAMS"
+.
+.nf
+
+{"th": <number>}
+.
+.fi
+.
+.SS "RESULT"
+.
+.nf
+
+{}
+.
+.fi
+.
+.SH "METHOD commit"
+Copies the configuration into the running datastore\.
+.
+.SS "PARAMS"
+.
+.nf
+
+{"th": <number>,
+ "timeout": <number, default: 0>,
+ "flags": <number>, default: 0}
+.
+.fi
+.
+.P
+The \fBflags\fR param can bit or:ed with the following values to change the commit behavior:
+.
+.IP "\(bu" 4
+\fB1 << 0\fR \- Do not release locks
+.
+.IP "\(bu" 4
+\fB1 << 1\fR \- Disable backlog
+.
+.IP "\(bu" 4
+\fB1 << 2\fR \- Do not drop revision
+.
+.IP "\(bu" 4
+\fB1 << 3\fR \- No device manager
+.
+.IP "" 0
+.
+.P
+The \fBtimeout\fR param represents the confirmed commit timeout, i\.e\. set it to zero (0) to commit without timeout\.
+.
+.IP "\(bu" 4
+If a call to \fBconfirm_commit\fR is not done within \fBtimeout\fR seconds an automatic rollback is performed\. This method can also be used to "extend" a confirmed commit that is already in progress, i\.e\. set a new timeout or add changes\.
+.
+.IP "\(bu" 4
+A call to \fBabort_commit\fR can be made to abort the confirmed commit\.
+.
+.IP "" 0
+.
+.P
+\fBNOTE\fR: Must be preceded by a call to \fBvalidate_commit\fR
+.
+.P
+\fBNOTE\fR: The transaction handler is deallocated as a side effect of this method
+.
+.SS "RESULT"
+.
+.nf
+
+{}
+.
+.fi
+.
+.SS "ERRORS (SPECIFIC)"
+.
+.nf
+
+{"type": "trans\.confirmed_commit_in_progress"}
+.
+.fi
+.
+.SH "METHOD abort_commit"
+Aborts the active read\-write transaction
+.
+.SS "RESULT"
+.
+.nf
+
+{}
+.
+.fi
+.
+.SH "METHOD confirm_commit"
+Confirms the currently pending confirmed commit
+.
+.SS "RESULT"
+.
+.nf
+
+{}
+.
+.fi
+

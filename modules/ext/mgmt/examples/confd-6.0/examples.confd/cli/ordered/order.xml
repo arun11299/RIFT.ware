@@ -1,0 +1,45 @@
+<c:config xmlns:c="http://tail-f.com/ns/config/1.0"
+          xmlns="http://tail-f.com/ns/example/order">
+  <server>
+    <name>1</name>
+    <ip>1.1.1.1</ip>
+    <port>1070</port>
+  </server>
+  <server>
+    <name>2</name>
+    <ip>1.1.1.2</ip>
+    <port>1070</port>
+  </server>
+  <server>
+    <name>3</name>
+    <ip>1.1.1.3</ip>
+    <port>1070</port>
+  </server>
+
+  <dns>
+    <name>primary</name>
+    <ip>1.1.1.1</ip>
+  </dns>
+  <dns>
+    <name>secondary</name>
+    <ip>1.1.1.2</ip>
+  </dns>
+  <dns>
+    <name>external-backup</name>
+    <ip>1.1.1.3</ip>
+  </dns>
+
+  <host>
+    <name>callisto</name>
+    <ip>1.1.1.1</ip>
+  </host>
+  <host>
+    <name>titan</name>
+    <ip>1.1.1.2</ip>
+  </host>
+  <host>
+    <name>ganymede</name>
+    <ip>1.1.1.3</ip>
+  </host>
+
+</c:config>

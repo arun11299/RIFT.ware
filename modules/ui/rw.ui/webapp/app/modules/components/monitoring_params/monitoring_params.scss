@@ -1,0 +1,78 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+.slick-track {
+  cursor:pointer;
+}
+.slick-slider {
+  margin-right:0;
+  margin-bottom: 50px;
+}
+.slick-next, .slick-prev {
+  opacity:0.25;
+  top:60%;
+  z-index:5;
+  height:auto;
+  &:hover{
+    opacity:1;
+  }
+  &:before{
+    font-family: "slick";
+    font-size: 50px;
+    font-weight: bold;
+    line-height: 1;
+    color: white;
+    opacity: 0.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+.slick-next {
+    right: -40px;
+}
+.slick-prev {
+    left: -10px;
+}
+.slick-list {
+  max-width: 693px;
+}
+.slick-slide {
+}
+.slick-slide.component {
+  box-sizing:border-box;
+  height: 275px;
+  flex-direction:column;
+  flex-wrap:none;
+  .componentWrapper {
+    display:flex;
+    flex-wrap:wrap;
+        flex: 1;
+  }
+}
+.slick-active {
+}
+.slick-slide.slick-active.component {
+  align-items:inherit;
+}
+.slick-initialized.slick-slider{
+  max-width: 693px;
+}
+.slick-initialized .slick-slide {
+    display: flex;
+}
+.monitoring_params_component {
+    text-align:center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    align-content: center;
+    padding: 0.5rem;
+    border:1px solid white;
+}
+.slick-dots li button:before {
+    font-size: 25px;
+}

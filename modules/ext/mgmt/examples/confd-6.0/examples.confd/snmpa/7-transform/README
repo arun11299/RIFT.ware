@@ -1,0 +1,503 @@
+Example: Transform between standard SNMP MIB and high-level data model
+----------------------------------------------------------------------
+
+Table of Contents
+
+  1.  Introduction
+  2.  Data model
+  3.  Implementation
+  4.  Run tests
+
+
+
+1.  Introduction
+
+  This example illustrates how ConfD can be used to implement some
+  existing SNMP MIBs, and at the same time provide a more high-level
+  view of the same data for other interfaces such as CLI, NETCONF, and
+  Web UI.
+
+  This is a common scenario when there are standard MIBs which
+  must be implemented.  The data model in the MIBs rarely makes a good
+  CLI, so a new data model for the CLI is designed.  For data
+  consistency reasons, development effort, and cleaner design, it is
+  important to have a common implementation of this data.
+
+  It should also be noted that almost all of the complexity in this
+  example stems from the fact that we require the standard MIBs to be
+  writable.  If it suffices with read-only access into these MIBs, the
+  design of the transformation and mapping code found in this example
+  would be completely different and also considerably easier to
+  understand.  It is better in mostly all ways to use NETCONF as a
+  configuration protocol rather than SNMP.  Thus, this example is only
+  of interest to ConfD developers that MUST have writable SNMP MIBs.
+
+  The example uses the high-level data model as the "base" data model
+  for which the data is stored in CDB.  The application reads data
+  from CDB according to this data model.
+
+  There is a set of transformation functions that transform data
+  between the base data model and the SNMP data model.
+
+
+    +-------------+                      +----------+
+    | CLI/NETCONF |      transform       | SNMP MIB |
+    |   view      |  <---------------->  |   view   |
+    +-------------+                      +----------+
+          |
+          | 1-1 mapping
+          |
+    +------------+
+    | CDB        |
+    | data store |
+    +------------+
+          |
+          |  CDB read / subscribe
+          |
+      +------------+
+   +-------------| |
+   | application |-+
+   +-------------+
+
+
+2.  Data model
+
+2.1  MIBs
+
+  For the sake of keeping the example easier to understand, the
+  example uses a proper subset of the OSPF-MIB, IF-MIB, and IP-MIB.
+  Specifically, a subset of the tables ifTable, ifXTable,
+  ipAddrTable, ospfAreaTable, ospfIfTable is implemented:
+
+    --mib-2(1.3.6.1.2.1)
+      +--interfaces(2)
+      |  +--ifTable(2)
+      |     +--ifEntry(1) [ifIndex]
+      |        +-- r-n InterfaceIndex ifIndex(1)
+      +--ip(4)
+      |  +--ipAddressTable(34)
+      |     +--ipAddressEntry(1) [ipAddressAddrType,ipAddressAddr]
+      |        +-- --- InetAddressType ipAddressAddrType(1)
+      |        +-- --- InetAddress     ipAddressAddr(2)
+      |        +-- rwn InterfaceIndex  ipAddressIfIndex(3)
+      |        +-- r-n TimeStamp       ipAddressCreated(8)
+      |        +-- r-n TimeStamp       ipAddressLastChanged(9)
+      |        +-- rwn RowStatus       ipAddressRowStatus(10)
+      +--ospf(14)
+      |  +--ospfGeneralGroup(1)
+      |  |  +-- rwn RouterID  ospfRouterId(1)
+      |  |  +-- rwn Status    ospfAdminStat(2)
+      |  +--ospfAreaTable(2)
+      |  |  +--ospfAreaEntry(1) [ospfAreaId]
+      |  |     +-- r-n AreaID      ospfAreaId(1)
+      |  |     +-- rwn Enumeration ospfImportAsExtern(3)
+      |  |     +-- rwn Enumeration ospfAreaSummary(9)
+      |  |     +-- rwn RowStatus   ospfAreaStatus(10)
+      |  |     +-- rwn Enumeration ospfAreaNssaTranslatorRole(11)
+      |  +--ospfIfTable(7)
+      |     +--ospfIfEntry(1) [ospfIfIpAddress,ospfAddressLessIf]
+      |        +-- r-n IpAddress                ospfIfIpAddress(1)
+      |        +-- r-n InterfaceIndexOrZero     ospfAddressLessIf(2)
+      |        +-- rwn AreaID                   ospfIfAreaId(3)
+      |        +-- rwn Enumeration              ospfIfType(4)
+      |        +-- rwn Status                   ospfIfAdminStat(5)
+      |        +-- rwn DesignatedRouterPriority ospfIfRtrPriority(6)
+      |        +-- rwn RowStatus                ospfIfStatus(17)
+      +--ifMIB(31)
+         +--ifMIBObjects(1)
+            +--ifXTable(1)
+               +--ifXEntry(1) [ifIndex]
+                  +-- r-n DisplayString ifName(1)
+
+2.2.  High-level model
+
+  In the high-level data model used in the CLI and other interfaces,
+  the structure of the data is different, and also instance naming is
+  different.  For example, an interface in SNMP is identified by its
+  ifIndex (an integer), but in the CLI it is identified by name (a
+  string).
+
+    +--interface [name]
+    |  +-- rw xs:string              name
+    |  +-- rw confd:inetAddressIPv4  address
+    |  
+    +--ospf
+       +-- rw empty        disable
+       +-- rw RouterID     router-id
+       +-- rw enumeration  admin-status
+       |
+       +--area [id]
+          +-- rw AreaID    id
+          +--stub
+          |  +-- rw empty  summary
+          +--nssa
+          |  +-- rw empty       summary
+          |  +-- rw Translator  translator
+          +--interface [name]
+             +-- rw leafref:/interface/name name
+             +-- rw InterfaceType           type
+             +-- rw empty                   disable
+             +-- rw xs:unsignedByte         priority
+    
+
+2.3.  Differences
+
+  The are a couple of notable differences between these data models:
+
+  The SNMP data model is a set of tables, with relationships between
+  the tables, whereas the high-level data model is more hierarchical.
+
+  Everything in the high-level data model can be modified, but in the
+  SNMP data model some of the config objects are read-only (for
+  example ifName is read-only, and in SNMP, new interfaces cannot be
+  created.
+
+  There are some read-only objects in the SNMP MIB which do not exist
+  in the CLI model, specifically ipAddressCreated and
+  ipAddressLastChanged.
+
+  The SNMP table ospfIfTable is indexed by an ip address.  The
+  corresponding high-level list (/area/interface) is indexed by
+  interface name.  Thus, in order to map from an ip address in the
+  SNMP MIB to an interface name, we have to use the ipAddrTable to find
+  an ifIndex, and then check the corresponding ifName in the ifXTable.
+
+
+3.  Implementation
+
+  We will use a set of transformation functions to map between the
+  SNMP view and the high-level model.
+
+3.1.  Interfaces
+
+  The high-level interface configuration list is very simplified.  An
+  interface is this model has a name and an ip address.
+
+  The corresponding MIB data is stored in three standard tables;
+  ifTable, ifXTable and ipAddressTable from IF-MIB and IP-MIB.
+
+  The main problem is that there is no ifIndex in the high-level data
+  model.  We solve this by writing some code that allocates a new
+  ifIndex when an interface gets created, and we store that ifIndex in
+  CDB together with the rest of the interface data.  To accomplish
+  this we need to do two things; add ifIndex to the data model and
+  write a hook function which allocates a new ifIndex when an
+  interface is created.
+
+  The interface list will have a hidden leaf "ifIndex".  Since it is
+  hidden, it will not be visible in the CLI or Web UI.  (An
+  alternative design could make it read-only, which means that the
+  operator can see the value in 'show interface'.)
+  Debug tip: to view the hidden data from the CLI, invoke "unhide debug"
+
+  When the hook code starts, it connects to ConfD and loops through
+  all interfaces and builds a mapping table from ifIndex to ifName,
+  which is kept in a global variable in the code.  When the hook code
+  is invoked because an interface is created, it will check the map
+  table to find a new free ifIndex, store that value in CDB, and
+  update the mapping table with a new entry.  When an interface is
+  deleted, the hook code simply deletes the corresponding entry from
+  its map.
+
+  Using this map, the transformation code is pretty straight forward.
+
+    NOTE: in general, a hook cannot be used to keep a data structure
+    completely in sync with the db, because there is one situation
+    where the db is changed without going through a transaction, and
+    that is when a confirmed-commit rolls back.  There are two
+    solutions to this: the code can be a proper CDB subscriber, and
+    keep the data structure in sync, or the code can subscribe to the
+    ConfD event CONFD_NOTIF_COMMIT_SIMPLE, and when the tid is 0 (not
+    really documented!!) rebuild the data structure.
+
+
+3.2.  IP addresses
+
+  In the high-level model, we have made the simplification that each
+  interface has zero or one IPv4 address.  In the MIB, there is the
+  ipAddressTable, which maps from ip address to ifIndex.  The only
+  difficulty here is to get the SNMP lexicographical ordering right.
+  We solve this by temporarily storing an array of all ip addresses,
+  per transaction.  The array is built the first time it is needed,
+  and discarded when the transaction is closed.
+
+
+3.3.  OSPF Area and Interfaces
+
+  This example uses a hidden table with the SNMP index, and a hook to
+  sync the hidden table.  The hidden table resides in /ospf/snmp-map.
+
+  One of the problems we face when mapping a structure like the one
+  found in OSPF-MIB.mib to a tree as found under /ospf in ospf.yang is
+  the following:
+
+  The OSPF-MIB contains two tables, one table ospfAreaTable and one
+  ospfIfTable.  The ospfIfTable contains a pointer into the
+  ospfAreaTable, thus in YANG we model this as an hierarchy
+  where we have /ospf/area/interface.
+  
+  Both the tables ospfAreaTable and ospfIfTable have a transform that
+  leads into the high level /ospf tree.  The transform needs to be
+  able read and also write.  The problem occurs in the create()
+  callback for the ospfIfTable.  We cannot there create the object in
+  /ospf/area{areaId}/interface{ipAddr, ifIndex} because we don't know
+  the areaId yet.  The creation must be delayed until we later receive
+  a set_elem for the area index.  This is solved by accumulating the
+  ospfIfEntry elements in a C structure until we finally receive the
+  set_elem for the ospfIfAreaId.  Awkward, but that's the price we
+  must pay to get a nice hierarchical model.
+
+  Another design consideration in the OSPF-MIB transformation code is
+  the hook callpoint "ospf-area-hook" that sits under /ospf/area.  It
+  will be called both for changes to each /ospf/area and
+  /ospf/area/interface.  Since this hook is used to keep the interface
+  map in sync, it might be tempting to define the hook under
+  /ospf/area/interface.  But if we do that, the hook won't get invoked
+  when an entire area is deleted.  Had we chosen to have the hook at
+  /ospf/area/interface, the result would be dangling pointers in the
+  snmp-map, this could be acceptable, if we chose to check all
+  references prior to usage.
+
+
+4.  Run tests
+
+4.1.  IP-MIB and IF-MIB
+
+  In order to test this do:
+
+    $ make all
+
+    $ make start
+
+  In another shell, start the ConfD CLI:
+
+    $ make cli
+    admin connected from 127.0.0.1 using console on x15
+    admin@x15>
+
+  In a third shell, walk the mibs.  At this point, we have no data,
+  and the only data in `mib-2` is the standard SNMPv2-MIB data:
+
+    $ make mibwalk
+
+    SNMPv2-MIB::sysDescr.0 = STRING: Tail-f ConfD agent
+    ...
+
+  Add some interfaces in the CLI:
+
+    admin@x15> configure
+    Entering configuration mode private
+    [ok][2008-11-10 14:40:56]
+    
+    [edit]
+    admin@x15% set interface eth0 address 10.0.0.1
+    [ok][2008-11-10 14:41:04]
+    
+    [edit]
+    admin@x15% set interface eth1                 
+    [ok][2008-11-10 14:41:08]
+    
+    [edit]
+    admin@x15% set interface eth2 address 10.0.0.3
+    [ok][2008-11-10 14:41:17]
+    
+    [edit]
+    admin@x15% commit 
+    Commit complete.
+
+    [ok][2008-11-10 14:41:18]
+    [edit]
+    admin@x15% run show all interface 
+    interface eth0 {
+        address 10.0.0.1;
+    }
+    interface eth1;
+    interface eth2 {
+        address 10.0.0.3;
+    }
+
+  Run mibwalk again:
+
+    $ make mibwalk
+    ...
+    IF-MIB::ifDescr.1 = STRING: dummy interface
+    IF-MIB::ifDescr.2 = STRING: dummy interface
+    IF-MIB::ifDescr.3 = STRING: dummy interface
+    IP-MIB::ipAddressIfIndex.ipv4."10.0.0.1" = INTEGER: 1
+    IP-MIB::ipAddressIfIndex.ipv4."10.0.0.3" = INTEGER: 3
+    IP-MIB::ipAddressCreated.ipv4."10.0.0.1" = Timeticks: (16019) 0:02:40.19
+    IP-MIB::ipAddressCreated.ipv4."10.0.0.3" = Timeticks: (16019) 0:02:40.19
+    IP-MIB::ipAddressLastChanged.ipv4."10.0.0.1" = Timeticks: (16019) 0:02:40.19
+    IP-MIB::ipAddressLastChanged.ipv4."10.0.0.3" = Timeticks: (16019) 0:02:40.19
+    IP-MIB::ipAddressRowStatus.ipv4."10.0.0.1" = INTEGER: active(1)
+    IP-MIB::ipAddressRowStatus.ipv4."10.0.0.3" = INTEGER: active(1)
+    ...
+    IF-MIB::ifName.1 = STRING: eth0
+    IF-MIB::ifName.2 = STRING: eth1
+    IF-MIB::ifName.3 = STRING: eth2
+
+  To view the hidden data in the CLI, unhide it first:
+
+    admin@x15% run unhide debug
+    [ok][2008-11-10 14:45:37]
+    
+    [edit]
+    admin@x15% run show all interface 
+    interface eth0 {
+        address              10.0.0.1;
+        ifIndex              1;
+        ipAddressCreated     16019;
+        ipAddressLastChanged 16019;
+    }
+    interface eth1 {
+        ifIndex              2;
+        ipAddressCreated     16019;
+        ipAddressLastChanged 16019;
+    }
+    interface eth2 {
+        address              10.0.0.3;
+        ifIndex              3;
+        ipAddressCreated     16019;
+        ipAddressLastChanged 16019;
+    }
+
+
+  Set an ip address of an interface over SNMP:
+
+    $ snmpset -m ./IP-MIB.mib -c public -v2c localhost:4000 \
+         ipAddressIfIndex.ipv4.4."10.0.0.2" = 2 \
+         ipAddressRowStatus.ipv4.4."10.0.0.2" = createAndGo
+
+
+  In the CLI:
+
+    admin@x15% run show all interface 
+    interface eth0 {
+        address              10.0.0.1;
+        ifIndex              1;
+        ipAddressCreated     16019;
+        ipAddressLastChanged 16019;
+    }
+    interface eth1 {
+        address              10.0.0.2;
+        ifIndex              2;
+        ipAddressCreated     16123;
+        ipAddressLastChanged 16123;
+    }
+    interface eth2 {
+        address              10.0.0.3;
+        ifIndex              3;
+        ipAddressCreated     16019;
+        ipAddressLastChanged 16019;
+    }
+
+
+   Delete an address over SNMP:
+
+     $ snmpset -m ./IP-MIB.mib -c public -v2c localhost:4000 \
+         ipAddressRowStatus.ipv4.4."10.0.0.2" = destroy
+
+
+4.2.  OSPF-MIB
+
+  We still have our 3 interfaces from above.
+  Now we continue and create an OSPF area in the CLI.
+
+    admin@x15% set ospf area 0.0.0.172
+    [ok][2008-11-19 16:38:24]
+
+    [edit]
+    admin@x15% commit
+    Commit complete.
+    [ok][2008-11-19 16:38:56]
+
+    [edit]
+    admin@x15% show ospf 
+    area 0.0.0.172;
+    [ok][2008-11-19 16:39:03]
+
+  We can now view that data over SNMP:
+
+    $ make mibwalk
+    ....
+    OSPF-MIB::ospfAreaSummary.0.0.0.172 = INTEGER: noAreaSummary(1)
+    OSPF-MIB::ospfAreaStatus.0.0.0.172 = INTEGER: active(1)
+    ...
+
+  We can delete that area over SNMP:
+
+    $ snmpset -m ./OSPF-MIB.mib -c public -v2c localhost:4000 \
+        OSPF-MIB::ospfAreaStatus.0.0.0.172 = destroy
+
+  and we can recreate it:
+
+    $ snmpset -m ./OSPF-MIB.mib -c public -v2c localhost:4000 \
+        OSPF-MIB::ospfAreaStatus.0.0.0.172 = createAndGo
+
+  If we have an existing area, we can create new interfaces for it in
+  the CLI:
+
+    admin@x15% set ospf area 0.0.0.172 interface eth2 
+    [ok][2008-11-19 16:43:21]
+
+    [edit]
+    admin@x15% commit
+    Commit complete.
+    [ok][2008-11-19 16:43:24]
+
+  Let's view that from SNMP:
+
+    $ make mibwalk | grep OSPF-MIB
+    MIBS=./IP-MIB.mib:./IF-MIB.mib:./OSPF-MIB.mib \
+      snmpwalk -c public -v2c localhost:4000 mib-2
+    OSPF-MIB::ospfAreaSummary.0.0.0.172 = INTEGER: sendAreaSummary(2)
+    OSPF-MIB::ospfAreaStatus.0.0.0.172 = INTEGER: active(1)
+    OSPF-MIB::ospfAreaNssaTranslatorRole.0.0.0.172 = INTEGER: candidate(2)
+    OSPF-MIB::ospfIfAreaId.10.0.0.3.0 = IpAddress: 0.0.0.172
+    OSPF-MIB::ospfIfAdminStat.10.0.0.3.0 = INTEGER: enabled(1)
+    OSPF-MIB::ospfIfStatus.10.0.0.3.0 = INTEGER: active(1)
+
+
+  We now have two tables, one with an index into the other, let's
+  delete the interface table entry over SNMP:
+
+    $ snmpset -m ./OSPF-MIB.mib -c public -v2c localhost:4000 \
+        OSPF-MIB::ospfIfStatus.10.0.0.3.0 = destroy 
+
+  Take a look in the CLI and see that it's gone:
+
+    admin@x15> show configuration ospf 
+    area 0.0.0.172 {
+        stub {
+            summary;
+        }
+        nssa {
+            translator candidate;
+        }
+    }
+
+  And finally, we recreate the same ospf interface over SNMP:
+
+    $ snmpset -m ./OSPF-MIB.mib -c public -v2c localhost:4000 \
+        OSPF-MIB::ospfIfStatus.10.0.0.3.0 = createAndGo \
+        OSPF-MIB::ospfIfAreaId.10.0.0.3.0 = 0.0.0.172
+
+  In the CLI we then get:
+
+    admin@x15> show configuration ospf 
+    area 0.0.0.172 {
+        stub {
+            summary;
+        }
+        nssa {
+            translator candidate;
+        }
+        interface eth2 {
+            disable;
+            priority 1.0;
+        }
+    }
+
+
+
+

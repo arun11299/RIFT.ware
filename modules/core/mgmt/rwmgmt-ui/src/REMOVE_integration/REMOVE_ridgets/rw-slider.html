@@ -1,0 +1,45 @@
+<script src="../../lib/nouislider/jquery.nouislider.min.js"></script>
+
+<polymer-element name="rw-slider" attributes="min max step value">
+    <template>
+        <link rel="stylesheet" type="text/css" href="../../lib/nouislider/jquery.nouislider.css"/>
+        <link rel="stylesheet" type="text/css" href="rw-slider.css"/>
+        <div id="slider"></div>
+    </template>
+<script>
+Polymer({
+
+  created: function() {
+    this.min = 0;
+    this.max = 100;
+    this.step = 1;
+  },
+
+  attached: function() {
+    this.slider = $(this.$.slider);
+    this.slider.noUiSlider({
+      start: this.value,
+      step: this.step,
+      range: {
+        min: this.min,
+        max: this.max
+      }
+    });
+    var self = this;
+    var onSlide = function(e, value) {
+      self.value = parseInt(value);
+    };
+    this.slider.on({
+      change: onSlide,
+      slide: onSlide
+    });
+  },
+
+  valueChanged: function() {
+    if(this.slider) {
+      this.slider.val(this.value);
+    }
+  }
+});
+</script>
+</polymer-element>

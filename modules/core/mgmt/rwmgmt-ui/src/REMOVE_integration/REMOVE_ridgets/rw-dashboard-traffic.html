@@ -1,0 +1,120 @@
+<link rel="import" href="rw-trafgen-controller.html">
+<link rel="import" href="rw-trafsim-controller.html">
+<link rel="import" href="rw-aggregate-control.html">
+<link rel="import" href="rw-gauge.html">
+<link rel="import" href="rw-scroll-graph.html">
+
+<polymer-element name="rw-dashboard-traffic" attributes="vnf fpath trafsims dialSize">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-dashboard-traffic.css"/>
+    <rw-iconset></rw-iconset>
+    <div id="traffic-control-dashpanel" class="dashpanel">
+      <rw-aggregate-control
+          id="control"
+          hasTrafGen="{{trafgen != null}}"
+          hasTrafSim="{{trafsimClient != null}}"
+          ></rw-aggregate-control>
+      <rw-trafgen-controller
+          id="trafgenController"
+          service="{{trafgen}}"
+          ></rw-trafgen-controller>
+      <rw-trafsim-controller
+          id="trafsimController"
+          colony="{{trafsimClient.colonyId}}"
+          service="{{trafsimClient.name}}"
+          ></rw-trafsim-controller>
+    </div>
+    <div id="gauges" class="dashpanel">
+      <div class="gauge-group">
+        <h2>Gbps</h2>
+        <rw-gauge
+                size="{{dialSize}}"
+                color="hsla(212, 57%, 50%, 1)"
+                value="{{gbps * $.control.started | noNaN}}"
+                max="{{gbpsMax}}"
+                resize="true"
+                max="{{gbpsMax}}"
+                ></rw-gauge>
+        <rw-scroll-graph
+                width="250"
+                lineColor="#377cc8"
+                strokeColor="rgba(55,124,200,0.7)"
+                value="{{gbps}}"
+                paused="{{! $.control.started}}"
+                max="{{gbpsMax}}"
+                ></rw-scroll-graph>
+      </div>
+      <div class="gauge-group">
+        <h2>Mpps</h2>
+        <rw-gauge
+                id="ppsGauge"
+                size="{{dialSize}}"
+                color="hsla(260, 35%, 50%, 1)"
+                value="{{mpps * $.control.started | noNaN}}"
+                max="{{mppsMax}}"
+                resize="true"
+                ></rw-gauge>
+        <rw-scroll-graph
+                width="250"
+                lineColor="hsla(260, 35%, 50%, 1)"
+                strokeColor="hsla(260, 35%, 50%, 0.7)"
+                value="{{mpps * $.control.started | noNaN}}"
+                paused="{{! $.control.started}}"
+                max="{{mppsMax}}"
+                ></rw-scroll-graph>
+      </div>
+    </div>
+  </template>
+  <script>
+Polymer(Platform.mixin({
+  mpps : 0,
+  mppsMax : 0,
+  mppsMax : 0,
+  gbps : 0,
+  gbpsMax : 0,
+  bpsPercent : 0,
+  trafgen: null,
+  trafsimClient: null,
+
+  trafsimsChanged: function() {
+    this.trafsims.addEventListener("update-config", this.trafsimsConfigUpdate.bind(this));
+  },
+
+  trafsimsConfigUpdate: function() {
+    var self = this;
+    _.each(this.trafsims.trafsims, function(trafsim) {
+      if (trafsim.isClient) {
+        self.trafsimClient = trafsim;
+        return false; // break
+      }
+    });
+  },
+
+  vnfChanged: function() {
+    this.vnf.addEventListener("update", this.vnfUpdate.bind(this));
+  },
+
+  vnfUpdate: function() {
+    var self = this;
+    _.each(this.vnf.services, function(service) {
+      if (service.type == 'trafgen') {
+        self.trafgen = service;
+      }
+    });
+  },
+
+  fpathChanged: function() {
+    this.stats = new rw.FpathKitchenSink(this.fpath, this, this.fpathUpdate.bind(this));
+  },
+
+  fpathUpdate: function() {
+    var started = this.$.control.started || false;
+    this.gbps = started * (this.tx_rate_mbps + this.rx_rate_mbps) / 1000;
+    this.gbpsMax = (this.speed * 2) / 1000;
+    this.bpsPercent = Math.round(100 * this.gbps / this.gbpsMax);
+    this.mpps = started * ((this.tx_rate_pps + this.rx_rate_pps) / 1000000);
+    this.mppsMax = this.gbpsMax * 1.5; // rough math from Aydin based on an average 64 packet size
+  }
+}, rw.ui));
+  </script>
+</polymer-element>

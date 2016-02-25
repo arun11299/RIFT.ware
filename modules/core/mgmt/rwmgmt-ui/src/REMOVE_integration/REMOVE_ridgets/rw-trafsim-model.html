@@ -1,0 +1,296 @@
+
+<polymer-element name="rw-trafsim-model" attributes="noCounters noTimers">
+<script>
+Polymer({
+
+  created: function() {
+    this.subscriptions = [];
+    this.noCounters = false;
+    this.noTimers = false;
+    this.g = rw.trafsim;
+    this.trafsims = [];
+  },
+
+  attached: function() {
+    rw.api.get('/api/running/colony?select=trafsim-service/name', 'application/vnd.yang.collection+json').
+            then(this.loadConfig.bind(this));
+  },
+
+  findFirstClient: function() {
+    // CONVENTION: name of trafsim indicates if it's a client or server
+    return this.findFirstByMode(true);
+  },
+
+  findFirstServer: function() {
+    return this.findFirstByMode(false);
+  },
+
+  findFirstByMode: function(isClient) {
+    if (!this.trafsims) {
+      return null;
+    }
+    for (var i = 0; i < this.trafsims.length; i++) {
+      if (this.trafsims[i].isClient == isClient) {
+        return this.trafsims[i];
+      }
+    }
+  },
+
+  loadConfig: function(data) {
+    // must not be any trafsims, then do not subscribe
+    if (!('collection' in data) || data.collection['rw-base:colony'].length === 0) {
+      return;
+    }
+    var self = this;
+    self.unsubscribe();
+    var clientTest = /.*_client/;
+    var serverTest = /.*_server/;
+    var trafsims = [];
+    _.each(data.collection['rw-base:colony'], function(colonyRecord) {
+      var colonyId = colonyRecord.name;
+      _.each(colonyRecord['rw-appmgr:trafsim-service'], function(trafsimRecord) {
+        var isClient = trafsimRecord.name.match(clientTest) != null;
+        var isServer = trafsimRecord.name.match(serverTest) != null;
+        if (!isClient && !isServer) {
+          return;
+        }
+        var trafsim = {
+          colonyId : colonyId,
+          name : trafsimRecord.name,
+          isClient : isClient
+        };
+        trafsims.push(trafsim);
+
+        // NOTE:  These URL were ported from uAgent to ConfD and need to be verfied
+        var baseUrl = '/api/operational/colony/' + trafsim.colonyId + '/trafsim-service/' + trafsim.name +
+                '/statistics/service';
+        var url = baseUrl + '/traffic?deep';
+        var socket = new rw.api.SocketSubscriber('web/get');
+        socket.subscribeMeta(self.loadMetrics.bind(self, trafsim), {
+          url: url,
+          accept: 'application/vnd.yang.collection+json'
+        }, self.offlineMetrics.bind(self, trafsim));
+        self.subscriptions.push(socket);
+
+        if (!self.noCounters) {
+          var socket_counters = new rw.api.SocketSubscriber('web/get');
+          var url_counters = baseUrl + '/counters/protocol/commands?deep';
+
+          socket_counters.subscribeMeta(self.loadCounters.bind(self, trafsim), {
+            url: url_counters,
+            accept: 'application/vnd.yang.collection+json'
+          }, self.offlineCounters.bind(self, trafsim));
+          self.subscriptions.push(socket_counters);
+        }
+
+        if (!self.noTimers) {
+          var url_timers = baseUrl + '/counters/timer?deep';
+          var socket_timers = new rw.api.SocketSubscriber('web/get');
+          socket_timers.subscribeMeta(self.loadTimers.bind(self, trafsim), {
+            url: url_timers,
+            accept: 'application/vnd.yang.collection+json'
+          }, self.offlineTimers.bind(self, trafsim));
+          self.subscriptions.push(socket_timers);
+        }
+      });
+    });
+    this.trafsims = trafsims;
+    this.fire("update-config");
+  },
+
+  loadTimers: function(trafsim, timers) {
+    var self = this;
+    trafsim.timers = {};
+    _.each(timers.collection['rw-appmgr:timer'], function(timer) {
+      for (var time in timer) {
+        if (!(time in trafsim.timers)) {
+          trafsim.timers[time] = parseInt(timer[time]);
+
+        } else {
+          trafsim.timers[time] += parseInt(timer[time]);
+        }
+      }
+    });
+    this.fire("update");
+  },
+
+  loadCounters: function(trafsim, counters) {
+    var self = this;
+    var i = 0;
+    trafsim.counters = {cer:{}, totalsent: 0, totalreceived: 0};
+    _.each(counters.collection['rw-appmgr:commands'], function(command) {
+      _.each(command.command, function(counter) {
+          if (counter.name == "CER") {
+            if ('periodic-received' in trafsim.counters.cer) {
+              trafsim.counters.cer['periodic-received'] = String(parseInt(trafsim.counters.cer['periodic-received']) + parseInt(counter['periodic-received']));
+              trafsim.counters.cer['periodic-sent'] = String(parseInt(trafsim.counters.cer['periodic-sent']) + parseInt(counter['periodic-sent']));
+              trafsim.counters.cer['cumulative-sent']  = String(parseInt(trafsim.counters.cer['cumulative-sent']) + parseInt(counter['cumulative-sent']));
+              trafsim.counters.cer['cumulative-received'] = String(parseInt(trafsim.counters.cer['cumulative-received']) + parseInt(counter['cumulative-received']));
+            } else {
+              trafsim.counters.cer = counter;
+            }
+            trafsim.counters.totalreceived += parseInt(counter['cumulative-received']);
+            trafsim.counters.totalsent += parseInt(counter['cumulative-sent']);
+          } else if (counter['periodic-sent'] != "0" || counter['periodic-received'] != "0" || counter['cumulative-sent'] != '0' || counter['cumulative-received'] != '0') {
+            if ('messages' in trafsim.counters) {
+              trafsim.counters.messages['periodic-received'] = String(parseInt(trafsim.counters.messages['periodic-received']) + parseInt(counter['periodic-received']));
+              trafsim.counters.messages['periodic-sent'] = String(parseInt(trafsim.counters.messages['periodic-sent']) + parseInt(counter['periodic-sent']));
+              trafsim.counters.messages['cumulative-sent'] = String(parseInt(trafsim.counters.messages['cumulative-sent']) + parseInt(counter['cumulative-sent']));
+              trafsim.counters.messages['cumulative-received'] = String(parseInt(trafsim.counters.messages['cumulative-received']) + parseInt(counter['cumulative-received']));
+            } else {
+              trafsim.counters.messages = counter;
+            }
+            trafsim.counters.totalsent += parseInt(counter['cumulative-sent']);
+            trafsim.counters.totalreceived += parseInt(counter['cumulative-received']);
+          }
+      });
+    });
+    this.fire("update");
+  },
+
+  loadMetrics: function(trafsim, metrics) {
+    var self = this;
+    var i = 0;
+    var started = false;
+    var rate = this.g.ratePerceived;
+    trafsim.cumulative = {};
+    _.each(metrics.collection['rw-appmgr:traffic'], function (traffic) {
+      if (traffic.service_status == 'started') {
+        started = true;
+      }
+      if ('assigned-call-rate' in traffic) {
+        rate = parseInt(traffic['assigned-call-rate']);
+      }
+      if ('periodic' in traffic) {
+        self.addTrafficMetric(i, trafsim, traffic.periodic);
+        i++;
+      }
+      if ('cumulative' in traffic) {
+        self.addTrafficMetric(i, trafsim.cumulative, traffic.cumulative);
+        i++;
+      }
+    });
+    if (i == 0) {
+      trafsim.call_rate = 0;
+      trafsim.tx_msg_per_sec  = 0;
+    }
+    var isClient = trafsim.name.indexOf('client') > -1;
+    if (isClient) {
+      if (rw.api.offline) {
+        this.g.startedActual = this.g.startedPerceived;
+        this.g.rateActual = this.g.ratePerceived;
+      } else {
+        if (this.g.startedActual === null) {
+          this.g.startedPerceived = started;
+        }
+        this.g.startedActual = started;
+        if (!isNaN(rate)) {
+          if (this.g.rateActual === null) {
+            this.g.ratePerceived = rate;
+          }
+          this.g.rateActual = rate;
+        }
+      }
+    }
+
+    this.fire("update");
+  },
+
+  addTrafficMetric: function(i, trafsim, metric) {
+    _.map(metric, function(value, key) {
+      var prop = key.replace(/-/g, '_');
+      var ivalue = parseInt(value);
+
+      if (isNaN(parseInt(ivalue))) {
+        trafsim[prop] = value + (i == 0 ? '' : ', ' + value );
+      } else {
+        if (!trafsim[prop]) {
+          trafsim[prop] = ivalue;
+        } else {
+          trafsim[prop] = ivalue + (i == 0 ? 0 : trafsim[prop]);
+        }
+      }
+    });
+  },
+
+  offlineTimers: function(trafsim, timers) {
+    if (!('timers' in trafsim)) {
+      this.loadTimers(trafsim, timers);
+    }
+    var self = this;
+    trafsim.timers = {};
+    _.each(timers.timer, function(timer) {
+      for (var time in timer) {
+        if (!(time in trafsim.timers)) {
+          trafsim.timers[time] = parseInt(timer[time]);
+        } else {
+          trafsim.timers[time] += parseInt(timer[time]);
+        }
+      }
+    });
+
+    this.fire("update");
+  },
+
+  // quasi-random
+  offlineMetrics: function(trafsim, metrics) {
+    if (!('call_rate' in trafsim)) {
+      this.loadMetrics(trafsim, metrics);
+      return;
+    }
+    var rate = rw.trafsim.ratePerceived;
+    trafsim.call_rate = Math.floor(((rate > 0) ? rate + (Math.random() * 200) - 0.5: 0));
+    trafsim.outgoing_calls = rate;
+    trafsim.incoming_calls = rate;
+    trafsim.tx_msg_per_sec = trafsim.call_rate * 3;
+    trafsim.rx_msg_per_sec = rate * 2.5;
+    trafsim.failed_calls += Math.round(rate * .0003);
+    trafsim.aborted_calls += Math.round(rate * .0002);
+
+
+    trafsim.cumulative.call_rate = rate;
+    trafsim.cumulative.outgoing_calls = rate;
+    trafsim.cumulative.incoming_calls = rate;
+    trafsim.cumulative.tx_msg_per_sec = rate * 3;
+    trafsim.cumulative.rx_msg_per_sec = rate * 2.5;
+    trafsim.cumulative.successful_calls += trafsim.call_rate * 3;
+
+    var isClient = trafsim.name.indexOf('client') > -1;
+    if (isClient) {
+      this.g.startedActual = this.g.startedPerceived;
+      this.g.rateActual = this.g.ratePerceived;
+    }
+    this.fire("update");
+  },
+
+  offlineCounters: function(trafsim, counters) {
+    if(!('statistics') in trafsim) {
+        this.loadCounters(trafsim, counters);
+        return
+    }
+      trafsim.service.counters = {cer:{}};
+      _.each(counters.commands, function(command) {
+          _.each(command.command, function(counter) {
+            if (counter.name == "CER") {
+              trafsim.counters.cer = counter;
+            } else if (counter['periodic-sent'] != "0" || counter['periodic-received'] != "0" || counter['cumulative-sent'] != '0' || counter['cumulative-received'] != '0') {
+              trafsim.counters.messages = counter;
+            }
+          });
+      });
+      this.fire("update");
+  },
+
+  unsubscribe: function() {
+    _.each(this.subscriptions, function(socket) {
+      socket.unsubscribe();
+    });
+    this.subscriptions.length = 0;
+  },
+
+  detached: function() {
+    this.unsubscribe();
+  }
+});
+</script>
+</polymer-element>

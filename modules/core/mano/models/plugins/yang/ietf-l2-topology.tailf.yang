@@ -1,0 +1,40 @@
+
+/*
+ * NO RW COPYRIGHT
+ *
+ */
+
+module ietf-l2-topology-annotation
+{
+  namespace "urn:ietf:params:xml:ns:yang:ietf-l2-topology";
+  prefix "ietf-l2-topology-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import ietf-network {
+    prefix nd;
+  }
+
+  import ietf-network-topology {
+    prefix nt;
+  }
+
+  import ietf-l2-topology {
+    prefix lt;
+  }
+
+  tailf:annotate "/nd:network" {
+      tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/nd:network/nd:server-provided" {
+      tailf:callpoint base_show;
+  }
+
+}

@@ -1,0 +1,7 @@
+ <chassis xmlns="http://tail-f.com/ns/example/loadhist">
+      <server-info>
+        <system-name>Quagga Router Box</system-name>
+        <ftos-version>1.232.22</ftos-version>
+        <location>Stockholm</location>
+      </server-info>
+    </chassis>

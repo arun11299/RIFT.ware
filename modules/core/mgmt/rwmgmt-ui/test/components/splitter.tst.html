@@ -1,0 +1,44 @@
+<html ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/platform/platform.js"></script>
+  <script src="../../lib/d3/d3.js"></script>
+  <script src="/vendor.js"></script>
+
+  <script src="../../lib/jsonpath/lib/jsonpath.js"></script>
+  <script src="../../lib/numeral/numeral.js"></script>
+  <script src="../../integration/ridgets/js/rw.js"></script>
+  <script src="../../modules/rift/rw.helper.min.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../modules/rift/rw.cmdcntr.min.js"></script>
+  <
+
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.cmdcntr.css"/>
+
+  <!--<script src="../../src/modules/rift/rw.ui/directives/splitter.js"></script>-->
+
+</head>
+<body ng-controller="test">
+
+
+
+<network-page></network-page>
+
+<script>
+  angular.module('test', ['uiModule', 'cmdcntr'])
+      .controller('test', function($scope) {
+
+      });
+</script>
+
+</body>
+</html>

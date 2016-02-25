@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="js/components.js"></script>
+  <script src="http://chancejs.com/chance.min.js"></script>
+</head>
+<body>
+<script>
+var chance = new Chance();
+var gen = $rw.component.localdata.jsonParser;
+console.log(
+gen({
+  "test":["repeat(2)", {
+    "guid":"{{string()}}",
+    "ips":[
+    "repeat(1,2)",
+    {
+      "name": "{{string()}}",
+      "address": "{{ip()}}"
+    }
+    ]
+  }]
+}, chance)
+)
+
+console.log(JSON.stringify(gen({
+  "test":["repeat(2)", {
+    "guid":"{{string()}}",
+    "ips":[
+    "repeat(1,2)",
+    {
+      "name": "{{string()}}",
+      "address": "{{ip()}}"
+    }
+    ]
+  }]
+}, chance)))
+
+</script>
+</body>
+</html>

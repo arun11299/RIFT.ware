@@ -1,0 +1,883 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>pyang</title><link rel="stylesheet" type="text/css" href="docbook.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="ConfD User Guide"><link rel="up" href="rn01.html" title="ConfD man-pages, Volume 1"><link rel="prev" href="rn01re07.html" title="maapi"><link rel="next" href="rn02.html" title="ConfD man-pages, Volume 3"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">pyang</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="rn01re07.html">Prev</a>&nbsp;</td><th width="60%" align="center">ConfD man-pages, Volume 1</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="rn02.html">Next</a></td></tr></table><hr></div><div class="refentry"><a name="man.1.pyang"></a><div class="titlepage"></div><div class="refnamediv"><a name="man.1.pyang.name"></a><h2>Name</h2><p>pyang &#8212; 
+      validate and convert YANG modules to various formats
+    </p></div><div class="refsynopsisdiv"><a name="man.1.pyang.synopsis"></a><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">pyang</code>  [--verbose] [--canonical] [--strict] [--ietf] [--lax-xpath-checks] [--hello] [--check-update-from <em class="replaceable"><code>oldfile</code></em>] [-o <em class="replaceable"><code>outfile</code></em>] [-f <em class="replaceable"><code>format</code></em>] [-p <em class="replaceable"><code>path</code></em>] [-W <em class="replaceable"><code>warning</code></em>] [-E <em class="replaceable"><code>error</code></em>] [-a <em class="replaceable"><code>filename</code></em>] [[--no-features] |  [-F <em class="replaceable"><code>feature</code></em>]] [--ignore-unknown-features]  
+        <em class="replaceable"><code>file</code></em>
+      ... </p></div><div class="cmdsynopsis"><p><code class="command">pyang</code>   --tailf-sanitize  [--tailf-remove-body] [--tailf-keep-actions] [--tailf-keep-info] [--tailf-keep-tailf-typedefs] [--tailf-keep-symlink-when] [--tailf-keep-symlink-must] [--tailf-keep-display-when]</p></div><div class="cmdsynopsis"><p><code class="command">pyang</code>    -h  |   --help  </p></div><div class="cmdsynopsis"><p><code class="command">pyang</code>   --rest-doc  [--rest-doc-db] [--rest-doc-address] [--rest-doc-output] [--rest-doc-query-type] [--rest-doc-end-list-url-with-keys] [--rest-doc-end-list-url-with-no-keys] [--rest-doc-list-keys] [--rest-doc-path] [--rest-doc-curl-flags]</p></div><div class="cmdsynopsis"><p><code class="command">pyang</code>    -v  |   --version  </p></div><p>
+      One or more <em class="replaceable"><code>file</code></em> parameters may be
+      given on the command line. They denote either YANG modules to be
+      processed (in YANG or YIN syntax) or, using the
+      <code class="option">--hello</code> switch, a server &lt;hello&gt; message
+      conforming to <a class="link" href="http://tools.ietf.org/html/rfc6241" target="_top">RFC 6241</a>
+      and <a class="link" href="http://tools.ietf.org/html/rfc6020" target="_top">RFC
+      6020</a>, which completely defines the data model - supported
+      YANG modules as well as features and capabilities. In the latter
+      case, only one <em class="replaceable"><code>file</code></em> parameter may be
+      present.
+    </p><p>
+      If no files are given, <span class="command"><strong>pyang</strong></span> reads input
+      from stdin, which must be one module or a server &lt;hello&gt; message.
+    </p></div><div class="refsect1"><a name="man.1.pyang.description"></a><h2>Description</h2><p>
+      The <span class="command"><strong>pyang</strong></span> program is used to validate YANG
+      modules (<a class="link" href="http://tools.ietf.org/html/rfc6020" target="_top">RFC
+      6020</a>).  It is also used to convert YANG modules into
+      equivalent YIN modules.  From a valid module a hybrid DSDL schema (<a class="link" href="http://tools.ietf.org/html/rfc6110" target="_top">RFC 6110</a>)
+      can be generated.
+    </p><p>
+      If no <em class="replaceable"><code>format</code></em> is given, the specified
+      modules are validated, and the program exits with exit code 0 if
+      all modules are valid.
+    </p></div><div class="refsect1"><a name="man.1.pyang.options"></a><h2>Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+          <code class="option">-h</code>
+          <code class="option">--help</code>
+        </span></dt><dd><p>
+            Print a short help text and exit.
+          </p></dd><dt><span class="term">
+          <code class="option">-v</code>
+          <code class="option">--version</code>
+        </span></dt><dd><p>
+            Print the version number and exit.
+          </p></dd><dt><span class="term">
+          <code class="option">-e</code>
+          <code class="option">--list-errors</code>
+        </span></dt><dd><p>
+            Print a listing of all error codes and messages pyang
+            might generate, and then exit.
+          </p></dd><dt><span class="term">
+          <code class="option">--print-error-code</code>
+        </span></dt><dd><p>
+            On errors, print the symbolic error code instead of the
+            error message.
+          </p></dd><dt><span class="term">
+          <code class="option">-Werror</code>
+        </span></dt><dd><p>
+            Treat warnings as errors.
+          </p></dd><dt><span class="term">
+          <code class="option">-Wnone</code>
+        </span></dt><dd><p>
+            Do not print any warnings.
+          </p></dd><dt><span class="term">
+          <code class="option">-W</code>
+          <em class="replaceable"><code>errorcode</code></em>
+        </span></dt><dd><p>
+            Treat <em class="replaceable"><code>errorcode</code></em> as a warning,
+            even if <code class="option">-Werror</code> is given.
+            <em class="replaceable"><code>errorcode</code></em> must be a warning or
+            a minor error.
+          </p><p>
+            Use <code class="option">--list-errors</code> to get a listing of all
+            errors and warnings.
+          </p><p>
+            The following example treats all warnings except the
+            warning for unused imports as errors:
+          </p><div class="informalexample"><pre class="screen">$ pyang --Werror -W UNUSED_IMPORT</pre></div></dd><dt><span class="term">
+          <code class="option">-E</code>
+          <em class="replaceable"><code>errorcode</code></em>
+        </span></dt><dd><p>
+            Treat the warning <em class="replaceable"><code>errorcode</code></em> as
+            an error.
+          </p><p>
+            Use <code class="option">--list-errors</code> to get a listing of all
+            errors and warnings.
+          </p><p>
+            The following example treats only the warning for unused
+            import as an error:
+          </p><div class="informalexample"><pre class="screen">$ pyang --Werror -W UNUSED_IMPORT</pre></div></dd><dt><span class="term">
+          <code class="option">--ignore-errors</code>
+        </span></dt><dd><p>
+            Ignore errors.  Use with care.  Plugins that don't expect
+            to be invoked if there are errors present may crash.
+          </p></dd><dt><span class="term">
+          <code class="option">--keep-comments</code>
+        </span></dt><dd><p>
+            This parameter has effect only if a plugin can handle
+            comments.  One example of such a plugin is the 'yang'
+            output format plugin.
+          </p></dd><dt><span class="term">
+          <code class="option">--canonical</code>
+        </span></dt><dd><p>
+            Validate the module(s) according to the canonical YANG order.
+          </p></dd><dt><span class="term">
+          <code class="option">--strict</code>
+        </span></dt><dd><p>
+            Force strict YANG compliance.  Currently this checks
+            that the deref() function is not used in XPath expressions
+            and leafrefs.
+          </p></dd><dt><span class="term">
+          <code class="option">--ietf</code>
+        </span></dt><dd><p>
+            Validate the module(s) according to IETF rules as
+            specified in <a class="link" href="http://tools.ietf.org/html/rfc6087" target="_top">RFC
+            6087</a>.  In addition, it checks that the module is in
+            canonical order, and that
+            <code class="option">--max-line-length</code> is 72 so that the
+            module fits into an RFC.
+          </p></dd><dt><span class="term">
+          <code class="option">--lax-xpath-checks</code>
+        </span></dt><dd><p>
+            Lax checks of XPath expressions.  Specifically, do not
+            generate an error if an XPath expression uses a variable
+            or an unknown function.
+          </p></dd><dt><span class="term">
+          <code class="option">-L</code>
+          <code class="option">--hello</code>
+        </span></dt><dd><p>
+            Interpret the input file or standard input as a server
+            &lt;hello&gt; message. In this case, no more than one
+            <em class="replaceable"><code>file</code></em> parameter may be given.
+          </p></dd><dt><span class="term">
+          <code class="option">--trim-yin</code>
+        </span></dt><dd><p>
+            In YIN input modules, remove leading and trailing
+            whitespace from every line in the arguments of the
+            following statements: 'contact', 'description',
+            'error-message', 'organization' and 'reference'. This way,
+            the XML-indented argument texts look tidy after
+            translating the module to the compact YANG syntax.
+          </p></dd><dt><span class="term">
+          <code class="option">--max-line-length</code>
+          <em class="replaceable"><code>maxlen</code></em>
+        </span></dt><dd><p>
+            Give a warning if any line is longer than
+            <em class="replaceable"><code>maxlen</code></em>.
+          </p></dd><dt><span class="term">
+          <code class="option">--max-identifier-length</code>
+          <em class="replaceable"><code>maxlen</code></em>
+        </span></dt><dd><p>
+            Give a error if any identifier is longer than
+            <em class="replaceable"><code>maxlen</code></em>.
+          </p></dd><dt><span class="term">
+          <code class="option">-f</code>
+          <code class="option">--format</code>
+          <em class="replaceable"><code>format</code></em>
+        </span></dt><dd><p>
+            Convert the module(s) into
+            <em class="replaceable"><code>format</code></em>.  Some translators
+            require a single module, and some can translate multiple
+            modules at one time.  If no
+            <em class="replaceable"><code>outfile</code></em> file is specified, the
+            result is printed on stdout.  The supported formats are
+            listed in <a class="xref" href="rn01re08.html#man.1.pyang.output_formats" title="Output Formats">
+      Output Formats
+    </a> below.
+          </p></dd><dt><span class="term">
+          <code class="option">-o</code>
+          <code class="option">--output</code>
+          <em class="replaceable"><code>outfile</code></em>
+        </span></dt><dd><p>
+            Write the output to the file
+            <em class="replaceable"><code>outfile</code></em> instead of stdout.
+          </p></dd><dt><span class="term">
+          <code class="option">--features</code>
+          <em class="replaceable"><code>features</code></em>
+        </span></dt><dd><p>
+            <em class="replaceable"><code>features</code></em> is a string on the
+            form
+            <em class="replaceable"><code>modulename</code></em>:[<em class="replaceable"><code>feature</code></em>(,<em class="replaceable"><code>feature</code></em>)*]
+          </p><p>
+            This option is used to prune the data model by removing
+            all nodes that are defined with a "if-feature" that is
+            not listed as <em class="replaceable"><code>feature</code></em>.  This option
+            affects all output formats.
+          </p><p>
+            This option can be given multiple times, and may be also
+            combined with <code class="option">--hello</code>. If a
+            <code class="option">--features</code> option specifies different
+            supported features for a module than the hello file, the
+            <code class="option">--features</code> option takes precedence.
+          </p><p>
+            If this option is not given, nothing is pruned, i.e., it works
+            as if all features were explicitly listed.
+          </p><p>
+            For example, to view the tree output for a module with all
+            if-feature'd nodes removed, do:
+          </p><div class="informalexample"><pre class="screen">$ pyang -f tree --features mymod: mymod.yang</pre></div></dd><dt><span class="term">
+          <code class="option">--deviation-module</code>
+          <em class="replaceable"><code>file</code></em>
+        </span></dt><dd><p>
+            This option is used to apply the deviations defined in
+            <em class="replaceable"><code>file</code></em>.  This option
+            affects all output formats.
+          </p><p>
+            This option can be given multiple times.
+          </p><p>
+            For example, to view the tree output for a module with some
+            deviations applied, do:
+          </p><div class="informalexample"><pre class="screen">$ pyang -f tree --deviation-module mymod-devs.yang mymod.yang</pre></div></dd><dt><span class="term">
+          <code class="option">-p</code>
+          <code class="option">--path</code>
+          <em class="replaceable"><code>path</code></em>
+        </span></dt><dd><p>
+            <em class="replaceable"><code>path</code></em> is a colon (:) separated
+            list of directories to search for imported modules.  This
+            option may be given multiple times.
+          </p><p>
+            The following directories are always added to the search path:
+          </p><div class="orderedlist"><ol class="orderedlist compact" type="1"><li class="listitem"><p>
+                current directory
+              </p></li><li class="listitem"><p>
+                <code class="envar">$YANG_MODPATH</code>
+              </p></li><li class="listitem"><p>
+                <code class="envar">$HOME</code><code class="filename">/yang/modules</code>
+              </p></li><li class="listitem"><p>
+                <code class="envar">$YANG_INSTALL</code><code class="filename">/yang/modules</code>
+                OR if <code class="envar">$YANG_INSTALL</code> is unset
+                <code class="filename">&lt;the default installation
+                directory&gt;/yang/modules</code> (on Unix
+                systems: <code class="filename">/usr/share/yang/modules</code>)
+              </p></li></ol></div></dd><dt><span class="term">
+          <code class="option">--plugindir</code>
+          <em class="replaceable"><code>plugindir</code></em>
+        </span></dt><dd><p>
+            Load all YANG plugins found in the directory
+            <span class="emphasis"><em>plugindir</em></span>.  This option may be given
+            multiple times.
+          </p><p>
+            list of directories to search for pyang plugins.  The
+            following directories are always added to the search
+            path:
+          </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+                <code class="filename">pyang/plugins</code> from
+                where pyang is installed
+              </p></li><li class="listitem"><p>
+                <code class="envar">$PYANG_PLUGINPATH</code>
+              </p></li></ol></div></dd><dt><span class="term">
+          <code class="option">--check-update-from</code>
+          <em class="replaceable"><code>oldfile</code></em>
+        </span></dt><dd><p>
+            Checks that a new revision of a module follows the update
+            rules given in <a class="link" href="http://tools.ietf.org/html/rfc6020" target="_top">RFC
+            6020</a>.  <span class="emphasis"><em>oldfile</em></span> is the old
+            module and <span class="emphasis"><em>file</em></span> is the new version of
+            the module.
+          </p><p>
+            If the old module imports or includes any modules or
+            submodules, it is important that the the old versions of
+            these modules and submodules are found.  By default, the
+            directory where <span class="emphasis"><em>oldfile</em></span> is found is
+            used as the only directory in the search path for old
+            modules.  Use the option
+            <code class="option">--check-update-from-path</code> to control this
+            path.
+          </p></dd><dt><span class="term">
+          <code class="option">-P</code>
+          <code class="option">--check-update-from-path</code>
+          <em class="replaceable"><code>oldpath</code></em>
+        </span></dt><dd><p>
+            <em class="replaceable"><code>oldpath</code></em> is a colon (:) separated
+            list of directories to search for imported modules.  This
+            option may be given multiple times.
+          </p></dd><dt><span class="term">
+          <em class="replaceable"><code>file...</code></em>
+        </span></dt><dd><p>
+            These are the names of the files containing the modules to
+            be validated, or the module to be converted.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.tailf_options"></a><h2>Tail-f Specific Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-a</code> <code class="option">--annotate</code> <em class="replaceable"><code>filename</code></em></span></dt><dd><p><span class="emphasis"><em>filename</em></span> is the name of a file
+              containing a YANG module with tailf:annotate statements.
+            </p><p>
+              This parameter can be given multiple times.
+            </p></dd><dt><span class="term"><code class="option">--cs-feature</code> <em class="replaceable"><code>feature</code></em></span></dt><dd><p>
+              Indicates that support for <span class="emphasis"><em>feature</em></span>
+              should be present in the generated confspec file.  If
+              <span class="emphasis"><em>feature</em></span> is defined in an imported
+              YANG module, it must be given as
+              <span class="emphasis"><em>prefix:feature-name</em></span>.
+            </p><p>
+              If no such parameter is given, all features in the module
+              is supported.
+            </p><p>
+              This parameter can be given multiple times.
+            </p></dd><dt><span class="term"><code class="option">--cs-no-features</code></span></dt><dd><p>
+              Indicates that no features are supported.
+            </p></dd><dt><span class="term"><code class="option">--cs-ignore-unknown-features</code></span></dt><dd><p>
+              Instructs the compiler to not give an error if an unknown
+              feature is specified with <code class="option">--feature</code>.
+            </p></dd><dt><span class="term"><code class="option">--cs-use-description</code></span></dt><dd><p>
+              Normally, 'description' statements are ignored by pyang
+              when translating to confspecs.  Instead the 'tailf:info'
+              statement is used as help and information text in the CLI
+              and WebUI.  When this option is specified, text in
+              'description' statements is used if no 'tailf:info'
+              statement is present.
+            </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.tailf_sanitation_options"></a><h2>Tail-f Sanitation Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--tailf-sanitize</code> </span></dt><dd><p>
+              This option removes all tailf specific statements from a
+              module, including the import statement that imports
+              tailf-common, if possible.  This option is intended to
+              be used together with <code class="option">-f yang</code> or
+              <code class="option">-f yin</code>, in order to produce a module
+              without any references to tailf modules.
+            </p><p>
+              This option is useful in order to publish YANG modules
+              to NETCONF clients, like Tail-f's NCS.
+            </p><p>
+              By default, this option:
+              </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+                    Removes all tailf extension statements.  Most of
+                    these extensions are used to control the
+                    implementation on the server, or to tweak the CLI
+                    experience.  These extensions are not needed in a
+                    NETCONF client.
+                  </p></li><li class="listitem"><p>
+                    Removes any 'must' or 'when' statement that uses a
+                    non-standard XPath function.
+                  </p></li><li class="listitem"><p>
+                    Removes any node marked with a 'tailf:hidden full'
+                    statement.  Such a node is not visible in any
+                    agent.
+                  </p></li><li class="listitem"><p>
+                    Inlines the subtree that a 'tailf:symlink' points
+                    to.  If any node in the target subtree contains
+                    'when' or 'must' statements, these are removed.
+                    The reason for this is that in general, it is not
+                    possible to guarantee that the argument to such a
+                    statement will point to a node that is visible in
+                    the module.
+                  </p></li><li class="listitem"><p>
+                    Copies any typedefs from 'tailf-common' into the
+                    module, and changes any references to such types
+                    to reference the copied type.
+                  </p></li></ul></div></dd><dt><span class="term"><code class="option">--tailf-remove-body</code> </span></dt><dd><p>
+              Removes all 'container', 'list', 'leaf', 'leaf-list',
+              'augment', 'rpc', and 'notification' statements from the
+              module.
+            </p><p>
+              This can be useful if the module is normally compiled
+              with the <code class="option">--export</code> option to
+              <span class="command"><strong>confdc</strong></span>, and the module is not
+              exported to NETCONF, but it still has typedefs,
+              groupings, features, or identities that are referenced
+              by some other module.  By using this option, such a
+              module can safely be published to a NETCONF client.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-non-std-xpath</code> </span></dt><dd><p>
+              In the sanitition process, do not remove 'must' and 'when'
+              statements with non-standard XPath functions.
+            </p><p>
+              If a module is prepared for NCS, this option should be
+              used, so that NCS can make use of the 'must' and 'when'
+              statements.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-actions</code> </span></dt><dd><p>
+              In the sanitition process, do not remove 'tailf:action'
+              statements.  This is useful if the client understands
+              this extension.
+            </p><p>
+              If a module is prepared for NCS, this option should be
+              used, so that NCS can invoke actions on the server.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-info</code> </span></dt><dd><p>
+              In the sanitition process, do not remove 'tailf:info'
+              statements.  This is useful if the client understands
+              this extension.
+            </p><p>
+              If a module is prepared for NCS, this option should be
+              used, so that the NCS CLI prints the given help text.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-tailf-typedefs</code> </span></dt><dd><p>
+              In the sanitation process, do not copy types from
+              'tailf-common'.  This option can be given if the
+              'tailf-common' module is published to the client.
+            </p><p>
+              If a module is prepared for NCS, this option should be
+              used, so that the NCS uses the correct internal
+              representation of these types.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-symlink-when</code> </span></dt><dd><p>
+              In the sanitation process, do not remove 'when'
+              statements found in the 'tailf:symlink' target subtree.
+              Use this option only if the 'when' expressions do not
+              escape out of the symlinked subtree.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-symlink-must</code> </span></dt><dd><p>
+              In the sanitation process, do not remove 'must'
+              statements found in the 'tailf:symlink' target subtree.
+              Use this option only if the 'must' expressions do not
+              escape out of the symlinked subtree.
+            </p></dd><dt><span class="term"><code class="option">--tailf-keep-display-when</code> </span></dt><dd><p>
+              In the sanitition process, do not remove 'tailf:display-when'
+              statements.  This is useful if the client understands
+              this extension.
+            </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.confspec_generation"></a><h2>Confspec Generation</h2><p>
+        In order to compile a YANG module for usage with
+        <span class="phrase">ConfD</span>, the YANG (or YIN) module is
+        converted to a functionally equivalent confspec.  This
+        confspec is then compiled by the normal
+        <span class="phrase">ConfD</span> toolchain.  For example:
+      </p><div class="informalexample"><pre class="screen">$ pyang -f cs test.yang -o test.cs
+$ confdc -c test.cs
+$ confdc -l -o t.fxs t.xso</pre></div></div><div class="refsect1"><a name="man.1.pyang.rest_doc_options"></a><h2>REST Documentation Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--rest-doc-db</code>=[candidate | running] </span></dt><dd><p>
+              This option defines what database to use, 
+              default is <span class="emphasis"><em>running</em></span>. 
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-address</code>=<span class="emphasis"><em>address</em></span></span></dt><dd><p>
+              Address used in curl output, 
+              default is <span class="emphasis"><em>http://localhost:8080</em></span>.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-output</code>=[delete | delete_curl | docbook |
+                  get | get_curl | patch | patch_curl | post | post_curl | 
+                  put | put_curl] 
+              </span></dt><dd><p>
+              This option defines the output format, 
+              default is <span class="emphasis"><em>get</em></span>. 
+            </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>delete</em></span>
+                    output generic DELETE format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>delete_curl</em></span>
+                    output curl DELETE format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>docbook</em></span>
+                    output docbook format.
+                  </p><p>
+                      The docbook format contains delete, delete_curl,
+                      get, get_curl, patch, patch_curl, put, put_curl, 
+                      post and post_curl formats for all the top containers
+                      and lists in a module.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>get</em></span>
+                    output generic GET format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>get_curl</em></span>
+                    output curl GET format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>patch</em></span>
+                    generates the generic PATCH format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>patch_curl</em></span>
+                    generates the curl PATCH format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>post</em></span>
+                    generates the generic POST format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>post_curl</em></span>
+                    generates the curl POST format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>put</em></span>
+                    generates the generic PUT format.
+                  </p></li><li class="listitem"><p><span class="emphasis"><em>put_curl</em></span>
+                    generates the curl PUT format.
+                  </p></li></ul></div></dd><dt><span class="term"><code class="option">--rest-doc-query-type</code>=[default | shallow | deep]</span></dt><dd><p>
+              GET result depth,
+              default is <span class="emphasis"><em>default</em></span>.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-end-list-url-with-keys</code></span></dt><dd><p>
+              End example list path with key parameters.
+              This is the default.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-end-list-url-with-no-keys</code></span></dt><dd><p>
+              Don't end example list path with key parameters.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-list-keys</code></span></dt><dd><p>
+              JSON dictionary of list keys and values.
+            </p><p>
+              Replaces the example leaf- and key-values in GET, PATCH,
+              POST and PUT, with the specified values in the dictionary.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-path</code></span></dt><dd><p>
+              Keypath to the yang-statment to generate output for.
+            </p></dd><dt><span class="term"><code class="option">--rest-doc-curl-flags</code></span></dt><dd><p>
+              Additional curl-flags added to the --rest-doc-output
+              *_curl commands. 
+            </p></dd></dl></div><p><span class="emphasis"><em>OUTPUT EXAMPLES</em></span></p><div class="variablelist"><dl class="variablelist"><dt></dt><dd><p><span class="emphasis"><em>--rest-doc-output=get</em></span></p><div class="informalexample"><pre class="programlisting">
+# leaf (string) /t1:test/t1:leaf-j-1/t1:s1
+GET /api/running/test/leaf-j-1/s1
+Accept: application/vnd.yang.data+json
+              </pre></div></dd><dt></dt><dd><p><span class="emphasis"><em>--rest-doc-output=get_curl</em></span></p><div class="informalexample"><pre class="programlisting">
+curl -X GET \
+  -u admin:admin \
+  -H "Accept: application/vnd.yang.data+json" \
+  http://localhost:8080/api/running/test/leaf-j-1/s1
+              </pre></div></dd><dt></dt><dd><p><span class="emphasis"><em>--rest-doc-output=patch_curl</em></span></p><div class="informalexample"><pre class="programlisting">
+echo '
+{
+  "cont-j-1" : {
+    "s1" : "s1 value",
+    "i1" : 42,
+    "ui1" : 42
+  }
+}
+' | curl -X PATCH -d @- -u admin:admin \
+      -H "Content-type: application/vnd.yang.data+json" \
+      http://localhost:8080/api/running/test/cont-j-1
+              </pre></div></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.output_formats"></a><h2>
+      Output Formats
+    </h2><p>
+      Installed <span class="command"><strong>pyang</strong></span> plugins may define their own
+      options, or add new formats to the <code class="option">-f</code> option.
+      These options and formats are listed in <strong class="userinput"><code>pyang -h</code></strong>.
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="emphasis"><em>capability</em></span></span></dt><dd><p>Capability URIs for each module of the data model.</p></dd><dt><span class="term"><span class="emphasis"><em>depend</em></span></span></dt><dd><p>Makefile dependency rule for the module.</p></dd><dt><span class="term"><span class="emphasis"><em>dsdl</em></span></span></dt><dd><p>Hybrid DSDL schema, see <a class="link" href="http://tools.ietf.org/html/rfc6110" target="_top">RFC
+	  6110</a>.</p></dd><dt><span class="term"><span class="emphasis"><em>hypertree</em></span></span></dt><dd><p>Hyperbolic tree navigator that can be displayed by
+          <span class="command"><strong>treebolic</strong></span>.</p></dd><dt><span class="term"><span class="emphasis"><em>jsonxsl</em></span></span></dt><dd><p>XSLT stylesheet for transforming XML instance
+          documents to JSON.</p></dd><dt><span class="term"><span class="emphasis"><em>jstree</em></span></span></dt><dd><p>HTML/JavaScript tree navigator.</p></dd><dt><span class="term"><span class="emphasis"><em>jtox</em></span></span></dt><dd><p>Driver file for transforming JSON
+          instance documents to XML.</p></dd><dt><span class="term"><span class="emphasis"><em>omni</em></span></span></dt><dd><p>An applescript file that draws a diagram in
+          <span class="command"><strong>OmniGraffle</strong></span>.</p></dd><dt><span class="term"><span class="emphasis"><em>sample-xml-skeleton</em></span></span></dt><dd><p>Skeleton of a sample XML instance document.</p></dd><dt><span class="term"><span class="emphasis"><em>tree</em></span></span></dt><dd><p>Tree structure of the module.</p></dd><dt><span class="term"><span class="emphasis"><em>uml</em></span></span></dt><dd><p>UML file that can be read by
+          <span class="command"><strong>plantuml</strong></span> to generate UML diagrams.</p></dd><dt><span class="term"><span class="emphasis"><em>xmi</em></span></span></dt><dd><p>XMI file that can be imported by
+          <span class="command"><strong>ArgoUML</strong></span>.</p></dd><dt><span class="term"><span class="emphasis"><em>xsd</em></span></span></dt><dd><p>DEPRECATED: W3C XML Schema.</p></dd><dt><span class="term"><span class="emphasis"><em>yang</em></span></span></dt><dd><p>Normal YANG syntax.</p></dd><dt><span class="term"><span class="emphasis"><em>yin</em></span></span></dt><dd><p>The XML syntax of YANG.</p></dd></dl></div><dt><span class="term"><span class="emphasis"><em>cs</em></span></span></dt><dd><p>Tail-f confspec language</p></dd></div><div class="refsect1"><a name="man.1.pyang.capability_output"></a><h2>Capability Output</h2><p>The <span class="emphasis"><em>capability</em></span> prints a capability URL
+    for each module of the input data model, taking into account
+    features and deviations, as described in section 5.6.4 of <a class="link" href="http://tools.ietf.org/html/rfc6020" target="_top">RFC&nbsp;6020</a>.</p><p>
+      Options for the <span class="emphasis"><em>capability</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--capability-entity</code></span></dt><dd><p>
+            Write ampersands in the output as XML entities ("&amp;amp;").
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.depend_output"></a><h2>Depend Output</h2><p>
+      The <span class="emphasis"><em>depend</em></span> output generates a Makefile
+      dependency rule for files based on a YANG module.  This is
+      useful if files are generated from the module.  For example,
+      suppose a .c file is generated from each YANG module.  If the
+      YANG module imports other modules, or includes submodules, the
+      .c file needs to be regenerated if any of the imported or
+      included modules change.  Such a dependency rule can be
+      generated like this:
+    </p><div class="informalexample"><pre class="screen">$ pyang -f depend --depend-target mymod.c \
+      --depend-extension .yang mymod.yang
+      mymod.c : ietf-yang-types.yang my-types.yang</pre></div><p>
+      Options for the <span class="emphasis"><em>depend</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--depend-target</code></span></dt><dd><p>
+            Makefile rule target.  Default is the module name.
+          </p></dd><dt><span class="term"><code class="option">--depend-extension</code></span></dt><dd><p>
+            YANG module file name extension.  Default is no extension.
+          </p></dd><dt><span class="term"><code class="option">--depend-no-submodules</code></span></dt><dd><p>
+            Do not generate dependencies for included submodules.
+          </p></dd><dt><span class="term"><code class="option">--depend-include-path</code></span></dt><dd><p>
+            Include file path in the prerequisites.  Note that if no
+            <code class="option">--depend-extension</code> has been given, the
+            prerequisite is the filename as found, i.e., ending in
+            ".yang" or ".yin".
+          </p></dd><dt><span class="term"><code class="option">--depend-ignore-module</code></span></dt><dd><p>
+            Name of YANG module or submodule to ignore in the
+            prerequisites.  This option can be given multiple times.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.dsdl_output"></a><h2>DSDL Output</h2><p>The <span class="emphasis"><em>dsdl</em></span> output takes a data model
+     consisting of one or more YANG modules and generates a hybrid
+     DSDL schema as described in <a class="link" href="http://tools.ietf.org/html/rfc6110" target="_top">RFC
+     6110</a>. The hybrid schema is primarily intended as an
+     interim product used by <span class="command"><strong>yang2dsdl</strong></span>(1).</p><p>The <span class="emphasis"><em>dsdl</em></span> plugin also supports metadata
+     annotations, if they are defined and used as described in <a class="link" href="https://tools.ietf.org/html/draft-lhotka-netmod-yang-metadata" target="_top">draft-lhotka-netmod-yang-metadata</a>.</p><p>
+      Options for the <span class="emphasis"><em>dsdl</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--dsdl-no-documentation</code></span></dt><dd><p>
+            Do not print documentation annotations
+          </p></dd><dt><span class="term"><code class="option">--dsdl-no-dublin-core</code></span></dt><dd><p>
+            Do not print Dublin Core metadata terms
+          </p></dd><dt><span class="term"><code class="option">--dsdl-record-defs</code></span></dt><dd><p>
+            Record translations of all top-level typedefs and
+            groupings in the output schema, even if they are not
+            used. This is useful for translating library modules.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.hypertree"></a><h2>hypertree output</h2><p>
+      The <span class="emphasis"><em>hypertree</em></span> output generates a hyperbolic YANG
+      browser. The generated xml file can be imported to <span class="command"><strong>treebolic</strong></span>
+      (<code class="uri">http://treebolic.sourceforge.net/en/</code>).
+    </p><p>
+      Color coding in the tree:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Light green node background : config = True</p></li><li class="listitem"><p>Light yellow node background : config = False</p></li><li class="listitem"><p>Red node foreground : mandatory = True</p></li><li class="listitem"><p>White leaf node background : index</p></li><li class="listitem"><p>Orange foreground : presence container</p></li></ul></div><p>
+    </p><p>
+      The xml file references an images folder that needs to
+      exist in the same folder as the generated file. This is installed
+      as share/yang/images in the pyang installation directory.
+      The easiest way is to symlink to this directory.
+    </p><p>
+      <strong class="userinput"><code>pyang -f hypertree model.yang -o model.xml</code></strong>
+    </p><p>
+      Prepare a HTML file that links to the generated XMI file:
+    </p><div class="informalexample"><pre class="programlisting">
+        &lt;applet code="treebolic.applet.Treebolic.class"
+        archive="TreebolicAppletDom.jar"
+        id="Treebolic" width="100%" height="100%"&gt;
+        &lt;param name="doc" value="model.xml"&gt;
+        &lt;/applet&gt;
+      </pre></div><p>
+      hypertree output specific option:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--hypertree-help</code></span></dt><dd><p>
+            Print help on hypertree usage and exit.
+          </p></dd><dt><span class="term"><code class="option">--xmi-no-assoc-names</code></span></dt><dd><p>
+            Do not print association names. ArgoUML has no way of hiding the
+            association name and the diagram gets cluttered.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.jsonxsl_output"></a><h2>JSONXSL Output</h2><p>
+      The <span class="emphasis"><em>jsonxsl</em></span> output generates an XSLT 1.0
+      stylesheet that can be used for transforming an XML instance
+      document into JSON text as specified in <a class="link" href="http://tools.ietf.org/html/draft-ietf-netmod-yang-json" target="_top">draft-ietf-netmod-yang-json</a>. The
+      XML document must be a valid instance of the data model which is
+      specified as one or more input YANG modules on the command line
+      (or via a &lt;hello&gt; message, see the
+      <code class="option">--hello</code> option).
+    </p><p>
+      The data tree(s) must be wrapped at least in either
+      &lt;nc:data&gt; or &lt;nc:config&gt; element, where "nc" is the
+      namespace prefix for the standard NETCONF URI
+      "urn:ietf:params:xml:ns:netconf:base:1.0", or the XML instance
+      document has to be a complete NETCONF RPC request/reply or
+      notification. Translation of RPCs and notifications defined by
+      the data model is also supported.
+    </p><p>
+      The generated stylesheet accepts the following parameters that
+      modify its behaviour:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>compact</em></span>: setting this parameter to
+        1 results in a compact representation of the JSON text,
+        i.e. without any whitespace. The default is 0 which means that
+        the JSON output is pretty-printed.</p></li><li class="listitem"><p><span class="emphasis"><em>ind-step</em></span>: indentation step,
+        i.e. the number of spaces to use for each level. The default
+        value is 2 spaces. Note that this setting is only useful for
+        pretty-printed output (compact=0).</p></li></ul></div><p>
+      The stylesheet also includes the file
+      <code class="filename">jsonxsl-templates.xsl</code> which is a part of
+      <span class="command"><strong>pyang</strong></span> distribution.
+    </p></div><div class="refsect1"><a name="man.1.pyang.jstree"></a><h2>jstree Output</h2><p>
+      The <span class="emphasis"><em>jstree</em></span> output grenerates an
+      HTML/JavaScript page that presents a tree-navigator to the given
+      YANG module(s).
+    </p><p>
+      jstree output specific option:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--jstree-no-path</code></span></dt><dd><p>
+            Do not include paths in the output.  This option makes the
+            page less wide.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.jtox_output"></a><h2>JTOX Output</h2><p>
+      The <span class="emphasis"><em>jtox</em></span> output generates a driver file
+      which can be used as one of the inputs to
+      <span class="command"><strong>json2xml</strong></span> for transforming a JSON document
+      to XML as specified in <a class="link" href="http://tools.ietf.org/html/draft-ietf-netmod-yang-json" target="_top">draft-ietf-netmod-yang-json</a>.
+    </p><p>
+      The <span class="emphasis"><em>jtox</em></span> output itself is a JSON document
+      containing a concise representation of the data model which is
+      specified as one or more input YANG modules on the command line
+      (or via a &lt;hello&gt; message, see the
+      <code class="option">--hello</code> option).
+    </p><p>
+      See <span class="command"><strong>json2xml</strong></span> manual page for more information.
+    </p></div><div class="refsect1"><a name="man.1.pyang.omni_output"></a><h2>Omni Output</h2><p>
+      The plugin generates an
+      applescript file that draws a diagram in OmniGraffle.  Requires
+      OmniGraffle 6.  Usage:
+      </p><div class="informalexample"><pre class="screen">$ pyang -f omni foo.yang -o foo.scpt
+$ osascript foo.scpt</pre></div><p>
+    </p><p>
+      omni output specific option:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+          <code class="option">--omni-path</code>
+          <em class="replaceable"><code>path</code></em>
+        </span></dt><dd><p>
+            Subtree to print.  The <em class="replaceable"><code>path</code></em> is
+            a slash ("/") separated path to a subtree to print.  For
+            example "/nacm/groups".
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.sample-xml-skeleton_output"></a><h2>Sample-xml-skeleton Output</h2><p>
+      The <span class="emphasis"><em>sample-xml-skeleton</em></span> output generates an
+      XML instance document with sample elements for all nodes in the
+      data model, according to the following rules:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>An element is present for every leaf, container or anyxml.</p></li><li class="listitem"><p>At least one element is present for every leaf-list or
+        list. The number of entries in the sample is min(1,
+        min-elements).</p></li><li class="listitem"><p>For a choice node, sample element(s) are present for
+        each case.</p></li><li class="listitem"><p>Leaf, leaf-list and anyxml elements are empty (but see
+        the <code class="option">--sample-xml-skeleton-defaults</code> option
+        below).</p></li></ul></div><p>Note that the output document will most likely be invalid
+    and needs manual editing.</p><p>
+      Options specific to the <span class="emphasis"><em>sample-xml-skeleton</em></span> output
+      format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+          <code class="option">--sample-xml-skeleton-doctype=<em class="replaceable"><code>type</code></em></code>
+        </span></dt><dd><p>
+            Type of the sample XML document. Supported values for
+            <em class="replaceable"><code>type</code></em> are
+            <code class="literal">data</code> (default) and
+            <code class="literal">config</code>. This option determines the
+            document element of the output XML document (&lt;data&gt;
+            or &lt;config&gt; in the NETCONF namespace) and also affects the contents: for
+            <code class="literal">config</code>, only data nodes representing
+            configuration are included.
+          </p></dd><dt><span class="term"><code class="option">--sample-xml-skeleton-defaults</code></span></dt><dd><p>
+            Add leaf elements with defined defaults to the output with
+            their default value. Without this option, the default
+            elements are omitted.
+          </p></dd><dt><span class="term"><code class="option">--sample-xml-skeleton-annotations</code></span></dt><dd><p>
+            Add XML comments to the sample documents with hints about
+            expected contents, for example types of leaf nodes,
+            permitted number of list entries etc.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.tree_output"></a><h2>Tree Output</h2><p>
+      The <span class="emphasis"><em>tree</em></span> output prints the resulting schema
+      tree from one or more modules.  Use <strong class="userinput"><code>pyang
+      --tree-help</code></strong> to print a description on the symbols
+      used by this format.
+    </p><p>
+      Tree output specific options:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--tree-help</code></span></dt><dd><p>
+            Print help on symbols used in the tree output and exit.
+          </p></dd><dt><span class="term">
+          <code class="option">--tree-depth</code>
+          <em class="replaceable"><code>depth</code></em>
+        </span></dt><dd><p>
+            Levels of the tree to print.
+          </p></dd><dt><span class="term">
+          <code class="option">--tree-path</code>
+          <em class="replaceable"><code>path</code></em>
+        </span></dt><dd><p>
+            Subtree to print.  The <em class="replaceable"><code>path</code></em> is
+            a slash ("/") separated path to a subtree to print.  For
+            example "/nacm/groups".
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.uml_output"></a><h2>UML Output</h2><p>
+      The <span class="emphasis"><em>uml</em></span> output prints an output that can be
+      used as input-file to <span class="command"><strong>plantuml</strong></span>
+      (<code class="uri">http://plantuml.sourceforge.net</code>) in order to
+      generate a UML diagram.  Note that it requires
+      <span class="command"><strong>graphviz</strong></span>
+      (<code class="uri">http://www.graphviz.org/</code>).
+    </p><p>
+      For large diagrams you may need to increase the Java heap-size
+      by the -XmxSIZEm option, to java.  For example: <strong class="userinput"><code>java
+      -Xmx1024m -jar plantuml.jar ....</code></strong>
+    </p><p>
+      Options for the <span class="emphasis"><em>UML</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--uml-classes-only</code></span></dt><dd><p>
+            Generate UML with classes only, no attributes
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-split-pages=<em class="replaceable"><code>layout</code></em></code>
+        </span></dt><dd><p>
+            Generate UML output split into pages, NxN, example 2x2.
+            One .png file per page will be rendered.
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-output-directory=<em class="replaceable"><code>directory</code></em></code>
+        </span></dt><dd><p>
+            Put the generated .png files(s) in the specified output directory.
+            Default is "img/"
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-title=<em class="replaceable"><code>title</code></em></code>
+        </span></dt><dd><p>
+            Set the title of the generated UML diagram, (default is
+            YANG module name).
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-header=<em class="replaceable"><code>header</code></em></code>
+        </span></dt><dd><p>
+            Set the header of the generated UML diagram.
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-footer=<em class="replaceable"><code>footer</code></em></code>
+        </span></dt><dd><p>
+            Set the footer of the generated UML diagram.
+          </p></dd><dt><span class="term"><code class="option">--uml-long-identifers</code></span></dt><dd><p>
+            Use complete YANG schema identifiers for UML class names.
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-no=<em class="replaceable"><code>arglist</code></em></code>
+        </span></dt><dd><p>
+            This option suppresses specified arguments in the
+            generated UML diagram.  Valid arguments are: uses,
+            leafref, identity, identityref, typedef, annotation,
+            import, circles, stereotypes. Annotation suppresses YANG
+            constructs rendered as annotations, examples module info,
+            config statements for containers.  Example
+            --uml-no=circles,stereotypes,typedef,import
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-truncate=<em class="replaceable"><code>elemlist</code></em></code>
+        </span></dt><dd><p>
+            Leafref attributes and augment elements can have long
+            paths making the classes too wide. This option will only
+            show the tail of the path.  Example
+            --uml-truncate=augment,leafref.
+          </p></dd><dt><span class="term"><code class="option">--uml-inline-groupings</code></span></dt><dd><p>
+            Render the diagram with groupings inlined.
+          </p></dd><dt><span class="term"><code class="option">--uml-inline-augments</code></span></dt><dd><p>
+            Render the diagram with augments inlined.
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-max-enums=<em class="replaceable"><code>number</code></em></code>
+        </span></dt><dd><p>
+            Maximum of enum items rendered.
+          </p></dd><dt><span class="term">
+          <code class="option">--uml-filter-file=<em class="replaceable"><code>file</code></em></code>
+        </span></dt><dd><p>
+            NOT IMPLEMENTED: Only paths in the filter file will be
+            included in the diagram. A default filter file is generated by
+            option --filter.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.xmioutput"></a><h2>XMI Output</h2><p>
+      The <span class="emphasis"><em>xmi</em></span> output prints an XMI file
+      that can be imported by ArgUML http://argouml.tigris.org/.
+    </p><p>
+      Drag all classes to the diagram area in ArgoUML and use
+      the Arrange-Layout menu.
+    </p><p>
+      XMI output specific option:
+    </p></div><div class="refsect1"><a name="man.1.pyang.xsd_output"></a><h2>XSD Output</h2><p>
+      NOTE: The XSD output plugin is deprecated.  Use the dsdl plugin
+      instead.
+    </p><p>
+      Options for the <span class="emphasis"><em>xsd</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--xsd-no-appinfo</code></span></dt><dd><p>
+            Do not print YANG specific appinfo.
+          </p></dd><dt><span class="term"><code class="option">--xsd-no-lecture</code></span></dt><dd><p>
+            Do not print the lecture about how the XSD can be used.
+          </p></dd><dt><span class="term"><code class="option">--xsd-no-imports</code></span></dt><dd><p>
+            Do not generate any xs:imports.
+          </p></dd><dt><span class="term"><code class="option">--xsd-break-pattern</code></span></dt><dd><p>
+            Break long patterns so that they fit into RFCs. The
+            resulting patterns might not always be valid XSD, so use
+            with care.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.yang_output"></a><h2>YANG Output</h2><p>
+      Options for the <span class="emphasis"><em>yang</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--yang-canonical</code></span></dt><dd><p>
+            Generate all statements in the canonical order.
+          </p></dd><dt><span class="term"><code class="option">--yang-remove-unused-imports</code></span></dt><dd><p>
+            Remove unused import statements from the output.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.yin_output"></a><h2>YIN Output</h2><p>
+      Options for the <span class="emphasis"><em>yin</em></span> output format:
+    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">--yin-canonical</code></span></dt><dd><p>
+            Generate all statements in the canonical order.
+          </p></dd><dt><span class="term"><code class="option">--yin-pretty-strings</code></span></dt><dd><p>
+            Pretty print strings, i.e. print with extra whitespace in
+            the string.  This is not strictly correct, since the
+            whitespace is significant within the strings in XML, but
+            the output is more readable.
+          </p></dd></dl></div></div><div class="refsect1"><a name="man.1.pyang.yang_extensions.xpath_functions"></a><h2>YANG Extensions</h2><p>
+      This section describes XPath functions that can be used in
+      "must", "when", or "path" expressions in YANG modules, in
+      addition to the core XPath 1.0 functions.
+    </p><p>
+      <span class="command"><strong>pyang</strong></span> can be instructed to reject the usage
+      of these functions with the parameter
+      <em class="parameter"><code>--strict</code></em>.
+    </p><p>
+      <span class="command"><strong>Function:</strong></span> <span class="emphasis"><em>node-set</em></span>
+      <span class="command"><strong>deref</strong></span>(<span class="emphasis"><em>node-set</em></span>)
+    </p><p>
+      The <code class="function">deref</code> function follows the reference
+      defined by the first node in document order in the argument
+      node-set, and returns the nodes it refers to.
+    </p><p>
+      If the first argument node is an
+      <span class="type">instance-identifier</span>, the function returns a
+      node-set that contains the single node that the instance
+      identifier refers to, if it exists.  If no such node exists,
+      an empty node-set is returned.
+    </p><p>
+      If the first argument node is a <span class="type">leafref</span>, the
+      function returns a node-set that contains the nodes that the
+      leafref refers to.
+    </p><p>
+      If the first argument node is of any other type, an empty
+      node-set is returned.
+    </p><p>
+      The following example shows how a leafref can be written with
+      and without the <code class="function">deref</code> function:
+    </p><div class="informalexample"><pre class="programlisting">
+/* without deref */
+
+leaf my-ip {
+  type leafref {
+    path "/server/ip";
+  }
+}
+leaf my-port {
+  type leafref {
+    path "/server[ip = current()/../my-ip]/port";
+  }
+}
+
+/* with deref */
+
+leaf my-ip {
+  type leafref {
+    path "/server/ip";
+  }
+}
+leaf my-port {
+  type leafref {
+    path "deref(../my-ip)/../port";
+  }
+}
+      </pre></div></div><div class="refsect1"><a name="man.1.pyang.example"></a><h2>Example</h2><p>
+      The following example validates the standard YANG modules with
+      derived types:
+    </p><div class="informalexample"><pre class="screen">$ pyang ietf-yang-types.yang ietf-inet-types.yang</pre></div><p>
+      The following example converts the ietf-yang-types module into
+      YIN:
+    </p><div class="informalexample"><pre class="screen">$ pyang -f yin -o ietf-yang-types.yin ietf-yang-types.yang</pre></div><p>
+      The following example converts the ietf-netconf-monitoring module into
+      a UML diagram:
+    </p><div class="informalexample"><pre class="screen">
+        $ pyang -f uml ietf-netconf-monitoring.yang &gt; \
+        ietf-netconf-monitoring.uml
+        $ java -jar plantuml.jar ietf-netconf-monitoring.uml
+        $ open img/ietf-netconf-monitoring.png
+      </pre></div></div><div class="refsect1"><a name="man.1.pyang.environment_variables"></a><h2>Environment Variables</h2><p>
+      pyang searches for referred modules in the colon (:) separated
+      path defined by the environment variable
+      <code class="envar">$YANG_MODPATH</code> and in the directory
+      <code class="envar">$YANG_INSTALL</code><code class="filename">/yang/modules</code>.
+    </p><p>
+      pyang searches for plugins in the colon (:) separated path
+      defined by the environment variable
+      <code class="envar">$PYANG_PLUGINDIR</code>.
+    </p></div><div class="refsect1"><a name="man.1.pyang.bugs"></a><h2>Bugs</h2><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>
+          The XPath arguments for the <span class="emphasis"><em>must</em></span> and
+          <span class="emphasis"><em>when</em></span> statements are checked only for
+          basic syntax errors.
+        </p></li></ol></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="rn01re07.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="rn01.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="rn02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">maapi&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ConfD man-pages, Volume 3</td></tr></table></div></body></html>

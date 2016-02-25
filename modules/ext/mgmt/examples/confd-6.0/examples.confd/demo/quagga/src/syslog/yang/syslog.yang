@@ -1,0 +1,42 @@
+module syslog {
+  namespace "http://tail-f.com/ns/example/syslog";
+  prefix syslog;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-xsd-types {
+    prefix xs;
+  }
+
+  container syslog {
+    config false;
+    tailf:cdb-oper {
+        tailf:persistent true;
+    }
+    list message {
+      key line;
+      leaf line {
+        type int32;
+      }
+      leaf date {
+        type string;
+        mandatory true;
+      }
+      leaf node {
+        type string;
+        mandatory true;
+      }
+      leaf text {
+        type string;
+        mandatory true;
+      }
+    }
+  }
+}

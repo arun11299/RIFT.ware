@@ -1,0 +1,23 @@
+submodule zebra_confd_stats_memory {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+/*  =============== memory statistics  ====================  */
+
+  augment "/system/stats/memory" {
+
+    container zebra {
+      config false;
+      tailf:callpoint zebraGetMemory;
+      uses memoryStatusType;
+    }
+  }
+}

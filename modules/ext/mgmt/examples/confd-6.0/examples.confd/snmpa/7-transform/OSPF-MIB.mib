@@ -1,0 +1,409 @@
+OSPF-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    IpAddress, mib-2, OBJECT-TYPE, MODULE-IDENTITY, Integer32
+                 FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, RowStatus, DisplayString
+                 FROM SNMPv2-TC
+    InterfaceIndex, InterfaceIndexOrZero
+                 FROM IF-MIB;
+
+-- This is a proper subset of the real OSPF-MIB.
+
+ospf MODULE-IDENTITY
+       LAST-UPDATED "200611100000Z" -- November 10, 2006 00:00:00 EST
+       ORGANIZATION "IETF OSPF Working Group"
+       CONTACT-INFO
+           ""
+
+       DESCRIPTION
+          "The MIB module to describe the OSPF Version 2
+          Protocol.  Note that some objects in this MIB
+          module may pose a significant security risk.
+          Refer to the Security Considerations section
+          in RFC 4750 for more information.
+
+
+
+          Copyright (C) The IETF Trust (2006).
+          This version of this MIB module is part of
+          RFC 4750;  see the RFC itself for full legal
+          notices."
+
+       REVISION "200611100000Z" -- November 10, 2006 09:00:00 EST
+       DESCRIPTION
+         "Updated for latest changes to OSPF Version 2:
+          - updated the General Group with the new
+            ospfRFC1583Compatibility, ospfReferenceBandwidth
+            and ospfDiscontinuityTime objects
+          - added graceful-restart-related objects
+          - added stub-router-related objects
+          - updated the Area Table with NSSA-related objects
+          - added ospfAreaAggregateExtRouteTag object
+          - added Opaque LSA-related objects
+          - updates to the Compliances and Security sections
+          - added area LSA counter table
+          - added section describing translation of notification
+            parameters between SNMP versions
+          - added ospfComplianceObsolete to contain obsolete
+            object groups
+          - deprecated ospfExtLsdbTable
+          See Appendix B of RFC 4750 for more details.
+
+          This version published as part of RFC 4750"
+
+       REVISION "199501201225Z" -- Fri Jan 20 12:25:50 PST 1995
+       DESCRIPTION
+          "The initial SMIv2 revision of this MIB module, published
+          in RFC 1850."
+       ::= { mib-2 14 }
+
+
+AreaID ::= TEXTUAL-CONVENTION
+       STATUS       current
+       DESCRIPTION
+          "An OSPF Area Identifier.
+           Note that the Area ID, in OSPF, has the same format
+           as an IP address, but has the function of defining
+           a summarization point for link state advertisements."
+       SYNTAX       IpAddress
+
+RouterID ::= TEXTUAL-CONVENTION
+       STATUS       current
+       DESCRIPTION
+          "A OSPF Router Identifier.
+           Note that the Router ID, in OSPF, has the same format
+           as an IP address, but identifies the router independent
+
+
+
+           of its IP address."
+       SYNTAX       IpAddress
+
+Status ::= TEXTUAL-CONVENTION
+       STATUS       current
+       DESCRIPTION
+          "An indication of the operability of an OSPF
+          function or feature.  For example, the status
+          of an interface: 'enabled' indicates that
+          it is willing to communicate with other OSPF routers,
+          and 'disabled' indicates that it is not."
+       SYNTAX       INTEGER { enabled (1), disabled (2) }
+
+DesignatedRouterPriority ::= TEXTUAL-CONVENTION
+--       DISPLAY-HINT "d-0"
+       STATUS       current
+       DESCRIPTION
+          "The range of values defined for the priority of a system
+          for becoming the designated router."
+       SYNTAX       Integer32 (0..'FF'h)
+
+
+--  OSPF General Variables
+
+--      Note: These parameters apply globally to the Router's
+--      OSPF Process.
+
+ospfGeneralGroup OBJECT IDENTIFIER ::= { ospf 1 }
+
+  ospfRouterId OBJECT-TYPE
+       SYNTAX       RouterID
+       MAX-ACCESS   read-write
+       STATUS       current
+       DESCRIPTION
+          "A 32-bit integer uniquely identifying the
+          router in the Autonomous System.
+          By convention, to ensure uniqueness, this
+          should default to the value of one of the
+          router's IP interface addresses.
+
+          This object is persistent and when written
+          the entity SHOULD save the change to non-volatile storage."
+       REFERENCE
+          "OSPF Version 2, C.1 Global parameters"
+       ::= { ospfGeneralGroup 1 }
+
+  ospfAdminStat OBJECT-TYPE
+       SYNTAX       Status
+       MAX-ACCESS   read-write
+       STATUS       current
+       DESCRIPTION
+          "The administrative status of OSPF in the
+          router.  The value 'enabled' denotes that the
+          OSPF Process is active on at least one interface;
+          'disabled' disables it on all interfaces.
+
+          This object is persistent and when written
+          the entity SHOULD save the change to non-volatile storage."
+       ::= { ospfGeneralGroup 2 }
+
+--  OSPF Area Table
+--     The OSPF Area Table contains information
+--     regarding the various areas.
+
+  ospfAreaTable OBJECT-TYPE
+       SYNTAX       SEQUENCE OF OspfAreaEntry
+       MAX-ACCESS   not-accessible
+       STATUS       current
+       DESCRIPTION
+          "Information describing the configured parameters and
+          cumulative statistics of the router's attached areas.
+          The interfaces and virtual links are configured
+          as part of these areas.  Area 0.0.0.0, by definition,
+          is the backbone area."
+       REFERENCE
+          "OSPF Version 2, Section 6 The Area Data Structure"
+       ::= { ospf 2 }
+
+  ospfAreaEntry OBJECT-TYPE
+       SYNTAX       OspfAreaEntry
+       MAX-ACCESS   not-accessible
+       STATUS       current
+       DESCRIPTION
+          "Information describing the configured parameters and
+          cumulative statistics of one of the router's attached areas.
+          The interfaces and virtual links are configured as part of
+          these areas.  Area 0.0.0.0, by definition, is the backbone
+          area.
+
+          Information in this table is persistent and when this object
+          is written the entity SHOULD save the change to non-volatile
+          storage."
+       INDEX { ospfAreaId }
+       ::= { ospfAreaTable 1 }
+
+
+  OspfAreaEntry ::=
+        SEQUENCE {
+           ospfAreaId
+              AreaID,
+           ospfImportAsExtern
+              INTEGER,
+           ospfAreaSummary
+              INTEGER,
+           ospfAreaStatus
+              RowStatus,
+           ospfAreaNssaTranslatorRole
+              INTEGER
+           }
+
+  ospfAreaId OBJECT-TYPE
+       SYNTAX       AreaID
+       MAX-ACCESS   read-only -- read-only since originally
+                              -- an SMIv1 index
+       STATUS       current
+       DESCRIPTION
+          "A 32-bit integer uniquely identifying an area.
+          Area ID 0.0.0.0 is used for the OSPF backbone."
+       REFERENCE
+          "OSPF Version 2, Appendix C.2 Area parameters"
+       ::= { ospfAreaEntry 1 }
+
+  ospfImportAsExtern OBJECT-TYPE
+       SYNTAX       INTEGER {
+                      importExternal (1),
+                      importNoExternal (2),
+                      importNssa (3)
+                      }
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "Indicates if an area is a stub area, NSSA, or standard
+          area.  Type-5 AS-external LSAs and type-11 Opaque LSAs are
+          not imported into stub areas or NSSAs.  NSSAs import
+          AS-external data as type-7 LSAs"
+       REFERENCE
+          "OSPF Version 2, Appendix C.2 Area parameters"
+       DEFVAL { importExternal }
+       ::= { ospfAreaEntry 3 }
+
+  ospfAreaSummary OBJECT-TYPE
+       SYNTAX       INTEGER {
+                       noAreaSummary (1),
+                       sendAreaSummary (2)
+                       }
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "The variable ospfAreaSummary controls the
+          import of summary LSAs into stub and NSSA areas.
+          It has no effect on other areas.
+
+          If it is noAreaSummary, the router will not
+          originate summary LSAs into the stub or NSSA area.
+          It will rely entirely on its default route.
+
+          If it is sendAreaSummary, the router will both
+          summarize and propagate summary LSAs."
+       DEFVAL { noAreaSummary }
+       ::= { ospfAreaEntry 9 }
+
+  ospfAreaStatus OBJECT-TYPE
+       SYNTAX       RowStatus
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "This object permits management of the table by
+          facilitating actions such as row creation,
+          construction, and destruction.
+
+          The value of this object has no effect on
+          whether other objects in this conceptual row can be
+          modified."
+       ::= { ospfAreaEntry 10 }
+
+  ospfAreaNssaTranslatorRole OBJECT-TYPE
+       SYNTAX       INTEGER { always (1), candidate (2) }
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "Indicates an NSSA border router's ability to
+          perform NSSA translation of type-7 LSAs into
+          type-5 LSAs."
+       DEFVAL { candidate }
+       ::= { ospfAreaEntry 11 }
+
+
+--  OSPF Interface Table
+
+  ospfIfTable OBJECT-TYPE
+       SYNTAX       SEQUENCE OF OspfIfEntry
+       MAX-ACCESS   not-accessible
+       STATUS       current
+       DESCRIPTION
+          "The OSPF Interface Table describes the interfaces
+          from the viewpoint of OSPF.
+          It augments the ipAddrTable with OSPF specific information."
+       REFERENCE
+          "OSPF Version 2, Appendix C.3  Router interface
+          parameters"
+       ::= { ospf 7 }
+
+  ospfIfEntry OBJECT-TYPE
+       SYNTAX       OspfIfEntry
+       MAX-ACCESS   not-accessible
+       STATUS       current
+       DESCRIPTION
+          "The OSPF interface entry describes one interface
+          from the viewpoint of OSPF.
+
+          Information in this table is persistent and when this object
+          is written the entity SHOULD save the change to non-volatile
+          storage."
+       INDEX { ospfIfIpAddress, ospfAddressLessIf }
+       ::= { ospfIfTable 1 }
+
+  OspfIfEntry ::=
+       SEQUENCE {
+          ospfIfIpAddress
+             IpAddress,
+          ospfAddressLessIf
+             InterfaceIndexOrZero,
+          ospfIfAreaId
+             AreaID,
+          ospfIfType
+             INTEGER,
+          ospfIfAdminStat
+             Status,
+          ospfIfRtrPriority
+             DesignatedRouterPriority,
+          ospfIfStatus
+             RowStatus
+          }
+
+  ospfIfIpAddress OBJECT-TYPE
+       SYNTAX       IpAddress
+       MAX-ACCESS   read-only -- read-only since originally an
+                              -- SMIv1 index
+       STATUS       current
+       DESCRIPTION
+          "The IP address of this OSPF interface."
+       ::= { ospfIfEntry 1 }
+
+  ospfAddressLessIf OBJECT-TYPE
+       SYNTAX       InterfaceIndexOrZero
+       MAX-ACCESS   read-only -- read-only since originally an
+                              -- SMIv1 index
+       STATUS       current
+       DESCRIPTION
+          "For the purpose of easing the instancing of
+          addressed and addressless interfaces; this
+          variable takes the value 0 on interfaces with
+          IP addresses and the corresponding value of
+          ifIndex for interfaces having no IP address."
+       ::= { ospfIfEntry 2 }
+
+  ospfIfAreaId OBJECT-TYPE
+       SYNTAX       AreaID
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "A 32-bit integer uniquely identifying the area
+          to which the interface connects.  Area ID
+          0.0.0.0 is used for the OSPF backbone."
+       ::= { ospfIfEntry 3 }
+
+  ospfIfType OBJECT-TYPE
+       SYNTAX       INTEGER {
+                       broadcast (1),
+                       nbma (2),
+                       pointToPoint (3),
+                       pointToMultipoint (5)
+                       }
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "The OSPF interface type.
+          By way of a default, this field may be intuited
+          from the corresponding value of ifType.
+          Broadcast LANs, such as Ethernet and IEEE 802.5,
+          take the value 'broadcast', X.25 and similar
+          technologies take the value 'nbma', and links
+          that are definitively point to point take the
+          value 'pointToPoint'."
+        ::= { ospfIfEntry 4 }
+
+  ospfIfAdminStat OBJECT-TYPE
+       SYNTAX       Status
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "The OSPF interface's administrative status.
+          The value formed on the interface, and the interface
+          will be advertised as an internal route to some area.
+          The value 'disabled' denotes that the interface is
+          external to OSPF."
+       DEFVAL { enabled }
+       ::= { ospfIfEntry 5 }
+
+  ospfIfRtrPriority OBJECT-TYPE
+       SYNTAX       DesignatedRouterPriority
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "The priority of this interface.  Used in
+          multi-access networks, this field is used in
+          the designated router election algorithm.  The
+          value 0 signifies that the router is not eligible
+          to become the designated router on this particular
+          network.  In the event of a tie in this value,
+          routers will use their Router ID as a tie breaker."
+        DEFVAL { 1 }
+        ::= { ospfIfEntry 6 }
+
+  ospfIfStatus OBJECT-TYPE
+       SYNTAX       RowStatus
+       MAX-ACCESS   read-create
+       STATUS       current
+       DESCRIPTION
+          "This object permits management of the table by
+          facilitating actions such as row creation,
+          construction, and destruction.
+
+          The value of this object has no effect on
+          whether other objects in this conceptual row can be
+          modified."
+       ::= { ospfIfEntry 17 }
+
+
+END

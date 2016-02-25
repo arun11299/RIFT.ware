@@ -1,0 +1,81 @@
+<link rel="stylesheet" type="text/css" href="integration/ridgets/rw-top-nav.css"/>
+<rw-iconset size="32"></rw-iconset>
+<header class="global-header">
+    <div class="logo"></div>
+    <nav class="global-nav">
+        <ul id="navList" class="left">
+            <li ng-repeat="item in header_list" ui-sref-active="selected">
+                <core-icon class="global-nav__list__item__icon" icon="rw-iconset:{{item.icon}}"></core-icon>
+                <span ui-sref="{{item.name.toLowerCase()}}" class="label">{{item.name}}</span>
+            </li>
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-control-panel"></core-icon>-->
+                <!--<span ui-sref="dashboard" class="label">Dashboard</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-service"></core-icon>-->
+                <!--<span ui-sref="vnf" class="label">Services</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-control-panel"></core-icon>-->
+                <!--<span ui-sref="traffic" class="label">Traffic</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-graph"></core-icon>-->
+                <!--<span ui-sref="network" class="label">Interfaces</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-control-panel"></core-icon>-->
+                <!--<span ui-sref="topology" class="label">Topology</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-cloud-server"></core-icon>-->
+                <!--<span ui-sref="resources" class="label">Resources</span>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="selected">-->
+                <!--<core-icon icon="rw-iconset:icon-html-code"></core-icon>-->
+                <!--<span ui-sref="config" class="label">Configuration</span>-->
+            <!--</li>-->
+        </ul>
+        <ul id="" class="right">
+            <li ng-if="showTest">
+                <div ng-class="{'button--is-on':button_on, 'button':true, 'button__size--short':true, 'button__size--medium':true}" ng-click="toggleTest()">
+                    <div class="button__box">
+                        <span class="button__label" style="1font-size:18px;">Test Mode</span>
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+    </nav>
+    <div ng-show="perf" class="perf">
+        <code>
+            <strong>AJAX</strong> count: {{ajax.length}}, max time: {{maxAjaxTime}}ms, subscriptions: {{stats.clientWebsocket.workers}}
+            <button ng-click="togglePerfClient()">client...</button>
+            <button ng-click="togglePerfServer()">server...</button>
+            <div ng-show="perfClient">
+                <strong>Client AJAX</strong>
+                <ul class="perf-list" ng-repeat="metric in ajax">
+                    <li>count: {{metric.n}}, max time: {{metric.max}}ms, url: {{metric.url}}</li>
+                </ul>
+                <strong>Client AJAX Subscriptions</strong><br>
+                <ul class="perf-list" ng-repeat="sub in clientSubscriptions">
+                    <li>count: {{sub.count}}, url: {{sub.url}}</li>
+                </ul>
+                <em>Reload page to reset client stats</em><br>
+            </div>
+            <div ng-show="perfServer">
+                <strong>Server REST (slowest 5)</strong><br>
+                <ul class="perf-list" ng-repeat="metric in maxByUrl">
+                    <li>max time: {{metric.maxTime}}ms, url: {{metric.url}}</li>
+                </ul>
+                <strong>Server Subscriptions</strong> sessions: {{stats.websocket.sockets}}<br>
+                <ul class="perf-list" ng-repeat="sub in serverSubscriptions">
+                    <li>count: {{sub.count}}, url: {{sub.url}}</li>
+                </ul>
+                <strong>uAgent</strong> avg time: {{avgNetconfTime}}ms, max time: {{maxNetconfTime}}ms<br>
+                <button ng-click="perfServerReset()">reset server stats</button>
+            </div>
+        </code>
+    </div>
+</header>

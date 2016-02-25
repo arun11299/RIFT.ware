@@ -1,0 +1,85 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwcmdargs-test-b
+{
+  namespace "http://riftio.com/ns/core/util/rwcmdargs/tests/rwcmdargs-test";
+  prefix "rcat";
+
+  import rw-pb-ext { prefix "rwpb"; }
+  //import rwcmdargs-min-b { prefix "rcamin"; }
+
+  description
+    "RW.CmdArgs test file.";
+
+  revision 2014-02-13 {
+    description "Initial version";
+    reference "CmdArgs Software Component Document";
+  }
+
+  grouping test-group {
+    container cont-in-group {
+      config true;
+      description "Test container in grouping.";
+
+      leaf str1 {
+        description "A string";
+        type string;
+      }
+
+      leaf num1 {
+        description "A number";
+        type int64;
+      }
+
+      leaf-list ll {
+        description "A leaf-list of enums";
+        type enumeration {
+          enum RWCAT_E_A { value 1; }
+          enum RWCAT_E_B { value 2; }
+          enum RWCAT_E_C { value 3; }
+          enum RWCAT_E_D { value 4; }
+          enum RWCAT_E_E { value 12345; }
+        }
+      }
+    }
+  }
+
+  container test-cont {
+    description "rwcmdargs test bootstrap";
+    config true;
+    rwpb:msg-new RwcaTestCont;
+
+    leaf str2 {
+      description "Another string";
+      type string;
+    }
+
+    leaf num2 {
+      description "Another number";
+      type int64;
+    }
+
+    list test-list {
+      description "A list of things";
+      key "str3";
+
+      leaf str3 {
+        description "A third string, this one is a key for a list";
+        type string;
+      }
+
+      leaf num3 {
+        description "A thid number, in a list, but not a key";
+        type int32;
+      }
+    }
+
+    uses test-group;
+  }
+}

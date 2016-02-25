@@ -1,0 +1,55 @@
+<link rel="import" href="../../lib/core-menu/core-menu.html">
+<link rel="import" href="../../lib/core-item/core-item.html">
+
+<polymer-element name="rw-tabs" attributes="tabs">
+  <template>
+    <link rel="stylesheet" type="text/css" href="rw-tabs.css"/>
+    <core-menu class="tabs" id="tabNav" selected="0" on-core-select="{{flipTab}}">
+      <template repeat="{{tab, tabIndex in tabs}}">
+        <core-item class="tab" data-tab="tab-{{tabIndex}}" label="{{tab.label}}"></core-item>
+      </template>
+    </core-menu>
+    <div id="tabContents">
+    </div>
+  </template>
+  <script>
+    Polymer({
+      created:function() {
+        this.tabs = [];
+        this.selected = 'tab-0';
+      },
+
+      addTab: function(label, elem) {
+        this.tabs.push({label : label, elem : elem});
+      },
+
+      tabsChanged: function() {
+        var container = this.shadowRoot.getElementById('tabContents');
+        $(container).empty();
+        for (var i = 0; i < this.tabs.length; i++) {
+          var tabContainer = document.createElement('div');
+          tabContainer.className = 'tab';
+          tabContainer.id = 'tab-' + i;
+          tabContainer.appendChild(this.tabs[i].elem);
+          container.appendChild(tabContainer);
+        }
+        this.selectedChanged();
+      },
+
+      flipTab: function(e) {
+        var selected = e.detail.item.attributes['data-tab'].value;
+        if (selected != 'tab-') {
+          this.selected = selected;          
+        }
+      },
+
+      selectedChanged: function() {
+        var self = this;
+        var tabs = this.$.tabContents.querySelectorAll('.tab');
+        _.each(tabs, function(tab) {
+          tab.classList.toggle('tab-on', tab.id == self.selected);
+        });
+      }
+    });
+  </script>
+</polymer-element>

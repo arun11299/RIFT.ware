@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RW.WEBSOCKET</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="top.css"/>
+  <script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="../lib/polymer/polymer.html">
+  <link rel="import" href="../integration/ridgets/rw.html">
+</head>
+<body class="viewport">
+<template is="auto-binding" id="ws">
+  <input type="text" size="40" value="{{meta.url}}"> <select value="{{meta.method}}">
+    <option>GET</option>
+    <option>POST</option>
+  </select><br>
+  accept: <input type="text" size="40" value="{{meta.accept}}"><br>
+  <template if="{{meta.method == 'POST'}}">
+    contentType: <input type="text" size="40" value="{{meta.contentType}}"><br>
+    <textarea id="payload" rows="15" cols="50"></textarea><br>
+  </template>
+  <button on-click="{{send}}">Subscribe</button><br>
+  <pre>{{result}}</pre>
+  <template if="{{ws}}">
+    <button on-click="{{unsubscribe}}">Unsubscribe</button>
+  </template>
+</template>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var t = document.getElementById('ws');
+    t.result = '';
+    t.meta = {
+      method : 'GET',
+      // Default url is really just an example.
+      url : '/operational/config',
+      accept : 'application/json',
+      contentType : 'application/vnd.yang.operation+json'
+    };
+    t.send = function() {
+      if (t.ws) {
+        t.ws.unsubscribe();
+      }
+      t.ws = new rw.api.SocketSubscriber('web/get');
+      var meta = _.clone(t.meta);
+      if (meta.method == 'POST') {
+        meta.data = document.getElementById("payload").value;
+      }
+      t.ws.subscribeMeta(function(data) {
+        t.result = JSON.stringify(data);
+      }, meta);
+    };
+    t.unsubscribe = function() {
+      t.ws.unsubscribe();
+      t.ws = null;
+      t.result = 'unsubscribed';
+    }
+  });
+</script>
+</body>
+</html>
+

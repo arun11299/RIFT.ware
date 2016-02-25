@@ -1,0 +1,18 @@
+
+
+Example to show how we can transform the fairly complicated
+AAA trees which are required by ConfD into a much simpler structure
+which could be incorporated somewhere in an application specific
+context. This example utilizes the transformation technique described
+in the user's guide chapter describing transforms.
+
+In a real application where we really want to hide tailf-aaa.yang and
+ietf-netconf-acm.yang from all northbound interfaces, we would typically
+use the --export flag when we compile these modules with confdc.
+
+
+
+
+
+
+

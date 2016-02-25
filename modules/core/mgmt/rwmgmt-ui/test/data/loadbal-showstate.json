@@ -1,0 +1,94 @@
+{
+    "data": {
+        "response": [
+            {
+                "@endpoint": "/R/rwinit/5"
+            },
+            {
+                "@endpoint": "/R/RW.FpCtrl/2"
+            },
+            {
+                "@endpoint": "/R/RW.uAgent/2",
+                "debug-info": "from-self"
+            },
+            {
+                "@endpoint": "/R/rwinit/7"
+            },
+            {
+                "@endpoint": "/R/rwinit/8"
+            },
+            {
+                "@endpoint": "/R/RW.Msgbroker/1"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/4"
+            },
+            {
+                "@endpoint": "/R/rwinit/4"
+            },
+            {
+                "@endpoint": "/R/rwinit/1"
+            },
+            {
+                "@endpoint": "/R/rwinit/6"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/6"
+            },
+            {
+                "@endpoint": "/R/RW.NcMgr/3"
+            },
+            {
+                "@endpoint": "/R/rwinit/9"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/1",
+                "node": {
+                    "rw-fpath:load-balancer": {
+                        "rw-fpath:worker": {
+                            "rw-fpath:fwd-bindings": "129",
+                            "rw-fpath:fwd-pkt-drop": "0",
+                            "rw-fpath:fwd-pkt-received": "0",
+                            "rw-fpath:fwd-pkt-xmit": "0",
+                            "rw-fpath:id": "31",
+                            "rw-fpath:rev-bindings": "0",
+                            "rw-fpath:rev-pkt-drop": "0",
+                            "rw-fpath:rev-pkt-received": "0",
+                            "rw-fpath:rev-pkt-xmit": "0"
+                        }
+                    }
+                }
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/7"
+            },
+            {
+                "@endpoint": "/R/RW.FpCtrl/3"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/5"
+            },
+            {
+                "@endpoint": "/R/rwinit/2"
+            },
+            {
+                "@endpoint": "/R/rwinit/3"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/3"
+            },
+            {
+                "@endpoint": "/R/rwinit/10"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/8"
+            },
+            {
+                "@endpoint": "/R/RW.NcMgr/2"
+            },
+            {
+                "@endpoint": "/R/RW.Fpath/2"
+            }
+        ]
+    }
+}

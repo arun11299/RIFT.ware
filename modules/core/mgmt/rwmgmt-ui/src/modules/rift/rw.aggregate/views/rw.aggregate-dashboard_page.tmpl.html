@@ -1,0 +1,57 @@
+<div>
+  <rw-trafsim-controller service="dashboardPage.trafsim" colony="dashboardPage.trafsimColony"></rw-trafsim-controller>
+  <trafgen-controller service="dashboardPage.trafgen"></trafgen-controller>
+  <div class="row">
+    <div class="panel">
+
+      <div class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">Aggregate I/O</div>
+      </div>
+
+      <div class="panel__panel-body dashboard-body">
+
+        <div class="dashboard-controlPanel">
+          <div class="primaryButtons dashboard-controlButtons">
+            <span ng-class="{'button--is-on' : dashboardPage.started}"
+                  class="button button__size--full"  ng-click="dashboardPage.toggleStarted()">
+                <span class="button__box">
+                    <svg class="icon icon--small" ng-class="{'loading-icon' : dashboardPage.loading}">
+                      <use ng-attr-xlink:href="{{dashboardPage.started ? '#icon-power-on' : '#icon-power-off'}}" xlink:href=""/>
+                    </svg>
+                    <span class="button__label">{{dashboardPage.started ? 'Active' : 'Off'}}</span>
+                </span>
+            </span>
+          </div>
+          <div class="dash-label">
+            <label for="rate" class="form__item__label">Rate</label>
+          </div>
+          <div class="dash-slider">
+            <div class="dash-slider-start">0</div>
+            <rw-slider class="dash-slider-slider" id="rate" name="rate" min="0" max="100" step="1"
+                       value="dashboardPage.rate"></rw-slider>
+            <div class="dash-slider-end">100</div>
+          </div>
+          <div class="dash-slider-value">{{dashboardPage.rate | fmt:'a'}}%</div>
+        </div>
+
+        <div class="dashboard-gaugeset"><rw-gaugeset
+                dialSize="140"
+                panelWidth="140"
+                class="panel__panel-body"
+                gauges="dashboardPage.aggregrateGauges"
+                ></rw-gaugeset>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="dash-cloud">
+    <div class="panel">
+      <div id="cloudPanel" class="panel__panel-header">
+        <div class="panel__panel-header__panel-title">Cloud</div>
+      </div>
+      <system-cloud
+              class="panel__panel-body"
+              ></system-cloud>
+    </div>
+  </div>
+</div>

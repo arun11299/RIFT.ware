@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="../../lib/mocha/mocha.css">
+<script src="../../lib/mocha/mocha.js"></script>
+<script src="../../lib/chai/chai.js"></script>
+<script src="../../lib/sinonjs/sinon.js"></script>
+<script src="../../lib/platform/platform.js"></script>
+<link rel="import" href="../../integration/ridgets/rw.html">
+<script src="helper.js"></script>
+
+<script>
+mocha.setup('tdd');
+assert = chai.assert;
+window.addEventListener('polymer-ready', function(e) {
+  //htmlTestRunner(mocha.run());
+});
+</script>
+

@@ -1,0 +1,14 @@
+<system xmlns="http://tail-f.com/ns/example/quagga">
+  <interface>
+    <name>eth0</name>
+    <description>Default interface</description>
+    <bandwidth>100</bandwidth>
+  </interface>
+  <key-chain>
+    <name>primary</name>
+    <key>
+      <id>40</id>
+      <key-string>abba</key-string>
+    </key>
+  </key-chain>
+</system>

@@ -1,0 +1,29 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-base-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-logmgmt-annotation";
+  prefix "rw-log-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+  
+  import rwlog-mgmt {
+    prefix rwlogmgmt;
+  }
+
+  tailf:annotate "/rwlogmgmt:show-logs" {
+    tailf:actionpoint rw_action;
+  }
+  
+  tailf:annotate "/rwlogmgmt:log-event" {
+    tailf:actionpoint rw_action;
+  }
+}

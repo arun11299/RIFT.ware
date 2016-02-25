@@ -1,0 +1,34 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-topology-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-topology";
+  prefix "rw-topology-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import ietf-network {
+    prefix nd;
+  }
+
+  import ietf-network-topology {
+    prefix nt;
+  }
+
+  tailf:annotate "/nd:network" {
+      tailf:callpoint base_show;
+  }
+
+}

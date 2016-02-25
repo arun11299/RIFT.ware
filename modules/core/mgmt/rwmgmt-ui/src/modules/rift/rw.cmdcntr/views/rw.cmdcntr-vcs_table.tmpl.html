@@ -1,0 +1,24 @@
+<table class="datagrid">
+  <thead>
+    <th>
+      Virtual Component System
+    </th>
+    <th>
+      Status
+    </th>
+  </thead>
+  <tbody id="vcsItems">
+    <tr ng-class="{'datagrid--is-selected' : row.selected}" ng-repeat="row in vcsTable.rows" ng-click="vcsTable.selectVcs(row)">
+      <td>
+        <div class="spacer indent-{{row.depth}}"></div>
+        <svg class="icon icon--small">
+          <use xlink:href="#icon-colony"></use>
+        </svg>
+        {{row.node.instance_name}}
+      </td>
+      <td>
+        <status-led state="{{row.node.state}}"></status-led>
+      </td>
+    </tr>
+  </tbody>
+</table>

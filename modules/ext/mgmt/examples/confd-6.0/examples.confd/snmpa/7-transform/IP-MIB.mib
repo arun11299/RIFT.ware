@@ -1,0 +1,195 @@
+IP-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE,
+    Integer32, Counter32, IpAddress,
+    mib-2, Unsigned32, Counter64,
+    zeroDotZero                        FROM SNMPv2-SMI
+    PhysAddress, TruthValue,
+    TimeStamp, RowPointer,
+    TEXTUAL-CONVENTION, TestAndIncr,
+    RowStatus, StorageType             FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP    FROM SNMPv2-CONF
+    InetAddress, InetAddressType,
+    InetAddressPrefixLength,
+    InetVersion, InetZoneIndex         FROM INET-ADDRESS-MIB
+    InterfaceIndex                     FROM IF-MIB;
+
+-- This is a proper subset of the real IP-MIB.
+
+ipMIB MODULE-IDENTITY
+    LAST-UPDATED "200602020000Z"
+    ORGANIZATION "IETF IPv6 MIB Revision Team"
+    CONTACT-INFO
+           "Editor:
+
+
+
+            Shawn A. Routhier
+            Interworking Labs
+            108 Whispering Pines Dr. Suite 235
+            Scotts Valley, CA 95066
+            USA
+            EMail: <sar@iwl.com>"
+    DESCRIPTION
+           "The MIB module for managing IP and ICMP implementations, but
+            excluding their management of IP routes.
+
+            Copyright (C) The Internet Society (2006).  This version of
+            this MIB module is part of RFC 4293; see the RFC itself for
+            full legal notices."
+
+    REVISION      "200602020000Z"
+    DESCRIPTION
+           "The IP version neutral revision with added IPv6 objects for
+            ND, default routers, and router advertisements.  As well as
+            being the successor to RFC 2011, this MIB is also the
+            successor to RFCs 2465 and 2466.  Published as RFC 4293."
+
+    REVISION      "199411010000Z"
+    DESCRIPTION
+           "A separate MIB module (IP-MIB) for IP and ICMP management
+            objects.  Published as RFC 2011."
+
+    REVISION      "199103310000Z"
+    DESCRIPTION
+           "The initial revision of this MIB module was part of MIB-II,
+            which was published as RFC 1213."
+    ::= { mib-2 48}
+
+--
+-- the IP general group
+-- some objects that affect all of IPv4
+--
+
+ip       OBJECT IDENTIFIER ::= { mib-2 4 }
+
+--
+-- Internet Address Table
+--
+
+ipAddressTable OBJECT-TYPE
+    SYNTAX     SEQUENCE OF IpAddressEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "This table contains addressing information relevant to the
+            entity's interfaces.
+
+            This table does not contain multicast address information.
+            Tables for such information should be contained in multicast
+            specific MIBs, such as RFC 3019.
+
+            While this table is writable, the user will note that
+            several objects, such as ipAddressOrigin, are not.  The
+            intention in allowing a user to write to this table is to
+            allow them to add or remove any entry that isn't
+
+
+
+            permanent.  The user should be allowed to modify objects
+            and entries when that would not cause inconsistencies
+            within the table.  Allowing write access to objects, such
+            as ipAddressOrigin, could allow a user to insert an entry
+            and then label it incorrectly.
+
+            Note well: When including IPv6 link-local addresses in this
+            table, the entry must use an InetAddressType of 'ipv6z' in
+            order to differentiate between the possible interfaces."
+    ::= { ip 34 }
+
+ipAddressEntry OBJECT-TYPE
+    SYNTAX     IpAddressEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "An address mapping for a particular interface."
+    INDEX { ipAddressAddrType, ipAddressAddr }
+    ::= { ipAddressTable 1 }
+
+IpAddressEntry ::= SEQUENCE {
+        ipAddressAddrType     InetAddressType,
+        ipAddressAddr         InetAddress,
+        ipAddressIfIndex      InterfaceIndex,
+        ipAddressCreated      TimeStamp,
+        ipAddressLastChanged  TimeStamp,
+        ipAddressRowStatus    RowStatus
+    }
+
+ipAddressAddrType OBJECT-TYPE
+    SYNTAX     InetAddressType
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "The address type of ipAddressAddr."
+    ::= { ipAddressEntry 1 }
+
+ipAddressAddr OBJECT-TYPE
+    SYNTAX     InetAddress
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+           "The IP address to which this entry's addressing information
+            pertains.  The address type of this object is specified in
+            ipAddressAddrType.
+
+            Implementors need to be aware that if the size of
+            ipAddressAddr exceeds 116 octets, then OIDS of instances of
+            columns in this row will have more than 128 sub-identifiers
+            and cannot be accessed using SNMPv1, SNMPv2c, or SNMPv3."
+    ::= { ipAddressEntry 2 }
+
+ipAddressIfIndex OBJECT-TYPE
+    SYNTAX     InterfaceIndex
+    MAX-ACCESS read-create
+    STATUS     current
+    DESCRIPTION
+           "The index value that uniquely identifies the interface to
+            which this entry is applicable.  The interface identified by
+            a particular value of this index is the same interface as
+            identified by the same value of the IF-MIB's ifIndex."
+    ::= { ipAddressEntry 3 }
+
+ipAddressCreated OBJECT-TYPE
+    SYNTAX     TimeStamp
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+           "The value of sysUpTime at the time this entry was created.
+            If this entry was created prior to the last re-
+            initialization of the local network management subsystem,
+            then this object contains a zero value."
+    ::= { ipAddressEntry 8 }
+
+ipAddressLastChanged OBJECT-TYPE
+    SYNTAX     TimeStamp
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+           "The value of sysUpTime at the time this entry was last
+            updated.  If this entry was updated prior to the last re-
+            initialization of the local network management subsystem,
+            then this object contains a zero value."
+    ::= { ipAddressEntry 9 }
+
+ipAddressRowStatus OBJECT-TYPE
+    SYNTAX     RowStatus
+    MAX-ACCESS read-create
+    STATUS     current
+    DESCRIPTION
+           "The status of this conceptual row.
+
+            The RowStatus TC requires that this DESCRIPTION clause
+            states under which circumstances other objects in this row
+
+
+
+            can be modified.  The value of this object has no effect on
+            whether other objects in this conceptual row can be
+            modified.
+
+            A conceptual row can not be made active until the
+            ipAddressIfIndex has been set to a valid index."
+    ::= { ipAddressEntry 10 }
+
+END

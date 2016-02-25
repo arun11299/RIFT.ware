@@ -1,0 +1,39 @@
+submodule zebra_confd {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+
+  typedef RouteType {
+    type enumeration {
+      enum kernel;
+      enum static;
+      enum connected;
+      enum rip;
+      enum ospf;
+      enum bgp;
+      enum isis;
+    }
+  }
+
+/*  =========================================================  */
+/*  =============== main zebra configuration ================  */
+/*  =========================================================  */
+
+  augment "/system" {
+
+    leaf router-id {
+      type inet:ipv4-address;
+    }
+    leaf table {
+      type int32;
+      default 0;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="j">
+  <operationalMode>
+    <modifications>
+      <defaultConfirmOption>yes</defaultConfirmOption>
+    </modifications>
+    <cmd name="xsnmp" mount="show">
+      <info>Show SNMP statistics</info>
+      <help>Show SNMP statistics</help>
+      <callback>
+        <exec>
+          <osCommand>./show_snmp.sh</osCommand>
+        </exec>
+      </callback>
+    </cmd>
+    <cmd name="xsnmp2" mount="show">
+      <info>Show SNMP statistics</info>
+      <help>Show SNMP statistics</help>
+      <callback>
+        <exec>
+          <osCommand>./xsl-show-snmp.sh</osCommand>
+        </exec>
+      </callback>
+    </cmd>
+  </operationalMode>
+
+  <configureMode>
+  </configureMode>
+</clispec>

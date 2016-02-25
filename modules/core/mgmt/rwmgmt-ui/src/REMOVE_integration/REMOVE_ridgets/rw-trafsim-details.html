@@ -1,0 +1,133 @@
+<link rel="import" href="rw-dashboard-trafsim-control.html">
+<link rel="import" href="rw-trafsim-controller.html">
+<link rel="import" href="rw-bargraph.html">
+
+<polymer-element name="rw-trafsim-details" attributes="trafsim trafsimModel">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-trafsim-details.css"/>
+        <div class="row details">
+            <div id="controls" class="col" style="display: {{trafsim.isClient ? 'block':'none'}}">
+                <h2>Controls</h2>
+                <div class="row details">
+                    <div class="col">
+                        <rw-dashboard-trafsim-control
+                           class="horizontal"
+                           id="control"
+                           ></rw-dashboard-trafsim-control>
+                        <rw-trafsim-controller id="trafsimController"
+                           colony="{{trafsim.colonyId}}"
+                           service="{{trafsim.name}}"
+                           ></rw-trafsim-controller>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row details">
+            <div id="traffic" class="col">
+                <h2>Traffic</h2>
+                <table class="datagrid">
+                    <thead>
+                        <tr>
+                            <th>Current Calls</th>
+                        </tr>
+                    </thead>
+                <tbody>
+                <tr>
+                  <th>TX Calls/s</th>
+                  <td>{{trafsim.total_calls}}</td>
+                </tr>
+                <tr>
+                  <th>TX Messages/s</th>
+                  <td>{{trafsim.tx_msg_per_sec}}</td>
+                </tr>
+                </tbody>
+                <thead>
+                <tr>
+                  <th>Total Calls</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <th>Successful</th>
+                  <td>{{trafsim.cumulative.successful_calls || 0}}</td>
+                </tr>
+                <tr>
+                  <th>Failed</th>
+                  <td>{{trafsim.cumulative.failed_calls || 0}}</td>
+                </tr>
+                <tr>
+                  <th>Refused</th>
+                  <td>{{trafsim.cumulative.refused_calls || 0}}</td>
+                </tr>
+                <tr>
+                  <th>Aborted</th>
+                  <td>{{trafsim.cumulative.aborted_calls || 0}}</td>
+                </tr>
+                <tr>
+                  <th>Timed Out</th>
+                  <td>{{trafsim.cumulative.timedout_calls || 0}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="bar" layout vertical class="col">
+                <h2>Message Response Time</h2>
+                <rw-bargraph id="barGraph" flex values="{{values}}"></rw-bargraph>
+            </div>
+        </div>
+  </template>
+  <script>
+
+    Polymer({
+
+      created: function() {
+        this.values = [];
+      },
+
+      timerLabel: function(value) {
+        var v_valueArray = value.split("_");
+        if (v_valueArray[1] == "0ms"){
+            return "< 25ms";
+        } else if (v_valueArray[1] == "3000ms") {
+            return ">= 3000ms";
+        } else {
+            return v_valueArray[1];
+        }
+      },
+
+      trafsimModelChanged: function() {
+        this.trafsimModel.addEventListener("update", this.trafsimChanged.bind(this));
+      },
+
+      trafsimChanged: function() {
+        if (typeof this.trafsim == 'undefined' || typeof this.trafsim.cumulative == 'undefined') {
+          return;
+        }
+        if (this.trafsim.isClient) {
+          this.trafsim.sent_calls = this.trafsim.call_rate;
+          this.trafsim.c_sent_calls = this.trafsim.cumulative.call_rate;
+          this.trafsim.recieved_calls = this.trafsim.c_recieved_calls = 0;
+        } else {
+          this.trafsim.recieved_calls = this.trafsim.call_rate;
+          this.trafsim.c_recieved_calls = this.trafsim.cumulative.call_rate;
+          this.trafsim.sent_calls = this.trafsim.c_sent_calls = 0;
+        }
+        this.trafsim.total_calls = this.trafsim.sent_calls + this.trafsim.recieved_calls;
+
+        var timers = _.filter(_.keys(this.trafsim.timers), function(timer) {
+          return timer != 'rwappmgr-instance';
+        });
+        if (this.values.length != timers.length) {
+          this.values = new Array(timers.length);
+        }
+        for (var i = 0; i < this.values.length; i++) {
+          this.values[i] = this.values[i] || {};
+          this.values[i].label = this.timerLabel(timers[i]);
+          this.values[i].x = this.trafsim.timers[timers[i]];
+        }
+
+        this.$.barGraph.valuesChanged();
+      }
+    });
+  </script>
+</polymer-element>

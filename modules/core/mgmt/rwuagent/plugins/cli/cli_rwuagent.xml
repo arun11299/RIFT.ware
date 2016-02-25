@@ -1,0 +1,13 @@
+<cli>
+  <yang-modules>
+    <module name="config_root"/>
+    <module name="rw-base"/>
+    <module name="rwuagent-cli"/>
+  </yang-modules>
+
+  <namespace-list>
+    <namespace name="http://riftio.com/ns/riftware-1.0/config_root"/>
+    <namespace name="http://riftio.com/ns/riftware-1.0/rw-base"/>
+    <namespace name="http://riftio.com/ns/riftware-1.0/rwuagent-cli"/>
+  </namespace-list>
+</cli>

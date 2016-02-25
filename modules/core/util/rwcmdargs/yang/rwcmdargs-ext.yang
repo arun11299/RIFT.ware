@@ -1,0 +1,143 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rwcmdargs-ext
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rwcmdargs-ext";
+  prefix "rcaext";
+
+  organization "RIFT.io";
+  description
+    "RW.CmdArgs YANG extension declarations.  The extensions control
+    the behavior of the parser.";
+
+  revision 2014-01-28 {
+    description
+      "Initial implementation of RW.CmdArgs YANG extensions.";
+    reference
+      "CmdArgs Software Component Document";
+  }
+
+  extension argv-shortcut-modify {
+    argument "shortcut-name";
+    description
+      "Defines a Modify Shortcut Option.
+
+       The Option shortcuts Node Selection to the annotated container,
+       anyxml, or leaf, and causes argv parsing to enter the
+       appropriate Edit Mode on the node.  A Modify Shortcut Option is
+       useful when a commonly changed node is nested deeply in the XML
+       schema.
+
+       A Modify Shortcut is not allowed on choice, case, list, or
+       leaf-list statements.  The Shortcut is not available in the CLI
+       or XML.";
+  }
+
+  extension argv-shortcut-append {
+    argument "shortcut-name";
+    description
+      "Defines an Append Shortcut Option.
+
+       The Option shortcuts Node Selection to the annotated list or
+       leaf-list, and causes argv parsing to enter the appropriate Edit
+       Mode on a newly appended node.  An Append Shortcut Option is
+       useful when a commonly used list is nested deeply in the XML
+       schema.
+
+       An Append Shortcut is not allowed on container, choice, case,
+       leaf, or anyxml statements.  The Shortcut is not available in
+       the CLI or XML.";
+  }
+
+  extension argv-shortcut-replace {
+    argument "shortcut-name";
+    description
+      "Defines a Replace Shortcut Option.
+
+       The Option shortcuts Node Selection to the annotated container,
+       list, anyxml, leaf-list, or leaf.  The node (or entire list),
+       and all descendant nodes, will be deleted.  For list, or
+       leaf-list, a new node will be appended to the cleared list.  For
+       container, leaf, and anyxml, a new node is created.  The parser
+       then enters the appropriate Edit Mode on the new node.  A
+       Replace Shortcut is useful when a deeply nested node is
+       frequently changed in whole.
+
+       A Replace Shortcut is not allowed on choice or case statements.
+       The Shortcut is not available in the CLI or XML.";
+  }
+
+  extension argv-shortcut-action {
+    argument "shortcut-name";
+    description
+      "Defines an Action Shortcut Option.
+
+       The Option shortcuts to the annotated container, which must
+       define an action for the parser.
+
+       An Action Shortcut is not allowed on 'config true' nodes.  The
+       Shortcut is not available in the CLI or XML.
+
+       This extension should only be used by the RW.CmdArgs
+       implementation.";
+  }
+
+  extension not-argv {
+    description
+      "Prevent parsing by the argv parser.
+
+       Prevents an identifier from being recognized by the argv parser.
+       Any YANG node (and all descendant nodes) containing this
+       extension will be ignored by the parser.  If any of the
+       argv-shortcut-* extensions are also specified, the Options those
+       shortcuts define will still be usable in argv.
+
+       Preventing parsing by the argv parser is useful for suppressing
+       Actions that do not apply to the argv parser, such as invoking
+       the command with the current configuration (invocation is
+       implied in the argv parser, by the consumption of all the
+       arguments).
+
+       This extension should only be used by the RW.CmdArgs
+       implementation.";
+  }
+
+  extension not-interactive {
+    description
+      "Prevent parsing by the interactive CLI parser.
+
+       Prevents an identifier from being recognized by the interactive
+       CLI parser.  Any YANG node (and all descendant nodes) containing
+       this extension will be ignored by the parser.
+
+       Preventing parsing by the interactive CLI parser is useful for
+       suppressing Actions that do not apply to the interactive CLI
+       parser, such as invoking the interactive CLI parser.
+
+       This extension should only be used by the RW.CmdArgs
+       implementation.";
+  }
+
+  extension not-cli-file {
+    description
+      "Prevent parsing by the CLI file parser.
+
+       Prevents an identifier from being recognized by the CLI file
+       parser.  Any YANG node (and all descendant nodes) containing
+       this extension will be ignored by the parser.
+
+       Preventing parsing by the CLI file parser is useful for
+       suppressing Actions that do not apply to the CLI file parser,
+       such as invoking the interactive CLI parser.
+
+       This extension should only be used by the RW.CmdArgs
+       implementation.";
+  }
+
+}

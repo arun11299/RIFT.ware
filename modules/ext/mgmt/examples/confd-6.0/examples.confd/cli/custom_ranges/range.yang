@@ -1,0 +1,38 @@
+module range {
+  namespace "http://tail-f.com/ns/example/range";
+  prefix range;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  typedef interface-type {
+    type string {
+      pattern "((FastEthernet)|(GigaEthernet))/[0-9]+";
+    }
+  }
+
+  typedef ifs-range-type {
+    type string {
+      pattern "((FastEthernet)|(GigaEthernet))/[0-9]+-((FastEthernet)|(GigaEthernet))/[0-9]+";
+    }
+  }
+
+  list interface {
+    key name;
+    max-elements 64;
+    leaf name {
+      type interface-type;
+    }
+    leaf ip {
+      type inet:ip-address;
+      mandatory true;
+    }
+    leaf mtu {
+      type int32;
+      mandatory true;
+    }
+    leaf description {
+      type string;
+    }
+  }
+}

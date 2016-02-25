@@ -1,0 +1,60 @@
+@import "css/network-diagram";
+
+:host {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+}
+
+.service {
+  fill: @gray6;
+
+  // Polymer shadowdom bug - it rewrites urls
+  // with complete page.css#dropshadow which isn't right
+  // so we set filter property on svg rect in js core
+  //    filter: url(#dropshadow);
+}
+
+circle.context {
+  fill : @gray6;
+  stroke: @blue-glow;
+  stroke-width: 4;
+}
+
+text.context {
+  fill : @white;
+}
+/**/
+text.title{
+  fill:#cccccc;
+  stroke:none;
+
+  font-size: 16px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:200;
+}
+
+/**/
+rect.iface {
+  fill: #5e5e5e;
+  stroke: #121212;
+  stroke-width: 0.5;
+}
+text.label, text.handle-label{
+  fill:#ffffff;
+  stroke:none;
+
+  font-size: 14px;
+  font-family:roboto-condensed, open-sans, sans-serif;
+  font-weight:400;
+}
+.selection {
+  fill: none;
+  stroke: @blue-glow;
+}
+
+#diagram {
+  height: 3000px;
+  width: 100%;
+  min-width: 1300px;
+}

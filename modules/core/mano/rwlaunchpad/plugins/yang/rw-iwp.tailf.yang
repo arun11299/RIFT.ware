@@ -1,0 +1,30 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-iwp-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-iwp-annotation";
+  prefix "rw-iwp-ann";
+
+  import rw-iwp
+  {
+    prefix rw-iwp;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  tailf:annotate "/rw-iwp:resource-mgr/rw-iwp:pools/rw-iwp:vm-pool/rw-iwp:resources/rw-iwp:is_reserved" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rw-iwp:resource-mgr/rw-iwp:pools/rw-iwp:network-pool/rw-iwp:resources/rw-iwp:is_reserved" {
+    tailf:callpoint base_show;
+  }
+}

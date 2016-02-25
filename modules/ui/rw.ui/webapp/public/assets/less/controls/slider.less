@@ -1,0 +1,93 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ */
+// out: ../css/core.css, sourcemap: false, compress: true, main: ../core.less
+//
+// slider.less
+//
+// Styles for slider controls
+//
+.slider {
+  &-container {
+    text-align: center;
+  }
+  &-vert {
+    float: left;
+    width: 42px;
+    margin-left: 47px !important;
+    &-header {
+      font-size: 11px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    &-start-val,
+    &-end-val {
+      font-size: 14px;
+    }
+    &-track {
+      border-left: 1px solid @gray;
+      border-right: 1px solid @gray;
+      height: 200px;
+      position: relative;
+      width: 30px;
+    }
+    &-handle {
+      background-color: @brand-blue;
+      box-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      height: 16px;
+      width: 34px;
+    }
+    &-position {
+      color: @brand-blue-light;
+      font-size: 12px;
+      position: absolute;
+      white-space: nowrap !important;
+      &.left {
+        left: -38px;
+        .slider-vert-handle {
+          float: right;
+          margin-left: 6px;
+        }
+      }
+      &.right {
+        left: -3px;
+        .slider-vert-handle {
+          float: left;
+          margin-right: 6px;
+        }
+      }
+    }
+  }
+  &-toggle {
+    float: left;
+    margin: 12px 27px 12px 0;
+    white-space: nowrap;
+    width: 43%;
+    .clearfix;
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    &-track {
+      .has-drop-shadow;
+      .clearfix;
+    }
+    &-option {
+      background-color: @white;
+      color: @gray-light;
+      float: left;
+      font-size: 12px;
+      margin-top: -4px;
+      padding: 8px;
+      text-align: center;
+      width: 50%;
+    }
+  }
+}

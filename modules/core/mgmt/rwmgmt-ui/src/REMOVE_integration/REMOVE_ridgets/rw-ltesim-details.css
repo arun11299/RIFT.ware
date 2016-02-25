@@ -1,0 +1,68 @@
+* {
+  box-sizing: border-box;
+}
+hr {
+  height: 2px;
+  border: 0;
+  border-top: 1px solid #121212;
+  background: #545454;
+}
+/*------------------*/
+/*----- LAYOUT -----*/
+.details.row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-content: stretch;
+  align-content: stretch;
+}
+.details.row .col {
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 10px;
+  margin: 0px;
+}
+/**/
+/**/
+.details h2 {
+  border-bottom: 1px solid #121212;
+  box-shadow: 0 1px 0 0 #5e5e5e;
+  color: #cccccc;
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  min-height: inherit;
+  padding-bottom: 5px;
+  text-align: left;
+  text-transform: uppercase;
+}
+:host {
+  display: block;
+}
+/**/
+/**/
+#ltesimdetails ul {
+  padding: 0px;
+  margin: 0px;
+  line-height: normal;
+  list-style: none;
+}
+#ltesimdetails ul li ul {
+  margin-left: 25px;
+}
+#ltesimdetails ul span.label {
+  padding: 0px;
+  margin: 0px;
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 200;
+}
+#ltesimdetails ul span.label::first-letter {
+  text-transform: capitalize;
+}
+#ltesimdetails ul span.value {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+}

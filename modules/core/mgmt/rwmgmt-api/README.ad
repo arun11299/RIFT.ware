@@ -1,0 +1,24 @@
+:numbered:
+// :data-uri:
+:pygments:
+:toc2: left
+
+
+**RIFT.io Web API Gateway**
+=====================================
+Provides a RESTful API to RW.MgmtAgent server.
+
+== Installation
+
+yum install python-pip python-devel gcc
+pip install \
+    Flask Flask-SocketIO Flask-Compress \
+    urllib3 lxml gevent-socketio geventconnpool
+
+=== Testing
+No installation required, just run
+----
+./bin/rwmgmtapigw-standalone
+----
+Then API will served on http://localhost:5050/index.html.  This also serves the Web UI also under root directory. You can load that by accessing http://localhost:5050/index.html
+

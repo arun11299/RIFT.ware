@@ -1,0 +1,37 @@
+@import "css/base/base";
+@import "css/elements/header";
+
+.dashpanel {
+  // overflow: auto;
+  height:300px;
+}
+
+.dashpanel:last-child {
+  margin: 0;
+}
+
+#gauges {
+  .flex(1 1 auto);
+
+  .flex-display();
+  .justify-content(space-around);
+  height: 420px;
+}
+
+.gauge-group {
+  .flex-display();
+  .flex-direction(column);
+  .align-content(center);
+}
+
+.gauge-group > h2 {
+  margin-bottom: 0px;
+
+  color:#cccccc;
+  font-weight:200;
+}
+
+rw-gauge {
+  margin: 0 0 10px 0;
+  text-align: center;
+}

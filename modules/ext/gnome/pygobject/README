@@ -1,0 +1,11 @@
+The gobject-introspection-1.40.0 repo is imported/tracked directly from the 
+upstream repository. The following commands are used to create this from 
+the upstream repo
+
+git branch pygobject-3-12
+git subtree add --prefix=pygobject/pygobject-3.12.3 -m 'Add the pygobject-3.12.3 branch' --squash git://git.gnome.org/pygobject pygobject-3-12
+
+git branch pygobject-3-14
+git subtree add --prefix=pygobject/pygobject-3.14.1 -m 'Add the pygobject-3.14.1 branch' --squash git://git.gnome.org/pygobject pygobject-3-14
+
+

@@ -1,0 +1,41 @@
+module interface {
+  namespace "http://tail-f.com/test/interface";
+  prefix "if";
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  list interface {
+    key name;
+
+    tailf:callpoint if-hook {
+      tailf:transaction-hook subtree;
+    }
+
+    leaf name {
+      type string;
+    }
+    leaf address {
+      type inet:ipv4-address;
+    }
+    leaf ifIndex {
+      type int32;
+      tailf:hidden "debug";
+    }
+    leaf ipAddressCreated {
+      type yang:timestamp;
+      tailf:hidden "debug";
+    }
+    leaf ipAddressLastChanged {
+      type yang:timestamp;
+      tailf:hidden "debug";
+    }
+  }
+}

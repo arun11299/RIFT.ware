@@ -1,0 +1,116 @@
+// Q: How do i test $scope?
+// Q: Is there a useful way to note js and css dependencies
+// Q: How do i jsdocument this?
+(function(window, angular) {
+
+  angular.module('uiModule')
+    .directive('rwSplitter', function() {
+      var controller = function($scope, $element) {
+        $scope.icon = "expand-more";
+
+
+        angular.element(document).ready(
+
+          function() {
+            angular.element($window).bind('resize', function() {
+              $scope.onResize();
+            })
+            if (!$scope.allowOverflow) {
+              console.log($element);
+
+              $element[0].parentNode.style.overflow = 'hidden';
+              $element[0].nextElementSibling.style.overflow = 'hidden';
+              $element[0].previousElementSibling.style.overflow = 'hidden';
+            }
+            $element[0].style.height = "300px"
+          }
+        );
+
+        $scope.onResize = function() {
+          $('.split-handler').css()
+        };
+        $scope.toggleMax = function(){
+          $scope.expanded ? $scope.restore() : $scope.expand();
+        };
+
+        $scope.toggle = function() {
+          $scope.collapsed ? $scope.restore() : $scope.collapse();
+        };
+
+        $scope.collapse = function() {
+          $scope.restoreSize = $scope.target.offsetHeight;
+          $scope.target.style.height = "0";
+          $scope.collapsed = true;
+          $scope.expanded = false;
+          $scope.changeClass();
+        };
+
+        $scope.expand = function() {
+          var body = document.body,
+            html = document.documentElement,
+            maxH = Math.max(body.scrollHeight,body.offsetHeight,html.clientHeight,html.scrollHeight,html.offsetHeight );
+          if( (maxH - parseInt($scope.target.style.height)) > 10 ) {
+            $scope.restoreSize = $scope.target.offsetHeight;
+            $scope.target.style.height = maxH + 'px';
+            $scope.collapsed = false;
+          }else{
+            $scope.restore();
+          }
+          $scope.changeClass();
+        };
+
+        $scope.restore = function() {
+          if ($scope.restoreSize || $scope.restoreSize == 0) {
+            $scope.target.style.height = $scope.restoreSize + "px";
+          }
+          $scope.changeClass();
+        };
+
+        $scope.trackEnd = function() {
+          $scope.changeClass();
+
+        };
+
+        $scope.track = function(e) {
+          var d = e[$scope.horizontal ? 'dy' : 'dx'];
+          $scope.target.style[$scope.dimension] = $scope.size + ($scope.isNext ? -d : d) + 'px';
+          $scope.changeClass();
+        };
+
+        $scope.changeClass = function(){
+          if(parseInt($scope.target.style.height) > 20){
+            $scope.icon = "expand-more";
+            $scope.collapsed = false;
+          }else{
+            $scope.icon = "expand-less"
+            $scope.collapsed = true;
+          }
+        };
+      };
+
+      return {
+          restrict : 'E',
+          template:
+          '<div>' +
+          '<link rel="stylesheet" type="text/css" href="rw-splitter.css" />' +
+            '<div id="content">' +
+            '<content></content>' +
+            '</div>' +
+            '<div class="adjustments">' +
+            '<div style="margin-right: 10px;"  id="buttons" on-tap="{{toggle}}" >' +
+            '<core-icon style="right: 5px;' +
+            'bottom: 5px;"' +
+            'size="15px" icon="{{icon}}"></core-icon></div>' +
+            '<div style="margin-right:10px;padding-left: 2.5px;' +
+            'line-height: 11px;"' +
+            'id="buttons" on-tap="{{expand}}">+</div>' +
+            '</div>' +
+            '</div>',
+          controller : controller,
+          replace: true,
+          scope: {
+          }
+        };
+    });
+
+})(window, window.angular);

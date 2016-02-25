@@ -1,0 +1,38 @@
+<html class="viewport" ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../vendor.js"></script>
+  <script src="../../lib/underscore/underscore.js"></script>
+  <script src="../../modules/rift/rw.ui.browserify.js"></script>
+  <script src="../../lib/d3/d3.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+  <style>
+    .graph-container {
+      width: 50%;
+      height: 50%;
+      border: 1px solid chartreuse;
+    }
+  </style>
+
+</head>
+<body class="viewport" ng-controller="test">
+
+<div class="graph-container">
+  <rw-gauge min="0" max="10" value="7"></rw-gauge>
+</div>
+
+<script>
+  angular.module('test', ['uiModule'])
+      .controller('test', function($scope, $timeout) {
+
+
+      });
+</script>
+
+</body>
+</html>

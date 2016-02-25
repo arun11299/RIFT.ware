@@ -1,0 +1,5 @@
+<input>
+  <clockSettings>1992-12-12T11:11:11</clockSettings>
+  <utc>true</utc>
+  <syncHardwareClock>true</syncHardwareClock>
+</input>

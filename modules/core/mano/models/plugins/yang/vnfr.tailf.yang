@@ -1,0 +1,29 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module vnfr-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/vnfr-annotation";
+  prefix "vnfr-ann";
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import rw-base {
+    prefix rwbase;
+  }
+
+  import vnfr {
+    prefix vnfr;
+  }
+
+  tailf:annotate "/vnfr:vnfr-catalog" {
+    tailf:callpoint base_show;
+  }
+}

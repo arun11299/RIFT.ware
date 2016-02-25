@@ -1,0 +1,20 @@
+<div>
+  <table id="stats" class="datagrid-small">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Forward</th>
+      <th>Reverse</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Bindings</td>
+      <td class="datagrid-numcell-small">{{aggregateData.fwdBindings | fmtNum }}</td>
+      <td class="datagrid-numcell-small">{{aggregateData.revBindings | fmtNum }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <connector-summary connector="ingressConnector"></connector-summary>
+  <connector-summary connector="egressConnector"></connector-summary>
+</div>

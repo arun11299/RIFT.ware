@@ -1,0 +1,134 @@
+<!-- A test for the button component -->
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="../../build/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/angular/angular.min.js"></script>
+  <script src="js/components.js"></script>
+</head>
+<body class="viewport" style="margin:100px;">
+<form id="form" novalidate>
+  <div id="simpleInput"></div>
+    <br/>
+    <br/>
+    <div id="placeholderInput"></div>
+    <br/>
+    <br/>
+  <div id="variableInput"></div>
+    <br/>
+    <br/>
+  <div id="resizableInput"></div>
+    <br/>
+    <br/>
+    <div id="requiredInput"></div>
+    <br/>
+    <br/>
+    <div id="maxLengthInput"></div>
+    <br/>
+    <br/>
+    <div id="readOnlyInput"></div>
+    <br/>
+    <br/>
+  <div id="disabledInput"></div>
+    <br/>
+    <br/>
+    <input type="submit">
+
+</form>
+<script>
+  $(document).ready(function() {
+    var React = $rw.component.React;
+
+    /*
+     * Each button this onClick is passed to will run this function when clicked.
+     */
+    var onClick = function (e, comp) {
+      console.log('click');
+    };
+
+    $rw.ui({
+      textArea: {
+        label: "Text Area",
+        onClick: onClick
+      }
+    }, document.getElementById('simpleInput'));
+
+      $rw.ui({
+          textArea: {
+              label: "Text Area With A Placeholder",
+              onClick: onClick,
+              placeholder: "Enter text here..."
+          }
+      }, document.getElementById('placeholderInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Text Area With Set Rows & Columns",
+        rows: 5,
+        cols: 50,
+        onClick: onClick
+      }
+    }, document.getElementById('variableInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Resizable Text Area",
+        onClick: onClick,
+        resizable: true
+      }
+    }, document.getElementById('resizableInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Text Area With Required Input",
+        onClick: onClick,
+        isRequired: true,
+        value: ""
+      }
+    }, document.getElementById('requiredInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Text Area With Instructions & Rules",
+        instructions: "30 Characters Maximum",
+        onClick: onClick,
+        maxLength: 30,
+        value: ""
+      }
+    }, document.getElementById('maxLengthInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Read Only Text Area",
+        onClick: onClick,
+        isReadOnly: true,
+        value: "Hello World"
+      }
+    }, document.getElementById('readOnlyInput'));
+
+    $rw.ui({
+      textArea: {
+        label: "Disabled Text Area",
+        onClick: onClick,
+        isDisabled: true
+      }
+    }, document.getElementById('disabledInput'));
+  });
+
+
+
+
+</script>
+
+</body>
+</html>

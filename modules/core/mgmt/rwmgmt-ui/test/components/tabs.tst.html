@@ -1,0 +1,48 @@
+<html ng-app="test">
+<head>
+  <title>RIFT.ware</title>
+  <!-- META Data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../vendor.js"></script>
+  <script src="../../modules/rift/rw.ui.min.js"></script>
+  <script src="../../lib/d3/d3.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="../../modules/css/rw.ui.css"/>
+</head>
+<body ng-controller="test">
+
+<rw-tabs>
+  <pane title="First Tab">
+    <div>This is the content of the first tab.</div>
+  </pane>
+  <pane title="Second Tab">
+    <div>This is the content of the second tab.</div>
+  </pane>
+</rw-tabs>
+
+<script>
+  angular.module('test', ['uiModule'])
+      .controller('test', function($scope) {
+        //$scope.values = [{x: 10, y: 20, size: 5, label: 'A'},{x: 6, y: 15, size: 5, label: 'B'}]
+
+      });
+
+
+//        var fixture = document.getElementById('fixture');
+//        fixture.addTab('One', createTab(1));
+//        fixture.addTab('Two', createTab(2));
+//        fixture.async(function() {
+//          var b = fixture.$.tabContents.querySelectorAll('.tab');
+//          assert.equal(2, b.length);
+//          var t = fixture.$.tabNav.querySelectorAll('.tab');
+//          assert.equal(2, t.length);
+//          done();
+//        });
+//      });
+</script>
+
+</body>
+</html>

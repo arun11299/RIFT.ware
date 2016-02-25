@@ -1,0 +1,4 @@
+rift/misc/emacs
+
+EMACS users should copy these files to their home direcory
+i.e. cp * ~/.emacs.d/.

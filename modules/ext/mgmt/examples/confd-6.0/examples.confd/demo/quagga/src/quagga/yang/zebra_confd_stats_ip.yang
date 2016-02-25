@@ -1,0 +1,40 @@
+submodule zebra_confd_stats_ip {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+  include confd_common;
+  include zebra_confd;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+/*  =============== statistics  ====================  */
+
+  augment "/system/stats/ip" {
+
+    list active-routes {
+      key "type network prefix target";
+      config false;
+      tailf:callpoint zebraGetRoutes;
+      leaf type {
+        type RouteType;
+      }
+      leaf network {
+        type inet:ipv4-address;
+      }
+      leaf prefix {
+        type PrefixLengthIPv4;
+      }
+      /*  target can be gw, ifname or null  */
+      leaf target {
+        type string;
+      }
+    }
+  }
+}

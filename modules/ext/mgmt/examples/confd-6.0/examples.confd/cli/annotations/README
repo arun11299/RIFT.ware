@@ -1,0 +1,84 @@
+Example annotations: exemplify how ranges can be used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how tags and annotations
+can be used in the CLI.
+
+To use annotations you need to enable attributes in the confd.conf file
+using
+
+  <enableAttributes>true</enableAttributes>
+  
+Note that you can control if the annotations and tags should be
+visible by default when displaying the configuration. This is
+done using the confd.conf setting
+
+  <cli><showTags>false</showTags></cli>
+  <cli><showAnnotations>false</showAnnotations></cli>
+
+If showTags have been set to "false", then the user needs to pipe
+the output to "| display tags" in order to see the tags when
+displaying the configuration. Similarly for annotations.
+
+If set to "true" then the annotations and tags can be hidden
+using the pipe target "| hide tags" and "| hide annotations"
+
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make clean all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and view the configuration
+
+        # show running-config server
+
+ 4. Enter configuration mode and add an annotation
+
+        # config terminal
+	(config)# annotate server 1 "Primary server"
+
+    Commit the changes and exit to exec mode
+
+        (config)# commit
+        (config)# exit
+	
+    View the new configuration again
+
+        # show running-config server
+
+    View the configuration and filter on the annotation
+      
+        # show running-config server | annotation "Primary"
+
+    Enter configuration mode again and add some tags
+	
+        # config terminal
+        (config)# tag add server 2 "foo"
+        (config)# tag add server 3 "foo"
+        (config)# tag add server 1 "bar"
+        (config)# tag add server 2 "bar"
+        (config)# commit
+        (config)# exit
+
+    View the configuration and filter on the tag foo
+
+        # show running-config server | tags "foo"
+
+    View the configuration and show servers tagged with foo or bar
+    
+        # show running-config server | tags "foo" | tags "bar"
+
+    View the configuration and show all servers with a tag starting with f
+    
+        # show running-config server | tags "f.*"
+

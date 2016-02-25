@@ -1,0 +1,169 @@
+#!/usr/bin/bash
+
+# 
+# (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+#
+#
+# @date 01/10/2015
+# @brief Takes system dump of the VM
+# @details Takes a set of information from the VM
+#          on which it is run for debug purposes
+#
+
+DATE_STR=`date '+%Y-%m-%d_%H-%M-%S'`
+NUM_LOG_LINES=100
+
+if [ -z "${RIFT_INSTALL}" ]
+then
+  echo "Warning: RIFT_INSTALL not set. Sysdump might not retrieve all information."
+  RIFT_HOME_DIR="/tmp"
+else
+  RIFT_HOME_DIR=${RIFT_INSTALL}
+fi
+
+SYSDUMP_DIR="${RIFT_HOME_DIR}/rwsysdump_${DATE_STR}"
+VMINFO_FILE="${SYSDUMP_DIR}/vminfo.txt"
+LOG_DIR="${SYSDUMP_DIR}/logs"
+CONFD_LOG_DIR="${LOG_DIR}/confd"
+COREDUMP_DIR="${SYSDUMP_DIR}/core_dump"
+
+# copy a file if it exists, preserving permissions
+do_safe_cp()
+{
+  file="$1"
+  dest="$2"
+  if [ -f "$file" ]; then
+    cp -p "$file" "$dest"
+  fi
+}
+
+# copy a file if it exists, preserving permissions
+# and then gzip it
+do_safe_cp_zip()
+{
+  file="$1"
+  dest="$2"
+  fname=`basename $1`
+
+  if [ -e "$file" ]; then
+    cp -p "$file" "$dest"
+    gzip "$dest/$fname"
+  fi
+}
+
+# Function to dump command output
+exec_command()
+{
+  local command_name="$*"
+  echo "==================================================" >> ${VMINFO_FILE}
+  echo "Result of '${command_name}':"  >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+  echo "`${command_name} 2>&1`" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+  echo "--------------------------------------------------" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+}
+
+fetch_confd_logs()
+{
+  confd_wss=`find ${RIFT_HOME_DIR}/*confd* -maxdepth 0 -type d`
+  for confd_ws in ${confd_wss}; do
+    base_confd_ws=`basename ${confd_ws}`
+    confd_logs=`find ${confd_ws} -name '*.log*' -o -name '*.trace*'`
+    for log in ${confd_logs}; do
+      mkdir -p ${CONFD_LOG_DIR}/${base_confd_ws}
+      do_safe_cp ${log} ${CONFD_LOG_DIR}/${base_confd_ws}
+    done
+  done
+}
+
+fetch_core_files()
+{
+  #ATTN: Core files are expected to be written to ${RIFT_HOME_DIR} ?
+  core_files=`find ${RIFT_HOME_DIR} -maxdepth 1 -name '*core*' | grep -E '[0-9]$'`
+  for core in ${core_files}; do
+    ln -s ${core} ${COREDUMP_DIR}/`basename ${core}`
+    if [ -e "${core}.txt" ]; then
+      do_safe_cp "${core}.txt" ${COREDUMP_DIR}
+    else
+      exe_name=`file ${core} | tr "'" ' ' | cut -d ' ' -f 14`
+      gdb `which ${exe_name}` --core ${core} --batch --quiet -ex "thread apply all bt" -ex "quit" > ${core}.txt
+      do_safe_cp "${core}.txt" ${COREDUMP_DIR}
+      rm -rf ${core}.txt
+    fi
+  done
+}
+
+fetch_var_log()
+{
+  journalctl --since "10 days ago" > ${LOG_DIR}/journalctl_messages
+  gzip ${LOG_DIR}/journalctl_messages
+  if [ $? == 0 ]; then
+    rm -rf ${LOG_DIR}/journalctl_messages
+  fi
+  do_safe_cp /var/log/rift/rift.log ${LOG_DIR}
+}
+
+fetch_schema_listing()
+{
+  echo "==================================================" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+  echo "SCHEMA LISTING : " >> ${VMINFO_FILE}
+  find ${RIFT_HOME_DIR}/var/rift -type d >> ${VMINFO_FILE}
+  echo "--------------------------------------------------" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+  find ${RIFT_HOME_DIR}/var/rift/schema -exec ls -l {} \; >> ${VMINFO_FILE}
+  echo "--------------------------------------------------" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+}
+
+fetch_system_info()
+{
+  exec_command 'uname -a'
+  exec_command 'uptime'
+  exec_command 'free'
+  exec_command 'df -h -l'
+  exec_command 'cat /proc/meminfo'
+  exec_command 'cat /proc/cpuinfo'
+  exec_command 'ifconfig -a'
+  exec_command 'route -n'
+  exec_command 'netstat -anp'
+  exec_command 'ps -ALww -o user,pid,ppid,tid,pcpu,psr,pri,nice,vsize,rss,majflt,tty,stat,wchan=WIDE-WCHAN-COLUMN -o start,bsdtime,command' 
+  exec_command 'who -a' 
+  exec_command 'rpm -qa'
+  fetch_schema_listing
+  exec_command "tail -${NUM_LOG_LINES} /var/log/messages"
+}
+
+main()
+{
+  mkdir ${SYSDUMP_DIR}
+  mkdir -p ${LOG_DIR}
+  mkdir -p ${COREDUMP_DIR}
+  mkdir -p ${CONFD_LOG_DIR}
+
+  # Vminfo header
+  echo "==================================================" >> ${VMINFO_FILE}
+  echo "System information:" >> ${VMINFO_FILE}
+  echo ""  >> ${VMINFO_FILE}
+  echo "Hostname: "`uname -n` >> ${VMINFO_FILE}
+  echo "Date:     ${DATE_STR}" >> ${VMINFO_FILE}
+  UPTIME_STRING=`cat /proc/uptime | awk '{fs=$1; d=int(fs/86400); fs=fs-d*86400; h=int(fs/3600); fs=fs-h*3600; m=int(fs/60); fs=fs-m*60; s=int(fs); fs=fs-s; print d "d " h "h " m "m " s "s\n"}'`
+  echo "Uptime:   ${UPTIME_STRING}" >> ${VMINFO_FILE}
+  echo "" >> ${VMINFO_FILE}
+
+  fetch_system_info
+  fetch_var_log
+  fetch_confd_logs
+  fetch_core_files
+
+  ## zip the sysdump dir
+  tar cpfz ${SYSDUMP_DIR}.tar.gz ${SYSDUMP_DIR}
+  if [ $? -eq 0 ]
+  then
+    rm -rf ${SYSDUMP_DIR}
+  fi
+}
+
+
+main

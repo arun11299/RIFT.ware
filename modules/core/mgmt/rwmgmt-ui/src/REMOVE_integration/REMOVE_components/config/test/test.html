@@ -1,0 +1,34 @@
+<html ng-app="configEditor">
+  <head>
+    <script src="/lib/angular/angular.js"></script>
+    <script src="../config.js"></script>
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/underscore/underscore.js"></script>
+    <script src="/lib/socket.io-client/dist/socket.io.js"></script>
+    <script src="/lib/jsonpath/lib/jsonpath.js"></script>
+    <script src="/lib/numeral/numeral.js"></script>
+    <script src="/lib/mocha/mocha.js"></script>
+    <script src="/lib/chai/chai.js"></script>
+    <script src="/integration/ridgets/js/rw.js"></script>
+    <link rel="stylesheet" type="text/css" href="/integration/ridgets/css/all.css"/>
+    <script>
+      angular.module('configEditor')
+        .factory('configFactory', function() {
+          return {
+            get: function() {
+              return $.when(
+                rw.api.json('config.json'),
+                rw.api.json('schema.json')
+              );
+            }
+          }
+        });
+    </script>
+  </head>
+  <body>
+    <div>
+      Config Editor
+      <config-editor></config-editor>
+    </div>
+  </body>
+</html>

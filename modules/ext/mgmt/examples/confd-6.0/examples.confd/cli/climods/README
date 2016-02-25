@@ -1,0 +1,33 @@
+Example climods: exemplify how cli modifications can inlined
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The aim of this example is to demonstrate how cli modifications
+can be inlined in the YANG files.
+
+Build dependencies.
+~~~~~~~~~~~~~~~~~~~~~
+
+This example requires Java CLASSPATH to include log4j and aspectjrt.
+The example has been tested against aspectjrt-1.6.5.jar and log4j-1.2.14.jar
+See:
+http://www.eclipse.org/aspectj/
+http://logging.apache.org/log4j/
+
+
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make clean all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the CLI with 'make cli' and try some commands
+
+ 

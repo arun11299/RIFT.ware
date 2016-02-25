@@ -1,0 +1,20 @@
+<div class="splitterContainer">
+
+
+    <div class="vpane vpane-top">
+      <traffic-diagram services="services"></traffic-diagram>
+    </div>
+    <splitter>
+      <div class="rw-traffic-tbar">
+        <div class="rw-traffic-tbar-label">
+          <span class="details-label">{{l10n.vnf[trafficPage.selectedService.type]}}</span>
+          <span class="details-description">{{trafficPage.selectedService.description | safePrefix:' - '}}</span>
+        </div>
+        <div class="rw-traffic-tbar-buttons">
+          <button class="rw-button__tbar" ng-click="trafficPage.resetTotals()">Reset Totals</button>
+        </div>        
+      </div>
+    </splitter>
+    <div class="vpane vpane-bottom" id="traffic-details-container">
+    </div>
+</div>

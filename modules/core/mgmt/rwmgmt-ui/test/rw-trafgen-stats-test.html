@@ -1,0 +1,128 @@
+<script src="../lib/webcomponentsjs/webcomponents.min.js"></script>
+<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="lib/helper.html">
+<link rel="import" href="../integration/ridgets/rw-iconset.html">
+<link rel="import" href="../integration/ridgets/rw-trafgen-stats.html">
+<link rel="stylesheet" href="../integration/ridgets/css/my-test.css">
+
+<script src="../integration/ridgets/js/rwdi.js"></script>
+
+<polymer-element name="my-test">
+<template>
+  <rw-trafgen-stats 
+    id="test0"
+    service="{{service}}"
+    targetRate="10"
+    ></rw-trafgen-stats>
+</template>
+<script>
+rwdi.inject = sinon.stub();
+Polymer('my-test', {
+  ready: function() {
+    this.service = {
+      id: 100,
+      rate: 30
+    };
+    this.service.ifaces = [{
+      name: 'iface name',
+      description: 'iface description',
+      state: 'up',
+      time: '1',
+      tx_percent: 50,
+      txRateString: '50Mbps',
+      targetSpeedString: 'zzz',
+      speedString: 'qqq',
+      output_errors: 0,
+      input_errors: 4321,
+      outputErrorsString: '0',
+      inputErrorsString: '4.3k',
+      rx_percent: 30,
+      rxRateString: '30Mbps'
+    },{
+      name: 'iface II name',
+      description: 'iface description',
+      state: 'up',
+      time: '1',
+      tx_percent: 50,
+      txRateString: '50Mbps',
+      targetSpeedString: 'zzz',
+      speedString: 'qqq',
+      output_errors: 1234,
+      input_errors: 4321,
+      outputErrorsString: '1.2k',
+      inputErrorsString: '4.3k',
+      rx_percent: 30,
+      rxRateString: '30Mbps'      
+    }];
+    this.service.ifaces[0].ports = [{
+      name: 'iface name',
+      description: 'iface description',
+      state: 'up',
+      time: '1',
+      tx_percent: 50,
+      txRateString: '50Mbps',
+      targetSpeedString: 'zzz',
+      speedString: 'qqq',
+      output_errors: 0,
+      input_errors: 4321,
+      outputErrorsString: '0',
+      inputErrorsString: '4.3k',
+      rx_percent: 30,
+      rxRateString: '30Mbps'
+    },{
+      name: 'iface name',
+      description: 'iface description',
+      state_display : '',
+      state: 'down',
+      time: '1',
+      tx_percent: 50,
+      txRateString: '50Mbps',
+      targetSpeedString: 'zzz',
+      speedString: 'qqq',
+      output_errors: 0,
+      input_errors: 4321,
+      outputErrorsString: '0',
+      inputErrorsString: '4.3k',
+      rx_percent: 30,
+      rxRateString: '30Mbps'
+    }];
+
+    this.service.ifaces[1].ports = [{
+      name: 'port name',
+      description: 'port description',
+      state: 'up',
+      time: '1',
+      tx_percent: 50,
+      txRateString: '50Mbps',
+      targetSpeedString: 'zzz',
+      speedString: 'qqq',
+      output_errors: 0,
+      input_errors: 4321,
+      outputErrorsString: '0',
+      inputErrorsString: '4.3k',
+      rx_percent: 30,
+      rxRateString: '30Mbps'      
+    }];
+  },
+  attached: function() {
+    var self = this;
+    var test0 = this.$.test0;
+    suite('rw-trafgen-stats', function() {
+      test('render', function(done) {
+        test0.rows = self.rows;
+        test0.aggregate = self.aggregate;
+        test0.async(function() {
+          assert.isTrue(true);
+          done();
+        });
+      });
+    });
+  }
+})
+</script>
+</polymer-element>  
+
+<div id="mocha"></div>
+<div class="viewport__body">
+  <my-test></my-test>
+</div>

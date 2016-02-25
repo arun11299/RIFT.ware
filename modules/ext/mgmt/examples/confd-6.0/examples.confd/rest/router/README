@@ -1,0 +1,859 @@
+    Example: Using the Confd REST API - simple router example
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This example shows how to work with the RESTful HTTP-based API and it uses
+    a simple router yang model to do this.
+
+    The API is demonstrated by walking through some queries. In this
+    example, we use the command line tool 'curl' to communicate with NCS.
+
+    Starting the Example
+    ~~~~~~~~~~~~~~~~~~~~
+
+    Build the data model and set up the initial files:
+
+    $ make all
+
+    Start ConfD
+
+    $ make start
+
+    ConfD is now started with some pre-populated data
+    (found in router_init.xml).
+
+
+    Sending REST requests
+    ~~~~~~~~~~~~~~~~~~~~~
+
+    In this example, we will authenticate as the user 'admin' with
+    password 'admin'.
+
+    0.  Top-level GET
+
+    Send the first REST query to get a representation of the top-level
+    resource, which is accessible through the well-known path '/api':
+
+    $ curl -v -u admin:admin http://localhost:8008/api
+
+    * About to connect() to localhost port 8008 (#0)
+    *   Trying ::1...
+    *   Trying fe80::1...
+    *   Trying 127.0.0.1...
+    * Connected to localhost (127.0.0.1) port 8008 (#0)
+    * Server auth using Basic with user 'admin'
+    > GET /api HTTP/1.1
+    > Authorization: Basic YWRtaW46YWRtaW4=
+    > User-Agent: curl/7.30.0
+    > Host: localhost:8008
+    > Accept: */*
+    >
+    < HTTP/1.1 200 OK
+    * Server ConfD/5.3.0 is not blacklisted
+    < Server: ConfD/5.3.0
+    < Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+    < Date: Wed, 03 Sep 2014 12:39:58 GMT
+    < Content-Length: 181
+    < Content-Type: application/vnd.yang.api+xml
+    <
+    <api xmlns="http://tail-f.com/ns/rest" xmlns:y="http://tail-f.com/ns/rest">
+      <version>0.5</version>
+      <config/>
+      <running/>
+      <operational/>
+      <operations/>
+      <rollbacks/>
+    </api>
+    * Connection #0 to host localhost left intact
+
+    As can be seen from the result, the server in this example exposes
+    a number of resources. See the Confd User Guide for more
+    information on this.
+
+    Note:
+
+    o  See the content-type header; contains the media-type for the
+       resource.
+
+    If you prefer JSON format just add an accept header, e.g.
+
+    $ curl -u admin:admin -H "Accept: application/vnd.yang.api+json" \
+    http://localhost:8008/api
+
+    {"api":{"version":"0.5","config":{},"running":{},"operational":{},"operations":{},"rollbacks":{}}} 
+
+
+
+    Examples
+    ~~~~~~~~
+
+
+
+    *   The HTTP GET method is used to retrieve resources
+        In this example the "sys/interfaces/ex:serial" resource
+        is retrieved
+
+    $ curl -i -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/interfaces/ex:serial -H "Accept: application/vnd.yang.collection+json"
+
+        The result looks like:
+    
+     HTTP/1.1 200 OK
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:28 GMT
+     Content-Type: application/vnd.yang.data+json
+     Transfer-Encoding: chunked
+     Etag: 1409-933068-296297
+     Last-Modified: Fri, 01 Jan 1971 00:00:00 GMT
+    
+     {
+       "example-serial:serial": \[
+         {
+           "name": "ppp0",
+           "ppp": {
+             "accounting": "acme"
+           },
+           "authentication": {
+             "method": "pap"
+           },
+           "authorization": "admin",
+           "ipcp": {
+           }
+         }
+       \]
+     }
+    
+    
+    
+    *   The POST HTTP method can be used to invoke operation and create
+        resources. In this example a new "sys/routes/inet/route"
+        list resource entry is created. The JSON payload is found in
+        the file inputsec2.json
+
+    $ curl -i -u admin:admin -T ./inputsec2.json -X POST http://127.0.0.1:8008/api/running/sys/routes/inet -H "Content-Type: application/vnd.yang.data+json"
+
+        The result looks like:
+    
+     HTTP/1.1 100 Continue
+     Server: ConfD/5.3.0
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+    
+     HTTP/1.1 201 Created
+     Server: ConfD/5.3.0
+     Location: http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.20.1.0%2C24
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:28 GMT
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+     Content-Type: text/html
+     Etag: 1409-933068-806754
+     Last-Modified: Fri, 05 Sep 2014 16:04:28 GMT
+    
+    
+    
+    *   The HTTP PUT method can be used to both create and replace
+        resources. In this example the the previously created
+        "sys/routes/inet/route" resource is replaced. The JSON payload
+        is found in the file inputsec3.json
+
+    $ curl -i -u admin:admin -T ./inputsec3.json -X PUT http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.20.1.0,24 -H "Content-Type: application/vnd.yang.data+json"
+
+        The result looks like:
+    
+     HTTP/1.1 100 Continue
+     Server: ConfD/5.3.0
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+    
+     HTTP/1.1 204 No Content
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:28 GMT
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+     Content-Type: text/html
+     Etag: 1409-933068-943071
+     Last-Modified: Fri, 05 Sep 2014 16:04:28 GMT
+    
+    
+    
+    *   The PATCH HTTP method can be used to change an existing resource.
+        In this example the "enabled" leaf in the "sys/routes/inet/route"
+        resource is set to true. The JSON payload is found in the
+        inputsec4.json file.
+
+    $ curl -i -u admin:admin -T ./inputsec4.json -X PATCH http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.20.1.0,24 -H "Content-Type: application/vnd.yang.data+json"
+
+        The result looks like:
+    
+     HTTP/1.1 100 Continue
+     Server: ConfD/5.3.0
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+    
+     HTTP/1.1 204 No Content
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:29 GMT
+     Allow: GET, POST, OPTIONS, HEAD
+     Content-Length: 0
+     Content-Type: text/html
+     Etag: 1409-933069-73677
+     Last-Modified: Fri, 05 Sep 2014 16:04:29 GMT
+    
+    
+    
+    *   The HTTP DELETE method is used to remove resources.
+        This example illustrates removal of a list element resource.
+
+    $ curl -i -u admin:admin -X DELETE http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.20.1.0,24
+
+        The result looks like:
+    
+     HTTP/1.1 204 No Content
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:29 GMT
+     Content-Length: 0
+     Content-Type: text/html
+     Etag: 1409-933069-199017
+     Last-Modified: Fri, 05 Sep 2014 16:04:29 GMT
+    
+    
+    
+    *   The OPTIONS HTTP request is used to retrieve information of
+        methods are allowed for a certain resource. This information is
+        delivered in the "Allow" header. This example shows the allowed
+        methods for the "sys" resource.
+
+    $ curl -i -u admin:admin -X OPTIONS http://127.0.0.1:8008/api/running/sys
+
+        The result looks like:
+    
+     HTTP/1.1 200 OK
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:29 GMT
+     Content-Length: 0
+     Content-Type: text/html
+     Allow: DELETE, GET, HEAD, PATCH, POST, PUT
+    
+    
+    
+    *   The HTTP HEAD method will for a resource retrieve the only
+        the headers, the same as they should be for a GET request
+
+    $ curl -i -u admin:admin -X HEAD http://127.0.0.1:8008/api/running/sys/interfaces/ex:serial
+
+        The result looks like:
+    
+     HTTP/1.1 200 OK
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Fri, 05 Sep 2014 16:04:29 GMT
+     Content-Length: 0
+     Content-Type: application/vnd.yang.data+xml
+     Etag: 1409-933069-199017
+     Last-Modified: Fri, 05 Sep 2014 16:04:29 GMT
+    
+    
+    
+    *   The "shallow" query parameter can be used to retrieve a resource
+        with zero subtree depth. Here we get the "sys" root resource as
+        shallow.
+
+    $ curl -u admin:admin -X GET "http://localhost:8008/api/running/sys?shallow"
+
+        The result looks like:
+    
+     <sys xmlns="http://example.com/router" ...>
+       <interfaces/>
+       <routes/>
+       <syslog/>
+       <ntp/>
+       <dns/>
+     </sys>
+    
+    
+    
+    *  The "deep" query parameter can be used to get the full subtree
+       as the result of a GET request. This examples lists the
+       "sys/interfaces/interface" resource as deep
+
+    $ curl -u admin:admin -X GET "http://localhost:8008/api/running/sys/interfaces/interface?deep"
+
+        The result looks like:
+    
+     <collection xmlns:y="http://tail-f.com/ns/rest">
+       <interface>
+         <name>eth0</name>
+         <unit>
+           <name>0</name>
+           <enabled>true</enabled>
+           <status>
+           </status>
+           <family>
+             <inet>
+               <address>
+                 <name>192.168.1.2</name>
+                 <prefix-length>16</prefix-length>
+               </address>
+             </inet>
+           </family>
+         </unit>
+         <unit>
+           <name>1</name>
+           <enabled>true</enabled>
+           <status>
+           </status>
+           <family>
+             <inet>
+               <address>
+                 <name>192.168.1.3</name>
+                 <prefix-length>16</prefix-length>
+               </address>
+             </inet>
+           </family>
+         </unit>
+         <unit>
+           <name>2</name>
+           <enabled>true</enabled>
+           <description>My Vlan</description>
+           <vlan-id>18</vlan-id>
+           <status>
+           </status>
+         </unit>
+       </interface>
+     </collection>
+    
+    
+    
+    *    The "limit" and "offset" query parameters can be used
+         to limit the GET result of a list resource. This example
+         starts with the 4:th element (offset starts with 0) and
+         retrieves 2 elements
+
+    $ curl -u admin:admin -X GET "http://localhost:8008/api/running/sys/routes/inet/route?offset=3&limit=2"
+
+        The result looks like:
+    
+     <collection xmlns:y="http://tail-f.com/ns/rest">
+       <route>
+         <name>10.40.0.0</name>
+         <prefix-length>16</prefix-length>
+         <description>Route 4</description>
+         <next-hop>
+           <name>192.168.10.4</name>
+         </next-hop>
+       </route>
+       <route>
+         <name>10.50.0.0</name>
+         <prefix-length>16</prefix-length>
+         <description>Route 5</description>
+         <next-hop>
+           <name>192.168.10.5</name>
+         </next-hop>
+       </route>
+     </collection>
+    
+    
+    
+    *    We can use the "select" query parameter to restrict the result
+         of a GET to the specified elements. In this example we only
+         retrieve the "route" resource name and next-hop names.
+
+    $ curl -u admin:admin -X GET "http://localhost:8008/api/running/sys/routes/inet/route/10.20.0.0,16?select=name;next-hop(name)"
+
+        The result looks like:
+    
+     <route xmlns="http://example.com/router" ...>
+       <name>10.20.0.0</name>
+       <next-hop>
+         <name>192.168.10.2</name>
+       </next-hop>
+     </route>
+    
+    
+    
+    *    We have in the beginning created resources with the POST
+         method. We then had JSON payload. Here is an example where
+         the payload is XML, as seen in the inputsec12.xml file.
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec12.xml -X POST http://127.0.0.1:8008/api/running/sys/routes/inet -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 201
+    
+    
+    
+    *    The PUT method can be used both to create or replace a resource.
+         We first use PUT to create a new "sys/routes/inet/route".
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec13.xml -X PUT http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24 -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 201
+    
+    
+    
+    *    We use get to retrieve the new "route" resource
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24
+
+        The result looks like:
+    
+     <route xmlns="http://example.com/router" ...>
+       <name>10.30.3.0</name>
+       <prefix-length>24</prefix-length>
+       <next-hop>
+         <name>192.168.4.4</name>
+       </next-hop>
+     </route>
+    
+    
+    
+    *    For an existing route resource the PUT request will
+         replace the route
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec15.xml -X PUT http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24 -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 204
+    
+    
+    
+    *   We use a GET request to verify that the resource
+        have been changed by the PUT request
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24
+
+        The result looks like:
+    
+     <route xmlns="http://example.com/router" ...
+       <name>10.30.3.0</name>
+       <prefix-length>24</prefix-length>
+       <next-hop>
+         <name>192.168.3.1</name>
+       </next-hop>
+       <next-hop>
+         <name>192.168.4.2</name>
+       </next-hop>
+     </route>
+    
+    
+    
+    *   To change an existing resource (without replacing all elements)
+        we can use the HTTP PATCH method.
+        Here we PATCH a "sys/routes/inet/route" by adding an next-hop
+        address to the next-hop list.
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec17.xml -X PATCH http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24 -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 204
+    
+    
+    
+    *   We make a GET request to verify the result of the PATCH
+        request.
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/routes/inet/route/10.30.3.0,24
+
+        The result looks like:
+    
+     <route xmlns="http://example.com/router" ...>
+       <name>10.30.3.0</name>
+       <prefix-length>24</prefix-length>
+       <next-hop>
+         <name>192.168.3.1</name>
+       </next-hop>
+       <next-hop>
+         <name>192.168.4.2</name>
+       </next-hop>
+       <next-hop>
+         <name>192.168.5.1</name>
+       </next-hop>
+     </route>
+    
+    
+    
+    *   The "insert" is used to control where list elements are created
+        in a order-by-user defined list.
+        We use the "sys/dbs/server" in our router example and before
+        we create a new element we GET the current list.
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/dns
+
+        The result looks like:
+    
+     <dns xmlns="http://example.com/router" ...>
+       <server>
+         <address>10.2.3.4</address>
+       </server>
+     </dns>
+    
+    
+    
+    *    We use the PATCH method to add a new element into the list.
+         Here the insert=before is used where also the resource 
+         parameter is required to get the position in the list.
+         Note, since the list only contain one element the insert=first
+         could have been used to create the same result.
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec20.xml -X POST "http://127.0.0.1:8008/api/running/sys/dns?insert=before&resource=/api/running/${FRAGMENT}sys/dns/server/10.2.3.4" -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 201
+    
+    
+    
+    *   After the insert we issue a new GET to verify the result.
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/dns
+
+        The result looks like:
+    
+     <dns xmlns="http://example.com/router" ...>
+       <server>
+         <address>10.1.1.2</address>
+       </server>
+     </dns>
+       <server>
+         <address>10.2.3.4</address>
+       </server>
+     </dns>
+    
+    
+    
+    *   To invoke an action the HTTP POST method is used.
+        Here we invoke the "archive-log" action that is situated in
+        the "sys/syslog/server" list. The input parameters for the
+        actions is found in the file inputsec22.xml
+
+    $ curl -u admin:admin -T ./inputsec22.xml -X POST "http://127.0.0.1:8008/api/running/sys/syslog/server/10.3.4.5/_operations/archive-log" -H "Content-Type: application/vnd.yang.data+xml"
+
+        The result looks like:
+    
+     <output xmlns='http://example.com/router'...
+       <result>success</result>
+     </output>
+    
+    
+    
+    *   Create a presence container using POST.
+        Presence containers, in contrast to non-presence containers,
+        is a resource that can be created and deleted.
+        Here we create the presence container "multilink" located in
+        the "sys/interfaces/serial" list. The payload for this POST is
+        found in the file inputsec29, and contains a subleaf named
+        "group" which we assign the value "1".
+        As this is the POST method, we use the URI to the existing
+        parent resource.
+
+    $ curl -is -u admin:admin -T ./inputsec29.xml -X POST http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0 -H "Content-Type: application/vnd.yang.data+xml" | egrep '(HTTP.*Created.*|Locat*)'
+
+        The successful result is indicated by HTTP status:
+    
+        HTTP/1.1 201
+    
+    
+    
+    *   Create a presence container using PUT.
+        Here we create the same presence container "multilink".
+        The payload for this PUT is found in the file inputsec30
+        found in the file inputsec29, and contains a subleaf named
+        "group" which we assign the value "1"
+    
+    
+    *    First we delete presence container created with POST.
+
+    $ curl -u admin:admin -X DELETE http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/multilink -H "Content-Type: application/vnd.yang.data+xml" -i
+
+        As this is the PUT method, we the URI to the resource we are
+        about to create.
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec30.xml -X PUT http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/multilink -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+        HTTP/1.1 201
+    
+    
+    
+    *   Create a presence container using PATCH.
+        Here we again create the presence container "multilink".
+        The payload for this PATCH is found in the file inputsec32
+        found in the file inputsec32, and contains a subleaf named
+        "group" which we assign the value "1", as well as the parent node
+        "serial", since PATCH is a merge operation and can only operate on
+        existing resources.
+    
+    
+    *    First we delete presence container created with PUT.
+
+    $ curl -u admin:admin -X DELETE http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/multilink -H "Content-Type: application/vnd.yang.data+xml" -i
+
+        As this is the PATCH method, we can only operate on existing
+        resource URIs, we target the parent to the container "multilink".
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec32.xml -X PATCH http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0 -H "Content-Type: application/vnd.yang.data+xml"
+
+      The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 204
+    
+    
+    
+    *   Replace a non-presence container using PUT.
+        Non-presence containers always exist if their parent exist,
+        and is a resource that can not be created and deleted.
+        So we can not use POST to 'create' them.
+        Instead we replace the non-presence container using PUT.
+        Here we replace the non-presence container "authentication"
+        located in the "sys/interfaces/serial" list.
+        The payload for this PUT is found in the file inputsec31,
+        and contains a two subleaf nodes, "method" and "list-name".
+        We use the URI to the existing resource "authentication".
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec31.xml -X PUT http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/authentication -H "Content-Type: application/vnd.yang.data+xml"
+
+        The successful result is indicated by HTTP status:
+    
+        HTTP/1.1 204
+    
+    
+    
+    *   A GET method call to show the result.
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/authentication
+
+        The result looks like:
+    
+     <authentication ...
+       <method>pap</method>
+       <list-name>foobar</list-name>
+     </authentication>
+    
+    
+    
+    *   Update a non-presence container using PATCH.
+        Here we update the non-presence container "authentication"
+        located in the "sys/interfaces/serial" list.
+        The payload for this PATCH is found in the file inputsec33,
+        and contains the subleaf nodes, "method".
+        We use the URI to the existing resource "authentication".
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -T ./inputsec33.xml -X PATCH http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/authentication -H "Content-Type: application/vnd.yang.data+xml"
+
+      The successful result is indicated by HTTP status:
+    
+      HTTP/1.1 204
+    
+    
+    
+    *   GET method call to show the result.
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/interfaces/serial/ppp0/authentication
+
+        The result looks like:
+    
+     <authentication ...
+       <method>eap</method>
+       <list-name>foobar</list-name>
+     </authentication>
+    
+        Note that the already existing node "list-name" was untouched by the
+        PATCH method.
+    
+    
+    *   Delete removes the complete subtree below the resource
+        that is pointed out by the uri. For instance we can use DELETE
+        to remove the complete "sys/interfaces/ex:serial" list
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin -X DELETE "http://127.0.0.1:8008/api/running/sys/interfaces/ex:serial"
+
+        The successful result is indicated by HTTP status:
+    
+    HTTP/1.1 204
+    
+    
+    
+    *   We can verify that list is removed by a
+        GET method call on the "sys/interfaces" resource
+
+    $ curl -u admin:admin -X GET http://127.0.0.1:8008/api/running/sys/interfaces
+
+        The result looks like:
+    
+     <interfaces xmlns="http://example.com/router" ...>
+       <interface>
+         <name>eth0</name>
+       </interface>
+     </interfaces>
+    
+    
+    
+    *   Normally the GET will not retrieve the default values.
+        We can see this when retrieving the "/sys/ntp/server" resource
+
+    $ curl -u admin:admin -X GET "http://127.0.0.1:8008/api/running/sys/ntp/server"
+
+        The result looks like:
+    
+    <collection xmlns:y="http://tail-f.com/ns/rest"...>
+      <server>
+        <name>10.2.3.4</name>
+        <key>2</key>
+      </server>
+    </collection>
+    
+    
+    
+    *   If we retrieve the same resource "/sys/ntp/server"
+        but this time with the query parameter ?with-defaults=report-all
+        we will also see the default parameters
+
+    $ curl -u admin:admin -X GET "http://127.0.0.1:8008/api/running/sys/ntp/server?with-defaults=report-all"
+
+        The result looks like:
+    
+     <collection xmlns:y="http://tail-f.com/ns/rest"...>
+       <server>
+         <name>10.2.3.4</name>
+         <enabled>true</enabled>
+         <peer>false</peer>
+         <version>4</version>
+         <key>2</key>
+       </server>
+     </collection>
+    
+    *   We now retrieve the "api" resource.
+
+    $ curl -i -u admin:admin -X GET "http://127.0.0.1:8008/api?verbose" -H "Application:vnd.yang.api+xml"
+
+        The result looks like:
+    
+     <api xmlns="http://tail-f.com/ns/rest" ...>
+       <version>0.5</version>
+       <config y:self="/api/config"/>
+       <running y:self="/api/running"/>
+       <operational y:self="/api/operational"/>
+       <operations/>
+       <rollbacks y:self="/api/rollbacks"/>
+     </api>
+    
+    *   Next we retrieve the "api/running" resource.
+
+    $ curl -i -u admin:admin -X GET "http://127.0.0.1:8008/api/running?verbose" -H "Application:vnd.yang.api+xml"
+
+        The result looks like:
+    
+     HTTP/1.1 200 OK
+     Server: ConfD/5.3.0
+     Cache-control: private, no-cache, must-revalidate, proxy-revalidate
+     Date: Tue, 23 Sep 2014 10:31:28 GMT
+     Content-Type: application/vnd.yang.datastore+xml
+     Transfer-Encoding: chunked
+     Etag: 1411-467580-650611
+     Last-Modified: Tue, 23 Sep 2014 10:19:40 GMT
+     
+     <data xmlns:y="http://tail-f.com/ns/rest" y:self="/api/running">
+       <sys ...>
+         <interfaces ...>
+          ...
+         </interfaces>
+         <routes ...>
+          ...
+         </routes>
+         <syslog ...>
+          ...
+         </syslog>
+         <ntp ...>
+          ...
+         </ntp>
+         <dns ...>
+          ...
+         </dns>
+       </sys>
+       <aaa ...>
+         ...
+       </aaa>
+       <webui ...>
+        ...
+       </webui>
+       <nacm ...>
+        ...
+       </nacm>
+       <operations>
+         <lock y:self="/api/running/_lock">/api/running/_lock</lock>
+         <rollback y:self="/api/running/_rollback">/api/running/_rollback</rollback>
+       </operations>
+     </data>
+    
+    *   We list rollback files.
+
+    $ curl -u admin:admin -X GET "http://127.0.0.1:8008/api/rollbacks" -H "Application:vnd.yang.api+xml"
+
+        The result looks like:
+     
+     <rollbacks xmlns="http://tail-f.com/ns/rest"...>
+       <file>
+         <name>0</name>
+         <creator>admin</creator>
+         <date>2014-09-23 14:53:23</date>
+         <via>rest</via>
+         <label></label>
+         <comment></comment>
+       </file>
+       <file>
+         <name>1</name>
+         <creator>admin</creator>
+         <date>2014-09-23 14:53:23</date>
+         <via>rest</via>
+         <label></label>
+         <comment></comment>
+       </file>
+     </rollbacks>
+    
+    *   We look into the specific rollback file.
+
+    $ curl -u admin:admin -X GET "http://127.0.0.1:8008/api/rollbacks/$RBNO" -H "Application:vnd.yang.api+xml"
+
+        The result looks like:
+     
+         # Created by: admin
+         # Date: 2014-09-23 17:45:29
+         # Via: rest
+         # Type: delta
+         # Label: 
+         # Comment: 
+         # No: 1
+     
+         ...
+    
+    *   When getting the "api/running" resource we got the rpc's listed.
+
+    $ curl -u admin:admin -X GET "http://127.0.0.1:8008/api/running" -H "Application:vnd.yang.datastore+xml"
+
+        Note here the _rollback rpc found as:
+    
+     ...
+          <operations>
+            <lock>/api/running/_lock</lock>
+            <rollback>/api/running/_rollback</rollback>
+          </operations>
+        </data>
+     
+    *   We use this _rollback rpc to apply the rollback file
+
+    $ curl -w "HTTP/1.1 %{http_code}\n" -u admin:admin --data "<file>$RBNO</file>" -X POST http://127.0.0.1:8008/api/running/_rollback -H "Content-Type: application/vnd.yang.data+xml"
+
+        The result looks like:
+    
+     HTTP/1.1 204
+     

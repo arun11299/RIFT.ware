@@ -1,0 +1,102 @@
+<!-- A test for the button component -->
+<!doctype html>
+<html lang="en" class="viewport">
+<head>
+  <!-- -->
+  <title>RIFT.ware</title>
+  <!-- -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- -->
+  <link href="/core.css" rel="stylesheet" type="text/css"  />
+  <!-- -->
+  <script src="../../lib/jquery/dist/jquery.js"></script>
+  <script src="../../lib/angular/angular.min.js"></script>
+  <script src="js/components.js"></script>
+</head>
+<body class="viewport" style="margin:100px;">
+<form id="form" novalidate>
+  <div id="simpleInput"></div>
+    <br/>
+    <br/>
+  <div id="requiredInput"></div>
+    <br/>
+    <br/>
+  <div id="patternInput"></div>
+    <br/>
+    <br/>
+  <div id="readOnlyInput"></div>
+    <br/>
+    <br/>
+  <div id="disabledInput"></div>
+    <br/>
+    <br/>
+  <input type="submit">
+
+</form>
+<script>
+  $(document).ready(function() {
+    var React = $rw.component.React;
+
+    /*
+     * Each button this onClick is passed to will run this function when clicked.
+     */
+    var onClick = function (e, comp) {
+      console.log('click');
+    };
+
+    $rw.ui({
+      textInput: {
+        label: "Input",
+        onClick: onClick,
+        value: "Hello World"
+      }
+    }, document.getElementById('simpleInput'));
+
+    $rw.ui({
+      textInput: {
+        label: "Input & Required",
+        onClick: onClick,
+        isRequired: true,
+        errorText: "Input & Required must be entered"
+      }
+    }, document.getElementById('requiredInput'));
+
+    $rw.ui({
+      textInput: {
+        label: "Input & Rules",
+        instructions: "Enter in 5-12 numbers",
+        onClick: onClick,
+        pattern: "^[0-9]{5,12}$",
+        maxLength: 12,
+        errorText: "Input & Rules must be 5-12 digits"
+      }
+    }, document.getElementById('patternInput'));
+
+    $rw.ui({
+      textInput: {
+        label: "Read Only Input",
+        onClick: onClick,
+        isReadOnly: true,
+        value: "Hello World"
+      }
+    }, document.getElementById('readOnlyInput'));
+
+    $rw.ui({
+      textInput: {
+        label: "Disabled Input",
+        onClick: onClick,
+        isDisabled: true
+      }
+    }, document.getElementById('disabledInput'));
+  });
+
+
+
+
+</script>
+
+</body>
+</html>

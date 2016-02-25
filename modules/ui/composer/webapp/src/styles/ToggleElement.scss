@@ -1,0 +1,23 @@
+
+/* simple toggle behavior (requires js to change data-toggle value to 'true' or add class '-is-toggled' */
+[data-toggle] {
+	position: relative;
+	&:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 20px;
+		content: '-';
+		text-align: left;
+	}
+}
+[data-toggle="true"],
+[data-toggle].-is-toggled {
+	+ .toggleable {
+		display: none !important;
+	}
+	&:before {
+		content: '+';
+	}
+}

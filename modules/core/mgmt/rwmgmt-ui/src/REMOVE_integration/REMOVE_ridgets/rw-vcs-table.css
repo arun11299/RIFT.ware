@@ -1,0 +1,175 @@
+.datagrid {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  padding: 0;
+}
+.datagrid__port-params {
+  border-right: 1px solid #787878;
+}
+.datagrid__tx {
+  border-right: 1px solid #787878;
+}
+.datagrid tr {
+  border-bottom: 1px solid #787878;
+}
+.datagrid tbody tr:nth-of-type(even) {
+  /*background: @gray7;*/
+}
+/**/
+.datagrid thead tr th {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin: 0px;
+  color: #d4d4d4;
+  font-size: 14px;
+  font-weight: 200;
+  text-align: left;
+  background-color: #3b3b3b;
+  border-bottom: 1px solid #787878;
+}
+/**/
+.datagrid tbody tr:nth-of-type(odd) {
+  background-color: #5e5e5e;
+}
+.datagrid tbody tr td {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+}
+.datagrid tbody tr.datagrid--is-selected td {
+  background-color: #67c6ef;
+}
+/**/
+/**/
+.datagrid tbody tr td.cluster .icon {
+  margin-left: 25px;
+}
+.datagrid tbody tr td.vm2 .icon {
+  margin-left: 50px;
+}
+.dataGridIsClosed,
+.datagrid__details--is-closed {
+  display: none;
+}
+.datagrid-small {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  padding: 0;
+}
+.datagrid-small td:first-child,
+.datagrid-small th {
+  font-size: 14px;
+  color: #d4d4d4;
+}
+.datagrid-small td:first-child,
+.datagrid-small th:first-child {
+  border-right: 1px solid #787878;
+}
+.datagrid-small th:not(:first-child) {
+  font-weight: normal;
+  border-left: 1px solid #787878;
+}
+.datagrid-small td:not(:first-child) {
+  border-left: 1px solid #787878;
+  color: #878787;
+}
+.datagrid-small tr {
+  border-bottom: 1px solid #787878;
+}
+.datagrid-small td {
+  padding: 0;
+}
+.datagrid-small thead tr {
+  text-align: center;
+  white-space: nowrap;
+}
+.datagrid-small thead td {
+  font-size: 14px;
+}
+.datagrid-small tbody tr {
+  border-bottom: 1px solid #787878;
+  text-align: left;
+}
+td.datagrid-numcell-small {
+  text-align: right;
+  font-size: 14px;
+  color: #787878;
+}
+* {
+  box-sizing: border-box;
+}
+.icon {
+  /*width: 32px;
+  height: 32px;*/
+  fill: white;
+}
+.icon--small {
+  width: 20px;
+  height: 20px;
+}
+.icon__expand-collapse {
+  width: 10px;
+  height: 10px;
+  cursor: default;
+}
+.icon__expand-collapse:hover {
+  fill: #49bdee;
+}
+.loading-icon {
+  -moz-animation: loading 1.5s infinite linear;
+  -ms-animation: loading 1.5s infinite linear;
+  -webkit-animation: loading 1.5s infinite linear;
+}
+@-webkit-keyframes loading {
+  from {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes loading {
+  from {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+#vcsItems {
+  font-size: 18px;
+}
+.depth-1 {
+  margin-left: 0px;
+}
+.depth-2 {
+  margin-left: 20px;
+}
+.depth-3 {
+  margin-left: 40px;
+}
+.depth-4 {
+  margin-left: 60px;
+}
+.depth-5 {
+  margin-left: 80px;
+}

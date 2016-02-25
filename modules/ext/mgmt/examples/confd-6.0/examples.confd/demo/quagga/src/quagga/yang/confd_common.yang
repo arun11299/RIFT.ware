@@ -1,0 +1,774 @@
+submodule confd_common {
+  belongs-to quagga {
+    prefix quagga;
+  }
+
+  include confd_top;
+
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+
+  typedef PrefixLengthIPv4 {
+    type uint8 {
+      range "0 .. 32";
+    }
+  }
+  typedef PrefixLengthIPv6 {
+    type uint8 {
+      range "0 .. 128";
+    }
+  }
+  typedef MtuRangeType {
+    type uint32 {
+      range "64 .. 9208";
+    }
+  }
+  grouping inetNetworkAddressIPv4 {
+    leaf address {
+      type inet:ipv4-address;
+      mandatory true;
+    }
+    leaf prefix-length {
+      type PrefixLengthIPv4;
+      mandatory true;
+    }
+  }
+  grouping inetNetworkAddressIPv6 {
+    leaf address {
+      type inet:ipv6-address;
+      mandatory true;
+    }
+    leaf prefix-length {
+      type PrefixLengthIPv6;
+      mandatory true;
+    }
+  }
+  grouping memoryStatusType {
+    leaf total {
+      type uint32;
+      mandatory true;
+    }
+    leaf used {
+      type uint32;
+      mandatory true;
+    }
+    leaf free {
+      type uint32;
+      mandatory true;
+    }
+  }
+  typedef MacAddressType {
+    type string {
+        length 17;
+      pattern "([0-9a-fA-F][0-9a-fA-F]:){5}([0-9a-fA-F][0-9a-fA-F])";
+    }
+  }
+  typedef ACLLowRangeType {
+    type uint32 {
+      range "1 .. 99";
+    }
+  }
+  typedef ACLHighRangeType {
+    type uint32 {
+      range "1300 .. 1999";
+    }
+  }
+  typedef ACLExtLowRangeType {
+    type uint32 {
+      range "100 .. 199";
+    }
+  }
+  typedef ACLExtHighRangeType {
+    type uint32 {
+      range "2000 .. 2699";
+    }
+  }
+  typedef IcmpTypeRangeType {
+    type int8 {
+      range "3 .. 18";
+    }
+  }
+  typedef DistanceRangeType {
+    type uint32 {
+      range "1 .. 255";
+    }
+  }
+  typedef RouteMapLineNumberRangeType {
+    type uint32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef PrefixGeLeRangeType {
+    type uint8 {
+      range "1 .. 32";
+    }
+  }
+  typedef PrefixGeLeRangeTypeV6 {
+    type uint8 {
+      range "1 .. 128";
+    }
+  }
+  typedef ACLType {
+    type union {
+      type ACLLowRangeType;
+      type ACLHighRangeType;
+    }
+  }
+  typedef ACLExtType {
+    type union {
+      type ACLExtLowRangeType;
+      type ACLExtHighRangeType;
+    }
+  }
+  typedef InfiniteType {
+    type enumeration {
+      enum infinite;
+    }
+  }
+  typedef DateTimeInfiniteType {
+    type union {
+      type yang:date-and-time;
+      type InfiniteType;
+    }
+  }
+  typedef ACLActionType {
+    type enumeration {
+      enum deny;
+      enum permit;
+    }
+  }
+  typedef DirectionType {
+    type enumeration {
+      enum in;
+      enum out;
+    }
+  }
+  typedef RedistributeType {
+    type enumeration {
+      enum kernel;
+      enum static;
+      enum connected;
+      enum ospf;
+      enum bgp;
+      enum isis;
+    }
+  }
+  typedef AuthenticationModeType {
+    type enumeration {
+      enum md5;
+      enum text;
+    }
+  }
+  typedef OriginType {
+    type enumeration {
+      enum egp;
+      enum igp;
+      enum incomplete;
+    }
+  }
+  typedef RouteTypeExternalType {
+    type enumeration {
+      enum type-1;
+      enum type-2;
+    }
+  }
+  typedef LevelType {
+    type enumeration {
+      enum level-1;
+      enum level-1-2;
+      enum level-2;
+    }
+  }
+  typedef MetricType {
+    type enumeration {
+      enum internal;
+      enum external;
+      enum type-1;
+      enum type-2;
+    }
+  }
+  typedef PacketType {
+    type enumeration {
+      enum any;
+      enum icmp;
+      enum ip;
+      enum tcp;
+      enum udp;
+    }
+  }
+  typedef LogFacilityType {
+    type enumeration {
+      enum auth;
+      enum cron;
+      enum daemon;
+      enum kern;
+      enum local0;
+      enum local1;
+      enum local2;
+      enum local3;
+      enum local4;
+      enum local5;
+      enum local6;
+      enum local7;
+      enum lpr;
+      enum mail;
+      enum news;
+      enum syslog;
+      enum user;
+      enum uucp;
+    }
+  }
+  typedef LogLevelType {
+    type enumeration {
+      enum alerts;
+      enum critical;
+      enum debugging;
+      enum emergencies;
+      enum errors;
+      enum informational;
+      enum notifications;
+      enum warnings;
+    }
+  }
+  typedef RelationType {
+    type enumeration {
+      enum eq;
+      enum gt;
+      enum lt;
+      enum ne;
+    }
+  }
+  typedef MetricOperType {
+    type enumeration {
+      enum set;
+      enum add;
+      enum sub;
+    }
+  }
+  grouping PortSettingsType {
+    leaf relation {
+      type RelationType;
+      mandatory true;
+    }
+    leaf port {
+      type inet:port-number;
+      mandatory true;
+    }
+  }
+  typedef OperationType {
+    type enumeration {
+      enum reject;
+      enum blackhole;
+    }
+  }
+
+/* Not used (yet...)
+  grouping AccessListRefType1 {
+    choice list-type {
+      mandatory true;
+      leaf access-list {
+        type leafref {
+          path "../ip/access-list/id";
+        }
+      }
+      leaf access-list-extended {
+        type leafref {
+          path "../ip/access-list-extended/id";
+        }
+      }
+      leaf access-list-word {
+        type leafref {
+          path "../ip/access-list-word/id";
+        }
+      }
+    }
+  }
+  grouping AccessListRefType2 {
+    choice list-type {
+      mandatory true;
+      leaf access-list {
+        type leafref {
+          path "../../ip/access-list/id";
+        }
+      }
+      leaf access-list-extended {
+        type leafref {
+          path "../../ip/access-list-extended/id";
+        }
+      }
+      leaf access-list-word {
+        type leafref {
+          path "../../ip/access-list-word/id";
+        }
+      }
+    }
+  }
+  grouping AccessListRefType3 {
+    choice list-type {
+      mandatory true;
+      leaf access-list {
+        type leafref {
+          path "../../../ip/access-list/id";
+        }
+      }
+      leaf access-list-extended {
+        type leafref {
+          path "../../../ip/access-list-extended/id";
+        }
+      }
+      leaf access-list-word {
+        type leafref {
+          path "../../../ip/access-list-word/id";
+        }
+      }
+    }
+  }
+  * end of not used */
+
+  grouping AccessListRefType4 {
+    choice list-type {
+      mandatory true;
+      leaf access-list {
+        type leafref {
+          path "/system/ip/access-list/id";
+        }
+      }
+      leaf access-list-extended {
+        type leafref {
+          path "/system/ip/access-list-extended/id";
+        }
+      }
+      leaf access-list-word {
+        type leafref {
+          path "/system/ip/access-list-word/id";
+        }
+      }
+    }
+  }
+  grouping AccessListRefType5 {
+    choice list-type {
+      mandatory true;
+      leaf access-list {
+        type leafref {
+          path "/system/ip/access-list/id";
+        }
+      }
+      leaf access-list-extended {
+        type leafref {
+          path "/system/ip/access-list-extended/id";
+        }
+      }
+      leaf access-list-word {
+        type leafref {
+          path "/system/ip/access-list-word/id";
+        }
+      }
+    }
+  }
+
+  augment "/system" {
+
+/*  =========================================================  */
+/*  =============== common configuration ====================  */
+/*  =========================================================  */
+    leaf hostname {
+      type inet:domain-name;
+      default ripd;
+    }
+    leaf password {
+      type inet:domain-name;
+      default zebra;
+    }
+    /*  TODO: password is temporary variable just to define password for old zebra telnet cli  */
+    container router;
+
+/*  =============== interfaces ====================  */
+    list interface {
+      key name;
+      leaf name {
+        type string;
+      }
+      leaf description {
+        type string;
+      }
+      container ip;
+      container ipv6;
+    }
+
+/*  =============== key chains ====================  */
+    list key-chain {
+      key name;
+      leaf name {
+        type string;
+      }
+      list key {
+        key id;
+        leaf id {
+          type uint32;
+        }
+        leaf key-string {
+          type string;
+        }
+        container accept-lifetime {
+          presence "";
+          leaf start {
+            type yang:date-and-time;
+            mandatory true;
+          }
+          leaf expire {
+            type DateTimeInfiniteType;
+            mandatory true;
+          }
+        }
+        container send-lifetime {
+          presence "";
+          leaf start {
+            type yang:date-and-time;
+            mandatory true;
+          }
+          leaf expire {
+            type DateTimeInfiniteType;
+            mandatory true;
+          }
+        }
+      }
+    }
+
+/*  =============== route maps ====================  */
+    list route-map {
+      key tag;
+      leaf tag {
+        type string;
+      }
+      list line {
+        key number;
+        tailf:indexed-view;
+        leaf number {
+          type RouteMapLineNumberRangeType;
+        }
+        leaf action {
+          type ACLActionType;
+          mandatory true;
+        }
+        leaf call {
+          type leafref {
+            path "../../../route-map/tag";
+          }
+        }
+        leaf on-match-goto {
+          type leafref {
+            path "../../line/number";
+          }
+          tailf:validate valRmapOnMatchGotoRef;
+          /*  validation - referenced line number must be higher than this line number (see command "continue") - valRmapOnMatchGotoRef  */
+        }
+        leaf match-interface {
+          type leafref {
+            path "../../../interface/name";
+          }
+        }
+        container match-ip-address {
+          uses AccessListRefType4;
+        }
+        leaf match-ip-address-prefix-list {
+          type leafref {
+            path "../../../ip/prefix-list/name";
+          }
+        }
+        container match-ip-next-hop {
+          uses AccessListRefType4;
+        }
+        leaf match-ip-next-hop-prefix-list {
+          type leafref {
+            path "../../../ip/prefix-list/name";
+          }
+        }
+        leaf match-metric {
+          type uint32;
+        }
+        leaf match-tag {
+          type uint32;
+        }
+        leaf set-ip-next-hop {
+          type inet:ipv4-address;
+        }
+        container set-metric {
+          presence "";
+          leaf operation {
+            type MetricOperType;
+            mandatory true;
+          }
+          leaf value {
+            type uint32;
+            mandatory true;
+          }
+        }
+        leaf set-tag {
+          type uint32;
+        }
+      }
+    }
+
+    container ip {
+
+/*  =============== access lists ====================  */
+      list access-list {
+        key id;
+        /*  validation - unique id for all access-lists - valAccessListRef  */
+        tailf:validate valAccessListRef;
+        leaf id {
+          type ACLType;
+        }
+        leaf remark {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          min-elements 1;
+          leaf number {
+            type int32;
+          }
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address 0.0.0.0 (reversed) mask 255.255.255.255  */
+          leaf address {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf mask {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+        }
+      }
+      list access-list-extended {
+        key id;
+        /*  validation - unique id for all access-lists - valAccessListRef  */
+        tailf:validate valAccessListRef;
+        leaf id {
+          type ACLExtType;
+        }
+        leaf remark {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          min-elements 1;
+          leaf number {
+            type int32;
+          }
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address 0.0.0.0 mask 0.0.0.0  */
+          /*  host == address <host> mask 255.255.255.255  */
+          leaf source {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf source-mask {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf destination {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+          leaf destination-mask {
+            type inet:ipv4-address;
+            mandatory true;
+          }
+        }
+      }
+      list access-list-word {
+        key id;
+        /*  validation - unique id for all access-lists - valAccessListRef  */
+        tailf:validate valAccessListRef;
+        leaf id {
+          type string;
+        }
+        leaf remark {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          min-elements 1;
+          leaf number {
+            type int32;
+          }
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address 0.0.0.0/32  */
+          container match {
+            uses inetNetworkAddressIPv4;
+          }
+          leaf exact-match {
+            type boolean;
+          }
+        }
+      }
+
+/*  =============== prefix lists ====================  */
+      list prefix-list {
+        key name;
+        tailf:validate valPrefixListRef;
+        /*  validation - unique name for all ipv4 and ipv6 prefix lists - implemented in valPrefixListRef  */
+        leaf name {
+          type string;
+        }
+        leaf description {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          tailf:validate valUniqItems;
+          leaf number {
+            type uint32;
+          }
+          /*  validation - action/network/le/ge must be unique  - implemented in valUniqItems  */
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address 0.0.0.0 prefix-length 0 le 32  */
+          container network {
+            uses inetNetworkAddressIPv4;
+            tailf:validate valPlistPrefix;
+          }
+          leaf le {
+            type PrefixGeLeRangeType;
+          }
+          leaf ge {
+            type PrefixGeLeRangeType;
+          }
+          /*  validation - if defined both ge and le, prefix-len < ge-value <= le-value - implemented by valPlistPrefix  */
+        }
+      }
+    }
+
+    container ipv6 {
+
+/*  =============== ipv6 access lists ====================  */
+      list access-list {
+        key id;
+        /*  validation - unique id for all access-lists - valAccessListRef  */
+        tailf:validate valAccessListRef;
+        leaf id {
+          type string;
+        }
+        leaf remark {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          min-elements 1;
+          leaf number {
+            type int32;
+          }
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address :: prefix-length 0  */
+          container match {
+            uses inetNetworkAddressIPv6;
+          }
+          leaf exact-match {
+            type boolean;
+          }
+        }
+      }
+
+/*  =============== ipv6 prefix lists ====================  */
+      list prefix-list {
+        key name;
+        tailf:validate valPrefixListRef;
+        /*  validation - unique name for all ipv4 and ipv6 prefix lists - implemented in valPrefixListRef  */
+        leaf name {
+          type string;
+        }
+        leaf description {
+          type string;
+        }
+        list line {
+          key number;
+          tailf:indexed-view;
+          tailf:validate valUniqItems;
+          leaf number {
+            type uint32;
+          }
+          /*  validation - action/network/le/ge must be unique - implemented in valUniqItems  */
+          leaf action {
+            type ACLActionType;
+            mandatory true;
+          }
+          /*  any == address :: prefix-length 0 le 128  */
+          container network {
+            uses inetNetworkAddressIPv6;
+            tailf:validate valPlistPrefix;
+          }
+          leaf ge {
+            type PrefixGeLeRangeTypeV6;
+          }
+          leaf le {
+            type PrefixGeLeRangeTypeV6;
+          }
+          /*  validation - if defined both ge and le, prefix-len < ge-value <= le-value - implemented by valPlistPrefix6  */
+        }
+      }
+    }
+
+/*  =============== logging ====================  */
+    container log {
+      leaf facility {
+        type LogFacilityType;
+      }
+      container file {
+        presence "";
+        leaf name {
+          type string;
+          mandatory true;
+        }
+        leaf level {
+          type LogLevelType;
+          mandatory true;
+        }
+      }
+      leaf monitor {
+        type LogLevelType;
+      }
+      leaf stdout {
+        type LogLevelType;
+      }
+      leaf syslog {
+        type LogLevelType;
+      }
+      leaf record-priority {
+        type boolean;
+      }
+    }
+    container stats {
+      container ip;
+      container memory;
+      /* container ipv6; */
+    }
+  }
+
+}

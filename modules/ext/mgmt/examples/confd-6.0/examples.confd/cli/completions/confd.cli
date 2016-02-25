@@ -1,0 +1,108 @@
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+      <simpleType namespace="" name="uint64">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+      <simpleType namespace="http://tail-f.com/ns/cli-builtin/1.0"
+                  name="history">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+      <simpleType namespace="http://tail-f.com/ns/cli-builtin/1.0"
+                  name="idle-timeout">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+      <completion path="test">
+        <callback>
+          <capi>
+            <completionpoint id="path">generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </completion>
+    </modifications>
+
+  </operationalMode>
+
+  <configureMode>
+    <modifications>
+      <simpleType namespace="http://tail-f.com/ns/example/config"
+                  name="interfaceNameType">
+        <callback>
+          <capi>
+            <completionpoint>ifs-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+
+      <simpleType namespace="http://tail-f.com/ns/example/config"
+                  name="secondsType">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+
+      <simpleType namespace="http://tail-f.com/ns/example/config"
+                  name="microSecondsType">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+
+      <simpleType namespace="" name="uint64">
+        <callback>
+          <capi>
+            <completionpoint>generic-complete</completionpoint>
+          </capi>
+        </callback>
+      </simpleType>
+    </modifications>
+
+    <cmd name="setClock">
+      <info>Set the system clock</info>
+      <help>The system time since epoch</help>
+      <callback>
+        <capi>
+          <cmdpoint>set-clock</cmdpoint>
+        </capi>
+      </callback>
+      <params>
+        <param>
+          <type>
+            <simpleType namespace="http://tail-f.com/ns/example/config"
+                        name="secondsType"/>
+          </type>
+        </param>
+        <param>
+          <type>
+            <simpleType namespace="http://tail-f.com/ns/example/config"
+                        name="microSecondsType"/>
+          </type>
+        </param>
+        <param>
+          <callback>
+            <capi>
+              <completionpoint>generic-complete</completionpoint>
+            </capi>
+          </callback>
+          <completionId>mode</completionId>
+        </param>
+      </params>
+    </cmd>
+  </configureMode>
+</clispec>

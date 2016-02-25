@@ -1,0 +1,93 @@
+<link rel="import" href="rw-vcs-status-led.html">
+<!--
+  Show details about a network interface 
+
+  <img src="interface-details.png"/>
+
+  @class rw-iface-details
+-->
+
+<!--
+  Interface
+
+  @attribute {Object} iface
+-->
+
+<!--
+  Port
+
+  @attribute {Object} port
+-->
+<polymer-element name="rw-iface-details" attributes="iface">
+    <template>
+        <link rel="stylesheet" type="text/css" href="rw-iface-details.css"/>
+        <div class="row details">
+            <div id="interfaces-details" class="col">
+                <h2 class="etched-bottom">Details</h2>
+                <dl>
+                    <dt>Name</dt>
+                    <dd>{{iface.name}}</dd>
+                </dl>
+                <dl>
+                    <dt>Description</dt>
+                    <dd>{{port[descr-string]}}</dd>
+                </dl>
+                <dl>
+                    <dt>Context</dt>
+                    <dd>{{iface.context}}</dd>
+                </dl>
+                <dl>
+                    <dt>Status</dt>
+                    <dd>{{iface.state}}</dd>
+                </dl>
+                <dl>
+                    <dt>IP Address</dt>
+                    <dd>{{iface.ip.address}}</dd>
+                </dl>
+            </div>
+            <div id="interfaces-ports" class="col">
+                <h2 class="etched-bottom">Ports</h2>
+                <table class="datagrid">
+                    <thead>
+                        <tr>
+                            <th>Port</th>
+                            <th>Link Status</th>
+                            <th>Admin Status</th>
+                            <th>MAC Address</th>
+                            <th>Speed</th>
+                            <th>TX Flow Control</th>
+                            <th>RX Flow Control</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr template repeat="{{port in iface.port}}">
+                            <td>{{port.id}}</td>
+                            <td><rw-vcs-status-led state="{{port['link-state']}}"></rw-vcs-status-led></td>
+                            <td>N/A</td>
+                            <td>{{port['mac']}}</td>
+                            <td>{{port.speed}}</td>
+                            <td>{{port.duplex | duplexToTxFlow}}</td>
+                            <td>{{port.duplex | duplexToRxFlow}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+<script>
+Polymer({
+
+  duplexToTxFlow: function(duplex) {
+    if (duplex === 'full-duplex') {
+      return "On";
+    }
+    return "Off";
+  },
+
+  duplexToRxFlow : function(duplex) {
+    // same right now
+    return this.duplexToTxFlow(duplex);
+  },
+});
+</script>
+</polymer-element>

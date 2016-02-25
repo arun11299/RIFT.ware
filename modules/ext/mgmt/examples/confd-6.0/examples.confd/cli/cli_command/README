@@ -1,0 +1,140 @@
+ConfD SNMP Agent Example - Simple, extended with CLI commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This example is an extension of the snmpa/1-simple example.
+It shows how a command written in C can be added to the CLI. 
+It also contains some examples of how parameters can be passed
+to custom commands, see test1, test2, and test3 in the clispec
+files.
+
+In the J style CLI a command is added in operational mode
+'show snmp' and one in configuration mode 'wizard adduser'.
+
+This is done using the show_snmp.c and add_user.c programs
+and the following entry in the clispec file:
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="j">
+  <operationalMode>
+    <modifications>
+    </modifications>
+      <cmd name="snmp" mount="show">
+	<info>Show SNMP statistics</info>
+	<help>Show SNMP statistics</help>
+	<callback>
+	  <exec>
+	    <osCommand>./show_snmp</osCommand>
+	  </exec>
+	</callback>
+      </cmd>
+  </operationalMode>
+
+  <configureMode>
+      <cmd name="wizard">
+      <info>Configuration wizards</info>
+      <help>Configuration wizards</help>
+      <cmd name="adduser">
+	<info>Add a user</info>
+	<help>Add a user</help>
+	<callback>
+	  <exec>
+	    <osCommand>./add_user</osCommand>
+	    <options>
+	      <uid>user</uid>
+	    </options>
+	  </exec>
+	</callback>
+      </cmd>
+    </cmd>
+  </configureMode>
+</clispec>
+
+
+In C style CLI the 'show snmp' command is added in operational mode
+and the 'adduser' command added in a custom mode (aaa authentication
+users user). This is done using the following clispec entry:
+
+
+<clispec xmlns="http://tail-f.com/ns/clispec/1.0" style="c">
+  <operationalMode>
+    <modifications>
+    </modifications>
+      <cmd name="snmp" mount="show">
+	<info>Show SNMP statistics</info>
+	<help>Show SNMP statistics</help>
+	<callback>
+	  <exec>
+	    <osCommand>./show_snmp</osCommand>
+	  </exec>
+	</callback>
+      </cmd>
+  </operationalMode>
+
+  <configureMode>
+    <!-- This will add the command adduser to the mode 
+	 aaa authentication users user <user>
+    -->
+      <cmd name="adduser" mount="aaa authentication users user">
+	<info>Add a user</info>
+	<help>Add a user</help>
+	<callback>
+	  <exec>
+	    <osCommand>./add_user</osCommand>
+	    <options>
+	      <uid>user</uid>
+	    </options>
+	  </exec>
+	</callback>
+      </cmd>
+  </configureMode>
+</clispec>
+
+
+The three test commands exemplifies how parameters can be passed 
+to a command with some different constraints.
+
+  test1 [host <hostname>] [port <port-id>] [user <user-name>]
+
+The arguments can occur in any order. The host argument
+is mandatory and must occur somewhere on the command line.
+
+  test2 host <hostname> [port <port-id>] [user <user-name>]
+
+In this command the host argument must be entered first, the
+rest (port and user) can occur in any order and are optional.
+
+
+  test3 host <hostname> [port <port-id> [remote <port-id>]] [user <user-name>]
+
+In this command the host argument must be entered first, the
+rest (port and user) can occur in any order and are optional.
+If port is given then the user can optionally also enter
+a 'remote' argument.
+
+Starting the Example
+~~~~~~~~~~~~~~~~~~~~
+
+ 1. Build the necessary files and start ConfD by typing 
+
+        $ make all start
+
+ 2. To see what's happening inside ConfD, optionally tail the ConfD
+    log file. Unless you have changed the default configuration for
+    this example (see confd.conf) the command would be
+
+        $ tail -f ./confd.log
+
+ 3. Start the C style CLI with 'make c_cli' and try some commands
+
+	# show snmp
+        # test1 port 33 host 3
+        # test2 host 33
+        # test3 host 33 port 4 remote 44 user admin
+	# config
+	(config)# aaa authentication users user admin
+	(config-user-admin)# adduser
+
+ 4. Start the J style CLI with 'make j_cli' and try some commands
+
+	> show snmp
+	> configure
+	% wizard adduser

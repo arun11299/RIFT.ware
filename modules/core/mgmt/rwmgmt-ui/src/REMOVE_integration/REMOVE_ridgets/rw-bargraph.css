@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+}
+:host {
+  display: block;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #787878;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: white;
+}
+.bar {
+  stroke: #000;
+}
+.txt {
+  fill: white;
+}
+.data {
+  fill: #3b3b3b;
+}

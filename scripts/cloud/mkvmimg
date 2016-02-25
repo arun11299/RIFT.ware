@@ -1,0 +1,1007 @@
+#!/bin/bash
+#
+# 12-24-2014 -- JLM
+# removing the naming system. We will be only be using one set of flags from here on out
+# deprecating the -d switch -- there is a script inside the VM that can enable developer mode
+# 1-7-2015 -- JLM -- parameterize the kernel rev
+#
+# WARNING TO ANYONE MERGING THIS FILE TO/FROM ATG
+# THIS FILE WAS MANUALLY MERGED WITH ATG AND COPIED TO MASTER 
+#
+
+
+set -o pipefail
+
+trap "_on_exit" EXIT INT
+
+_on_exit() {
+	local m i
+
+	for m in $(echo ${_MOUNTS} | sort); do
+		echo "Unmounting ${m}..."
+		umount -f ${m}
+	done
+
+	_MOUNTS=""
+
+	for m in ${_NBD_NODES}; do
+		echo "Unexporting ${m}..."
+		kpartx -d ${m}
+		qemu-nbd -d ${m}
+	done
+
+	_NBD_NODES=""
+}
+
+die() {
+	echo
+	echo "ERROR: $*"
+	echo
+	exit 1
+}
+
+announce() {
+	echo -e "\n=============================\n$*\n===========================\n" >&2
+}
+
+fetch_seed() {
+	announce $FUNCNAME
+	if [ -f ${SEED_PATH} ] && ! ${FORCE_CLEAN}; then
+		return
+	fi
+
+	if [[ ${SEED_URL} =~ ^http:// ]]; then
+		curl --location \
+			--output ${SEED_PATH} \
+			${SEED_URL}/${SEED} \
+			|| die "Failed to download ${SEED_URL}/${SEED}"
+	elif [[ ${SEED_URL} =~ ^file:// ]]; then
+		cp ${SEED_URL#file:/}/${SEED} ${SEED_PATH} \
+			|| die "Failed to copy ${SEED_URL}/${SEED}"
+	else
+		die "Unknown resource type for seed url ${SEED_URL}"
+	fi
+}
+
+_find_free_nbd_node() {
+	local node
+
+	for node in /dev/nbd[0-9]*; do
+		nbd-client -c $node  >/dev/null 2>&1 
+		if [ $? -ne 1 ]; then 
+			continue
+		fi
+		if [ ! -f /sys/block/${node##*/}/pid ]; then
+			echo ${node}
+			break
+		fi
+	done
+}
+
+setup() {
+	local nbd_dev
+	local mp
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	if ! lsmod | grep -q nbd; then
+		modprobe nbd max_devices=256 || die "Failed to modprobe nbd"
+	fi
+
+	mkdir -p ${STAGING} 2>&1
+
+	nbd_dev=$(_find_free_nbd_node)
+
+	if [ -z "${nbd_dev}" ]; then
+		die "Failed to find free nbd node"
+	fi
+
+	qemu-nbd -c ${nbd_dev} ${SEED_PATH}\
+		|| die "Failed to qemu-nbd ${SEED_PATH} on ${nbd_dev}"
+	_NBD_NODES="${_NBD_NODES} ${nbd_dev}"
+	kpartx -s -a ${nbd_dev} || die "kpartx ${nbd_dev} failed"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	mp=/dev/mapper/${nbd_dev##*/}p1
+	if ! mount ${mp} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Failed to mount ${SEED_PATH} (${mp}) on ${tmp_mp})"
+	fi
+	if [ -n "REBUILD" ]; then
+		rsync -a ${tmp_mp}/ ${STAGING}/
+		rc=$?
+	else
+		rsync -a --delete-after ${tmp_mp}/ ${STAGING}/
+		rc=$?
+	fi
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync to ${STAGING}"
+	fi
+
+	for mp in sys proc dev; do
+		mount -o bind /${mp} ${STAGING}/${mp} || die "Failed to bind mount ${mp}"
+		_MOUNTS="${STAGING}/${mp} ${_MOUNTS}"
+	done
+
+	cp -L /etc/resolv.conf ${STAGING}/etc/
+}
+
+pack_qcow2() {
+	local bind_mp
+	local img_size
+	local sha
+	local dest
+	local nbd_dev
+	local p_dev
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	set -x
+	img_size=$(du --exclude='proc/*' --exclude='sys/*' -sk ${STAGING} | cut -f1)
+	img_size=$((img_size + ${_EXTRA_DISK_SPACE_K} + 500 * 1024))
+	sha=$(git rev-parse --short HEAD)
+
+	if [ -z "${sha}" ]; then
+		die "Failed to find a git sha"
+	fi
+	dest=${IMG_PREFIX}-${sha}.qcow2
+	echo ${sha} >${STAGING}/etc/rift.hash
+
+	qemu-img create -f qcow2 ${dest} ${img_size}k
+	nbd_dev=$(_find_free_nbd_node)
+
+	if [ -z "${nbd_dev}" ]; then
+		die "Failed to find free nbd node"
+	fi
+
+	qemu-nbd -c ${nbd_dev} ${dest} || die "Failed to qemu-nbd ${dest} on ${nbd_dev}"
+	_NBD_NODES="${_NBD_NODES} ${nbd_dev}"
+
+	echo ",," | sfdisk ${nbd_dev} || die "Failed to partition ${nbd_dev}"
+	kpartx -s -a ${nbd_dev} || die "kpartx ${nbd_dev} failed"
+	p_dev=/dev/mapper/${nbd_dev##*/}p1
+	mkfs.ext4 -q ${p_dev} || die "Failed to mkfs ${p_dev}"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	if ! mount ${p_dev} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Filed to mount ${dest} on ${tmp_mp}"
+	fi
+
+	rsync -a --exclude='/sys/*' --exclude='/proc/*' ${STAGING}/ ${tmp_mp}/
+	rc=$?
+	if [ ${rc} -ne 0 ]; then
+		umount -f ${tmp_mp}
+		die "Failed to sync from ${STAGING}"
+	fi
+
+	for bind_mp in dev proc sys; do
+		mount -o bind /${bind_mp} ${tmp_mp}/${bind_mp} || die "Failed to bind mount ${tmp_mp}/${bind_mp}"
+		_MOUNTS="${_MOUNTS} ${tmp_mp}/${bind_mp}"
+	done
+
+	# grub2 install isonly really needed for qcow2/kvm -- AWS uses grub
+
+	chroot ${tmp_mp} yum install -y grub2 || die "Failed to yum install grub2"
+	chroot ${tmp_mp} grub2-mkconfig -o /boot/grub2/grub.cfg || die "Failed to create grub2 config"
+	chroot ${tmp_mp} grub2-set-default "Fedora, with Linux ${KERNEL_REV}"
+
+	cat > ${tmp_mp}/boot/grub2/device.map <<-EOF
+		(hd0) ${nbd_dev}
+	EOF
+
+	chroot ${tmp_mp} grub2-install -f ${nbd_dev} || "Failed to grub2-install"
+
+	cat > ${tmp_mp}/etc/fstab <<-EOF
+		/dev/vda1 / ext4    defaults,noatime 0 0
+	EOF
+
+	cat > ${tmp_mp}/etc/rc.d/rc.local <<-EOF
+#!/bin/bash
+
+
+############################################
+# Below code only run once at the first boot
+[ -f /root/.firstboot ] && exit 1
+
+touch /root/.firstboot
+
+if lspci | grep -q "Co-processor: Intel Corporation Device 0443" ; then
+   echo "Leave qat-service running"
+   chkconfig qat_service on
+   service qat_service start
+else 
+   echo "Disable qat-service running"
+   chkconfig qat_service off
+   service qat_service stop
+fi
+
+exit 1
+	EOF
+	chmod +x ${tmp_mp}/etc/rc.d/rc.local
+
+	for bind_mp in dev proc sys; do
+		umount -f ${tmp_mp}/${bind_mp}
+		_MOUNTS=$(echo ${_MOUNTS} | sed "s,${tmp_mp}/${bind_mp},,")
+	done
+
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+	[ -n "${SUDO_UID}" ] && chown ${SUDO_UID} ${dest}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync from ${STAGING}"
+	fi
+
+	# resize build qcow2 image to 20G
+	if [[ $dest =~ ^rift-build ]]; then
+		virt-filesystems --long -h --all -a ${dest}
+		qemu-img create -f qcow2 -o preallocation=metadata ${dest}.new 40G
+ 		virt-resize --expand /dev/sda1 ${dest} ${dest}.new
+		rm -f ${dest}
+		qemu-img convert -O qcow2 ${dest}.new ${dest}
+		virt-filesystems --long -h --all -a ${dest}
+  	fi
+}
+
+pack_image() {
+	local img_size
+	local sha
+	local dest
+	local nbd_dev
+	local tmp_mp
+	local rc
+
+	announce $FUNCNAME
+	img_size=$(du --exclude='proc/*' --exclude='sys/*' -sk ${STAGING} | cut -f1)
+	img_size=$((img_size + ${_EXTRA_DISK_SPACE_K} + 500 * 1024))
+	sha=$(git rev-parse --short HEAD)
+
+	if [ -z "${sha}" ]; then
+		die "Failed to find a git sha"
+	fi
+	dest=${IMG_PREFIX}-${sha}.img
+
+	dd if=/dev/zero of=${dest} bs=1024 count=${img_size} || die "Failed to create disk image"
+	mkfs.ext4 -F -q ${dest} || die "Failed to format ${dest}"
+
+	tmp_mp=$(mktemp -d --tmpdir=${BUILDDIR})
+	if ! mount -o loop ${dest} ${tmp_mp}; then
+		rmdir ${tmp_mp}
+		die "Filed to mount ${dest} on ${tmp_mp}"
+	fi
+
+	rsync -a --exclude='/sys/*' --exclude='/proc/*' ${STAGING}/ ${tmp_mp}/
+	rc=$?
+
+	# NOTE this menu is for grub which is used for AWS
+	# kvm uses grub2 
+	cat > ${tmp_mp}/boot/grub/menu.lst <<-EOF
+		default=0
+		timeout=0
+
+		title Fedora ($KERNEL_REV})
+			root (hd0)
+			kernel /boot/vmlinuz-${KERNEL_REV} ro root=/dev/xvda1 console=hvc0 console=ttyS0,115200n8 LANG=en_US.UTF-8 
+			initrd /boot/initramfs-${KERNEL_REV}.img
+	EOF
+
+	cat > ${tmp_mp}/etc/fstab <<-EOF
+		/dev/xvda1 / ext4    defaults,noatime 0 0
+	EOF
+
+	umount -f ${tmp_mp}
+	rmdir ${tmp_mp}
+	[ -n "${SUDO_UID}" ] && chown ${SUDO_UID} ${dest}
+
+	if [ ${rc} -ne 0 ]; then
+		die "Failed to sync from ${STAGING}"
+	fi
+}
+
+cmd() {
+	echo "$@ ..." >&2
+	if [ "${STAGING}" == "" ]; then
+			/bin/bash -c "$*" || die "Failed to run $@"
+	else
+			chroot ${STAGING} /bin/bash -c "$*" || die "Failed to run $@"
+	fi
+
+	echo "...done" >&2
+}
+
+yum() {
+	cmd /bin/yum \
+		--assumeyes \
+		--nogpgcheck \
+		"$@" \
+		|| die "yum '$@' failed"
+}
+
+pip_install() {
+	cmd /bin/pip2 install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/wheelhouse "$@" || die "pip install '$@' failed"
+}
+
+pip3_install() {
+	cmd /bin/python3-pip install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/python3_wheelhouse "$@" \
+		|| die "pip3 install '$@' failed"
+}
+
+pip3_install_kilo_modules() {
+	cmd /bin/python3-pip install --use-wheel --no-index --trusted-host wheel.eng.riftio.com \
+		--find-links=http://wheel.eng.riftio.com/mirrors/python3_kilo_wheelhouse "$@" \
+		|| die "pip3 install '$@' failed"
+}
+
+setup_fedora_repos() {
+	announce $FUNCNAME
+	cp $RIFTROOT/scripts/setup/skel/etc/yum.repos.d/* $STAGING/etc/yum.repos.d/
+}
+
+install_extra_pkgs() {
+	announce $FUNCNAME
+
+  yum install \
+		dnsmasq \
+		ejabberd \
+		graphviz \
+		hadoop-hdfs \
+		kernel-${KERNEL_REV} \
+		kernel-debug-${KERNEL_REV} \
+		kernel-devel-${KERNEL_REV} \
+		libhdfs \
+		libhdfs \
+		libmicrohttpd \
+		luajit \
+		luajit-devel \
+		python3-devel \
+		tmux.x86_64 || die "Yum install failed"
+
+	yum install \
+		pydot \
+		pyparsing \
+		python-amqplib \
+		python-beautifulsoup4 \
+		python-cmd2 \
+		python-devel \
+		python-eventlet \
+		python-flask \
+		python-futures \
+		python-gevent \
+		python-gevent-socketio \
+		python-gevent-websocket \
+		python-jinja2 \
+		python-mock \
+		python-pexpect \
+		python-pyasn1 \
+		python-virtualenv \
+		python-virtualenv-clone \
+		python-virtualenvwrapper \
+		python-websockify \
+		python-wsgiref \
+		scapy || die 'Yum install failed'
+
+
+	pip3_install \
+		"beautifulsoup4==4.3.2" \
+		"google-apputils==0.4.2" \
+		"python-hdfs==0.4" \
+		"requests==2.7.0" \
+		"requests-unixsocket==0.1.4"
+
+	pip_install \
+		"python-hdfs==0.4"  || die "Pip install failed"
+
+}
+
+install_base_pkgs() {
+	announce $FUNCNAME
+
+	cmd mkdir -p /run/lock
+
+	# Base packages to install.  Please maintain the ordering.
+
+	# gcc was necessary to install paramiko(libcrypto needs to be compiled) -austin
+	# there may be another approach
+	yum install \
+		authconfig \
+		autofs \
+		boost-filesystem.x86_64 \
+		boost-system.x86_64 \
+		bridge-utils \
+		cloud-init \
+		ethtool \
+		file \
+		fuse \
+		fuse-devel \
+		gcc \
+		ganglia-gmond \
+		graphviz \
+		hadoop-hdfs \
+		hostname \
+		htop \
+		hwloc \
+		iperf3 \
+		json-c \
+		libffi-devel \
+		libhdfs \
+		libicu \
+		libpcap \
+		libselinux-utils \
+		libxslt \
+		libvirt-client \
+		libvirt-daemon-lxc \
+		log4j \
+		lvm2 \
+		lxc \
+		lxc-extra \
+		nbd \
+		net-tools \
+		nfs-utils \
+		ntp \
+		open-vm-tools \
+		openssh-clients \
+		perf \
+		psmisc \
+		qat_guest \
+		rpcbind \
+		rwho \
+		salt-master \
+		salt-minion \
+		screen \
+		sssd \
+		strace \
+		sudo \
+		systemd-devel \
+		tcpdump \
+		time \
+		xorg-x11-xauth \
+		xterm \
+		yum-utils \
+		npm \
+		zookeeper-java || die "yum install failed"
+
+	cmd systemctl enable salt-master
+	cmd systemctl enable libvirtd.service
+
+	# Log analyzer prerequisites
+	cmd yum -y install httpd \
+	        php \
+                php-gd
+	cmd systemctl enable httpd
+
+	echo 'auto_accept: True' >>$STAGING/etc/salt/master
+
+	# Log analyzer prerequisites
+	cmd yum -y install httpd php php-gd
+	cmd systemctl enable httpd
+
+	cmd "debuginfo-install -y python3-3.3.2-8.fc20.x86_64"
+
+	# Define JAVA_HOME for any packages that need it.
+	local JAVA_HOME=$(cmd realpath /etc/alternatives/java_sdk)
+	cat > $STAGING/etc/profile.d/java_home.sh <<HEREDOC
+	#!/bin/sh
+	export JAVA_HOME="${JAVA_HOME}"
+HEREDOC
+
+    cmd npm set registry http://npm.eng.riftio.com:4873/
+    cmd npm install -g wrappy npmconf fstream-ignore fstream-npm fstream glob tar block-stream forever express  || die "npm failed"
+    cmd npm install -g node.js tty.js pty.js || die "npm2 failed"
+
+	# WHY IS THIS IN THE BASE PACAKGES? IT should be in the build VM only
+	yum group install "\"C Development Tools and Libraries\"" || die "yum install failed"
+
+	# Python packages to install.  Please maintain the ordering.
+	yum install \
+		python-pip \
+		python3 \
+		python3-devel \
+		python3-pip \
+		python-amqplib \
+		python-beautifulsoup4 \
+		python-cmd2 \
+		python-devel \
+		python-eventlet \
+		python-flask \
+		python-futures \
+		python-gevent \
+		python-gevent-socketio \
+		python-gevent-websocket \
+		python-jinja2 \
+		python-libcloud \
+      	python3-devel \
+		python3-libcloud \
+		python-lxml \
+		python-novaclient \
+		python-ordereddict \
+		python-requests-oauthlib \
+		python-testresources \
+		python-testrepository \
+		python-tools \
+		python-tox \
+		python-xmltodict \
+		python-formencode  \
+		pytest \
+		PyYAML \
+		|| die "yum install of python packages failed"
+
+	yum update --disablerepo=misc || die "yum update failed"
+
+	yum install --enablerepo=updates3 \
+		python-kazoo \
+		python-taskflow || die "yum 3 failed"
+
+	#cmd pip install --no-deps --index-url=http://boson/mirrors/pip/packages/simple -r /tmp/PIP
+	cp $RIFTROOT/scripts/setup/wheel/* $STAGING/tmp
+	cmd pip install --upgrade --no-index --find-links=file:///tmp pip==6.0.3 setuptools==9.0.1 wheel==0.24.0
+
+	cp $RIFTROOT/scripts/setup/PIP $STAGING/tmp/PIP
+	pip_install -r /tmp/PIP
+
+	# Notice the ordering here yet again.
+	# upgrade pip without using the trusted-host option 
+	cmd /bin/python3-pip install --use-wheel --no-index --find-links=http://wheel.eng.riftio.com/mirrors/python3_wheelhouse --upgrade pip==6.1.1 
+	cmd sed -i 's/1\.4\.1/6\.1\.1/g' /bin/python3-pip
+
+	pip3_install \
+		"apache-libcloud==0.17.0" \
+		"asyncio==3.4.3" \
+		"backports.ssl-match-hostname==3.4.0.2" \
+		"certifi==2015.4.28" \
+		"kazoo==2.1" \
+		"lxml==3.4.4" \
+		"mock==1.0.1" \
+		"paramiko==1.15.2" \
+		"python-dateutil==2.4.2" \
+		"python-gflags==2.0" \
+		"pytz==2015.2" \
+		"pyYAML==3.11" \
+		"requests==2.7.0" \
+		"requests-unixsocket==0.1.4" \
+		"six==1.9.0" \
+		"tornado==4.1" \
+		"enum34==1.0.4" \
+		"zake==0.2.1" \
+		"pytest-xdist==1.13.1" \
+		"jsonpath-rw==1.4.0" \
+		"objectpath==0.5"
+
+	pip3_install_kilo_modules \
+		"Babel==2.0" \
+		"cliff==1.14.0" \
+		"cmd2==0.6.8" \
+		"debtcollector==0.7.0" \
+		"iso8601==0.1.10" \
+		"jsonpatch==1.11" \
+		"jsonpointer==1.9" \
+		"jsonschema==2.5.1" \
+		"monotonic==0.3" \
+		"msgpack-python==0.4.6" \
+		"netaddr==0.7.18" \
+		"netifaces==0.10.4" \
+		"oslo.config==2.4.0" \
+		"oslo.i18n==2.5.0" \
+		"oslo.serialization==2.0.0" \
+		"oslo.utils==2.4.0" \
+		"pbr==1.6.0" \
+		"prettytable==0.7.2" \
+		"pyparsing==2.0.3" \
+		"pytz==2015.4" \
+		"requests==2.7.0" \
+		"simplejson==3.8.0" \
+		"six==1.9.0" \
+		"stevedore==1.7.0" \
+		"unicodecsv==0.13.0" \
+		"warlock==1.1.0" \
+		"wrapt==1.10.5" \
+		"python-glanceclient==1.0.0" \
+		"python-keystoneclient==1.6.0" \
+		"python-neutronclient==2.6.0" \
+		"python-novaclient==2.28.0" \
+		"python-ceilometerclient==2.0.1" 
+
+	pip_install \
+		"kazoo==2.1" \
+		"zake==0.2.1"
+
+	# Enable salt-minion
+	cmd systemctl enable salt-minion.service
+	cmd systemctl enable salt-master.service
+
+	# Enable Salt Master auto-accept
+	sed -i 's/#auto_accept: False/auto_accept: True/g' ${STAGING}/etc/salt/master
+}
+
+install_dev_packages() {
+	yum install \
+		autofs \
+		asciidoc \
+		bash-completion \
+		bc \
+		boost-devel \
+		ccache \
+		clang \
+		cmake \
+		doxygen \
+		flex-devel \
+		fop \
+		git \
+		gmp-devel \
+		gnome-common \
+		gnutls-devel \
+		golang \
+		gperf \
+		gtk-doc \
+		httperf \
+		intltool \
+		json-c-devel \
+		kernel-modules-extra \
+		ksh \
+		lcov \
+		libevent-devel \
+		libev-devel \
+		libffi-devel \
+		libguestfs-tools \
+		libidn-devel \
+		libmicrohttpd-devel \
+		libnl3-devel \
+		libpcap-devel \
+		libssh2-devel \
+		libuuid-devel \
+		libxslt-devel \
+		lksctp-tools-devel \
+		mock \
+		msgpack \
+		msgpack-devel \
+		ncurses-devel \
+		ntl-devel \
+		openldap-clients \
+		pdftk \
+		protobuf \
+		pycscope \
+		python3-devel \
+		qemu-img \
+		redis \
+		rpm-build \
+		ruby \
+		rubygem-asciidoctor \
+		texlive-latex2man \
+		vala \
+		valgrind-devel \
+		xz-devel \
+		wireshark \
+	|| die "failed to install dev-packages"
+
+	pip_install netifaces
+}
+
+post_install_config() {
+	announce $FUNCNAME
+	echo root:toor | cmd chpasswd
+
+	echo "ALL ALL=NOPASSWD: ALL" >> ${STAGING}/etc/sudoers
+	sed -i '/requiretty/s/^/#/' ${STAGING}/etc/sudoers || die "sed failed"
+
+	sed -i 's/MOUNT_NFS_DEFAULT_PROTOCOL=.*/MOUNT_NFS_DEFAULT_PROTOCOL=3/g' ${STAGING}/etc/sysconfig/autofs || die "sed failed"
+	sed -i "s/# Defaultvers=4/Defaultvers=3/g" ${STAGING}/etc/nfsmount.conf || die "sed failed"
+
+	if [ -e ${STAGING}/etc/selinux/config ]; then
+			sed -i 's,^\(SELINUX=\).*,\1permissive,' ${STAGING}/etc/selinux/config || die "sed failed"
+	fi
+
+	# Various sysctls, networking buffer sizes, core pattern, etc
+	cp $RIFTROOT/scripts/setup/skel/etc/sysctl.d/riftware.conf $STAGING/etc/sysctl.d/
+
+	cat >> ${STAGING}/etc/security/limits.conf <<-EOF
+		# RiftIO cranked fd limits
+		*  soft  nofile  8192
+		*  hard  nofile  32768
+	EOF
+
+	cp $RIFTROOT/scripts/setup/skel/etc/systemd/system/riftware.service $STAGING/etc/systemd/system/
+	# riftware.service is enabled below by legacy chkconfig command
+
+	#cmd chkconfig --levels 235 ntpdate "on"
+	cmd chkconfig ntpdate "off"
+	cmd chkconfig --levels 235 ntpd "on"
+	cmd chkconfig --levels 235 autofs "off"
+	cmd chkconfig --levels 235 rpcbind "on"
+	cmd chkconfig --levels 235 sshd "on"
+	cmd chkconfig --levels 235 sssd "on"
+	cmd chkconfig --levels 235 rwhod "on"
+	cmd chkconfig --levels 235 riftware "on"
+	cmd chkconfig dbus "off"
+
+    perl -i -p -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/;' ${STAGING}/etc/ssh/sshd_config
+    perl -i -p -e 's/#PermitEmptyPasswords no/PermitEmptyPasswords no/;' ${STAGING}/etc/ssh/sshd_config
+    perl -i -p -e 's/PasswordAuthentication no/#PasswordAuthentication no/;' ${STAGING}/etc/ssh/sshd_config
+	cat <<EOF >>${STAGING}/etc/ssh/sshd_config
+Match User root
+        PasswordAuthentication no
+EOF
+
+	perl -i -p -e 's/ssh_pwauth: +0/ssh_pwauth:  1/;' ${STAGING}/etc/cloud/cloud.cfg
+
+	cmd "id rift || adduser -m -s /bin/bash -U rift"
+	echo rift:rift | cmd chpasswd
+
+	install --group=root --owner=root --mode=700 -d $STAGING/root/.ssh/
+	#install --group=root --owner=root --mode=600 /usr/rift/etc/id_grunt.pub $STAGING/root/.ssh/authorized_keys
+	cp -r $RIFTROOT/scripts/vm/* $STAGING/
+	chmod 700 $STAGING/home/rift/.ssh $STAGING/root/.ssh
+	chmod 600 $STAGING/home/rift/.ssh/* $STAGING/root/.ssh/*
+	mkdir $STAGING/home/rift/.artifacts
+	# chown is done later
+	cp $RIFTROOT/scripts/setup/skel/etc/profile.d/rift.sh $STAGING/etc/profile.d
+
+	# Enable the ping by users
+	cmd setcap cap_net_raw+ep `which ping`
+
+	# RIFT 9529
+	echo 'export LC_ALL="en_US.UTF-8"' >>$STAGING/etc/environment
+
+}
+
+bundle_dot_install() {
+	local f
+	local idir=$(git rev-parse --show-cdup)
+	if [ -z "$idir" ]; then
+		idir="."
+	fi
+	idir=$(realpath $idir/.install)
+
+	announce $FUNCNAME
+	[ -d "${idir}" ] || die "Failed to find install directory.  Tried ${idir}"
+
+	for f in $(find ${idir} -type l); do
+		if readlink ${f} | grep -q '.build'; then
+			echo "WARNING:  ${f} points to the build directory and will not be copied"
+		fi
+	done
+
+	mkdir  ${STAGING}/home/rift/sw
+	rsync -a --safe-links ${idir}/ ${STAGING}/home/rift/sw/ || die "Failed to rsync install dir"
+	mkdir  ${STAGING}/home/rift/scripts
+	rsync -a --safe-links ${RIFTROOT}/scripts/ ${STAGING}/home/rift/scripts/ || die "Failed to rsync scripts dir"
+	install ${RIFTROOT}/rift* $STAGING/home/rift
+	ln -s sw $STAGING/home/rift/.install
+	cmd chown -R rift:rift /home/rift
+	install -g root -o root -d $STAGING/usr/lib/modules/${KERNEL_REV}/kernel/rift/
+	install -g root -o root $RIFTROOT/.install/modules/core/fpath/dpdk-*/usr/lib/modules/*/extra/dpdk/kmod/igb_uio.ko \
+			$RIFTROOT/.install/modules/core/fpath/dpdk-*/usr/lib/modules/*/extra/dpdk/kmod/rte_kni.ko \
+			$RIFTROOT/.install/modules/core/fpath/vtune-3_15/usr/lib/modules/${KERNEL_REV}/extra/vtunes/pax/pax-x32_64-3.12.9-301.fc20.x86_64smp.ko \
+			$RIFTROOT/.install/modules/core/fpath/vtune-3_15/usr/lib/modules/${KERNEL_REV}/extra/vtunes/vtsspp/vtsspp-x32_64-3.12.9-301.fc20.x86_64smp.ko \
+			$RIFTROOT/.install/modules/core/fpath/vtune-3_15/usr/lib/modules/${KERNEL_REV}/extra/vtunes/sep3_15-x32_64-3.12.9-301.fc20.x86_64smp.ko \
+			$STAGING/usr/lib/modules/${KERNEL_REV}/kernel/rift/
+	cmd depmod -a
+
+}
+
+enable_lab() {
+	announce "Enable Lab..."
+	cmd /usr/rift/scripts/cloud/enable_lab
+}
+
+
+
+setup_usr_rift() {
+	mkdir $STAGING/usr/rift
+	rsync -a --safe-links ${RIFTROOT}/scripts/ ${STAGING}/usr/rift/scripts/ || die "Failed to rsync usr/scripts dir"
+	if ! ${INSTALL_ONLY}; then
+		cmd /usr/rift/scripts/yum/update_usr_rift_bin -f
+	fi
+}
+
+output_images() {
+	local output_type
+
+	announce $FUNCNAME
+	for output_type in ${OUTPUTS}; do
+		case ${output_type} in
+			qcow2)
+				pack_qcow2
+				;;
+			disk-image)
+				pack_image
+				;;
+			*)
+				echo
+				echo "WARNING:  Unknown output type '${output_type}'"
+				echo
+				;;
+		esac
+	done
+}
+
+BUILDDIR=$(dirname $(realpath $0))
+RIFTROOT=$(dirname $(dirname $BUILDDIR))
+
+#SEED_URL=http://download.fedoraproject.org/pub/fedora/linux/releases/20/Images/x86_64/
+SEED_URL=http://sharedfiles/common/vm
+SEED=Fedora-x86_64-20-20131211.1-sda.qcow2
+SEED_PATH=""
+FEDORA_REL=20
+OUTPUTS="qcow2 disk-image"
+IMG_PREFIX="rift-root"
+INSTALL_ONLY=false
+INSTALL_EXTRA=true
+ENABLE_LAB=fals3
+
+# Are we building a local RIFT.io dev image.  If so
+# additional configuration will be included that assumes
+# a local connection to eng.riftio.com
+RIFT_DEV=false
+
+FORCE_CLEAN=false
+STAGING=${BUILDDIR}/image-staging
+INCLUDE_SW=false
+
+_YUM_CONFIG=${STAGING}/build-yum.conf
+_MOUNTS=""
+_NBD_NODES=""
+
+# This is roughly the amount of space required to hold the .install tree when
+# built with NOT_DEVELOPER_BUILD=TRUE, also known as 1.5G
+_EXTRA_DISK_SPACE_K=1572864
+KERNEL_REV="3.12.9-301.fc20.x86_64"
+
+usage() {
+	cat <<-EOF
+		$(basename $0) [ARGUMENTS]
+
+		This script is used to create base VM images capable of running the RW.OS.  In addition
+		it can also add a full RIFT.io developer environment which adds internal tools like
+		ldap and nfs.
+
+		ARGUMENTS:
+			-h, --help               This screen
+			-f, --force              Force a clean build
+
+			-d, --dev                Enable Rift Developer build (includes packages needed to compile)
+			-r, --rw-install         Include the top level .install directory in ~rift.
+
+			-b, --builddir [PATH]    Directory to use for building the build [${BUILDDIR}]
+			-p, --prefix             Prefix for the image filename [${IMG_PREFIX}]
+			-s, --seed [URL]         Image seed [${SEED_URL}/${SEED}]
+			-o, --outputs [OUTPUTS]  Comma seperated list of images to generate [${OUTPUTS}]
+			--install-only           Only install packages, do not produce images
+			--no-install-extra       Skip installing extra packages (barebones platform)
+			--enable-lab			 enable LDAP for user auth and NFS
+
+		OUTPUTS:
+			qcow2:         Openstack/kvm suitable image
+			disk-image:    Raw disk image, suitable for EC2
+
+		EXAMPLES:
+			build an image to be used in our environment, run in $RIFT_ROOT:
+			mkdir tmp
+			sudo ./scripts/cloud/mkvmimage -d -b tmp -o qcow2
+	EOF
+}
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-f|--force)
+			FORCE_CLEAN=true
+			;;
+		-d|--dev)
+			RIFT_DEV=true
+			;;
+		-r|--rw-install)
+			INCLUDE_SW=true
+			;;
+		-b|--builddir)
+			shift
+			BUILDDIR=${1}
+			;;
+		-p|--prefix)
+			shift
+			IMG_PREFIX=${1}
+			;;
+		-s|--seed)
+			shift
+			SEED_URL=${1%/*}
+			SEED=${1##*/}
+			;;
+		-o|--outputs)
+			shift
+			OUTPUTS=$(echo ${1} | tr ',' ' ')
+			;;
+		--install-only)
+			INSTALL_ONLY=true
+			;;
+		--no-install-extra)
+			INSTALL_EXTRA=false
+			;;
+		--enable-lab)
+			ENABLE_LAB=true
+			;;
+		*)
+			die "Unknown argument $1"
+			;;
+	esac
+	shift
+done
+
+if [ ${UID} != 0 ]; then
+	die "$(basename $0) must be run as root"
+fi
+
+if ${INCLUDE_SW}; then
+	if [ ! -f ${RIFTROOT}/.install/usr/bin/rwmain ]; then
+		echo "It does not appear that you have done a build with NOT_DEVELOPER_BUILD=TRUE"
+		exit 1
+	fi
+fi
+
+#check_build_area  -- we cannot be under $RIFT_ROOT unless we are also in .build
+x=$(realpath $BUILDDIR)
+if [[ $x =~ $RIFTROOT && ! $x =~ $RIFTROOT/.build ]]; then
+	echo "ERROR $x is not an approriate BUILDDIR. It must not be inside RIFTROOT unless it is under .build"
+	exit 1
+fi
+
+
+STAGING=${BUILDDIR}/image-staging
+if ${INSTALL_ONLY}; then
+	STAGING=""
+fi
+
+SEED_PATH=${BUILDDIR}/${SEED}
+
+set -x
+
+if ! ${INSTALL_ONLY}; then
+	fetch_seed
+	setup
+fi
+
+setup_fedora_repos
+setup_usr_rift
+
+install_base_pkgs
+if ${RIFT_DEV}; then
+	install_dev_packages
+	cmd "mkdir /localdisk"
+	cmd "chmod 777 /localdisk"
+fi
+
+if ${INSTALL_EXTRA}; then
+		install_extra_pkgs
+fi
+
+post_install_config
+
+if ${INSTALL_ONLY}; then
+	exit 0
+fi
+
+
+
+if ${INCLUDE_SW}; then
+	# I've been told that nobody uses this software and this will be un-neccesary when we move to RPMS, turned this off by removing -r from build_vm call in scripts/jenkins/vm_image/step2.sh
+	# see RIFT-9653 -nhudson
+	bundle_dot_install
+fi
+
+if ${ENABLE_LAB}; then
+	enable_lab
+fi
+
+output_images
+
+_on_exit
+
+# vim: noet

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<!--[if lt IE 9]>
+		<script src="lib/aight.js"></script>
+		<![endif]-->
+		<script src="lib/mocha.js"></script>
+		<script src="lib/assert.js"></script>
+		<script src="lib/sinon.js"></script>
+		<script>
+			mocha.setup({
+				ui: 'tdd'
+			});
+		</script>
+		<link href="lib/mocha.css" rel="stylesheet"></link>
+		<title>d3.chart test suite</title>
+		<script src="lib/d3.v3.js"></script>
+		<script src="../src/init.js"></script>
+		<script src="../src/layer.js"></script>
+		<script src="../src/chart.js"></script>
+		<script src="tests/chart.js"></script>
+		<script src="tests/layer.js"></script>
+		<script src="tests/integration.js"></script>
+	</head>
+	<body>
+		<div id="mocha"></div>
+		<div id="test"></div>
+		<script>
+			mocha.run();
+		</script>
+	</body>
+</html>

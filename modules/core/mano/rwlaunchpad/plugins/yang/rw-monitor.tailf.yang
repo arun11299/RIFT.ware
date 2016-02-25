@@ -1,0 +1,21 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-monitor-annotation
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-monitor-annotation";
+  prefix "rw-monitor-ann";
+
+  import rw-monitor {
+    prefix rw-monitor;
+  }
+
+  import tailf-common {
+    prefix tailf;
+  }
+}

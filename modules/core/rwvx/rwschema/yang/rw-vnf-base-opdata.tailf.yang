@@ -1,0 +1,44 @@
+
+/*
+ * 
+ * (c) Copyright RIFT.io, 2013-2016, All Rights Reserved
+ *
+ *
+ */
+
+module rw-vnf-base-opdata.tailf
+{
+  namespace "http://riftio.com/ns/riftware-1.0/rw-vnf-base-opdata-annotation";
+  prefix "rw-vnf-base-opdata-ann";
+    
+  import mano-base {
+    prefix manobase;
+  }
+  import rw-vnf-base-opdata {
+    prefix rwvnfbaseopdata;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+    
+  tailf:annotate "/manobase:vnf-opdata/manobase:vnf/rwvnfbaseopdata:logical-port" {
+    tailf:callpoint base_show;
+  }
+  tailf:annotate "/manobase:vnf-opdata/manobase:vnf/rwvnfbaseopdata:port-state" {
+    tailf:callpoint base_show;
+  }
+  tailf:annotate "/manobase:vnf-opdata/manobase:vnf/rwvnfbaseopdata:network-context-state" {
+    tailf:callpoint base_show;
+  }
+
+  tailf:annotate "/rwvnfbaseopdata:clear-data" {
+    tailf:actionpoint rw_action;
+  }
+  tailf:annotate "/rwvnfbaseopdata:start" {
+    tailf:actionpoint rw_action;
+  }
+  tailf:annotate "/rwvnfbaseopdata:stop" {
+    tailf:actionpoint rw_action;
+  }
+  
+}

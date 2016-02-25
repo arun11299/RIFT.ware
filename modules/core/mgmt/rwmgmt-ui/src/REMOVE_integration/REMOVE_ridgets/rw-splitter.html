@@ -1,0 +1,113 @@
+<link rel="import" href="../../lib/core-splitter/core-splitter.html">
+<link rel="import" href="../../lib/core-icons/core-icons.html">
+<link rel="import" href="../../lib/core-icon/core-icon.html">
+
+<!--
+  <img src="rw-splitter.png"/>
+
+  Examples:
+  
+    <div>top</div>
+    <rw-splitter>
+      <span>This goes inside splitter area</span>
+    </rw-splitter>
+    <div>bottom</div>
+
+    <div>top</div>
+    <rw-splitter class="vertical">
+    <div>bottom</div>
+
+  @class rw-splitter
+-->
+
+<polymer-element name="rw-splitter" extends="core-splitter" on-trackend="{{trackEnd}}" on-track="{{track}}">
+<template>
+  <link rel="stylesheet" type="text/css" href="rw-splitter.css" />
+  <div id="content">
+    <content></content>
+  </div>
+  <div class="adjustments">
+  <div style="margin-right: 10px;"  id="buttons" on-tap="{{toggle}}" >
+    <core-icon style="right: 5px;
+    bottom: 5px;"
+    size="15px" icon="{{icon}}"></core-icon></div>
+  <div style="margin-right:10px;padding-left: 2.5px;
+line-height: 11px;"
+       id="buttons" on-tap="{{expand}}">+</div>
+    </div>
+</template>
+<script>
+Polymer({
+
+  ready: function() {
+      this.icon = "expand-more";
+  },
+
+  domReady: function() {
+      if (!this.allowOverflow) {
+          this.parentNode.style.overflow = this.nextElementSibling.style.overflow =
+                  this.previousElementSibling.style.overflow = 'hidden';
+      }
+      this.target.style.height = "300px"
+  },
+
+  toggleMax: function(){
+    this.expanded ? this.restore() : this.expand();
+  },
+
+  toggle: function() {
+    this.collapsed ? this.restore() : this.collapse();
+  },
+
+  collapse: function() {
+    this.restoreSize = this.target.offsetHeight;
+    this.target.style.height = "0";
+    this.collapsed = true;
+    this.expanded = false;
+      this.changeClass();
+  },
+
+  expand: function() {
+    var body = document.body,
+        html = document.documentElement,
+        maxH = Math.max(body.scrollHeight,body.offsetHeight,html.clientHeight,html.scrollHeight,html.offsetHeight );
+    if( (maxH - parseInt(this.target.style.height)) > 10 ) {
+        this.restoreSize = this.target.offsetHeight;
+        this.target.style.height = maxH + 'px';
+        this.collapsed = false;
+    }else{
+        this.restore();
+    }
+    this.changeClass();
+  },
+
+  restore: function() {
+    if (this.restoreSize || this.restoreSize == 0) {
+      this.target.style.height = this.restoreSize + "px";
+    }
+      this.changeClass();
+  },
+
+  trackEnd: function() {
+      this.changeClass();
+
+  },
+
+  track: function(e) {
+    var d = e[this.horizontal ? 'dy' : 'dx'];
+    this.target.style[this.dimension] = this.size + (this.isNext ? -d : d) + 'px';
+    this.changeClass();
+  },
+
+  changeClass: function(){
+      if(parseInt(this.target.style.height) > 20){
+          this.icon = "expand-more";
+          this.collapsed = false;
+      }else{
+          this.icon = "expand-less"
+          this.collapsed = true;
+      }
+ }
+});
+</script>
+</polymer-element>
