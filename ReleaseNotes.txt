@@ -1,0 +1,16 @@
+Release Notes 
+RIFT.ware version 4.1.0.1
+Updated February 29, 2016
+
+
+RIFT.ware version 4.1.0.1  is the first public release of RIFT.ware 4.1. It is available as RPMs and as source.  See https://open.riftio.com for the latest updates, files, and documentation. 
+
+
+Known Issues
+MANO 
+RIFT-11934, RIFT-11916 -- Launchpad will be slow and may fail with a heartbeat error if the VM in which it runs is under-resourced. 
+
+Open source
+The Build VM is missing some packages. See the README file in the open source tree for the latest updates.
+
+Visit https://support.riftio.com to post questions or raise issues. 
